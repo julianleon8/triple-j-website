@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(//Users/julianleon/.claude/skills/notebooklm/**)",
+      "Bash(python scripts/run.py notebook_manager.py activate --id triple-j-website)",
+      "Skill(firecrawl-search)",
+      "Skill(firecrawl-search:*)"
+    ]
+  }
+}
