@@ -17,14 +17,17 @@
 │
 ├── /locations/
 │   ├── /locations/central-texas/    ← Primary geo hub
-│   ├── /locations/waco/             ← P1
-│   ├── /locations/austin/           ← P1
-│   ├── /locations/dallas/           ← P1
-│   ├── /locations/temple/           ← P2
-│   ├── /locations/killeen/          ← P2
-│   ├── /locations/round-rock/       ← P2
-│   ├── /locations/georgetown/       ← P2
-│   ├── /locations/belton/           ← P3
+│   ├── /locations/temple/           ← P1 (base of operations)
+│   ├── /locations/harker-heights/   ← P1 (highest lead volume)
+│   ├── /locations/killeen/          ← P1 (high lead volume)
+│   ├── /locations/copperas-cove/    ← P1 (active market)
+│   ├── /locations/belton/           ← P1 (active market, upgraded)
+│   ├── /locations/waco/             ← P2
+│   ├── /locations/austin/           ← P2
+│   ├── /locations/dallas/           ← P2
+│   ├── /locations/taylor/           ← P2
+│   ├── /locations/round-rock/       ← P3
+│   ├── /locations/georgetown/       ← P3
 │   └── /locations/san-marcos/       ← P3
 │
 ├── /gallery/

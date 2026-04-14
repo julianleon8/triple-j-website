@@ -2,10 +2,14 @@
 
 ## Business Overview
 - **Company:** Triple J Metal LLC
-- **Location:** Central Texas (primary), Dallas + Austin (secondary)
-- **Specialty:** Residential carports — welded and bolted red iron steel
-- **Positioning:** Cheapest + best carport builders in Central Texas
+- **Phone:** 254-346-7764
+- **Base:** Temple, TX
+- **Hot Markets:** Harker Heights, Copperas Cove, Killeen (highest residential lead volume), Belton, Holland, Taylor
+- **Secondary Markets:** Palestine, Waco, Austin, Dallas
+- **Specialty:** Residential carports — welded and bolted red iron steel; also garages, barns, RV covers, equipment covers, ranch structures
+- **Positioning:** Cheapest + best carport builders in Central Texas — local family business, 8 years experience
 - **Suppliers:** MetalMax (Waco), MetalMart
+- **Local Competitors:** Central Texas Builders, L&E (both local to Temple/Killeen area)
 - **Goal:** Lead generation — quote requests and phone calls
 
 ---
@@ -15,8 +19,12 @@
 ### Primary (high intent, local)
 | Keyword | Monthly Volume (est.) | Difficulty | Priority |
 |---|---|---|---|
+| carport builders temple tx | 200–500 | Low | P1 |
+| carport builders harker heights tx | 100–200 | Very Low | P1 ← NEW |
+| metal carports harker heights texas | 100–200 | Very Low | P1 ← NEW |
+| metal carports copperas cove tx | 100–200 | Very Low | P1 ← NEW |
+| carport builders killeen tx | 200–500 | Low | P1 |
 | carports central texas | 500–1k | Low | P1 |
-| metal carports waco tx | 200–500 | Low | P1 |
 | carport builders near me texas | 1k–5k | Medium | P1 |
 | cheap carports texas | 500–1k | Low | P1 |
 | red iron steel carports texas | 100–200 | Very Low | P1 |
@@ -35,7 +43,9 @@
 - carport company round rock texas
 
 ### Local City Modifiers
-Waco · Austin · Dallas · Temple · Killeen · Round Rock · Georgetown · Belton · San Marcos · Salado · Hillsboro · Hewitt · Woodway · Lorena · McGregor
+**Tier 1 (active markets):** Temple · Harker Heights · Copperas Cove · Killeen · Belton · Holland · Taylor
+**Tier 2 (secondary):** Waco · Austin · Dallas · Palestine · Round Rock · Georgetown
+**Tier 3 (expansion):** San Marcos · Salado · Hillsboro · Hewitt · Woodway · Lorena · McGregor
 
 ---
 

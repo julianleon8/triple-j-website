@@ -5,17 +5,19 @@
 |---|---|---|---|
 | Home | carport builders central texas | Landing | P1 |
 | /services/carports/ | metal carports central texas | Service | P1 |
-| /about/ | triple j metal llc waco | Brand | P1 |
-| /contact/ + /get-a-quote/ | get carport quote waco texas | Conversion | P1 |
+| /about/ | triple j metal llc temple texas | Brand | P1 |
+| /contact/ + /get-a-quote/ | get carport quote temple texas | Conversion | P1 |
 | /faq/ | carport questions texas | FAQ | P1 |
 
-## Month 3–4: Location Pages
+## Month 3–4: Core Location Pages (Actual Hot Markets First)
 | Page | Target Keyword | Type | Priority |
 |---|---|---|---|
 | /locations/central-texas/ | carport builders central texas | Location Hub | P1 |
-| /locations/waco/ | metal carports waco tx | Location | P1 |
-| /locations/austin/ | carport builders austin tx | Location | P1 |
-| /locations/dallas/ | metal carports dallas tx | Location | P1 |
+| /locations/temple/ | carport builders temple tx | Location | P1 |
+| /locations/harker-heights/ | carport builders harker heights tx | Location | P1 |
+| /locations/killeen/ | metal carport installation killeen tx | Location | P1 |
+| /locations/copperas-cove/ | metal carports copperas cove tx | Location | P1 |
+| /locations/belton/ | carport builders belton tx | Location | P1 |
 
 ## Month 5–6: Secondary Locations + First Blog Posts
 | Page | Target Keyword | Type | Priority |

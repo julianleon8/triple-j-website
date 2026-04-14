@@ -1,6 +1,22 @@
 # Competitor Analysis — Triple J Metal LLC
 
-## Top 5 Competitors
+## Local Competitors (Temple / Killeen Area) — Highest Priority
+
+### Central Texas Builders
+- **Known:** Local Temple/Killeen area competitor
+- **Research needed:** Website, pricing, reviews, keyword rankings, service areas
+- **Opportunity:** Direct local comparison content — "Triple J vs Central Texas Builders"
+
+### L&E (Metal / Construction)
+- **Known:** Local competitor in the Temple/Killeen market
+- **Research needed:** Full name, website, service offerings, online presence
+- **Opportunity:** Same — comparison page targeting customers researching local options
+
+> **Action:** Research both companies before writing comparison content. Target keywords: "central texas builders vs triple j metal", "best carport company temple tx"
+
+---
+
+## Top 5 National/Regional Competitors
 
 ### 1. Alan's Factory Outlet
 - **Strengths:** 4.8★ / 24,000+ reviews, 3D instant configurator, dominant Texas presence, transparent pricing, direct-to-consumer model
