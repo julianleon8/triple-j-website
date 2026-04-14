@@ -1,7 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod'
-import { adminClient } from '@/lib/supabase/admin'
+import { getAdminClient } from '@/lib/supabase/admin'
 import { Resend } from 'resend'
+
+export const dynamic = 'force-dynamic'
 
 const resend = new Resend(process.env.RESEND_API_KEY)
 
@@ -20,7 +22,7 @@ export async function POST(request: NextRequest) {
     const body = await request.json()
     const data = leadSchema.parse(body)
 
-    const { data: lead, error } = await adminClient
+    const { data: lead, error } = await getAdminClient()
       .from('leads')
       .insert({ ...data, source: 'website_form' })
       .select()
@@ -71,7 +73,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ success: true, id: lead.id })
   } catch (error) {
     if (error instanceof z.ZodError) {
-      return NextResponse.json({ error: error.errors }, { status: 400 })
+      return NextResponse.json({ error: error.issues }, { status: 400 })
     }
     console.error('Lead submission error:', error)
     return NextResponse.json({ error: 'Failed to submit lead' }, { status: 500 })

@@ -24,24 +24,28 @@
             "id": "a8ec76d43806c421",
             "type": "leaf",
             "state": {
-              "type": "empty",
+              "type": "graph",
               "state": {},
-              "icon": "lucide-file",
-              "title": "New tab"
+              "icon": "lucide-git-fork",
+              "title": "Graph view"
             }
           },
           {
             "id": "fd12a7482b66fc1c",
             "type": "leaf",
             "state": {
-              "type": "empty",
-              "state": {},
+              "type": "markdown",
+              "state": {
+                "file": "docs/app/getting-started/error-handling.md",
+                "mode": "source",
+                "source": false
+              },
               "icon": "lucide-file",
-              "title": "New tab"
+              "title": "error-handling"
             }
           }
         ],
-        "currentTab": 2
+        "currentTab": 1
       }
     ],
     "direction": "vertical"
@@ -201,23 +205,34 @@
       "bases:Create new base": false
     }
   },
-  "active": "fd12a7482b66fc1c",
+  "active": "a8ec76d43806c421",
   "lastOpenFiles": [
+    "src/app/locations/page.tsx",
+    "src/app/locations/[slug]/page.tsx",
+    "src/app/locations/[slug]",
+    "src/app/locations",
+    "src/lib/locations.ts",
+    "research/competitors/full-analysis-2026-04.md",
+    "research/customers/PLACEHOLDER.md",
+    "research/customers",
+    "research/inspiration/PLACEHOLDER.md",
+    "research/inspiration",
+    "research/keywords/PLACEHOLDER.md",
+    "research/keywords",
+    "research/markets/harker-heights.md",
+    "research/markets",
+    "research/competitors/l-and-e.md",
+    "research/competitors/central-texas-builders.md",
+    "research/competitors/TEMPLATE.md",
+    "research/competitors",
+    "research/README.md",
+    "research",
+    "docs/app/getting-started/error-handling.md",
     "seo/CONTENT-CALENDAR.md",
     "seo/IMPLEMENTATION-ROADMAP.md",
     "seo/SITE-STRUCTURE.md",
     "seo/COMPETITOR-ANALYSIS.md",
     "seo/SEO-STRATEGY.md",
-    "src/app/login/page.tsx",
-    "src/app/dashboard/page.tsx",
-    "src/app/dashboard/layout.tsx",
-    "src/middleware.ts",
-    "src/app/api/quotes/[token]/accept/route.ts",
-    "src/app/api/leads/route.ts",
-    "src/lib/supabase/admin.ts",
-    "src/lib/supabase/server.ts",
-    "src/lib/supabase/client.ts",
-    "skills-lock.json",
     "node_modules/socket.io-adapter/node_modules/ws/README.md",
     "node_modules/socket.io-adapter/Readme.md",
     "node_modules/string-width/node_modules/emoji-regex/README.md",
@@ -228,17 +243,6 @@
     "node_modules/path-scurry/LICENSE.md",
     "node_modules/ora/node_modules/log-symbols/node_modules/is-unicode-supported/readme.md",
     "node_modules/ora/node_modules/log-symbols/readme.md",
-    "node_modules/ora/node_modules/chalk/readme.md",
-    "node_modules/ora/readme.md",
-    "node_modules/engine.io/node_modules/ws/README.md",
-    "node_modules/engine.io/node_modules/cookie/SECURITY.md",
-    "node_modules/engine.io/node_modules/cookie/README.md",
-    "node_modules/engine.io/README.md",
-    "node_modules/accepts/node_modules/mime-types/README.md",
-    "node_modules/accepts/node_modules/mime-types/HISTORY.md",
-    "node_modules/accepts/node_modules/mime-db/HISTORY.md",
-    "node_modules/accepts/node_modules/mime-db/README.md",
-    "node_modules/accepts/README.md",
     "node_modules/@supabase/phoenix/priv/static/phoenix.png",
     "node_modules/@supabase/phoenix/priv/static/phoenix-orange.png",
     "public/window.svg",

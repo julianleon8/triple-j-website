@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { adminClient } from '@/lib/supabase/admin'
+import { getAdminClient } from '@/lib/supabase/admin'
+
+export const dynamic = 'force-dynamic'
 
 export async function POST(
   request: NextRequest,
@@ -8,8 +10,9 @@ export async function POST(
   const { token } = await params
   const body = await request.json().catch(() => ({}))
   const action: 'accepted' | 'declined' = body.action === 'decline' ? 'declined' : 'accepted'
+  const db = getAdminClient()
 
-  const { data: quote, error } = await adminClient
+  const { data: quote, error } = await db
     .from('quotes')
     .update({
       status: action,
@@ -32,7 +35,7 @@ export async function POST(
 
   // Auto-create job record on acceptance
   if (action === 'accepted') {
-    await adminClient.from('jobs').insert({
+    await db.from('jobs').insert({
       customer_id: quote.customer_id,
       quote_id: quote.id,
       job_number: `JJM-${new Date().getFullYear()}-${Date.now().toString().slice(-6)}`,
