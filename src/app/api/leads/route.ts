@@ -33,7 +33,7 @@ export async function POST(request: NextRequest) {
     // Alert owner immediately
     await resend.emails.send({
       from: 'Triple J Metal <leads@triplejmetal.com>',
-      to: process.env.OWNER_EMAIL!,
+      to: process.env.OWNER_EMAIL!.split(','),
       subject: `🔔 New Lead: ${data.name} — ${data.city || 'TX'} — ${data.service_type}`,
       html: `
         <div style="font-family:sans-serif;max-width:500px">

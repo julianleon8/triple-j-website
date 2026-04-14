@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+
 import "./globals.css";
+
+import { SITE } from "@/lib/site";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -14,22 +17,24 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: {
-    default: "Triple J Metal LLC | Metal Carports Central Texas",
-    template: "%s | Triple J Metal LLC",
+    default: `${SITE.name} | Metal Carports & Buildings in Central Texas`,
+    template: `%s | ${SITE.name}`,
   },
   description:
-    "Triple J Metal LLC builds and installs welded and bolted metal carports, garages, and barns across Central Texas. Based in Temple, TX. Call 254-346-7764.",
+    "Triple J Metal builds custom welded metal carports, garages, and barns in under 48 hours. Serving Temple, Belton, Killeen, Harker Heights and all of Central Texas. Call 254-346-7764.",
   keywords: [
     "metal carports central texas",
     "carport builders temple tx",
     "welded carports texas",
     "metal building installation central texas",
-    "cheap carports texas",
+    "carports with concrete belton tx",
+    "turnkey carports killeen",
+    "custom metal buildings temple tx",
   ],
   openGraph: {
     type: "website",
     locale: "en_US",
-    siteName: "Triple J Metal LLC",
+    siteName: SITE.name,
   },
 };
 
