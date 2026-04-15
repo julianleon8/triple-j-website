@@ -7,7 +7,7 @@ A lead-generation website + owner dashboard for Triple J Metal LLC. Maintained b
 - Notebook URL: https://notebooklm.google.com/notebook/f4aaf762-3ede-45b9-a1ad-b9d8a6319207
 - Use for: source-grounded answers from uploaded project documents
 
-_Last updated: 2026-04-14_
+_Last updated: 2026-04-15_
 
 ---
 
@@ -28,42 +28,38 @@ _Last updated: 2026-04-14_
 
 ---
 
-## Current Site Status (as of 2026-04-14)
-**The site is built and code is committed to GitHub (`julianleon8/triple-j-website`).**
-**Vercel is connected to the repo but NOT yet deployed** — waiting on env vars + Julian to push.
+## Current Site Status (as of 2026-04-15)
+**All code committed to GitHub (`julianleon8/triple-j-website`, commit 0c77415).**
+**Vercel is connected but NOT yet deployed** — Julian still needs to push + set env vars.
 
-### What's live in the repo
-- Full design system: steel-blue tokens, typography, Button, Container, SVG icons
-- Site chrome: Header (sticky+shrink, top bar w/ phone, mobile drawer), Footer (4-col NAP), MobileCallBar
-- Homepage sections: Hero → TrustBar → Services → WhyTripleJ → HowItWorks → Gallery → Testimonials → ServiceAreas → QuoteForm
-- QuoteForm wired to POST /api/leads (Name, Phone, Email, City, Service, W×L×H, structure type, notes)
-- 6 real Triple J job photos in /public/images/
-- Route group (marketing) isolates public chrome from dashboard/login/api
-- Full backend: leads, customers, quotes, quote_line_items, quote_templates, jobs tables (Supabase + RLS)
-- Owner dashboard at /dashboard (Supabase Auth protected): leads, customers, quotes, jobs
-- Tokenized quote acceptance (customer clicks Accept in email — no login needed)
-- 5 location pages: /locations/[slug] for Temple, Belton, Killeen, Harker Heights, Copperas Cove
+### What's in the repo (latest)
+- Full design system: Barlow Condensed headlines + Inter body, steel-blue tokens, fluid typography
+- Site chrome: Header, Footer (4-col NAP + Lean-to Patios + House Additions), MobileCallBar
+- Homepage: Hero → TrustBar → Services → WhyTripleJ → HowItWorks → Gallery → Testimonials (auto-scroll marquee) → ServiceAreas → QuoteForm
+- Multi-step QuoteForm: Step 1 (NAP+ZIP) → Step 2 (service+type+dimensions) → Step 3 (concrete+timeline+military)
+- 14 location pages: Temple, Belton, Killeen, Harker Heights, Copperas Cove, Salado, Waco, Georgetown, Round Rock, Lampasas, Holland, Taylor, Troy, Nolanville
+- 7 service pages: carports, garages, barns, rv-covers, hoa-structures, metal-porch-covers, pbr-vs-pbu-panels
+- Additional pages: /gallery, /about, /contact, /service-areas
+- Full backend: Supabase leads table with ZIP, concrete, timeline, military fields; Resend email alerts
+- Owner dashboard at /dashboard (Supabase Auth protected)
+- inspiration/screenshots/ folder — drop zone for visual reference
 
-### What still needs doing (next session)
-- Julian must: `git push origin main` from his Mac Terminal (sandbox can't push — proxy blocks it)
-- Vercel env vars: set all 7 variables from .env.local before clicking Deploy
-  - NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_ANON_KEY, SUPABASE_SERVICE_ROLE_KEY
-  - RESEND_API_KEY, OWNER_EMAIL, NEXT_PUBLIC_SITE_URL, SETUP_KEY
-  - Update NEXT_PUBLIC_SITE_URL to the real Vercel domain after first deploy
-- Test quote form end-to-end (check Supabase leads table + owner email alert fires)
-- Design iteration: Julian needs to review localhost and give feedback before next push
+### Julian action items to deploy
+1. `git push origin main` from Mac Terminal
+2. Set 7 Vercel env vars from .env.local:
+   - NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_ANON_KEY, SUPABASE_SERVICE_ROLE_KEY
+   - RESEND_API_KEY, OWNER_EMAIL, NEXT_PUBLIC_SITE_URL, SETUP_KEY
+3. Update NEXT_PUBLIC_SITE_URL to real Vercel domain after first deploy
+4. Test quote form end-to-end (Supabase leads table + owner email)
 
 ### Pending / future work
-- Supabase migration SQL: run supabase/migrations/001_initial_schema.sql if not done yet
-- Display font: placeholder (Geist) — decide on Barlow Condensed/Oswald later
-- Testimonials: placeholder copy — swap when real Google reviews arrive
-- Gallery: add more job photos as they accumulate
-- Services pages: /services/[slug] don't exist yet (linked in nav + service cards)
-- Gallery page: /gallery doesn't exist yet (linked in footer)
-- About page: /about doesn't exist yet
-- Contact page: /contact doesn't exist yet
-- Quote calculator (phase 4): instant price estimate on homepage
+- Real Google reviews → fill testimonials.md → swap placeholder Testimonials cards
+- Julian: drop inspiration screenshots into inspiration/screenshots/ for next design pass
+- Niche landing pages: barndominium foundations, RV carports Fort Cavazos, custom metal sheds
+- Quote calculator (phase 4): instant price estimate
 - Stripe payments (phase 4): deposit capture post-quote-acceptance
+- Dashboard auth flow: not built yet — on hold until Vercel is live
+- Cdance hero video: on hold pending AI-generated footage from Julian
 
 ---
 

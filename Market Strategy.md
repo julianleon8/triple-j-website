@@ -40,12 +40,49 @@
 - **Leland's Metal Buildings:** High-volume mass production, not custom/bespoke
 
 ## SEO Keywords to Target
-- 'Turnkey Carports Killeen'
-- 'Carports with Concrete Belton TX'
-- '48-hour build times'
-- 'Custom Metal Buildings Temple TX'
-- 'Carport builders Harker Heights TX'
-- 'Metal carports Fort Cavazos'
+
+### Confirmed Gap Opportunities (NotebookLM research 2026-04-15)
+National brands (Alan's, East Texas Carports, Safeguard) own broad terms. These gaps are open:
+
+**Gap 1 — Turnkey + Concrete (no competitor offers this)**
+- 'Turnkey carports Killeen'
+- 'Carports with concrete Belton TX'
+- 'Metal building site prep Bell County'
+- 'Barndominium foundations Central Texas'
+
+**Gap 2 — Welded Quality (competitors only sell bolted kits)**
+- 'Custom welded carports Belton TX'
+- 'Permanent metal structures Temple TX'
+- 'Heavy-duty welded RV covers Central Texas'
+
+**Gap 3 — Build Speed + Military**
+- 'Fast carport installation Temple TX'
+- 'Same-week metal building Central Texas'
+- 'Immediate RV cover Fort Cavazos'
+
+**Gap 4 — HOA Luxury Builds**
+- 'HOA compliant metal porches Temple TX'
+- 'Standing seam metal sheds Bella Charca'
+- 'Custom architectural carports Heritage Oaks'
+
+**High-converting niche pages to build next:**
+- 'Barndominium foundations Central Texas'
+- 'RV carports Fort Cavazos / Killeen TX'
+- 'Custom metal sheds Temple TX'
+
+## GBP Photo Strategy (NotebookLM 2026-04-15)
+- New baseline: 30–100+ reviews + job site photos = "digital tiebreaker" in TX contractor market
+- What to post: trucks, equipment (F350, skid steer), completed structures, crew on-site
+- Review velocity matters: algorithms favor recent reviews mentioning specific services + traits (punctuality, professionalism, "easy to work with")
+- Verified address on city's "Registered General Contractor" list = ranking stability signal
+- Service-area configuration: define radius to include Harker Heights, Nolanville, Gatesville for "near me" searches
+
+## Military Buyer Behavior (Fort Cavazos / KTB Corridor)
+- PCS timing = strict deadline → urgency messaging converts ("before your household goods even arrive")
+- BAH + VA Loans = primary financial levers → mention explicitly in ads
+- Facebook: geofence to Killeen-Temple-Belton corridor, use PCS/BAH/VA language naturally
+- Military discount CTA is a primary hook — check the box on the quote form already exists
+- Speed is the #1 military buying trigger: same-week = they're in before the next family moves in
 
 ## Business Development
 - **Texas CMBL** registration ($70/yr) — state + higher-ed bidding

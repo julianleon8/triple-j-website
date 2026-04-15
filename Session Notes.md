@@ -1,3 +1,41 @@
+## 2026-04-15 — Refinement Pass 1 + Research Sync
+
+**NotebookLM research pulled (Gemini):**
+- GBP photo strategy: 30–100+ reviews + job site photos = "digital tiebreaker" for TX contractors
+- Review velocity: algorithms weight reviews mentioning specific services performed + traits like punctuality
+- Proximity signal: verified address + appearing on city's "Registered General Contractor" list = ranking stability
+- Keyword gaps confirmed: turnkey+concrete, welded vs. bolted, build speed, HOA compliance
+- Military: geofence Facebook to KTB corridor, use PCS/BAH/VA Loans language, military discount CTA
+- Multi-step form: ZIP upfront, turnkey upsell (concrete dropdown), urgency timeline cards, military toggle
+- 4,000 PSI concrete callout = technical authority signal that increases conversion rates
+- Specific niche pages that convert: "Barndominium foundations," "RV carports," "Custom metal sheds"
+
+**Refinement pass committed (0c77415):**
+- Font system: Geist → Barlow Condensed (headlines) + Inter (body)
+- Tagline: "Built right, built fast, built by Triple J."
+- TrustBar: Zero Subcontractors / Welded or Bolted / Same-Week / Temple TX
+- Fixed all "custom welded" → "welded or bolted" (Triple J does BOTH)
+- Fixed all "48-hour build" → "same-week scheduling" (48 hrs = materials arrival, not build time)
+- Added Lean-to patios + House additions to all 14 location service lists + site.ts
+- Testimonials.tsx rewritten as 'use client' auto-scroll marquee (CSS @keyframes, pause on hover)
+- testimonials.md fill-in template created for Julian
+- inspiration/screenshots/ folder created for visual reference drops
+
+**New pages added (previous commit f82cc33 + refinement pass):**
+- /gallery, /about, /contact, /service-areas
+- /services/pbr-vs-pbu-panels
+- 9 new location pages: Salado, Waco, Georgetown, Round Rock, Lampasas, Holland, Taylor, Troy, Nolanville
+- Total: 14 location pages, 7 service pages
+
+**Pending (Julian action items):**
+1. `git push origin main` from Mac Terminal
+2. Set 7 Vercel env vars → deploy
+3. Collect real Google reviews → fill testimonials.md
+4. Drop inspiration screenshots into inspiration/screenshots/ for next visual pass
+5. Send Julian-approved AI footage for Cdance hero (on hold)
+
+---
+
 ## 2026-04-14 — SEO + Form Architecture Session
 
 **What we built:**

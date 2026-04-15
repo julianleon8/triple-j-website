@@ -22,3 +22,12 @@ _Maintained by Claude Code_
 | 2026-04-14 | QuoteForm dimensions: W×L×H as 3 numeric fields, concat into message field | Captures structured size data without requiring a DB migration |
 | 2026-04-14 | ClickUp as CRM: HOLD — revisit when live leads come in | Don't over-engineer before validating lead volume; Option 2 (ClickUp + custom quotes) preferred if/when needed |
 | 2026-04-14 | Sandbox can't push to GitHub (proxy blocks outbound) | Julian must run `git push origin main` from his Mac Terminal |
+| 2026-04-15 | Font system: Geist → Barlow Condensed (headlines) + Inter (body) | Industrial/confident feel; Barlow Condensed is tight and bold without needing custom weights |
+| 2026-04-15 | Tagline locked: "Built right, built fast, built by Triple J." | Julian approved; replaces generic placeholder |
+| 2026-04-15 | TrustBar stats: Zero Subcontractors / Welded or Bolted / Same-Week / Temple TX | More differentiating than generic "150+ Projects" stats |
+| 2026-04-15 | "48-hour build" messaging removed site-wide | 48 hrs = materials arrival time, NOT build time. Misleading. Replaced with "same-week" language. |
+| 2026-04-15 | "Custom welded" → "welded or bolted" everywhere | Triple J offers BOTH options. Saying only welded was losing bolted-interested customers. |
+| 2026-04-15 | Added Lean-to Patios + House Additions as services | Real services Triple J performs; were absent from all service lists and nav |
+| 2026-04-15 | Testimonials: auto-scroll marquee instead of static grid | More engaging; hides the fact that placeholder copy is thin until real reviews arrive |
+| 2026-04-15 | inspiration/screenshots/ folder created | Drop zone for visual reference screenshots before next design pass |
+| 2026-04-15 | Dashboard deployment on hold | Auth flow not yet built; Julian still needs to set 7 Vercel env vars |
