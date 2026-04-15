@@ -1,6 +1,10 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
+import { ButtonLink } from '@/components/ui/Button'
+import { Container } from '@/components/ui/Container'
+import { QuoteForm } from '@/components/sections/QuoteForm'
 import { LOCATIONS, LOCATION_SLUGS } from '@/lib/locations'
+import { SITE } from '@/lib/site'
 
 export async function generateStaticParams() {
   return LOCATION_SLUGS.map((slug) => ({ slug }))
@@ -12,27 +16,19 @@ export async function generateMetadata(
   const { slug } = await params
   const loc = LOCATIONS[slug]
   if (!loc) return {}
-
   return {
     title: loc.metaTitle,
     description: loc.metaDescription,
     keywords: [
       `carport builders ${loc.name} tx`,
       `metal carports ${loc.name} texas`,
-      `carport installation ${loc.name} tx`,
-      `metal building contractor ${loc.name} texas`,
+      `turnkey carports ${loc.name}`,
+      `carports with concrete ${loc.name} tx`,
       `welded carport ${loc.name} tx`,
-      `affordable carport ${loc.name} texas`,
+      ...(loc.military?.keywords ?? []),
     ],
-    openGraph: {
-      title: loc.metaTitle,
-      description: loc.metaDescription,
-      type: 'website',
-      locale: 'en_US',
-    },
-    alternates: {
-      canonical: `/locations/${slug}`,
-    },
+    openGraph: { title: loc.metaTitle, description: loc.metaDescription, type: 'website' },
+    alternates: { canonical: `/locations/${slug}` },
   }
 }
 
@@ -46,94 +42,190 @@ export default async function LocationPage(
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'LocalBusiness',
-    name: `Triple J Metal LLC \u2014 ${loc.name} TX Carports`,
+    name: `${SITE.name} — ${loc.name} TX`,
     description: loc.metaDescription,
-    telephone: '254-346-7764',
+    telephone: SITE.phone,
     url: `https://triplejjjmetal.com/locations/${slug}`,
     address: {
       '@type': 'PostalAddress',
-      addressLocality: loc.name,
-      addressRegion: 'TX',
-      postalCode: loc.zip,
+      streetAddress: SITE.address.street,
+      addressLocality: SITE.address.city,
+      addressRegion: SITE.address.state,
+      postalCode: SITE.address.zip,
       addressCountry: 'US',
     },
-    geo: {
-      '@type': 'GeoCoordinates',
-      latitude: loc.lat,
-      longitude: loc.lng,
-    },
-    areaServed: {
-      '@type': 'City',
-      name: loc.name,
-    },
-    serviceType: 'Metal Carport Installation',
-    priceRange: '$',
-    paymentAccepted: 'Cash, Check',
-    currenciesAccepted: 'USD',
-    openingHours: 'Mo-Sa 07:00-18:00',
+    geo: { '@type': 'GeoCoordinates', latitude: loc.lat, longitude: loc.lng },
+    areaServed: { '@type': 'City', name: loc.name, containedIn: { '@type': 'State', name: 'Texas' } },
+    openingHours: 'Mo-Sa 08:00-18:00',
+    priceRange: '$$',
   }
 
   return (
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify(jsonLd).replace(/</g, '\\u003c'),
-        }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, '\\u003c') }}
       />
 
-      <main>
-        {/* Hero */}
-        <section>
-          <h1>{loc.heroHeadline}</h1>
-          <p>{loc.heroCopy}</p>
-          <div>
-            <a href="tel:254-346-7764">Call 254-346-7764</a>
-            <a href="/get-a-quote">Get a Free Quote</a>
+      {/* ── Hero ── */}
+      <section className="relative bg-ink-900 text-white py-20 md:py-28 overflow-hidden">
+        <div className="hero-glow absolute inset-0 pointer-events-none" aria-hidden="true" />
+        <Container className="relative">
+          <div className="max-w-3xl">
+            <span className="text-xs font-semibold uppercase tracking-[0.15em] text-brand-400">
+              {loc.county}
+            </span>
+            <h1 className="mt-3 text-white">{loc.heroHeadline}</h1>
+            <p className="mt-5 text-lg text-white/75 leading-relaxed max-w-2xl">
+              {loc.heroCopy}
+            </p>
+            <div className="mt-8 flex flex-wrap gap-4">
+              <ButtonLink href="#quote" variant="primary" size="lg">
+                Get a Free Quote
+              </ButtonLink>
+              <a
+                href={`tel:${SITE.phone}`}
+                className="inline-flex items-center gap-2 h-12 px-6 rounded-lg border-2 border-white/30 text-white font-semibold hover:border-white/60 transition-colors text-sm"
+              >
+                Call {SITE.phone}
+              </a>
+            </div>
           </div>
-        </section>
+        </Container>
+      </section>
 
-        {/* Services */}
-        <section>
-          <h2>Metal Building Services in {loc.name}, TX</h2>
-          <ul>
+      {/* ── Trust strip ── */}
+      <section className="bg-(--color-brand-600) text-white py-5">
+        <Container>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
+            {[
+              { stat: '150+',      label: 'Projects Completed' },
+              { stat: '48 hrs',    label: 'Typical Build Time' },
+              { stat: '1',         label: 'Contract for Everything' },
+              { stat: 'Temple TX', label: 'Local Family Business' },
+            ].map(({ stat, label }) => (
+              <div key={label}>
+                <div className="text-xl font-extrabold">{stat}</div>
+                <div className="text-xs text-white/75 mt-0.5 uppercase tracking-wide">{label}</div>
+              </div>
+            ))}
+          </div>
+        </Container>
+      </section>
+
+      {/* ── Services ── */}
+      <section className="py-16 md:py-24 bg-white">
+        <Container>
+          <h2 className="mb-10">Metal Building Services in {loc.name}, TX</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {loc.services.map((service) => (
-              <li key={service}>{service}</li>
+              <div
+                key={service}
+                className="flex items-center gap-3 rounded-xl border border-ink-100 bg-ink-50 px-5 py-4"
+              >
+                <span className="w-2 h-2 rounded-full bg-(--color-brand-600) shrink-0" />
+                <span className="text-sm font-medium text-ink-800">{service}</span>
+              </div>
+            ))}
+          </div>
+          <div className="mt-8 flex gap-3 flex-wrap">
+            <ButtonLink href="/services" variant="secondary" size="sm">
+              View all services →
+            </ButtonLink>
+            <ButtonLink href="/services/turnkey-carports-with-concrete" variant="secondary" size="sm">
+              Turnkey + Concrete →
+            </ButtonLink>
+          </div>
+        </Container>
+      </section>
+
+      {/* ── Why Triple J local ── */}
+      <section className="py-16 md:py-20 bg-ink-50">
+        <Container size="narrow">
+          <h2 className="mb-6">Why Triple J Metal in {loc.name}?</h2>
+          <p className="text-ink-600 text-lg leading-relaxed mb-8">
+            {loc.whyLocal}
+          </p>
+          <ul className="space-y-3">
+            {[
+              'Temple-based family business — 150+ completed projects',
+              'Welded AND bolted red iron steel — your choice',
+              'Concrete pad pouring included in the same contract',
+              'Same-week installs — no 4–16 week wait lists',
+              'Licensed and insured',
+              'Steel from MetalMax (Waco) — 100% Texas supplier',
+              '4,000 PSI concrete for Bell County expansive clay soils',
+            ].map((point) => (
+              <li key={point} className="flex items-start gap-3 text-sm text-ink-700">
+                <span className="text-(--color-brand-600) mt-0.5 font-bold shrink-0">✓</span>
+                {point}
+              </li>
             ))}
           </ul>
-        </section>
+        </Container>
+      </section>
 
-        {/* Why Triple J — local advantage */}
-        <section>
-          <h2>Why Choose Triple J Metal LLC in {loc.name}?</h2>
-          <p>{loc.whyLocal}</p>
-          <ul>
-            <li>Local Temple, TX family business — 8 years experience</li>
-            <li>Welded AND bolted red iron steel — your choice</li>
-            <li>Cheapest full-service installer in Central Texas</li>
-            <li>Same-week installs available</li>
-            <li>Licensed and insured</li>
-            <li>Steel from MetalMax (Waco) and MetalMart — 100% Texas suppliers</li>
-          </ul>
-        </section>
-
-        {/* City context */}
-        <section>
-          <h2>Serving {loc.name} and {loc.county}</h2>
-          <p>{loc.areaContext}</p>
-        </section>
-
-        {/* Quote CTA */}
-        <section>
-          <h2>Get a Free Carport Quote in {loc.name}</h2>
-          <p>
-            We respond within 24 hours. Call{' '}
-            <a href="tel:254-346-7764">254-346-7764</a> or submit a quote
-            request and we&apos;ll get back to you same day.
+      {/* ── Area context ── */}
+      <section className="py-16 bg-white">
+        <Container size="narrow">
+          <h2 className="mb-6">Serving {loc.name} and {loc.county}</h2>
+          <p className="text-ink-600 text-lg leading-relaxed">
+            {loc.areaContext}
           </p>
-          <a href="/get-a-quote">Request a Free Quote</a>
+        </Container>
+      </section>
+
+      {/* ── Military section (Killeen + Harker Heights only) ── */}
+      {loc.military && (
+        <section className="py-16 bg-ink-900 text-white">
+          <Container size="narrow">
+            <div className="flex items-start gap-5">
+              <span className="text-4xl shrink-0">⭐</span>
+              <div>
+                <h2 className="text-white mb-4">{loc.military.headline}</h2>
+                <p className="text-white/75 text-lg leading-relaxed">
+                  {loc.military.copy}
+                </p>
+              </div>
+            </div>
+          </Container>
         </section>
-      </main>
+      )}
+
+      {/* ── Competitor comparison ── */}
+      <section className="py-16 bg-ink-50">
+        <Container size="narrow">
+          <h2 className="mb-8">The Local Advantage</h2>
+          <div className="rounded-xl border border-ink-200 overflow-hidden">
+            <div className="grid grid-cols-2 bg-ink-900 text-white text-sm font-bold uppercase tracking-wide">
+              <div className="px-5 py-3">National Dealers</div>
+              <div className="px-5 py-3 text-brand-400">Triple J Metal</div>
+            </div>
+            {[
+              ['Ship a kit, you handle installation', 'Full crew install — we do everything'],
+              ["4–16 week lead times", 'Most installs within the week'],
+              ["No concrete — \"customer's responsibility\"", 'Concrete pad poured in the same contract'],
+              ['No local phone, no local crew', `Temple-based — 15–30 min from ${loc.name}`],
+              ['One-size catalog structures', 'Custom dimensions, any configuration'],
+            ].map(([them, us], i) => (
+              <div
+                key={i}
+                className={`grid grid-cols-2 text-sm ${i % 2 === 0 ? 'bg-white' : 'bg-ink-50'}`}
+              >
+                <div className="px-5 py-4 text-ink-500 border-r border-ink-100">
+                  ✗ {them}
+                </div>
+                <div className="px-5 py-4 font-medium text-ink-800">
+                  <span className="text-(--color-brand-600)">✓</span> {us}
+                </div>
+              </div>
+            ))}
+          </div>
+        </Container>
+      </section>
+
+      {/* ── Quote form ── */}
+      <QuoteForm />
     </>
   )
 }

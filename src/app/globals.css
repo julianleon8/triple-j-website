@@ -127,6 +127,13 @@ p { line-height: 1.6; }
   border-radius: 4px;
 }
 
+/* Quote section — brand blue radial glow behind the dark background */
+.quote-glow {
+  background:
+    radial-gradient(60% 60% at 20% 30%, rgba(30,107,214,0.35), transparent 60%),
+    radial-gradient(50% 50% at 85% 70%, rgba(30,107,214,0.25), transparent 70%);
+}
+
 /* Reserve space at page bottom on mobile for the sticky Call bar */
 @media (max-width: 768px) {
   body {
