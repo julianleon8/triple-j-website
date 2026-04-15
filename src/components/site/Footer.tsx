@@ -39,7 +39,7 @@ export function Footer() {
             </Link>
             <p className="mt-4 text-sm leading-relaxed text-white/60">
               Family-owned, Temple-based metal building company. Welded red-iron
-              carports, garages, and barns built in under 48 hours.
+              carports, garages, and barns — welded or bolted, same-week installs.
             </p>
             <address className="mt-5 not-italic text-sm text-white/70 space-y-2">
               <div className="flex items-start gap-2">

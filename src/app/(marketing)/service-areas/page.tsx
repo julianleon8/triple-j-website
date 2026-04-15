@@ -155,10 +155,10 @@ export default function ServiceAreasPage() {
         <Container>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
             {[
-              { stat: '14+', label: 'Cities Served' },
-              { stat: '90 min', label: 'Max Drive from Temple' },
-              { stat: '48 hrs', label: 'Typical Build Time' },
-              { stat: 'Same Week', label: 'Scheduling' },
+              { stat: '14+',       label: 'Cities Served' },
+              { stat: '90 min',    label: 'Max Drive from Temple' },
+              { stat: 'Same-Week', label: 'On-Site After Approval' },
+              { stat: 'Zero',      label: 'Subcontractors — Ever' },
             ].map(({ stat, label }) => (
               <div key={label}>
                 <div className="text-xl font-extrabold">{stat}</div>

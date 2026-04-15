@@ -2,16 +2,14 @@ import { Container } from "@/components/ui/Container";
 
 /**
  * Trust bar — sits directly under the hero.
- * Four-up grid of differentiator stats.
- * Dark background to create a visual break between the hero and
- * the lighter services/why-us sections.
+ * Four differentiators that no national kit dealer can claim.
  */
 
 const STATS = [
-  { value: "150+", label: "Projects Completed" },
-  { value: "48 hrs", label: "Build Time" },
-  { value: "Turnkey", label: "Site Prep & Concrete" },
-  { value: "Temple, TX", label: "Family-Owned, Local" },
+  { value: "Zero",          label: "Subcontractors — Ever" },
+  { value: "Welded or Bolted", label: "Your Choice" },
+  { value: "Same-Week",    label: "On-Site After Approval" },
+  { value: "Temple, TX",   label: "Local Family Crew" },
 ] as const;
 
 export function TrustBar() {

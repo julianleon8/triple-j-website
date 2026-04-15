@@ -7,7 +7,7 @@
 export const SITE = {
   name: "Triple J Metal LLC",
   shortName: "Triple J Metal",
-  tagline: "Custom Welded Metal Buildings, Built in Under 48 Hours",
+  tagline: "Built right, built fast, built by Triple J.",
   phone: "254-346-7764",
   phoneHref: "tel:+12543467764",
   email: "info@triplejmetal.com", // TODO: confirm real email
@@ -41,7 +41,7 @@ export const SERVICES = [
   {
     slug: "carports",
     title: "Carports",
-    blurb: "Welded + bolted carports built on-site in 48 hours.",
+    blurb: "Welded or bolted red iron carports — built and installed by our crew.",
   },
   {
     slug: "garages",
@@ -57,6 +57,16 @@ export const SERVICES = [
     slug: "rv-covers",
     title: "RV & Boat Covers",
     blurb: "Tall-clearance structures for trailers, RVs, and boats.",
+  },
+  {
+    slug: "lean-to-patios",
+    title: "Lean-To Patios",
+    blurb: "Steel-framed attached patio covers — any size, welded or bolted.",
+  },
+  {
+    slug: "house-additions",
+    title: "House Additions",
+    blurb: "Steel-framed additions attached to your existing structure.",
   },
 ] as const;
 

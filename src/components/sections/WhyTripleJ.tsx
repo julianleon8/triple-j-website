@@ -14,12 +14,12 @@ import { Container } from "@/components/ui/Container";
 const COMPARISON = [
   {
     attr: "Construction",
-    tripleJ: "Fully welded red-iron frame",
-    others: "Bolted tubular kit, assembled on-site",
+    tripleJ: "Welded OR bolted red-iron — your choice",
+    others: "Bolted tubular kit only — no weld option",
   },
   {
     attr: "Build Time",
-    tripleJ: "Under 48 hours",
+    tripleJ: "Days, not months",
     others: "4–16 weeks from order",
   },
   {
@@ -57,9 +57,9 @@ export function WhyTripleJ() {
             Why Triple J
           </span>
           <h2 id="why-heading" className="mt-3 text-[color:var(--color-ink-900)]">
-            Welded, not bolted.
+            Welded or bolted — your call.
             <br className="hidden sm:block" />
-            Installed in a weekend, not a quarter.
+            Installed in days, not months.
           </h2>
           <p className="mt-4 text-lg text-[color:var(--color-ink-500)]">
             Most &ldquo;carport companies&rdquo; in Texas ship you a bolt-together

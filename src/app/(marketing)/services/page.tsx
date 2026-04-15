@@ -41,8 +41,8 @@ export default function ServicesPage() {
             <h1 className="mt-3 text-white">Metal Buildings Built the Way Competitors Won&rsquo;t</h1>
             <p className="mt-5 text-lg text-white/75 leading-relaxed">
               We identified four gaps that every national carport brand leaves wide open.
-              Triple J Metal fills all of them — turnkey concrete, welded steel, 48-hour
-              speed, and HOA-grade architectural finishes.
+              Triple J Metal fills all of them — turnkey concrete, welded or bolted steel,
+              same-week scheduling, and HOA-grade architectural finishes.
             </p>
           </div>
         </Container>
@@ -89,10 +89,10 @@ export default function ServicesPage() {
         <Container>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
             {[
-              { stat: '150+', label: 'Completed Projects' },
-              { stat: '48 hrs', label: 'Typical Build Time' },
-              { stat: '1', label: 'Contract for Everything' },
-              { stat: 'Temple TX', label: 'Local Family Business' },
+              { stat: 'Zero',       label: 'Subcontractors — Ever' },
+              { stat: 'Same-Week', label: 'On-Site After Approval' },
+              { stat: '1',          label: 'Contract for Everything' },
+              { stat: 'Temple TX',  label: 'Local Family Business' },
             ].map(({ stat, label }) => (
               <div key={label}>
                 <div className="text-2xl font-extrabold text-[color:var(--color-brand-400)]">{stat}</div>

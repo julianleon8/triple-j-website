@@ -27,7 +27,7 @@ export async function generateMetadata(
 const GAP_BADGES: Record<number, { label: string; color: string }> = {
   1: { label: 'Turnkey + Concrete',    color: 'bg-amber-100 text-amber-800' },
   2: { label: 'Welded Steel Quality',  color: 'bg-blue-100 text-blue-800' },
-  3: { label: '48-Hour Speed',         color: 'bg-green-100 text-green-800' },
+  3: { label: 'Same-Week Speed',        color: 'bg-green-100 text-green-800' },
   4: { label: 'HOA Luxury Builds',     color: 'bg-purple-100 text-purple-800' },
 }
 
@@ -196,8 +196,8 @@ export default async function ServicePage(
               <div>
                 <h2 className="text-white mb-3">Fort Cavazos Military Discount</h2>
                 <p className="text-white/75 text-lg leading-relaxed mb-4">
-                  PCS&rsquo;ing to Fort Cavazos? We protect your vehicles in under 48 hours — before
-                  your household goods even arrive. Active duty, veterans, and first responders
+                  PCS&rsquo;ing to Fort Cavazos? We protect your vehicles fast — on-site same week,
+                  often before your household goods even arrive. Active duty, veterans, and first responders
                   receive a discount on all Triple J Metal installs.
                 </p>
                 <p className="text-white/60 text-sm">

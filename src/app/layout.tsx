@@ -1,18 +1,22 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Barlow_Condensed, Inter } from "next/font/google";
 
 import "./globals.css";
 
 import { SITE } from "@/lib/site";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const barlowCondensed = Barlow_Condensed({
+  variable: "--font-barlow",
   subsets: ["latin"],
+  weight: ["600", "700", "800"],
+  display: "swap",
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const inter = Inter({
+  variable: "--font-inter",
   subsets: ["latin"],
+  weight: ["400", "500", "600"],
+  display: "swap",
 });
 
 export const metadata: Metadata = {
@@ -21,15 +25,16 @@ export const metadata: Metadata = {
     template: `%s | ${SITE.name}`,
   },
   description:
-    "Triple J Metal builds custom welded metal carports, garages, and barns in under 48 hours. Serving Temple, Belton, Killeen, Harker Heights and all of Central Texas. Call 254-346-7764.",
+    "Triple J Metal builds welded or bolted metal carports, garages, and barns across Central Texas. Turnkey concrete included, same-week scheduling. Serving Temple, Belton, Killeen & more. Call 254-346-7764.",
   keywords: [
     "metal carports central texas",
     "carport builders temple tx",
     "welded carports texas",
+    "bolted carports texas",
     "metal building installation central texas",
     "carports with concrete belton tx",
     "turnkey carports killeen",
-    "custom metal buildings temple tx",
+    "metal buildings temple tx",
   ],
   openGraph: {
     type: "website",
@@ -46,7 +51,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${barlowCondensed.variable} ${inter.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">{children}</body>
     </html>

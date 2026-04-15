@@ -31,7 +31,7 @@ export const LOCATIONS: Record<string, LocationData> = {
     lng: -97.6477,
     metaTitle: 'Metal Carports Harker Heights TX | 48-Hour Install | Triple J Metal LLC',
     metaDescription:
-      'Triple J Metal builds custom welded and bolted metal carports in Harker Heights, TX — 48-hour installs, concrete pad included, Fort Cavazos military discount. Call 254-346-7764.',
+      'Triple J Metal builds welded or bolted metal carports in Harker Heights, TX — same-week installs, concrete pad included, Fort Cavazos military discount. Call 254-346-7764.',
     heroHeadline: 'Metal Carports in Harker Heights, TX — Built in Under 48 Hours',
     heroCopy:
       "Harker Heights homeowners trust Triple J Metal LLC for durable metal carports installed fast. We're a local Central Texas company — not a national kit seller — which means we show up, weld it, and stand behind our work. PCS'ing to Fort Cavazos? We'll protect your vehicles before your household goods arrive.",
@@ -40,16 +40,18 @@ export const LOCATIONS: Record<string, LocationData> = {
     whyLocal:
       "Every national company targeting Harker Heights ships a kit and leaves you to figure out installation. Triple J Metal LLC is based in Temple — 15 minutes away — and we handle everything: site prep, concrete pad pouring, welding or bolting, and cleanup. One call, one company, done.",
     services: [
-      'Custom welded red iron carports',
+      'Welded or bolted red iron carports',
       'Bolted metal carports',
       'Metal garages',
       'RV and boat covers',
       'Metal barns',
       'Concrete pad pouring',
+      'Lean-to patios',
+      'House additions',
     ],
     military: {
       headline: 'Fort Cavazos Military Discount — Harker Heights',
-      copy: "Fort Cavazos is minutes from Harker Heights, and we know what PCS season looks like. Military families need vehicle and equipment protection fast — not in 12 weeks. Triple J Metal builds RV covers, carports, and garages in under 48 hours, and we offer a Fort Cavazos military and first responder discount on every install. Mention your service when you call or check the military box on the quote form.",
+      copy: "Fort Cavazos is minutes from Harker Heights, and we know what PCS season looks like. Military families need vehicle and equipment protection fast — not in 12 weeks. Triple J Metal builds RV covers, carports, and garages same-week, and we offer a Fort Cavazos military and first responder discount on every install. Mention your service when you call or check the military box on the quote form.",
       keywords: ['Fort Cavazos carport', 'military carport Harker Heights', 'PCS vehicle protection Bell County'],
     },
   },
@@ -63,7 +65,7 @@ export const LOCATIONS: Record<string, LocationData> = {
     lng: -97.7278,
     metaTitle: 'Metal Carports Killeen TX | Turnkey + Concrete | Triple J Metal LLC',
     metaDescription:
-      "Killeen's local metal carport installer. Triple J Metal builds welded carports with concrete pads in Killeen, TX — 48-hour installs, Fort Cavazos military discount. Call 254-346-7764.",
+      "Killeen's local metal carport installer. Triple J Metal builds welded or bolted carports with concrete pads in Killeen, TX — same-week installs, Fort Cavazos military discount. Call 254-346-7764.",
     heroHeadline: "Killeen's Local Metal Carport Builder — Turnkey, Concrete Included",
     heroCopy:
       "Killeen has no shortage of national companies selling carport kits — but Triple J Metal LLC is the only local Central Texas builder who shows up and installs it, pours the concrete pad, and hands you the keys. We serve the entire Killeen area including neighborhoods near Fort Cavazos, and we offer a military discount for active duty and veterans.",
@@ -72,16 +74,18 @@ export const LOCATIONS: Record<string, LocationData> = {
     whyLocal:
       "The Carport Co., Viking Steel, and Infinity Carports all have Killeen pages — but none of them have a local crew or pour concrete. Triple J Metal LLC does. We offer same-week scheduling, a local phone number, welded steel, and the only turnkey concrete option you'll find from a local installer.",
     services: [
-      'Custom welded red iron carports',
+      'Welded or bolted red iron carports',
       'Bolted metal carports',
       'Turnkey carports with concrete pads',
       'Metal garages',
       'RV and boat covers',
       'Metal barns',
+      'Lean-to patios',
+      'House additions',
     ],
     military: {
       headline: 'Fort Cavazos Military Discount — Killeen',
-      copy: "Fort Cavazos drives a constant flow of PCS moves through Killeen. Military families arrive on short notice and need vehicle protection immediately — not after a 12-week wait list. Triple J Metal LLC builds RV covers and carports in under 48 hours and offers a Fort Cavazos military and first responder discount. We use military-friendly language: BAH, VA Loans, PCS timelines — because we know this community.",
+      copy: "Fort Cavazos drives a constant flow of PCS moves through Killeen. Military families arrive on short notice and need vehicle protection immediately — not after a 12-week wait list. Triple J Metal LLC builds RV covers and carports same-week and offers a Fort Cavazos military and first responder discount. We use military-friendly language: BAH, VA Loans, PCS timelines — because we know this community.",
       keywords: ['turnkey carports Killeen', 'carports Fort Cavazos', 'military carport Killeen TX'],
     },
   },
@@ -104,12 +108,14 @@ export const LOCATIONS: Record<string, LocationData> = {
     whyLocal:
       "Viking Steel, The Carport Co., and Get Carports all target Copperas Cove with location pages — but they're all national dealers. Triple J Metal LLC is based in Temple, 30 minutes away, and sends a real crew to build and install your structure from start to finish.",
     services: [
-      'Custom welded red iron carports',
+      'Welded or bolted red iron carports',
       'Bolted metal carports',
       'Turnkey carports with concrete pads',
       'Metal garages',
       'RV and boat covers',
       'Metal barns',
+      'Lean-to patios',
+      'House additions',
     ],
   },
 
@@ -131,7 +137,7 @@ export const LOCATIONS: Record<string, LocationData> = {
     whyLocal:
       "We're not a chain. Triple J Metal LLC was founded by a Temple family and operates out of Temple. Our suppliers are MetalMax in Waco and MetalMart — real Texas steel, real Texas builders. When other companies send a kit, we send a crew.",
     services: [
-      'Custom welded red iron carports',
+      'Welded or bolted red iron carports',
       'Bolted metal carports',
       'Turnkey carports with concrete pads',
       'Metal garages',
@@ -139,6 +145,8 @@ export const LOCATIONS: Record<string, LocationData> = {
       'Metal barns',
       'HOA-compliant structures',
       'Ranch structures',
+      'Lean-to patios',
+      'House additions',
     ],
   },
 
@@ -160,13 +168,15 @@ export const LOCATIONS: Record<string, LocationData> = {
     whyLocal:
       "The Carport Co. and Dayton Barns both have Belton pages, but they're national outfits with no local crew. Triple J Metal LLC is 10 minutes from downtown Belton. We schedule faster, include concrete, and our crew actually knows your neighborhood.",
     services: [
-      'Custom welded red iron carports',
+      'Welded or bolted red iron carports',
       'Bolted metal carports',
       'Turnkey carports with concrete pads',
       'Metal garages',
       'RV and boat covers',
       'Metal barns',
       'Ranch structures',
+      'Lean-to patios',
+      'House additions',
     ],
   },
 
@@ -188,13 +198,15 @@ export const LOCATIONS: Record<string, LocationData> = {
     whyLocal:
       "Most carport companies targeting Salado are national dealers with no local footprint. Triple J Metal LLC is a Temple family business — we drive 20 minutes to your property, build it ourselves, and include the concrete pad at no extra contract hassle.",
     services: [
-      'Custom welded red iron carports',
+      'Welded or bolted red iron carports',
       'Bolted metal carports',
       'Turnkey carports with concrete pads',
       'Metal garages',
       'RV and boat covers',
       'Metal barns',
       'Ranch structures',
+      'Lean-to patios',
+      'House additions',
     ],
   },
 
@@ -216,12 +228,14 @@ export const LOCATIONS: Record<string, LocationData> = {
     whyLocal:
       "National dealers like Viking Steel and The Carport Co. have Waco landing pages, but no local crew. Triple J Metal LLC makes the 45-minute drive from Temple with our own team, steel from MetalMax in Waco itself, and a turnkey concrete option that nobody else provides.",
     services: [
-      'Custom welded red iron carports',
+      'Welded or bolted red iron carports',
       'Bolted metal carports',
       'Turnkey carports with concrete pads',
       'Metal garages',
       'RV and boat covers',
       'Metal barns',
+      'Lean-to patios',
+      'House additions',
     ],
   },
 
@@ -243,12 +257,14 @@ export const LOCATIONS: Record<string, LocationData> = {
     whyLocal:
       "Georgetown is about 60 minutes from our Temple base — worth the drive when no local installer offers turnkey concrete. We bring our own crew, our own steel from MetalMax, and handle the full job start to finish.",
     services: [
-      'Custom welded red iron carports',
+      'Welded or bolted red iron carports',
       'Bolted metal carports',
       'Turnkey carports with concrete pads',
       'Metal garages',
       'RV and boat covers',
       'HOA-compliant structures',
+      'Lean-to patios',
+      'House additions',
     ],
   },
 
@@ -270,12 +286,14 @@ export const LOCATIONS: Record<string, LocationData> = {
     whyLocal:
       "Round Rock is 70 minutes from our Temple base — but we make the drive for jobs that require a full-service contractor with welded steel and turnkey concrete. No national dealer in your area offers what we do.",
     services: [
-      'Custom welded red iron carports',
+      'Welded or bolted red iron carports',
       'Bolted metal carports',
       'Turnkey carports with concrete pads',
       'Metal garages',
       'RV and boat covers',
       'HOA-compliant structures',
+      'Lean-to patios',
+      'House additions',
     ],
   },
 
@@ -297,13 +315,15 @@ export const LOCATIONS: Record<string, LocationData> = {
     whyLocal:
       "Lampasas is 45 minutes from Temple — close enough for our crew to make the drive with no travel fee on most jobs. National dealers who target this area ship kits with no installer. We show up and build it.",
     services: [
-      'Custom welded red iron carports',
+      'Welded or bolted red iron carports',
       'Bolted metal carports',
       'Turnkey carports with concrete pads',
       'Metal barns',
       'Metal garages',
       'Ranch structures',
       'RV and boat covers',
+      'Lean-to patios',
+      'House additions',
     ],
   },
 
@@ -325,12 +345,14 @@ export const LOCATIONS: Record<string, LocationData> = {
     whyLocal:
       "Holland is a short drive from our Temple base. We know Bell County inside and out — the soils, the weather patterns, the permit requirements. Local crew, local knowledge, one contract.",
     services: [
-      'Custom welded red iron carports',
+      'Welded or bolted red iron carports',
       'Bolted metal carports',
       'Turnkey carports with concrete pads',
       'Metal barns',
       'Metal garages',
       'Ranch structures',
+      'Lean-to patios',
+      'House additions',
     ],
   },
 
@@ -352,12 +374,14 @@ export const LOCATIONS: Record<string, LocationData> = {
     whyLocal:
       "Taylor is about 55 minutes from Temple — close enough for our crew on standard residential and commercial jobs. No national kit dealer in this market includes concrete or installs with their own crew.",
     services: [
-      'Custom welded red iron carports',
+      'Welded or bolted red iron carports',
       'Bolted metal carports',
       'Turnkey carports with concrete pads',
       'Metal garages',
       'RV and boat covers',
       'Metal barns',
+      'Lean-to patios',
+      'House additions',
     ],
   },
 
@@ -379,12 +403,14 @@ export const LOCATIONS: Record<string, LocationData> = {
     whyLocal:
       "Troy is a short drive from our Temple base. We treat every job the same — rural or suburban, small carport or large barn. Same crew, same contract, same standards.",
     services: [
-      'Custom welded red iron carports',
+      'Welded or bolted red iron carports',
       'Bolted metal carports',
       'Turnkey carports with concrete pads',
       'Metal barns',
       'Metal garages',
       'Ranch structures',
+      'Lean-to patios',
+      'House additions',
     ],
   },
 
@@ -406,12 +432,14 @@ export const LOCATIONS: Record<string, LocationData> = {
     whyLocal:
       "Nolanville is practically in our backyard. We've built throughout Bell County and know the permit requirements, soil types, and what structures hold up in this part of Texas. One call, one company.",
     services: [
-      'Custom welded red iron carports',
+      'Welded or bolted red iron carports',
       'Bolted metal carports',
       'Turnkey carports with concrete pads',
       'Metal garages',
       'RV and boat covers',
       'Metal barns',
+      'Lean-to patios',
+      'House additions',
     ],
   },
 }

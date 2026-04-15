@@ -67,7 +67,7 @@ export function Gallery() {
               id="gallery-heading"
               className="mt-3 text-[color:var(--color-ink-900)]"
             >
-              Real Central Texas jobs. Real 48-hour builds.
+              Real Central Texas jobs. Same-week builds, not month-long wait lists.
             </h2>
           </div>
           <Link

@@ -49,8 +49,8 @@ export const SERVICES: Record<string, ServiceData> = {
     keywordGap: 2,
     metaTitle: 'Custom Metal Carports Temple TX | Welded & Bolted | Triple J Metal',
     metaDescription:
-      'Triple J Metal builds custom welded and bolted metal carports in Temple, Belton, Killeen & Central Texas. 48-hour installs, concrete pad included. Call 254-346-7764.',
-    heroHeadline: 'Custom Metal Carports Built in Under 48 Hours',
+      'Triple J Metal builds welded or bolted metal carports in Temple, Belton, Killeen & Central Texas. Same-week installs, concrete pad included. Call 254-346-7764.',
+    heroHeadline: 'Custom Metal Carports — Welded or Bolted, Same-Week Installs',
     heroCopy:
       'Most carport companies ship you a kit and leave. Triple J Metal LLC shows up with a crew, welds or bolts your structure on-site, and cleans up before we leave. Welded red iron steel is a permanent real estate improvement — it doesn\'t rattle loose in Texas storms. Bolted red iron is the affordable option when a kit-level investment fits your budget. Either way, we build it right the first time.',
     mainBenefit: 'Permanent welded steel that becomes part of your property — not a kit that shakes apart in a Texas storm.',
@@ -66,9 +66,9 @@ export const SERVICES: Record<string, ServiceData> = {
           'Prefer a budget-friendly option? We also install bolted red iron carport kits — but unlike Alan\'s or kit dealers, we handle every step: delivery, site prep, and installation.',
       },
       {
-        title: '48-Hour Build Time',
+        title: 'Same-Week Scheduling',
         description:
-          'Most installs are completed in one working day. East Texas Carports quotes 4–16 weeks. We schedule within days, not months.',
+          'Most installs are completed in one working day — larger structures in two. East Texas Carports quotes 4–16 weeks. We schedule within days, not months.',
       },
       {
         title: 'Any Size or Configuration',
@@ -272,7 +272,7 @@ export const SERVICES: Record<string, ServiceData> = {
     keywordGap: null,
     metaTitle: 'Metal Barns Central Texas | Ranch & Ag Structures | Triple J Metal LLC',
     metaDescription:
-      'Triple J Metal builds custom metal barns and ranch structures across Bell and Coryell counties. Welded red iron, concrete available, 48-hour small-structure installs. Call 254-346-7764.',
+      'Triple J Metal builds metal barns and ranch structures across Bell and Coryell counties. Welded or bolted red iron, concrete available, same-week installs. Call 254-346-7764.',
     heroHeadline: 'Metal Barns Built for Central Texas Ranch Life',
     heroCopy:
       'A Central Texas barn has to handle 90 mph gusts, hail the size of golf balls, and baking summer heat — then do it all again next season. Triple J Metal LLC builds welded red iron barns engineered for this climate: thick steel, proper anchoring, and MetalMax roofing rated for the punishment Texas delivers. We\'ve built structures across Bell and Coryell counties for livestock, equipment storage, hay, and mixed use. Our John Deere skid-steer reaches 40 feet — we can tackle larger structures that smaller crews can\'t.',
@@ -341,13 +341,13 @@ export const SERVICES: Record<string, ServiceData> = {
     title: 'RV & Boat Covers',
     shortTitle: 'RV & Boat Covers',
     keywordGap: 3,
-    metaTitle: 'RV Covers Central Texas | Built in 48 Hours | Fort Cavazos Military Discount',
+    metaTitle: 'RV Covers Central Texas | Same-Week Installs | Fort Cavazos Military Discount',
     metaDescription:
-      'Triple J Metal builds custom RV and boat covers in under 48 hours across Central Texas. Military discount available. Concrete pad included. Call 254-346-7764.',
-    heroHeadline: 'RV & Boat Covers Built in Under 48 Hours — Texas Hail Won\'t Wait',
+      'Triple J Metal builds custom RV and boat covers fast across Central Texas — same-week scheduling, military discount available, concrete pad included. Call 254-346-7764.',
+    heroHeadline: 'RV & Boat Covers — Same-Week Installs, Texas Hail Won\'t Wait',
     heroCopy:
-      'Texas hail season doesn\'t send a calendar invite. A single storm can total an unprotected RV or boat in minutes. Triple J Metal LLC builds tall-clearance RV and boat covers faster than any competitor in Central Texas — most installs are complete within 48 hours of job start. East Texas Carports quotes 4–16 weeks. We quote and schedule within days. If you just bought an RV, just PCS\'d to Fort Cavazos, or just had a close call with hail — call us today.',
-    mainBenefit: '48-hour install beats every competitor in Central Texas. Military discount available for Fort Cavazos families.',
+      'Texas hail season doesn\'t send a calendar invite. A single storm can total an unprotected RV or boat in minutes. Triple J Metal LLC builds tall-clearance RV and boat covers faster than any competitor in Central Texas — most jobs are scheduled and on-site within days of your approval. East Texas Carports quotes 4–16 weeks. If you just bought an RV, just PCS\'d to Fort Cavazos, or just had a close call with hail — call us today.',
+    mainBenefit: 'Same-week installs beat every competitor in Central Texas. Military discount available for Fort Cavazos families.',
     features: [
       {
         title: 'Tall Clearance for Class A & Class C RVs',
@@ -355,9 +355,9 @@ export const SERVICES: Record<string, ServiceData> = {
           'Standard clearance heights from 12–16 feet. We build to your RV or boat\'s exact height requirements — no squeezing under a low kit structure.',
       },
       {
-        title: '48-Hour Install — No Waiting',
+        title: 'Same-Week Install — No Waiting',
         description:
-          'We schedule within days. East Texas Carports, Viking Steel, and similar dealers quote 4–16 weeks. If hail season is approaching, speed matters.',
+          'We schedule within days of your approval. East Texas Carports, Viking Steel, and similar dealers quote 4–16 weeks. If hail season is approaching, speed matters.',
       },
       {
         title: 'Fort Cavazos Military Discount',
@@ -383,7 +383,7 @@ export const SERVICES: Record<string, ServiceData> = {
     technicalAuthority:
       'Central Texas averages some of the highest hail frequency in the nation — Bell County alone sees multiple significant hail events per year. A standard Class A RV is 13–13.5 feet tall; we build clearance frames to 14–16 feet to ensure full roof clearance with room to maneuver. All structures are anchored into 4,000 PSI concrete or direct-buried posts engineered for 90 mph wind loads.',
     competitorRows: [
-      { them: '4–16 week lead times (East Texas Carports)', us: 'Most installs within 48 hours of job start' },
+      { them: '4–16 week lead times (East Texas Carports)', us: 'On-site within days — same-week scheduling' },
       { them: 'Standard kit heights may not clear your RV', us: 'Built to your RV\'s exact height requirements' },
       { them: 'No military discount', us: 'Fort Cavazos military and first responder discount' },
       { them: 'No concrete — you handle site prep', us: 'Concrete pad poured in the same contract' },
@@ -440,9 +440,9 @@ export const SERVICES: Record<string, ServiceData> = {
           'Premium structures deserve premium steel. 12-gauge framing provides greater rigidity and meets the structural requirements of HOA engineering reviews.',
       },
       {
-        title: 'Low Disruption Build — 48 Hours',
+        title: 'Low Disruption — Same-Week Build',
         description:
-          'Heritage Oaks and Bella Charca neighbors notice long construction projects. Our 48-hour build timeline means minimal neighborhood disruption — often completed before your neighbors realize construction started.',
+          'Heritage Oaks and Bella Charca neighbors notice long construction projects. Our fast build timeline means minimal neighborhood disruption — most jobs are done before your neighbors realize construction started.',
       },
       {
         title: 'Concrete & Site Prep Included',
@@ -462,7 +462,7 @@ export const SERVICES: Record<string, ServiceData> = {
       { them: 'Standard color palette of 6–8 options', us: 'Wide MetalMax color range with color-match service' },
       { them: '14-gauge only — may not pass HOA engineering review', us: '12-gauge upgrade available for premium builds' },
       { them: 'No concrete — manage your own site prep', us: 'Concrete and site prep in the same contract' },
-      { them: 'Weeks of neighborhood disruption', us: '48-hour build — minimal neighborhood impact' },
+      { them: 'Weeks of neighborhood disruption', us: 'Same-week build — minimal neighborhood impact' },
     ],
     faqs: [
       {

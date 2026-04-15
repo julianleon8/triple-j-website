@@ -76,9 +76,9 @@
   --color-accent-amber: var(--color-accent-amber);
   --color-accent-steel: var(--color-accent-steel);
 
-  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
-  --font-display: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
-  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-barlow), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: ui-monospace, monospace;
 }
 
 /* Base reset / typography */
@@ -95,10 +95,10 @@ body {
   font-feature-settings: "ss01", "cv11";
 }
 
-/* Display/headline type — leaning tight & confident */
+/* Display/headline type — Barlow Condensed: bold, industrial, confident */
 h1, h2, h3 {
   font-family: var(--font-display);
-  letter-spacing: -0.02em;
+  letter-spacing: -0.01em;
   line-height: 1.05;
   font-weight: 800;
 }
@@ -132,6 +132,17 @@ p { line-height: 1.6; }
   background:
     radial-gradient(60% 60% at 20% 30%, rgba(30,107,214,0.35), transparent 60%),
     radial-gradient(50% 50% at 85% 70%, rgba(30,107,214,0.25), transparent 70%);
+}
+
+/* Testimonials auto-scroll marquee */
+@keyframes scroll-x {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+.marquee-track {
+  -webkit-mask-image: linear-gradient(to right, transparent, black 8%, black 92%, transparent);
+  mask-image: linear-gradient(to right, transparent, black 8%, black 92%, transparent);
 }
 
 /* Reserve space at page bottom on mobile for the sticky Call bar */

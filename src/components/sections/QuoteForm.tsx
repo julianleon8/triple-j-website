@@ -537,7 +537,7 @@ export function QuoteForm() {
               {[
                 "No obligation, no high-pressure sales call",
                 "Quote includes concrete, site prep, and permit advisory",
-                "Most builds scheduled within 48 hours of quote acceptance",
+                "Materials arrive within 48 hrs — most builds start same week",
               ].map((line) => (
                 <div key={line} className="flex gap-3">
                   <span className="mt-0.5 text-[color:var(--color-brand-400)]">✓</span>

@@ -21,9 +21,9 @@ const STEPS = [
   },
   {
     n: "03",
-    title: "Built and welded in under 48 hours",
+    title: "Built right — done in days, not months",
     blurb:
-      "Red-iron frame up on day one. Panels, trim, and finish on day two. You keep your weekend, we keep our word.",
+      "Red-iron frame up on day one. Panels, trim, and finish on day two. Small carports are done same day. You keep your weekend, we keep our word.",
   },
 ] as const;
 

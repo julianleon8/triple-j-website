@@ -110,9 +110,9 @@ export default function GalleryPage() {
         <Container>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
             {[
-              { stat: '150+',   label: 'Projects Completed' },
-              { stat: '48 hrs', label: 'Typical Build Time' },
-              { stat: '1',      label: 'Contract for Everything' },
+              { stat: '150+',      label: 'Projects Completed' },
+              { stat: 'Same-Week', label: 'On-Site After Approval' },
+              { stat: '1',         label: 'Contract for Everything' },
               { stat: 'Temple TX', label: 'Local Family Business' },
             ].map(({ stat, label }) => (
               <div key={label}>

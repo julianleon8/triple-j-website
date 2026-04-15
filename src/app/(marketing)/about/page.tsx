@@ -20,7 +20,7 @@ const jsonLd = {
   '@context': 'https://schema.org',
   '@type': 'LocalBusiness',
   name: SITE.name,
-  description: 'Temple, TX metal building contractor — custom welded carports, garages, barns, and RV covers with turnkey concrete.',
+  description: 'Temple, TX metal building contractor — welded or bolted carports, garages, barns, and RV covers with turnkey concrete.',
   telephone: SITE.phone,
   url: 'https://triplejjjmetal.com/about',
   address: {
@@ -75,7 +75,7 @@ export default function AboutPage() {
             {[
               { stat: '150+',      label: 'Projects Completed' },
               { stat: '50+',       label: 'Satisfied Clients' },
-              { stat: '48 hrs',    label: 'Typical Build Time' },
+              { stat: 'Same-Week', label: 'On-Site After Approval' },
               { stat: 'Temple TX', label: 'Family Business' },
             ].map(({ stat, label }) => (
               <div key={label}>
@@ -132,8 +132,8 @@ export default function AboutPage() {
                 body: 'No other local installer includes concrete pad pouring in the same contract. We handle site prep, concrete, and structure — one call, one crew, one invoice.',
               },
               {
-                headline: '48-Hour Build Time',
-                body: 'National companies quote 4–16 week lead times. We schedule same-week and build most structures in under 48 hours of on-site time.',
+                headline: 'Same-Week Scheduling',
+                body: 'National companies quote 4–16 week lead times. We schedule same-week after your approval — small carports done in a day, larger structures in two.',
               },
               {
                 headline: 'Custom Dimensions',

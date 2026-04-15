@@ -14,7 +14,7 @@ const SERVICE_CARDS = [
     slug: "carports",
     title: "Carports",
     blurb:
-      "Welded red-iron carports — single, double, triple, or custom. Built and secured in under 48 hours.",
+      "Welded or bolted red iron carports — single, double, triple, or custom. Built and installed by our crew.",
     image: "/images/carport-gable-residential.jpg",
   },
   {
@@ -57,12 +57,12 @@ export function Services() {
             id="services-heading"
             className="mt-3 text-[color:var(--color-ink-900)]"
           >
-            Built on-site in under 48 hours.
+            Welded or bolted — your call. Same-week installs, not month-long wait lists.
           </h2>
           <p className="mt-4 text-lg text-[color:var(--color-ink-500)]">
-            Every structure is custom-welded from red-iron steel and delivered
+            Every structure is welded or bolted from red-iron steel and delivered
             turnkey — site prep, concrete pad, and installation all under one
-            contract.
+            contract. No kits, no subcontractors.
           </p>
         </div>
 
