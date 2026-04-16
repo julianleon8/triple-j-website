@@ -148,6 +148,9 @@ export function Footer() {
             <Link href="/terms" className="hover:text-white/70">
               Terms
             </Link>
+            <Link href="/login" className="hover:text-white/70">
+              Owner Login
+            </Link>
           </div>
         </div>
       </Container>
