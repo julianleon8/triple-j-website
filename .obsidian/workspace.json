@@ -50,12 +50,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "node_modules/next/dist/docs/01-app/02-guides/production-checklist.md",
+                "file": "node_modules/next/dist/docs/01-app/04-glossary.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "production-checklist"
+              "title": "04-glossary"
             }
           }
         ],
@@ -224,19 +224,21 @@
   },
   "active": "afd9c86cf2e569d8",
   "lastOpenFiles": [
+    "node_modules/next/dist/docs/01-app/02-guides/production-checklist.md",
+    "inspiration/screenshots",
+    "inspiration",
+    "testimonials.md",
+    "src/app/(marketing)/services/pbr-vs-pbu-panels/page.tsx",
+    "src/app/(marketing)/services/pbr-vs-pbu-panels",
+    "src/app/(marketing)/service-areas/page.tsx",
+    "src/app/(marketing)/service-areas",
+    "src/app/(marketing)/contact/page.tsx",
+    "src/app/(marketing)/contact",
+    "src/app/(marketing)/about/page.tsx",
+    "src/app/(marketing)/about",
     "node_modules/commander/Readme.md",
     "node_modules/eslint-plugin-import/docs/rules/namespace.md",
     "node_modules/next/dist/docs/01-app/03-api-reference/05-config/03-eslint.md",
-    "src/app/(marketing)/services/page.tsx",
-    "src/app/(marketing)/services/[slug]/page.tsx",
-    "src/app/(marketing)/services/[slug]",
-    "src/app/(marketing)/services",
-    "src/lib/services.ts",
-    "supabase/migrations/002_leads_qualification_fields.sql",
-    "src/components/sections/ServiceAreas.tsx",
-    "src/components/sections/Gallery.tsx",
-    "src/components/sections/QuoteForm.tsx",
-    "src/components/sections/Testimonials.tsx",
     "public/images/logo-lion.png",
     "public/images/carport-truck-concrete-hero.jpg",
     "public/images/carport-gable-residential.jpg",
@@ -251,7 +253,6 @@
     "research/ui/INSPO-SITES.md",
     "docs/app/api-reference/file-conventions/error.md",
     "research/ui/INSPIRATION-GUIDE.md",
-    "node_modules/next/dist/docs/01-app/02-guides/production-checklist.md",
     "2026-04-14.md",
     "Untitled 3.canvas",
     "node_modules/next/dist/docs/01-app/04-glossary.md",
@@ -270,8 +271,6 @@
     "research/markets/harker-heights.md",
     "research/competitors/l-and-e.md",
     "research/competitors/central-texas-builders.md",
-    "research/competitors/TEMPLATE.md",
-    "research/README.md",
     "Untitled 1.canvas",
     "Untitled.canvas"
   ]
