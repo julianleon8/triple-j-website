@@ -55,7 +55,7 @@ export default function HomePage() {
             <h1 className="mt-6 text-white">
               Custom Metal Buildings in{" "}
               <span className="text-[color:var(--color-brand-300)]">
-                Temple &amp; Belton, TX
+                Central Texas
               </span>{" "}
               — Built in Under 48 Hours
             </h1>
