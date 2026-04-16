@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
 type Lead = {
   id: string
@@ -44,6 +44,19 @@ const TIMELINE_LABELS: Record<string, string> = {
 export default function LeadsTable({ initialLeads }: { initialLeads: Lead[] }) {
   const [leads, setLeads] = useState(initialLeads)
   const [updating, setUpdating] = useState<string | null>(null)
+  const [lastRefresh, setLastRefresh] = useState<Date>(new Date())
+
+  useEffect(() => {
+    const poll = setInterval(async () => {
+      const res = await fetch('/api/leads')
+      if (res.ok) {
+        const { leads: fresh } = await res.json()
+        setLeads(fresh)
+        setLastRefresh(new Date())
+      }
+    }, 30_000)
+    return () => clearInterval(poll)
+  }, [])
 
   const handleStatusChange = async (id: string, newStatus: string, prevStatus: string) => {
     setUpdating(id)
@@ -64,6 +77,10 @@ export default function LeadsTable({ initialLeads }: { initialLeads: Lead[] }) {
 
   return (
     <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-x-auto">
+      <div className="px-4 py-2 border-b border-gray-100 flex items-center gap-2 text-xs text-gray-400">
+        <span className="h-2 w-2 rounded-full bg-green-400 animate-pulse" />
+        Live · refreshes every 30s · last updated {lastRefresh.toLocaleTimeString()}
+      </div>
       <table className="w-full text-sm min-w-[900px]">
         <thead className="bg-gray-50 text-gray-500 uppercase text-xs border-b">
           <tr>

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod'
+import { createClient } from '@/lib/supabase/server'
 import { getAdminClient } from '@/lib/supabase/admin'
 import { Resend } from 'resend'
 
@@ -71,6 +72,21 @@ const leadSchema = z.object({
   is_military:      z.boolean().default(false),
   message:          z.string().max(1000).optional(),
 })
+
+export async function GET() {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+
+  const { data: leads, error } = await getAdminClient()
+    .from('leads')
+    .select('*')
+    .order('created_at', { ascending: false })
+    .limit(100)
+
+  if (error) return NextResponse.json({ error: 'Failed to fetch leads' }, { status: 500 })
+  return NextResponse.json({ leads })
+}
 
 export async function POST(request: NextRequest) {
   try {
