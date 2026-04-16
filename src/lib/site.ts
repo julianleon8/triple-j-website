@@ -10,7 +10,7 @@ export const SITE = {
   tagline: "Built right, built fast, built by Triple J.",
   phone: "254-346-7764",
   phoneHref: "tel:+12543467764",
-  email: "info@triplejmetal.com", // TODO: confirm real email
+  email: "info@triplejjjmetal.com",
   address: {
     street: "3319 Tem-Bel Ln",
     city: "Temple",
