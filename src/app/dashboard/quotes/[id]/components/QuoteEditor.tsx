@@ -38,9 +38,12 @@ export default function QuoteEditor({ quote, customers }: Props) {
   const [notes, setNotes] = useState(quote.notes ?? '')
   const [isSaving, setIsSaving] = useState(false)
   const [isSending, setIsSending] = useState(false)
+  const [isPushingQBO, setIsPushingQBO] = useState(false)
+  const [qboResult, setQboResult] = useState<string>('')
   const [error, setError] = useState('')
   const [confirmSend, setConfirmSend] = useState(false)
   const isDraft = quote.status === 'draft'
+  const isAccepted = quote.status === 'accepted'
 
   const subtotal = lineItems.reduce((s, i) => s + i.quantity * i.unit_price, 0)
 
@@ -181,32 +184,61 @@ export default function QuoteEditor({ quote, customers }: Props) {
       </div>
 
       {error && <p className="text-red-500 text-sm">{error}</p>}
+      {qboResult && <p className="text-green-600 text-sm">{qboResult}</p>}
 
       {/* Actions */}
       {isDraft && (
         <div className="flex gap-3 flex-wrap">
-          <button onClick={handleSave} disabled={isSaving}
+          <button type="button" onClick={handleSave} disabled={isSaving}
             className="bg-yellow-500 hover:bg-yellow-400 disabled:bg-yellow-200 text-black font-bold px-6 py-2.5 rounded-lg transition text-sm">
             {isSaving ? 'Saving…' : 'Save Changes'}
           </button>
           {!confirmSend ? (
-            <button onClick={() => setConfirmSend(true)}
+            <button type="button" onClick={() => setConfirmSend(true)}
               className="bg-green-600 hover:bg-green-500 text-white font-bold px-6 py-2.5 rounded-lg transition text-sm">
               Send to Customer
             </button>
           ) : (
             <div className="flex gap-2 items-center">
               <span className="text-sm text-gray-600">Send quote to {quote.customers?.name}?</span>
-              <button onClick={handleSend} disabled={isSending}
+              <button type="button" onClick={handleSend} disabled={isSending}
                 className="bg-green-600 hover:bg-green-500 disabled:bg-green-300 text-white font-bold px-4 py-2 rounded-lg transition text-sm">
                 {isSending ? 'Sending…' : 'Yes, Send'}
               </button>
-              <button onClick={() => setConfirmSend(false)}
+              <button type="button" onClick={() => setConfirmSend(false)}
                 className="bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold px-4 py-2 rounded-lg transition text-sm">
                 Cancel
               </button>
             </div>
           )}
+        </div>
+      )}
+
+      {/* QuickBooks push — visible on accepted quotes */}
+      {isAccepted && (
+        <div className="pt-2 border-t border-gray-100">
+          <button
+            type="button"
+            onClick={async () => {
+              setIsPushingQBO(true)
+              setQboResult('')
+              setError('')
+              const res = await fetch(`/api/qbo/push/${quote.id}`, { method: 'POST' })
+              setIsPushingQBO(false)
+              if (res.ok) {
+                const d = await res.json()
+                setQboResult(`Pushed to QuickBooks — Invoice ${d.invoiceId}`)
+              } else {
+                const d = await res.json().catch(() => ({}))
+                setError(d.error ?? 'QuickBooks push failed')
+              }
+            }}
+            disabled={isPushingQBO}
+            className="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-500 disabled:bg-blue-300 text-white font-bold px-5 py-2.5 rounded-lg transition text-sm"
+          >
+            {isPushingQBO ? 'Pushing…' : 'Push to QuickBooks'}
+          </button>
+          <p className="text-xs text-gray-400 mt-1.5">Creates a Draft invoice in QuickBooks Online.</p>
         </div>
       )}
     </div>

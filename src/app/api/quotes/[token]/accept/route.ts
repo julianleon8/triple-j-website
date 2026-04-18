@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getAdminClient } from '@/lib/supabase/admin'
+import { pushQuoteToQBO } from '@/lib/qbo'
 
 export const dynamic = 'force-dynamic'
 
@@ -41,6 +42,11 @@ export async function POST(
       job_number: `JJM-${new Date().getFullYear()}-${Date.now().toString().slice(-6)}`,
       status: 'scheduled',
     })
+
+    // Push to QuickBooks — fire and forget; don't block the acceptance response
+    pushQuoteToQBO(quote.id).catch((err) =>
+      console.error('[QBO] auto-push on acceptance failed:', err)
+    )
   }
 
   return NextResponse.json({ success: true, action, quote_number: quote.quote_number })
