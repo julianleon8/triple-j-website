@@ -1,3 +1,44 @@
+## 2026-04-20 — Prep + Dashboard Hardening + Domain/Email
+
+**Memory + tooling setup:**
+- Appended Project Memory + Operating Rules to `AGENTS.md` (business, stack, key source files, locked decisions, NotebookLM ID, vault index)
+- Triple J name origin logged: Juan (investor) + Julian (tech/ops, 19) + Jose Alfredo "Freddy" (foreman — cuts, welds, math)
+- NotebookLM skill installed at `~/.claude/skills/notebooklm/` (unauthenticated in sandbox — user runs queries on Mac, pastes back)
+- API keys dropped into `.env.local`: ANTHROPIC_API_KEY + FIRECRAWL_API_KEY
+
+**Strategic lock-in — Lead Engine V1:**
+- Filter Strategy **B (stay close to wheelhouse)** chosen: <$500K, pole barns, ag, small commercial accessory, auto/storage. Skip large PEMB/warehouse subcontractor pivot.
+- NotebookLM research saved to `Lead Sources Research.md` — 7 Central TX jurisdictions mapped (Temple, Bell County, Harker Heights = easy Revize/Joomla; Killeen, Waco, McLennan, Copperas Cove = harder CivicPlus/Granicus)
+- MGOconnect.org + EnerGov CSS confirmed unscrapable (login-gated) — TOMA upstream pivot (P&Z + Commissioners' Court + weekly permit reports) legally mandated public data
+
+**Dashboard hardening committed (4c3bfe9 + 6a36b96):**
+- Removed Owner Login link from public `Footer.tsx`
+- `/dashboard` → `/hq` rename (all links, middleware matcher, grep-verified zero stale refs)
+- Julian to enable Supabase 2FA himself
+
+**Brand infra locked:**
+- Domain: **triplejmetaltx.com** (Squarespace, ~$3 first-year)
+- Email: **julian@triplejmetaltx.com** (Google Workspace Basic)
+- Still on Wix `TripleJJMetal.com` — migration to Vercel pending
+
+**NOT yet built (tomorrow's full session):**
+- `permit_leads` Supabase migration
+- `src/app/api/cron/scrape-permits/route.ts` (Temple-first MVP, then Bell County + Harker Heights)
+- `vercel.json` daily cron
+- `/hq/permit-leads` dashboard page (sortable by filter score, called-toggle)
+- Claude parsing prompt for permit PDFs → structured JSON + wheelhouse filter score
+
+**Julian's brainstorm parked for post-Lead-Engine session:**
+- Business cards / yard signs / social collateral via Canva + real jobsite photos (shoot Freddy welding, 150 jobs worth of content) — NOT Nano Banana fake project photos
+- Frontend design refresh after Lead Engine lands
+
+**Next session checklist:**
+1. Build Lead Engine V1 start-to-finish (migration → scraper → cron → dashboard page)
+2. Then: frontend design pass if time permits
+3. Julian deploys to Vercel when ready (still pending — needs `git push origin main` from Mac + 7 env vars)
+
+---
+
 ## 2026-04-15 — Refinement Pass 1 + Research Sync
 
 **NotebookLM research pulled (Gemini):**
