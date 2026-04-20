@@ -42,7 +42,7 @@ export default function QuotesTable({ quotes }: { quotes: Quote[] }) {
           {quotes.map(quote => (
             <tr key={quote.id} className="hover:bg-gray-50 transition-colors">
               <td className="px-4 py-3">
-                <Link href={`/dashboard/quotes/${quote.id}`} className="font-mono text-xs text-blue-600 hover:underline">
+                <Link href={`/hq/quotes/${quote.id}`} className="font-mono text-xs text-blue-600 hover:underline">
                   {quote.quote_number}
                 </Link>
               </td>

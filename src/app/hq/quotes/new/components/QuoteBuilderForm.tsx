@@ -101,7 +101,7 @@ export default function QuoteBuilderForm({ customers }: Props) {
       return
     }
 
-    router.push(`/dashboard/quotes/${savedQuoteId}`)
+    router.push(`/hq/quotes/${savedQuoteId}`)
     router.refresh()
   }
 
@@ -262,7 +262,7 @@ export default function QuoteBuilderForm({ customers }: Props) {
           <>
             <button
               type="button"
-              onClick={() => router.push(`/dashboard/quotes/${savedQuoteId}`)}
+              onClick={() => router.push(`/hq/quotes/${savedQuoteId}`)}
               className="bg-gray-100 hover:bg-gray-200 text-gray-800 font-bold px-6 py-2.5 rounded-lg transition text-sm"
             >
               View Draft
