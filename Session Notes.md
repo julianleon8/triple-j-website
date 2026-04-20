@@ -1,3 +1,86 @@
+## 2026-04-21 (end of session) — Final session addendum
+
+This section captures tonight's extended strategic conversation and is the closing summary for this session. New Claude sessions should read `Next Session Primer.md` + `FB Marketplace Intel.md` first, then this entry for nuance.
+
+**New strategic frameworks discussed (full detail in `Next Session Primer.md`):**
+
+- **5 Market Edges** prioritized: Speed-to-response, Spanish site, Review velocity, Transparent pricing, Permit-data flywheel. First two pair up for Night 2 build (shared Twilio infra).
+- **Moat honesty framing:** Tech advantage = 18-36 month window, NOT a permanent moat. Use head start to build durable moats (brand, reviews, crew, supplier leverage) before window closes ~2028. Real threat isn't Irvin — it's a hypothetical 22-yo AI-native founder in Austin targeting Central TX metal buildings vertical. Defense: crew + trust + tenure.
+- **Capital strategy:** Debt-only, no equity dilution for foreseeable future. Realistic path: equipment financing Year 2+ → SBA 7(a)/504 Year 3+ → bonding capacity build Year 2+ → evaluate PE bolt-on offers only at $5M+ revenue Year 7-10. NEVER merchant cash advances, factoring, or pre-exit equity dilution.
+- **FB Marketplace tier analysis:** Julian shared screenshots. Tier 1 threat = ProStructures of Belton (Joseph Zeluff, 5500 W FM 93 Temple). Full intel in `FB Marketplace Intel.md` including head-to-head pricing benchmarks + Triple J's winning listing template.
+
+**Reality corrections that materially changed projections:**
+
+1. **Julian is 18, not 19.** Extra year of compounding runway.
+2. **Julian has 20% EQUITY (not commission).** Juan 40% / Freddy 40% / Julian 20% via LegalZoom. Freddy is co-owner, not employee. Earlier advice to "negotiate equity Year 3" is MOOT — he already has it.
+3. **Juan is generous, not competitive.** Sees Julian as growth engine. Equity will likely grow over time with performance (realistic trajectory: 20% → 30-40% by Year 6-8 as Juan semi-retires).
+4. **Real net margins ~2x textbook contractor assumption.** 50-60% on small jobs, 35-45% medium, 25-35% large. Live data: Copperas Cove $8,600 job / $3,036 materials / $100 diesel = $5,464 net (63%). Driven by owner-operated welders + paid-off equipment + direct MetalMax.
+5. **Julian is also a welder.** Team has 2 in-house welders (Julian + Freddy). Can scale to $3-5M before 3rd welder hire.
+6. **Asset base:** Skid steer, Ram 2500, trailers paid off. Only F350 at ~$900/mo. Lean fixed overhead.
+7. **Financial state:** NOT broke. ~$16K incoming from recent contracts. Full execution greenlit, no cash-crunch constraint.
+8. **Domain migration to triplejmetaltx.com DONE** (not pending as earlier docs suggested).
+
+**Revised 10-year wealth projection:**
+- Cumulative distributions to Julian over 10 years: **~$7M**
+- Potential PE exit at Year 10: **+$5-7M pre-tax (20% of $25-35M sale)**
+- **Realistic net worth at age 28: $10-20M**
+- **Aggressive (equity growth + PE exit): $20-35M**
+
+**Julian's physical state:**
+- Recent car accident. Recovering. Can't work jobsite right now.
+- Cognitive bandwidth fully intact, pouring into Triple J tech buildout.
+- Recovery timing aligns perfectly with tech-work window.
+
+**Parallel family business updates:**
+- Mexicano Grill — 812 East Central Ave, Belton TX
+- Target reopen **mid-July 2026** (~10 weeks out from 2026-04-21)
+- Juan-funded entirely; Julian contributes welding labor (drive-through framework) but not capital
+- When restaurant stabilizes → cash flow loops back to fund Triple J growth
+- Known as "a very successful business" historically per Julian
+
+**Execution pace directive from Julian:**
+- "Let's not delay anything" — matched to his fast pace
+- Can compress 10-week plan to 2 long-form Claude sessions
+- Night 1 = deploy + GBP + reviews + FB recon + LegalZoom pull (all Julian solo)
+- Night 2 = speed-to-response + review velocity + Spanish + pricing + market-report template (Claude session)
+- Night 3 (optional) = CivicPlus expansion + FB template generator + LLC review
+
+**Phase 2 is NOT financing. Phase 2 is conversion + trust stack.**
+Phase 2 moves: Twilio SMS speed-to-response, post-job review velocity, Spanish page, pricing transparency page. Financing moves to Phase 3 with explicit trigger conditions in `Financing Research.md` (20+ leads/mo + 10+ reviews + current COIs).
+
+**Permit data publishing strategy locked:**
+- Public `/market-report/[year-month]` auto-generated aggregates (no addresses, no scoring, no individual owners)
+- Private `/hq/permit-leads` keeps the full juice
+- Zillow analogy: publish the narrative, hoard the leads
+
+**Files created/updated this session (cumulative):**
+- NEW: `Next Session Primer.md` — read-first doc for future sessions
+- NEW: `FB Marketplace Intel.md` — competitive tier analysis + winning listing template + offensive tactics
+- UPDATED: `Decisions.md` — 13 new 2026-04-21 rows total
+- UPDATED: `Session Notes.md` — this entry + earlier 2026-04-21 pivots
+- UPDATED: `Financing Research.md` — deferral notice at top, research preserved below
+- UPDATED: `Project Context.md` — real margins, ownership (20/40/40 equity), domain DONE, team capacity, Mexicano Grill context, F350 at $900/mo
+
+**Julian's between-session action items (priority order):**
+1. **DEPLOY** — `git pull` on Mac → push to main → Vercel env vars (`CRON_SECRET`, `ANTHROPIC_API_KEY`) → run `004_permit_leads.sql` in Supabase dashboard → trigger cron, verify permits land
+2. **Claim Google Business Profile** — business.google.com, fill every field, 20+ jobsite photos, request postcard
+3. **10 Google reviews** — text past happy customers manually, personal asks, target 10 live within 1 week
+4. **FB Marketplace full recon** — additional screenshots beyond ProStructures already covered; document other local competitors
+5. **Post first 2-3 Triple J FB Marketplace listings** using template in `FB Marketplace Intel.md`
+6. **Insurance COI check** — GL + WC PDFs with agent
+7. **Pull LegalZoom LLC Operating Agreement** — paste text into next session for review against 20/40/40 equity + buy-sell + death/divorce checklist
+8. **DO NOT apply to Hearth yet** — premature, trigger conditions not met
+
+**Next Claude session (Night 2) scope:**
+- Twilio SMS speed-to-response automation
+- Post-job review velocity automation
+- Spanish landing page (`/es/` + top 3 service pages)
+- Pricing transparency page (`/pricing` + calculator)
+- Market-report template at `/market-report/[year-month]`
+- First 2-3 FB Marketplace listings using template
+
+---
+
 ## 2026-04-21 — Lead Engine V1 MVP Shipped + Phase 2 Reframed + Capital Strategy Locked
 
 **Lead Engine V1 MVP built (Temple + Bell County + Harker Heights):**
