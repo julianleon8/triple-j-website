@@ -1,3 +1,252 @@
+## 2026-04-21 (end of session) — Final session addendum
+
+This section captures tonight's extended strategic conversation and is the closing summary for this session. New Claude sessions should read `Next Session Primer.md` + `FB Marketplace Intel.md` first, then this entry for nuance.
+
+**New strategic frameworks discussed (full detail in `Next Session Primer.md`):**
+
+- **5 Market Edges** prioritized: Speed-to-response, Spanish site, Review velocity, Transparent pricing, Permit-data flywheel. First two pair up for Night 2 build (shared Twilio infra).
+- **Moat honesty framing:** Tech advantage = 18-36 month window, NOT a permanent moat. Use head start to build durable moats (brand, reviews, crew, supplier leverage) before window closes ~2028. Real threat isn't Irvin — it's a hypothetical 22-yo AI-native founder in Austin targeting Central TX metal buildings vertical. Defense: crew + trust + tenure.
+- **Capital strategy:** Debt-only, no equity dilution for foreseeable future. Realistic path: equipment financing Year 2+ → SBA 7(a)/504 Year 3+ → bonding capacity build Year 2+ → evaluate PE bolt-on offers only at $5M+ revenue Year 7-10. NEVER merchant cash advances, factoring, or pre-exit equity dilution.
+- **FB Marketplace tier analysis:** Julian shared screenshots. Tier 1 threat = ProStructures of Belton (Joseph Zeluff, 5500 W FM 93 Temple). Full intel in `FB Marketplace Intel.md` including head-to-head pricing benchmarks + Triple J's winning listing template.
+
+**Reality corrections that materially changed projections:**
+
+1. **Julian is 18, not 19.** Extra year of compounding runway.
+2. **Julian has 20% EQUITY (not commission).** Juan 40% / Freddy 40% / Julian 20% via LegalZoom. Freddy is co-owner, not employee. Earlier advice to "negotiate equity Year 3" is MOOT — he already has it.
+3. **Juan is generous, not competitive.** Sees Julian as growth engine. Equity will likely grow over time with performance (realistic trajectory: 20% → 30-40% by Year 6-8 as Juan semi-retires).
+4. **Real net margins ~2x textbook contractor assumption.** 50-60% on small jobs, 35-45% medium, 25-35% large. Live data: Copperas Cove $8,600 job / $3,036 materials / $100 diesel = $5,464 net (63%). Driven by owner-operated welders + paid-off equipment + direct MetalMax.
+5. **Julian is also a welder.** Team has 2 in-house welders (Julian + Freddy). Can scale to $3-5M before 3rd welder hire.
+6. **Asset base:** Skid steer, Ram 2500, trailers paid off. Only F350 at ~$900/mo. Lean fixed overhead.
+7. **Financial state:** NOT broke. ~$16K incoming from recent contracts. Full execution greenlit, no cash-crunch constraint.
+8. **Domain migration to triplejmetaltx.com DONE** (not pending as earlier docs suggested).
+
+**Revised 10-year wealth projection:**
+- Cumulative distributions to Julian over 10 years: **~$7M**
+- Potential PE exit at Year 10: **+$5-7M pre-tax (20% of $25-35M sale)**
+- **Realistic net worth at age 28: $10-20M**
+- **Aggressive (equity growth + PE exit): $20-35M**
+
+**Julian's physical state:**
+- Recent car accident. Recovering. Can't work jobsite right now.
+- Cognitive bandwidth fully intact, pouring into Triple J tech buildout.
+- Recovery timing aligns perfectly with tech-work window.
+
+**Parallel family business updates:**
+- Mexicano Grill — 812 East Central Ave, Belton TX
+- Target reopen **mid-July 2026** (~10 weeks out from 2026-04-21)
+- Juan-funded entirely; Julian contributes welding labor (drive-through framework) but not capital
+- When restaurant stabilizes → cash flow loops back to fund Triple J growth
+- Known as "a very successful business" historically per Julian
+
+**Execution pace directive from Julian:**
+- "Let's not delay anything" — matched to his fast pace
+- Can compress 10-week plan to 2 long-form Claude sessions
+- Night 1 = deploy + GBP + reviews + FB recon + LegalZoom pull (all Julian solo)
+- Night 2 = speed-to-response + review velocity + Spanish + pricing + market-report template (Claude session)
+- Night 3 (optional) = CivicPlus expansion + FB template generator + LLC review
+
+**Phase 2 is NOT financing. Phase 2 is conversion + trust stack.**
+Phase 2 moves: Twilio SMS speed-to-response, post-job review velocity, Spanish page, pricing transparency page. Financing moves to Phase 3 with explicit trigger conditions in `Financing Research.md` (20+ leads/mo + 10+ reviews + current COIs).
+
+**Permit data publishing strategy locked:**
+- Public `/market-report/[year-month]` auto-generated aggregates (no addresses, no scoring, no individual owners)
+- Private `/hq/permit-leads` keeps the full juice
+- Zillow analogy: publish the narrative, hoard the leads
+
+**Files created/updated this session (cumulative):**
+- NEW: `Next Session Primer.md` — read-first doc for future sessions
+- NEW: `FB Marketplace Intel.md` — competitive tier analysis + winning listing template + offensive tactics
+- UPDATED: `Decisions.md` — 13 new 2026-04-21 rows total
+- UPDATED: `Session Notes.md` — this entry + earlier 2026-04-21 pivots
+- UPDATED: `Financing Research.md` — deferral notice at top, research preserved below
+- UPDATED: `Project Context.md` — real margins, ownership (20/40/40 equity), domain DONE, team capacity, Mexicano Grill context, F350 at $900/mo
+
+**Julian's between-session action items (priority order):**
+1. **DEPLOY** — `git pull` on Mac → push to main → Vercel env vars (`CRON_SECRET`, `ANTHROPIC_API_KEY`) → run `004_permit_leads.sql` in Supabase dashboard → trigger cron, verify permits land
+2. **Claim Google Business Profile** — business.google.com, fill every field, 20+ jobsite photos, request postcard
+3. **10 Google reviews** — text past happy customers manually, personal asks, target 10 live within 1 week
+4. **FB Marketplace full recon** — additional screenshots beyond ProStructures already covered; document other local competitors
+5. **Post first 2-3 Triple J FB Marketplace listings** using template in `FB Marketplace Intel.md`
+6. **Insurance COI check** — GL + WC PDFs with agent
+7. **Pull LegalZoom LLC Operating Agreement** — paste text into next session for review against 20/40/40 equity + buy-sell + death/divorce checklist
+8. **DO NOT apply to Hearth yet** — premature, trigger conditions not met
+
+**Next Claude session (Night 2) scope:**
+- Twilio SMS speed-to-response automation
+- Post-job review velocity automation
+- Spanish landing page (`/es/` + top 3 service pages)
+- Pricing transparency page (`/pricing` + calculator)
+- Market-report template at `/market-report/[year-month]`
+- First 2-3 FB Marketplace listings using template
+
+---
+
+## 2026-04-21 — Lead Engine V1 MVP Shipped + Phase 2 Reframed + Capital Strategy Locked
+
+**Lead Engine V1 MVP built (Temple + Bell County + Harker Heights):**
+- Migration `supabase/migrations/004_permit_leads.sql` — `permit_leads` table w/ RLS, dedup unique index on `(jurisdiction, source_url, permit_number)`, score/status/created indexes
+- `src/lib/permit-sources.ts` — 3 enabled Revize entries + 4 disabled CivicPlus/Granicus stubs
+- `src/lib/permit-extractor.ts` — `unpdf` PDF text extraction + Anthropic SDK (`claude-sonnet-4-6`) with wheelhouse-scored JSON output, Zod-validated
+- `src/app/api/cron/scrape-permits/route.ts` — Bearer-auth GET handler, per-jurisdiction try/catch, upsert with `ignoreDuplicates: true`
+- `src/app/api/permit-leads/[id]/route.ts` — PATCH for status/notes/mark_called, Supabase Auth enforced
+- `src/app/hq/permit-leads/page.tsx` + `components/PermitLeadsTable.tsx` — dashboard w/ status filter pills, score color-coding, expand-row for wheelhouse reasons + notes + raw source
+- `vercel.json` — daily cron at 14:00 UTC (9am CT)
+- Nav link added to `src/app/hq/layout.tsx`
+- `.env.local` now has `CRON_SECRET` (64-char hex)
+- Deps added: `@anthropic-ai/sdk` + `unpdf`
+
+**Code is NOT YET DEPLOYED.** Sitting on branch `claude/setup-new-project-wA6jt`. Julian must pull on Mac, push to main, set env vars in Vercel, run migration in Supabase dashboard before any of this is live.
+
+**Evening strategic conversation — key pivots:**
+
+1. **Phase 2 is NOT financing, it's conversion + trust.**
+   - Financing lift = 15-25%. Review velocity + speed-to-response lift = 100-300%.
+   - Phase 2: claim GBP + manually collect 10 Google reviews + Twilio SMS auto-respond + post-job review-velocity automation.
+   - Phase 3 (later): financing integration. Trigger: 20+ leads/mo AND 10+ reviews AND current COIs.
+   - `Financing Research.md` prepended with deferral notice; original research preserved below.
+
+2. **Permit data publishing strategy = public/private split.**
+   - Public `/market-report/[year-month]` auto-generated aggregate stats (permit counts, valuations, city breakdown, contractor names from public record).
+   - Private `/hq/permit-leads` keeps addresses + wheelhouse scores + reasoning + notes.
+   - Publish the narrative, hoard the leads.
+
+3. **Tech advantage = 18-36 month window, not permanent moat.**
+   - Claude Code + scraping will commoditize. Window closes ~2028.
+   - Use the head start to build durable moats: Google reviews, crew expansion, supplier leverage, bonding capacity, local brand.
+   - Direct competitors (Capital/Irvin) won't build this — they adapt in years, not weeks. Real threat is a 22-yo AI-native founder in Austin targeting Central TX vertical. Defense = crew + trust + 3yr tenure.
+
+4. **Outside capital stance = debt-only, no equity dilution.**
+   - Contractor grand slam = cash-flow the business + debt for assets that earn (trucks, welder, yard).
+   - Year 3+: SBA 7(a) or 504 for facility.
+   - Build bonding capacity from Year 2.
+   - NEVER MCAs. NEVER equity until a real exit.
+   - Mueller merger unlikely — suppliers rarely acquire installers. Realistic exit (if wanted) in Year 7-10: PE bolt-on at 3-6x EBITDA or strategic acquirer (Morton, Varco Pruden, Nucor) at 5-8x.
+
+5. **Facebook Marketplace = confirmed active channel.**
+   - Irvin's highest-ROI channel. Julian doing recon between sessions.
+   - Next-session build: `/quote?src=fb` UTM tracking + listing template generator pulling from `/hq/gallery`.
+   - Differentiation: welded-only, same-week, real crew photos, not stock renders.
+
+6. **Language division of labor logged.**
+   - Julian = English. Juan + Freddy = Spanish. This is why Julian is the sales guy on 20% commission.
+   - Spanish landing page + Google Voice Spanish line deferred to post-Phase-2 — massive untapped market, zero competitor coverage.
+
+**Strategic locks from earlier in the day (`Decisions.md` appended):**
+- Lead Engine V1 = 3 Revize jurisdictions only; CivicPlus deferred
+- Capital/Irvin = **Both** — supply secondary ≤30% + installer-partnership pitch in parallel (MetalMax primary unchanged)
+- Financing = Hearth primary, Enhancify subprime fallback; HFS / GreenSky / SFC evaluated + skipped
+- 3D Builder = deferred indefinitely
+
+**Julian's between-session action items (revised priority):**
+
+1. **DEPLOY.** Pull branch on Mac, push to main, set `CRON_SECRET` + `ANTHROPIC_API_KEY` in Vercel env vars, run `supabase/migrations/004_permit_leads.sql` in Supabase dashboard. Trigger cron manually or wait 24hr for 9am CT run.
+2. **Claim Google Business Profile** at business.google.com → "Triple J Metal Buildings." Fill every field. Push 20+ jobsite photos. Request postcard verification. Non-negotiable — you've been dragging on this.
+3. **Manually collect 10 Google reviews** from past happy customers. Text them personally. Target: 10 in 7 days.
+4. **Facebook Marketplace recon** on Capital — categories, price format, photo style, description formula, posting cadence. Screenshot 5-10 listings. Check FB Ad Library for paid ads.
+5. **Insurance COIs check** — GL + Workers Comp, request PDFs from agent. Needed for Hearth application later.
+6. Separately: Irvin installer-partnership conversation (Capital's overflow → Triple J crew).
+7. Hearth enrollment = **DO NOT DO YET.** Premature. Trigger: 20+ leads/mo + 10+ reviews + current COIs.
+
+**Next session (Claude work):**
+- Twilio SMS speed-to-response automation (60-sec auto-reply on lead submit or permit-lead call)
+- Post-job review-velocity automation (24hr after job "complete" → Google review link text)
+- Debug any Lead Engine issues found during first live cron runs
+- Optional if time: FB Marketplace `/quote?src=fb` UTM tracking
+
+**Deferred to later sessions:**
+- Spanish-language landing pages + Google Voice Spanish line
+- Transparent pricing page (`/pricing` + per-service ranges + calculator)
+- Permit-data content flywheel (`/market-report/[year-month]`, auto-generated, publish once we have 30 days of data)
+- Financing frontend (trigger conditions above)
+- CivicPlus scraping (Killeen, Waco, McLennan, Copperas Cove) — Firecrawl + headless
+- FB Marketplace listing-template generator
+- Apollo/ZoomInfo permit-owner enrichment
+- Auto-outreach (SMS/email to permit holders)
+- Domain migration Wix → Vercel + Resend branded-sender DNS
+- Supabase 2FA (Julian self-service)
+
+## 2026-04-21 (late evening) — Financial Reality + Margin Recalibration + No-Delay Directive
+
+Julian dropped critical context that reframes everything built today:
+
+**Ownership structure (confirmed):** Juan 40% / Freddy 40% / Julian 20% via LegalZoom. Freddy is a co-owner equity partner, not just a foreman. LLC paperwork needs verification (Julian to pull from LegalZoom account).
+
+**Real net margins are DOUBLE what the earlier projection used:**
+- Textbook contractor assumption: 15-25% net
+- Triple J reality: **50-60% net on small jobs, 35-45% on medium, 25-35% on large**
+- Live data point — Copperas Cove job, closed in 48 hrs: $8,600 rev / $3,036 materials / $100 diesel = **$5,464 net (63% margin)**
+- Why: owner-operated welders (Julian + Freddy both weld), paid-off equipment, direct MetalMax relationship, zero subcontractors
+
+**Asset base:** Skid steer, Ram 2500, trailers — paid off. F350 at $900/mo. Fixed monthly overhead is trivial vs. realistic revenue.
+
+**Financial state correction:** Julian is NOT in broke mode. ~$16K incoming from recent invoices + the Copperas Cove close. Can fund Twilio/Anthropic/Google Voice line items without strain. Cash-crunch survival plan from earlier is OBSOLETE — full execution is greenlit.
+
+**Parallel family business:** Mexicano Grill (812 East Central Ave, Belton TX). Target reopen **mid-July 2026** (~10 weeks out). Juan-funded entirely. Julian contributes welding labor (drive-through framework) but not capital. When restaurant stabilizes, cash flow loops back to fund Triple J growth.
+
+**New team fact:** Julian is ALSO a welder. Team has 2 welders in-house (Julian + Freddy). Can scale to ~$3-5M before hiring a 3rd welder. Juan = investor + relationships only, not jobsite.
+
+**Domain migration done** — triplejmetaltx.com live and professional. Remove "pending" from Project Context.md.
+
+**Revised 10-year wealth projection (with real margins + 20% equity):**
+- Year 2 (post-restaurant refocus): ~$170K to Julian
+- Year 3: ~$320K
+- Year 5: ~$600K
+- Year 10: ~$1.3M/year in distributions
+- Cumulative 10-yr: ~$7M + potential $5-7M exit at Year 10
+- **Realistic net worth at age 28: $10-20M. Aggressive w/ equity growth + PE exit: $20-35M.**
+
+**Julian's directive:** "Let's not delay anything." No cash-crunch constraints. Full Phase 2 execution starts next session.
+
+**10-week plan (restaurant reopens mid-July = our window):**
+- Week 1 (this week): Deploy branch to Vercel, run migration, first cron, claim GBP
+- Weeks 2-4: 10 Google reviews (manual), FB Marketplace recon, LLC paperwork verify
+- Weeks 4-6 (next Claude session): Twilio SMS speed-to-response + post-job review velocity
+- Weeks 6-8: Spanish landing page + pricing transparency page
+- Weeks 8-10: First `/market-report/` (May 2026) goes live; prep for restaurant reopen + Juan's refocus
+
+---
+
+## 2026-04-20 — Prep + Dashboard Hardening + Domain/Email
+
+**Memory + tooling setup:**
+- Appended Project Memory + Operating Rules to `AGENTS.md` (business, stack, key source files, locked decisions, NotebookLM ID, vault index)
+- Triple J name origin logged: Juan (investor) + Julian (tech/ops, 19) + Jose Alfredo "Freddy" (foreman — cuts, welds, math)
+- NotebookLM skill installed at `~/.claude/skills/notebooklm/` (unauthenticated in sandbox — user runs queries on Mac, pastes back)
+- API keys dropped into `.env.local`: ANTHROPIC_API_KEY + FIRECRAWL_API_KEY
+
+**Strategic lock-in — Lead Engine V1:**
+- Filter Strategy **B (stay close to wheelhouse)** chosen: <$500K, pole barns, ag, small commercial accessory, auto/storage. Skip large PEMB/warehouse subcontractor pivot.
+- NotebookLM research saved to `Lead Sources Research.md` — 7 Central TX jurisdictions mapped (Temple, Bell County, Harker Heights = easy Revize/Joomla; Killeen, Waco, McLennan, Copperas Cove = harder CivicPlus/Granicus)
+- MGOconnect.org + EnerGov CSS confirmed unscrapable (login-gated) — TOMA upstream pivot (P&Z + Commissioners' Court + weekly permit reports) legally mandated public data
+
+**Dashboard hardening committed (4c3bfe9 + 6a36b96):**
+- Removed Owner Login link from public `Footer.tsx`
+- `/dashboard` → `/hq` rename (all links, middleware matcher, grep-verified zero stale refs)
+- Julian to enable Supabase 2FA himself
+
+**Brand infra locked:**
+- Domain: **triplejmetaltx.com** (Squarespace, ~$3 first-year)
+- Email: **julian@triplejmetaltx.com** (Google Workspace Basic)
+- Still on Wix `TripleJJMetal.com` — migration to Vercel pending
+
+**NOT yet built (tomorrow's full session):**
+- `permit_leads` Supabase migration
+- `src/app/api/cron/scrape-permits/route.ts` (Temple-first MVP, then Bell County + Harker Heights)
+- `vercel.json` daily cron
+- `/hq/permit-leads` dashboard page (sortable by filter score, called-toggle)
+- Claude parsing prompt for permit PDFs → structured JSON + wheelhouse filter score
+
+**Julian's brainstorm parked for post-Lead-Engine session:**
+- Business cards / yard signs / social collateral via Canva + real jobsite photos (shoot Freddy welding, 150 jobs worth of content) — NOT Nano Banana fake project photos
+- Frontend design refresh after Lead Engine lands
+
+**Next session checklist:**
+1. Build Lead Engine V1 start-to-finish (migration → scraper → cron → dashboard page)
+2. Then: frontend design pass if time permits
+3. Julian deploys to Vercel when ready (still pending — needs `git push origin main` from Mac + 7 env vars)
+
+---
+
 ## 2026-04-15 — Refinement Pass 1 + Research Sync
 
 **NotebookLM research pulled (Gemini):**

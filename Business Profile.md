@@ -7,7 +7,10 @@
 - **Founded:** 2025
 - **Completed projects:** 150+
 - **Satisfied clients:** 50+
-- **Owner:** Juan Luis Leon (father), Julian Leon Alvarez (son, 19, daily ops)
+- **The three Js:**
+  - **Juan Luis Leon** — father, investor, capital + decisions
+  - **Julian Leon Alvarez** — son (19), tech & ops, runs the website + dashboard
+  - **Jose Alfredo "Freddy"** — foreman, the experienced one. Cuts, welds, math, jobsite execution. The skills are his.
 
 
 ## Equipment Fleet

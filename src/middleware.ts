@@ -4,7 +4,7 @@ import { createServerClient } from '@supabase/ssr'
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
 
-  if (!pathname.startsWith('/dashboard')) {
+  if (!pathname.startsWith('/hq')) {
     return NextResponse.next()
   }
 
@@ -39,5 +39,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/dashboard/:path*'],
+  matcher: ['/hq/:path*'],
 }
