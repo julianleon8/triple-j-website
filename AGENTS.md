@@ -72,7 +72,8 @@ This repo doubles as an Obsidian vault. The `.md` files at the root are the work
 ## Operating Rules
 
 - **Firecrawl / scrape skills** — never run a `firecrawl-search` (or any scrape skill) without explicit per-run user approval. Token cost is high. Always ask first, even if `.claude/settings.local.json` permits the call.
-- **NotebookLM** — the `notebooklm` skill is installed at `~/.claude/skills/notebooklm/`. Auth requires a visible Chrome window (`python scripts/run.py auth_manager.py setup`); in headless sandboxes, the user must complete auth from a machine with a display, then either work from there or copy `data/browser_state/` over.
+- **NotebookLM** — the `notebooklm` skill is installed at `~/.claude/skills/notebooklm/` but **not authenticated in this sandbox** (no display for Google login). Workflow: when a task would benefit from a NotebookLM query (deep research, source-grounded citations, anything where hallucination risk is real), **tell the user first** and let them run the query on their authenticated Mac and paste the answer back. Do not attempt to authenticate or query NotebookLM from this sandbox.
+- **Deep research / citations** — same rule: ask before spending tokens on multi-step research. The user prefers to spend tokens on execution, not planning.
 - **Code changes** — wait for the user's larger plan before touching `src/`. The user prefers to lay out the bigger picture first.
 - **Vault discipline** — when a decision is made or reversed in conversation, log it to `Decisions.md` in the same turn. Memory must stay in sync with reality.
 - **Git push** — sandbox proxy blocks outbound git push. Julian runs `git push origin main` from his Mac.
