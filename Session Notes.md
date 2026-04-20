@@ -82,6 +82,45 @@
 - Domain migration Wix → Vercel + Resend branded-sender DNS
 - Supabase 2FA (Julian self-service)
 
+## 2026-04-21 (late evening) — Financial Reality + Margin Recalibration + No-Delay Directive
+
+Julian dropped critical context that reframes everything built today:
+
+**Ownership structure (confirmed):** Juan 40% / Freddy 40% / Julian 20% via LegalZoom. Freddy is a co-owner equity partner, not just a foreman. LLC paperwork needs verification (Julian to pull from LegalZoom account).
+
+**Real net margins are DOUBLE what the earlier projection used:**
+- Textbook contractor assumption: 15-25% net
+- Triple J reality: **50-60% net on small jobs, 35-45% on medium, 25-35% on large**
+- Live data point — Copperas Cove job, closed in 48 hrs: $8,600 rev / $3,036 materials / $100 diesel = **$5,464 net (63% margin)**
+- Why: owner-operated welders (Julian + Freddy both weld), paid-off equipment, direct MetalMax relationship, zero subcontractors
+
+**Asset base:** Skid steer, Ram 2500, trailers — paid off. F350 at $900/mo. Fixed monthly overhead is trivial vs. realistic revenue.
+
+**Financial state correction:** Julian is NOT in broke mode. ~$16K incoming from recent invoices + the Copperas Cove close. Can fund Twilio/Anthropic/Google Voice line items without strain. Cash-crunch survival plan from earlier is OBSOLETE — full execution is greenlit.
+
+**Parallel family business:** Mexicano Grill (812 East Central Ave, Belton TX). Target reopen **mid-July 2026** (~10 weeks out). Juan-funded entirely. Julian contributes welding labor (drive-through framework) but not capital. When restaurant stabilizes, cash flow loops back to fund Triple J growth.
+
+**New team fact:** Julian is ALSO a welder. Team has 2 welders in-house (Julian + Freddy). Can scale to ~$3-5M before hiring a 3rd welder. Juan = investor + relationships only, not jobsite.
+
+**Domain migration done** — triplejmetaltx.com live and professional. Remove "pending" from Project Context.md.
+
+**Revised 10-year wealth projection (with real margins + 20% equity):**
+- Year 2 (post-restaurant refocus): ~$170K to Julian
+- Year 3: ~$320K
+- Year 5: ~$600K
+- Year 10: ~$1.3M/year in distributions
+- Cumulative 10-yr: ~$7M + potential $5-7M exit at Year 10
+- **Realistic net worth at age 28: $10-20M. Aggressive w/ equity growth + PE exit: $20-35M.**
+
+**Julian's directive:** "Let's not delay anything." No cash-crunch constraints. Full Phase 2 execution starts next session.
+
+**10-week plan (restaurant reopens mid-July = our window):**
+- Week 1 (this week): Deploy branch to Vercel, run migration, first cron, claim GBP
+- Weeks 2-4: 10 Google reviews (manual), FB Marketplace recon, LLC paperwork verify
+- Weeks 4-6 (next Claude session): Twilio SMS speed-to-response + post-job review velocity
+- Weeks 6-8: Spanish landing page + pricing transparency page
+- Weeks 8-10: First `/market-report/` (May 2026) goes live; prep for restaurant reopen + Juan's refocus
+
 ---
 
 ## 2026-04-20 — Prep + Dashboard Hardening + Domain/Email

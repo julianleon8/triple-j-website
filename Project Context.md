@@ -7,24 +7,43 @@ A lead-generation website + owner dashboard for Triple J Metal LLC. Maintained b
 - Notebook URL: https://notebooklm.google.com/notebook/f4aaf762-3ede-45b9-a1ad-b9d8a6319207
 - Use for: source-grounded answers from uploaded project documents
 
-_Last updated: 2026-04-15_
+_Last updated: 2026-04-21 (evening)_
 
 ---
 
 ## Business Details
 **Company:** Triple J Metal LLC (Triple JJJ Metal Buildings)
-**Owner:** Juan Luis Leon (father) + Julian Leon Alvarez (son, 19, daily ops)
+**Ownership:** Juan 40% / Freddy 40% / Julian 20% (per LegalZoom formation — paperwork verification pending)
+**Team:** Juan (investor/co-owner) + Julian Leon Alvarez (son, **18**, sales lead + tech + welder) + Jose Alfredo "Freddy" (foreman/co-owner — welder + all jobsite skills)
 **Address:** 3319 Tem-Bel Ln, Temple, TX 76502
 **Phone:** 254-346-7764
+**Domain:** triplejmetaltx.com (migrated from Wix — **DONE**, professional)
+**Email:** julian@triplejmetaltx.com (Google Workspace Business Starter)
 **Founded:** 2025 · 150+ projects completed · 50+ satisfied clients
-**Type:** Metal construction — welded + bolted red-iron carports, garages, barns, RV covers
-**Location:** Central Texas (Temple base; also serves Belton, Killeen, Harker Heights, Copperas Cove)
-**Suppliers:** MetalMax (Waco) — primary; MetalMart
-**Key differentiators:**
-- 48-hour build time (competitors take 4–16 weeks)
-- Turnkey: site prep + concrete pad included (nobody else does this)
-- Welded not bolted — permanent, storm-proof
-- Local Temple-based crew — no middlemen
+**Type:** Metal construction — welded + bolted red-iron carports, garages, barns, RV covers, house additions, lean-to patios
+**Location:** Central Texas (Temple base; serves Belton, Killeen, Harker Heights, Copperas Cove, Waco, Salado, Georgetown, Round Rock, Lampasas, Holland, Taylor, Troy, Nolanville)
+**Suppliers:** MetalMax (Waco) — primary; MetalMart secondary; Capital Metal Buildings (Troy, Irvin Jimenez) — tertiary ≤30% of spend for specialty/overflow
+
+**Crew capacity:** 2 welders in-house (Freddy + Julian). Juan = investor + relationships, not jobsite labor. Can scale to ~$3-5M revenue before needing a 3rd welder hire.
+
+**Real net margin structure (discovered 2026-04-21):**
+- Small jobs ($5-15K): **50-60% net** — owner-operated, paid-off equipment, direct supplier
+- Medium jobs ($15-40K): **35-45% net**
+- Large jobs ($40-100K+): **25-35% net** (compresses as hired labor grows)
+- Reference data point: Copperas Cove job — $8,600 rev − $3,036 materials − $100 diesel = **$5,464 net on a single small building**
+
+**Asset base:** Skid steer, Ram 2500, trailers — **all paid off**. F350 truck financed at ~$900/mo. Very low fixed overhead.
+
+**Parallel family business:** Mexicano Grill (812 East Central Ave, Belton TX) — under rebuild, target reopen **mid-July 2026**. Juan-funded; Julian contributes welding labor (drive-through framework). Currently absorbing Triple J's cash + Juan's attention.
+
+**Key differentiators (current / locked per Decisions.md):**
+- **Same-week** turnaround (not 48-hour build — 48 hrs = materials arrival)
+- **Welded OR bolted** (both capabilities; never "only welded")
+- **Zero subcontractors** (owner-operated welders only)
+- **4,000 PSI concrete** (above 3,000 PSI standard)
+- **Turnkey** — site prep + concrete pad included
+- **Paid-off equipment** = lean overhead = competitive pricing with 60% margins
+- **Bilingual team** (Juan + Freddy Spanish; Julian English) — division of labor, not weakness
 
 ---
 
