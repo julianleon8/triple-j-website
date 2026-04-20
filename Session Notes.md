@@ -1,3 +1,48 @@
+## 2026-04-21 — Lead Engine V1 MVP Shipped + Financing Memo + Capital Strategy Locked
+
+**Lead Engine V1 MVP built (Temple + Bell County + Harker Heights):**
+- Migration `supabase/migrations/004_permit_leads.sql` — `permit_leads` table w/ RLS, dedup unique index on `(jurisdiction, source_url, permit_number)`, score/status/created indexes
+- `src/lib/permit-sources.ts` — 3 enabled Revize entries + 4 disabled CivicPlus/Granicus stubs
+- `src/lib/permit-extractor.ts` — `unpdf` PDF text extraction + Anthropic SDK (`claude-sonnet-4-6`) with wheelhouse-scored JSON output, Zod-validated
+- `src/app/api/cron/scrape-permits/route.ts` — Bearer-auth GET handler, per-jurisdiction try/catch, upsert with `ignoreDuplicates: true`
+- `src/app/api/permit-leads/[id]/route.ts` — PATCH for status/notes/mark_called, Supabase Auth enforced
+- `src/app/hq/permit-leads/page.tsx` + `components/PermitLeadsTable.tsx` — dashboard w/ status filter pills, score color-coding, expand-row for wheelhouse reasons + notes + raw source
+- `vercel.json` — daily cron at 14:00 UTC (9am CT)
+- Nav link added to `src/app/hq/layout.tsx`
+- `.env.local` now has `CRON_SECRET` (64-char hex)
+- Deps added: `@anthropic-ai/sdk` + `unpdf`
+
+**Strategic locks (`Decisions.md` appended):**
+- Lead Engine V1 = 3 Revize jurisdictions only; CivicPlus deferred
+- Capital/Irvin = **Both** — supply secondary ≤30% + installer-partnership pitch in parallel (MetalMax primary unchanged)
+- Financing = Hearth primary, Enhancify subprime fallback; HFS / GreenSky / SFC evaluated + skipped
+- 3D Builder = deferred indefinitely
+- **Facebook Marketplace = active channel; Julian doing recon between sessions** (Irvin's highest-ROI channel per conversation)
+
+**Financing Research memo written (`Financing Research.md`):**
+- Full 6-provider comparison matrix, explicit recommendation, 6-item enrollment checklist
+- 3-phase integration plan for next session (hero CTA → `/financing` page → QuoteForm step)
+- Explicit what-NOT-to-do list to keep Julian from over-building
+
+**Julian's between-session action items:**
+1. Run `supabase/migrations/004_permit_leads.sql` in Supabase dashboard (SQL editor)
+2. Add `CRON_SECRET` + `ANTHROPIC_API_KEY` to Vercel env vars (9 total now)
+3. Recon Capital's Facebook Marketplace listings — category, price format, photo style, description formula, posting cadence. Screenshot 5–10 examples.
+4. Enroll as Hearth contractor partner at hearth.com/contractors (~2 hrs; needs EIN, COI, W-9, 3 refs)
+5. Paste Hearth referral link + widget snippet into next session for frontend wiring
+6. Separately: reach out to Irvin on installer-partnership angle (Capital's overflow → Triple J crew)
+
+**Deferred to future sessions:**
+- CivicPlus scraping (Killeen, Waco, McLennan, Copperas Cove) — Firecrawl + headless
+- Financing frontend (hero CTA + `/financing` page + QuoteForm integration)
+- FB Marketplace funnel (`/quote?src=fb` UTM tracking + listing-template generator)
+- Apollo/ZoomInfo permit-owner enrichment
+- Auto-outreach (SMS/email to permit holders)
+- Domain migration Wix → Vercel + Resend branded-sender DNS
+- Supabase 2FA (Julian self-service)
+
+---
+
 ## 2026-04-20 — Prep + Dashboard Hardening + Domain/Email
 
 **Memory + tooling setup:**

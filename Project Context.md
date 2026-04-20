@@ -46,11 +46,14 @@ _Last updated: 2026-04-15_
 
 ### Julian action items to deploy
 1. `git push origin main` from Mac Terminal
-2. Set 7 Vercel env vars from .env.local:
+2. Set 9 Vercel env vars from .env.local:
    - NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_ANON_KEY, SUPABASE_SERVICE_ROLE_KEY
    - RESEND_API_KEY, OWNER_EMAIL, NEXT_PUBLIC_SITE_URL, SETUP_KEY
+   - **ANTHROPIC_API_KEY** (Lead Engine — Claude permit-PDF extraction)
+   - **CRON_SECRET** (Lead Engine — Vercel Cron Bearer auth)
 3. Update NEXT_PUBLIC_SITE_URL to real Vercel domain after first deploy
 4. Test quote form end-to-end (Supabase leads table + owner email)
+5. Run `supabase/migrations/004_permit_leads.sql` in Supabase SQL editor (Lead Engine table)
 
 ### Pending / future work
 - Real Google reviews → fill testimonials.md → swap placeholder Testimonials cards

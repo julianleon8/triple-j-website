@@ -7,6 +7,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         <span className="font-bold text-xl tracking-tight">Triple J Metal — Dashboard</span>
         <div className="flex gap-6 text-sm font-semibold">
           <Link href="/hq" className="hover:underline">Leads</Link>
+          <Link href="/hq/permit-leads" className="hover:underline">Permits</Link>
           <Link href="/hq/customers" className="hover:underline">Customers</Link>
           <Link href="/hq/quotes" className="hover:underline">Quotes</Link>
           <Link href="/hq/jobs" className="hover:underline">Jobs</Link>
