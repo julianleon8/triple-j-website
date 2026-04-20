@@ -20,6 +20,15 @@
 - East Texas Carports handles permit research + applications for customers
 - Opportunity: Triple J should offer permit handling as a service differentiator
 
+## Lead Sources — What's Scrapable
+- **MGOconnect.org** (Temple + Belton permit portal): **NOT scrapable** — login + CAPTCHA gated. Do not attempt to bypass auth (legal/ToS risk). Use upstream public data instead.
+- **Upstream targets to verify** (pending NotebookLM research 2026-04-20):
+  - Bell County Planning & Zoning agendas (commercial site plans appear 30–90 days before final permits)
+  - City of Temple Weekly Permit Reports (PDF/HTML)
+  - City of Belton public notices / P&Z agendas
+  - Possibly Killeen + Waco equivalents
+- **Open question:** do these public reports actually exist for Triple J's service area? Julian is verifying via NotebookLM. If most jurisdictions don't publish upstream data, the Lead Engine V1 plan needs rework.
+
 ## Larger Projects
 - John Deere skid-steer + scaffold platform reaches 40ft
 - One large warehouse already in portfolio
