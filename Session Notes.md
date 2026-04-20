@@ -1,4 +1,4 @@
-## 2026-04-21 — Lead Engine V1 MVP Shipped + Financing Memo + Capital Strategy Locked
+## 2026-04-21 — Lead Engine V1 MVP Shipped + Phase 2 Reframed + Capital Strategy Locked
 
 **Lead Engine V1 MVP built (Temple + Bell County + Harker Heights):**
 - Migration `supabase/migrations/004_permit_leads.sql` — `permit_leads` table w/ RLS, dedup unique index on `(jurisdiction, source_url, permit_number)`, score/status/created indexes
@@ -12,30 +12,71 @@
 - `.env.local` now has `CRON_SECRET` (64-char hex)
 - Deps added: `@anthropic-ai/sdk` + `unpdf`
 
-**Strategic locks (`Decisions.md` appended):**
+**Code is NOT YET DEPLOYED.** Sitting on branch `claude/setup-new-project-wA6jt`. Julian must pull on Mac, push to main, set env vars in Vercel, run migration in Supabase dashboard before any of this is live.
+
+**Evening strategic conversation — key pivots:**
+
+1. **Phase 2 is NOT financing, it's conversion + trust.**
+   - Financing lift = 15-25%. Review velocity + speed-to-response lift = 100-300%.
+   - Phase 2: claim GBP + manually collect 10 Google reviews + Twilio SMS auto-respond + post-job review-velocity automation.
+   - Phase 3 (later): financing integration. Trigger: 20+ leads/mo AND 10+ reviews AND current COIs.
+   - `Financing Research.md` prepended with deferral notice; original research preserved below.
+
+2. **Permit data publishing strategy = public/private split.**
+   - Public `/market-report/[year-month]` auto-generated aggregate stats (permit counts, valuations, city breakdown, contractor names from public record).
+   - Private `/hq/permit-leads` keeps addresses + wheelhouse scores + reasoning + notes.
+   - Publish the narrative, hoard the leads.
+
+3. **Tech advantage = 18-36 month window, not permanent moat.**
+   - Claude Code + scraping will commoditize. Window closes ~2028.
+   - Use the head start to build durable moats: Google reviews, crew expansion, supplier leverage, bonding capacity, local brand.
+   - Direct competitors (Capital/Irvin) won't build this — they adapt in years, not weeks. Real threat is a 22-yo AI-native founder in Austin targeting Central TX vertical. Defense = crew + trust + 3yr tenure.
+
+4. **Outside capital stance = debt-only, no equity dilution.**
+   - Contractor grand slam = cash-flow the business + debt for assets that earn (trucks, welder, yard).
+   - Year 3+: SBA 7(a) or 504 for facility.
+   - Build bonding capacity from Year 2.
+   - NEVER MCAs. NEVER equity until a real exit.
+   - Mueller merger unlikely — suppliers rarely acquire installers. Realistic exit (if wanted) in Year 7-10: PE bolt-on at 3-6x EBITDA or strategic acquirer (Morton, Varco Pruden, Nucor) at 5-8x.
+
+5. **Facebook Marketplace = confirmed active channel.**
+   - Irvin's highest-ROI channel. Julian doing recon between sessions.
+   - Next-session build: `/quote?src=fb` UTM tracking + listing template generator pulling from `/hq/gallery`.
+   - Differentiation: welded-only, same-week, real crew photos, not stock renders.
+
+6. **Language division of labor logged.**
+   - Julian = English. Juan + Freddy = Spanish. This is why Julian is the sales guy on 20% commission.
+   - Spanish landing page + Google Voice Spanish line deferred to post-Phase-2 — massive untapped market, zero competitor coverage.
+
+**Strategic locks from earlier in the day (`Decisions.md` appended):**
 - Lead Engine V1 = 3 Revize jurisdictions only; CivicPlus deferred
 - Capital/Irvin = **Both** — supply secondary ≤30% + installer-partnership pitch in parallel (MetalMax primary unchanged)
 - Financing = Hearth primary, Enhancify subprime fallback; HFS / GreenSky / SFC evaluated + skipped
 - 3D Builder = deferred indefinitely
-- **Facebook Marketplace = active channel; Julian doing recon between sessions** (Irvin's highest-ROI channel per conversation)
 
-**Financing Research memo written (`Financing Research.md`):**
-- Full 6-provider comparison matrix, explicit recommendation, 6-item enrollment checklist
-- 3-phase integration plan for next session (hero CTA → `/financing` page → QuoteForm step)
-- Explicit what-NOT-to-do list to keep Julian from over-building
+**Julian's between-session action items (revised priority):**
 
-**Julian's between-session action items:**
-1. Run `supabase/migrations/004_permit_leads.sql` in Supabase dashboard (SQL editor)
-2. Add `CRON_SECRET` + `ANTHROPIC_API_KEY` to Vercel env vars (9 total now)
-3. Recon Capital's Facebook Marketplace listings — category, price format, photo style, description formula, posting cadence. Screenshot 5–10 examples.
-4. Enroll as Hearth contractor partner at hearth.com/contractors (~2 hrs; needs EIN, COI, W-9, 3 refs)
-5. Paste Hearth referral link + widget snippet into next session for frontend wiring
-6. Separately: reach out to Irvin on installer-partnership angle (Capital's overflow → Triple J crew)
+1. **DEPLOY.** Pull branch on Mac, push to main, set `CRON_SECRET` + `ANTHROPIC_API_KEY` in Vercel env vars, run `supabase/migrations/004_permit_leads.sql` in Supabase dashboard. Trigger cron manually or wait 24hr for 9am CT run.
+2. **Claim Google Business Profile** at business.google.com → "Triple J Metal Buildings." Fill every field. Push 20+ jobsite photos. Request postcard verification. Non-negotiable — you've been dragging on this.
+3. **Manually collect 10 Google reviews** from past happy customers. Text them personally. Target: 10 in 7 days.
+4. **Facebook Marketplace recon** on Capital — categories, price format, photo style, description formula, posting cadence. Screenshot 5-10 listings. Check FB Ad Library for paid ads.
+5. **Insurance COIs check** — GL + Workers Comp, request PDFs from agent. Needed for Hearth application later.
+6. Separately: Irvin installer-partnership conversation (Capital's overflow → Triple J crew).
+7. Hearth enrollment = **DO NOT DO YET.** Premature. Trigger: 20+ leads/mo + 10+ reviews + current COIs.
 
-**Deferred to future sessions:**
+**Next session (Claude work):**
+- Twilio SMS speed-to-response automation (60-sec auto-reply on lead submit or permit-lead call)
+- Post-job review-velocity automation (24hr after job "complete" → Google review link text)
+- Debug any Lead Engine issues found during first live cron runs
+- Optional if time: FB Marketplace `/quote?src=fb` UTM tracking
+
+**Deferred to later sessions:**
+- Spanish-language landing pages + Google Voice Spanish line
+- Transparent pricing page (`/pricing` + per-service ranges + calculator)
+- Permit-data content flywheel (`/market-report/[year-month]`, auto-generated, publish once we have 30 days of data)
+- Financing frontend (trigger conditions above)
 - CivicPlus scraping (Killeen, Waco, McLennan, Copperas Cove) — Firecrawl + headless
-- Financing frontend (hero CTA + `/financing` page + QuoteForm integration)
-- FB Marketplace funnel (`/quote?src=fb` UTM tracking + listing-template generator)
+- FB Marketplace listing-template generator
 - Apollo/ZoomInfo permit-owner enrichment
 - Auto-outreach (SMS/email to permit holders)
 - Domain migration Wix → Vercel + Resend branded-sender DNS

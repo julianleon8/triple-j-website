@@ -1,6 +1,32 @@
 # Financing Research — Provider Evaluation & Enrollment Plan
 
-_Last updated: 2026-04-20 · Author: Claude (Opus 4.7) · Status: Research complete, enrollment pending Julian_
+_Last updated: 2026-04-21 (evening) · Author: Claude (Opus 4.7) · Status: **DEFERRED to Phase 3. Do not apply yet.**_
+
+## ⚠️ 2026-04-21 Status Update — Read This First
+
+**Financing moved from Phase 2 → Phase 3.** Julian correctly flagged that Triple J isn't ready to apply. The research below (written earlier same day) is still accurate and useful reference — but the timing has changed.
+
+**Why defer:**
+- Financing lifts conversion ~15-25%. Speed-to-response + review velocity lift it 100-300%. Phase 2 should fix the bigger leaks first.
+- Hearth wants 1+ year in business (Triple J is ~1 year, you'd get lower caps + higher referral tier at current volume).
+- You have ~0 Google reviews. Hearth asks for references; easier after you've collected 10+.
+- Hearth prices your referral rate based on volume you send them. Applying with 0 permit-lead closes means you start at the worst tier. Wait until you have proof of lead flow.
+
+**Trigger conditions — hit ALL THREE before enrolling:**
+
+1. ✅ **Lead flow ≥ 20/mo** from permit engine + site + FB Marketplace combined
+2. ✅ **≥ 10 Google reviews live** on GBP (Hearth needs customer references)
+3. ✅ **GL + Workers Comp COIs current** and accessible as PDF (Hearth gate)
+
+Check these in `/hq` + GBP every ~30 days. When all three are true, proceed with the enrollment checklist below. Estimated: 60-90 days out from 2026-04-21.
+
+**Phase 2 (what comes BEFORE financing):**
+- Julian: Claim GBP (20 min), manually collect 10 reviews from past customers, FB Marketplace recon
+- Claude (next session): Twilio SMS speed-to-response + post-job review-velocity automation
+
+Everything below this section is the original research — provider comparison, Hearth-vs-Enhancify rationale, enrollment checklist, integration plan. All of it still valid when you're ready. Don't re-research; just pick up here.
+
+---
 
 ## TL;DR
 
