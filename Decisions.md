@@ -31,3 +31,5 @@ _Maintained by Claude Code_
 | 2026-04-15 | Testimonials: auto-scroll marquee instead of static grid | More engaging; hides the fact that placeholder copy is thin until real reviews arrive |
 | 2026-04-15 | inspiration/screenshots/ folder created | Drop zone for visual reference screenshots before next design pass |
 | 2026-04-15 | Dashboard deployment on hold | Auth flow not yet built; Julian still needs to set 7 Vercel env vars |
+| 2026-04-20 | "Triple J" name meaning logged: Juan + Julian + Jose Alfredo ("Freddy") | Vault didn't have it; Freddy is foreman with all jobsite skills, key person for SEO/marketing realism |
+| 2026-04-20 | Lead Engine V1 picked as next build | Permit-scrape → Claude parse → Supabase pipeline → dashboard call list. Skip Apollo enrichment, skip auto-outreach, skip SEO + barndo engines for now. Validate lead quality before adding cost/automation. |

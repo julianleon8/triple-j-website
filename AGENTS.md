@@ -10,7 +10,7 @@ This repo doubles as an Obsidian vault. The `.md` files at the root are the work
 
 ### Business
 - **Triple J Metal Buildings LLC** (Triple JJJ Metal Buildings)
-- **Owners:** Juan Luis Leon (father) + Julian Leon Alvarez (son, 19, daily ops)
+- **Name:** "Triple J" = **Juan** (father, investor) + **Julian** (son, 19, tech/ops) + **Jose Alfredo "Freddy"** (foreman, the hands and the skills — cuts, welds, math, runs the crew)
 - **Address:** 3319 Tem-Bel Ln, Temple, TX 76502 · **Phone:** 254-346-7764
 - Founded 2025 · 150+ projects · 50+ clients
 - Central Texas (Temple base; serves Belton, Killeen, Harker Heights, Copperas Cove, Waco, Salado, Georgetown, Round Rock, Lampasas, Holland, Taylor, Troy, Nolanville)
