@@ -45,6 +45,8 @@ export default function LeadsTable({ initialLeads }: { initialLeads: Lead[] }) {
   const [leads, setLeads] = useState(initialLeads)
   const [updating, setUpdating] = useState<string | null>(null)
   const [lastRefresh, setLastRefresh] = useState<Date>(new Date())
+  const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null)
+  const [deleting, setDeleting] = useState<string | null>(null)
 
   useEffect(() => {
     const poll = setInterval(async () => {
@@ -75,6 +77,16 @@ export default function LeadsTable({ initialLeads }: { initialLeads: Lead[] }) {
     setUpdating(null)
   }
 
+  const handleDelete = async (id: string) => {
+    setDeleting(id)
+    const res = await fetch(`/api/leads/${id}`, { method: 'DELETE' })
+    if (res.ok) {
+      setLeads(prev => prev.filter(l => l.id !== id))
+    }
+    setDeleting(null)
+    setConfirmDeleteId(null)
+  }
+
   return (
     <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-x-auto">
       <div className="px-4 py-2 border-b border-gray-100 flex items-center gap-2 text-xs text-gray-400">
@@ -84,15 +96,15 @@ export default function LeadsTable({ initialLeads }: { initialLeads: Lead[] }) {
       <table className="w-full text-sm min-w-[900px]">
         <thead className="bg-gray-50 text-gray-500 uppercase text-xs border-b">
           <tr>
-            {['Date', 'Name', 'Phone', 'Location', 'Service', 'Concrete', 'Timeline', 'Notes', 'Status'].map(h => (
-              <th key={h} className="px-4 py-3 text-left font-medium whitespace-nowrap">{h}</th>
+            {['Date', 'Name', 'Phone', 'Location', 'Service', 'Concrete', 'Timeline', 'Notes', 'Status', ''].map((h, i) => (
+              <th key={i} className="px-4 py-3 text-left font-medium whitespace-nowrap">{h}</th>
             ))}
           </tr>
         </thead>
         <tbody className="divide-y divide-gray-100">
           {leads.length === 0 && (
             <tr>
-              <td colSpan={9} className="px-4 py-8 text-center text-gray-400">
+              <td colSpan={10} className="px-4 py-8 text-center text-gray-400">
                 No leads yet. They&apos;ll show up here when the quote form is submitted.
               </td>
             </tr>
@@ -142,6 +154,34 @@ export default function LeadsTable({ initialLeads }: { initialLeads: Lead[] }) {
                     <option key={s} value={s} className="bg-white text-gray-800 capitalize">{s}</option>
                   ))}
                 </select>
+              </td>
+              <td className="px-4 py-3 whitespace-nowrap">
+                {confirmDeleteId === lead.id ? (
+                  <div className="flex gap-1 items-center">
+                    <button
+                      onClick={() => handleDelete(lead.id)}
+                      disabled={deleting === lead.id}
+                      className="px-2 py-1 text-xs font-semibold rounded bg-red-600 text-white hover:bg-red-700 disabled:opacity-50"
+                    >
+                      {deleting === lead.id ? '...' : 'Confirm'}
+                    </button>
+                    <button
+                      onClick={() => setConfirmDeleteId(null)}
+                      disabled={deleting === lead.id}
+                      className="px-2 py-1 text-xs font-semibold rounded bg-gray-100 text-gray-600 hover:bg-gray-200"
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                ) : (
+                  <button
+                    onClick={() => setConfirmDeleteId(lead.id)}
+                    aria-label={`Delete lead from ${lead.name}`}
+                    className="px-2 py-1 text-xs font-semibold text-gray-400 hover:text-red-600 hover:bg-red-50 rounded transition-colors"
+                  >
+                    Delete
+                  </button>
+                )}
               </td>
             </tr>
           ))}
