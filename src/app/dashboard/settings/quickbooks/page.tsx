@@ -5,9 +5,9 @@ export const dynamic = 'force-dynamic'
 export default async function QuickBooksSettingsPage({
   searchParams,
 }: {
-  searchParams: Promise<{ connected?: string; error?: string }>
+  searchParams: Promise<{ connected?: string; error?: string; missing?: string }>
 }) {
-  const { connected, error } = await searchParams
+  const { connected, error, missing } = await searchParams
   const tokens = await getStoredTokens()
   const isConnected = !!tokens
 
@@ -15,6 +15,7 @@ export default async function QuickBooksSettingsPage({
     missing_params: 'OAuth callback was missing required parameters.',
     invalid_state: 'Security check failed. Please try connecting again.',
     token_exchange_failed: 'Failed to exchange authorization code. Check your QBO app credentials.',
+    missing_config: 'QuickBooks is not configured yet. Add all required QBO environment variables, then try again.',
   }
 
   return (
@@ -35,6 +36,11 @@ export default async function QuickBooksSettingsPage({
       {error && (
         <div className="rounded-lg bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-800">
           {errorMessages[error] ?? `Connection error: ${error}`}
+          {error === 'missing_config' && missing && (
+            <p className="mt-2 text-xs">
+              Missing: <code>{decodeURIComponent(missing)}</code>
+            </p>
+          )}
         </div>
       )}
 
@@ -79,7 +85,7 @@ export default async function QuickBooksSettingsPage({
             <code>QBO_REDIRECT_URI</code>, and <code>QBO_ENVIRONMENT</code> to your environment variables (Vercel
             dashboard or <code>.env.local</code>). Then create an app at{' '}
             <span className="font-mono">developer.intuit.com</span> and set your redirect URI to{' '}
-            <code>https://triplejmetal.com/api/qbo/callback</code>.
+            <code>https://www.triplejmetaltx.com/api/qbo/callback</code>.
           </div>
         )}
       </div>

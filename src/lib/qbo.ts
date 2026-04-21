@@ -25,6 +25,25 @@ export const QBO_TOKEN_URL = 'https://oauth.platform.intuit.com/oauth2/v1/tokens
 
 export const QBO_SCOPES = 'com.intuit.quickbooks.accounting'
 
+type QboRequiredEnv =
+  | 'QBO_CLIENT_ID'
+  | 'QBO_CLIENT_SECRET'
+  | 'QBO_REDIRECT_URI'
+  | 'QBO_ENVIRONMENT'
+
+export function getMissingQboEnv(): QboRequiredEnv[] {
+  const required: QboRequiredEnv[] = [
+    'QBO_CLIENT_ID',
+    'QBO_CLIENT_SECRET',
+    'QBO_REDIRECT_URI',
+    'QBO_ENVIRONMENT',
+  ]
+  return required.filter((key) => {
+    const value = process.env[key]
+    return !value || !value.trim()
+  })
+}
+
 // ── Token management ──────────────────────────────────────────────────────────
 
 export type QboTokenRow = {

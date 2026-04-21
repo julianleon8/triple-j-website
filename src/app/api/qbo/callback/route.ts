@@ -1,10 +1,22 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
-import { saveTokens, QBO_TOKEN_URL } from '@/lib/qbo'
+import { saveTokens, QBO_TOKEN_URL, getMissingQboEnv } from '@/lib/qbo'
 
 export const dynamic = 'force-dynamic'
 
 export async function GET(request: NextRequest) {
+  const missing = getMissingQboEnv()
+  if (missing.length > 0) {
+    return NextResponse.redirect(
+      new URL(
+        `/dashboard/settings/quickbooks?error=missing_config&missing=${encodeURIComponent(
+          missing.join(',')
+        )}`,
+        request.url
+      )
+    )
+  }
+
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return NextResponse.redirect(new URL('/login', request.url))
