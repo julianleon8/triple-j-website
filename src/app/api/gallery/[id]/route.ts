@@ -52,7 +52,9 @@ export async function PATCH(
   return NextResponse.json({ item: data })
 }
 
-// DELETE /api/gallery/[id] — remove from DB and Storage
+// DELETE /api/gallery/[id] — remove item + Storage objects for every child photo.
+// Collect storage paths from gallery_photos BEFORE the item delete; the FK
+// cascade drops those rows along with the item.
 export async function DELETE(
   _request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
@@ -63,12 +65,10 @@ export async function DELETE(
 
   const { id } = await params
 
-  // Fetch image_url so we can remove from Storage if applicable
-  const { data: item } = await getAdminClient()
-    .from('gallery_items')
+  const { data: photos } = await getAdminClient()
+    .from('gallery_photos')
     .select('image_url')
-    .eq('id', id)
-    .single()
+    .eq('gallery_item_id', id)
 
   const { error } = await getAdminClient()
     .from('gallery_items')
@@ -77,12 +77,15 @@ export async function DELETE(
 
   if (error) return NextResponse.json({ error: 'Delete failed' }, { status: 500 })
 
-  // Remove from Supabase Storage if it's a storage URL
-  if (item?.image_url?.includes('supabase.co/storage')) {
-    const storagePath = item.image_url.split('/gallery/')[1]
-    if (storagePath) {
-      await getAdminClient().storage.from('gallery').remove([storagePath])
-    }
+  const storagePaths = (photos ?? [])
+    .map((p) => {
+      if (!p.image_url?.includes('supabase.co/storage')) return null
+      return p.image_url.split('/gallery/')[1] ?? null
+    })
+    .filter((path): path is string => path !== null)
+
+  if (storagePaths.length > 0) {
+    await getAdminClient().storage.from('gallery').remove(storagePaths)
   }
 
   return NextResponse.json({ success: true })

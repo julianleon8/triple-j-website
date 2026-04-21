@@ -15,13 +15,11 @@ type GalleryPhoto = {
 
 function pickCover(
   photos: GalleryPhoto[] | null | undefined,
-  fallbackUrl: string,
-  fallbackAlt: string | null,
-): { url: string; alt: string | null } {
+): { url: string; alt: string | null } | null {
   const list = photos ?? [];
   const cover = list.find((p) => p.is_cover) ?? list[0];
-  if (cover) return { url: cover.image_url, alt: cover.alt_text };
-  return { url: fallbackUrl, alt: fallbackAlt };
+  if (!cover) return null;
+  return { url: cover.image_url, alt: cover.alt_text };
 }
 
 export async function Gallery() {
@@ -29,7 +27,7 @@ export async function Gallery() {
     .from("gallery_items")
     .select(
       `
-      id, image_url, alt_text, title, city, is_featured,
+      id, alt_text, title, city, is_featured,
       gallery_photos ( id, image_url, alt_text, sort_order, is_cover )
       `,
     )
@@ -70,11 +68,8 @@ export async function Gallery() {
             picks up the featured item naturally. */}
         <div className="mt-12 grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 auto-rows-[180px] md:auto-rows-[220px]">
           {(photos ?? []).map((p, idx) => {
-            const cover = pickCover(
-              p.gallery_photos as GalleryPhoto[] | null,
-              p.image_url,
-              p.alt_text,
-            );
+            const cover = pickCover(p.gallery_photos as GalleryPhoto[] | null);
+            if (!cover) return null;
             return (
               <Link
                 key={p.id}

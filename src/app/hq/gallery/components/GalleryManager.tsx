@@ -32,7 +32,6 @@ type GalleryItem = {
   type: string
   tag: string
   alt_text: string
-  image_url: string
   sort_order: number
   is_active: boolean
   is_featured: boolean
@@ -61,9 +60,9 @@ function sortPhotos(photos: Photo[] | null | undefined): Photo[] {
   })
 }
 
-function coverUrlOf(item: GalleryItem): string {
+function coverUrlOf(item: GalleryItem): string | null {
   const sorted = sortPhotos(item.gallery_photos)
-  return sorted[0]?.image_url ?? item.image_url
+  return sorted[0]?.image_url ?? null
 }
 
 function ColorSelect({
@@ -484,14 +483,20 @@ export default function GalleryManager({ initialItems }: { initialItems: Gallery
               >
                 {/* Thumbnail */}
                 <div className="relative aspect-[4/3] bg-gray-100">
-                  <Image
-                    src={coverUrl}
-                    alt={item.alt_text || item.title}
-                    fill
-                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                    className="object-cover"
-                    unoptimized={coverUrl.startsWith('/')}
-                  />
+                  {coverUrl ? (
+                    <Image
+                      src={coverUrl}
+                      alt={item.alt_text || item.title}
+                      fill
+                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                      className="object-cover"
+                      unoptimized={coverUrl.startsWith('/')}
+                    />
+                  ) : (
+                    <div className="absolute inset-0 flex items-center justify-center text-xs text-gray-400">
+                      No photos yet
+                    </div>
+                  )}
                   {item.is_featured && (
                     <span className="absolute top-2 left-2 bg-amber-500 text-white text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full shadow">
                       Featured

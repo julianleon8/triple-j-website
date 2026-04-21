@@ -75,14 +75,8 @@ export default async function GalleryDetailPage(
   if (!item) notFound()
 
   const photos = sortPhotos(item.gallery_photos ?? [])
-  const cover: GalleryPhoto =
-    photos[0] ?? {
-      id: 'fallback',
-      image_url: item.image_url,
-      alt_text: item.alt_text,
-      sort_order: 0,
-      is_cover: true,
-    }
+  if (photos.length === 0) notFound()
+  const cover = photos[0]
   const rest = photos.slice(1)
 
   const colors = describeGalleryColors({

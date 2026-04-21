@@ -18,13 +18,11 @@ type GalleryPhoto = {
 
 function pickCover(
   photos: GalleryPhoto[] | null | undefined,
-  fallbackUrl: string,
-  fallbackAlt: string | null,
-): { url: string; alt: string | null } {
+): { url: string; alt: string | null } | null {
   const list = photos ?? []
   const cover = list.find((p) => p.is_cover) ?? list[0]
-  if (cover) return { url: cover.image_url, alt: cover.alt_text }
-  return { url: fallbackUrl, alt: fallbackAlt }
+  if (!cover) return null
+  return { url: cover.image_url, alt: cover.alt_text }
 }
 
 export const metadata: Metadata = {
@@ -111,11 +109,8 @@ export default async function GalleryPage() {
         <Container size="wide">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {(projects ?? []).map((project) => {
-              const cover = pickCover(
-                project.gallery_photos as GalleryPhoto[] | null,
-                project.image_url,
-                project.alt_text,
-              )
+              const cover = pickCover(project.gallery_photos as GalleryPhoto[] | null)
+              if (!cover) return null
               const colorLine = describeGalleryColors({
                 panelColor: project.panel_color,
                 panelColorLine: project.panel_color_line,

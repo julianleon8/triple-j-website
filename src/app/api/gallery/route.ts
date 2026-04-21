@@ -78,7 +78,6 @@ export async function POST(request: NextRequest) {
       type,
       tag,
       alt_text,
-      image_url: publicUrl,
       sort_order,
       is_featured,
       panel_color: panel?.color ?? null,
