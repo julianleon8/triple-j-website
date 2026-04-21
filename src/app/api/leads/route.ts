@@ -132,7 +132,7 @@ export async function POST(request: NextRequest) {
       : ''
 
     await resend.emails.send({
-      from: 'Triple J Metal <leads@triplejmetal.com>',
+      from: 'Triple J Metal <leads@triplejmetaltx.com>',
       to: process.env.OWNER_EMAIL!.split(','),
       subject: `🔔 New Lead: ${data.name} — ${city} — ${data.service_type}${data.is_military ? ' ⭐' : ''}${data.timeline === 'asap' ? ' ⚡' : ''}`,
       html: `
@@ -166,7 +166,7 @@ export async function POST(request: NextRequest) {
     // ── Customer confirmation ─────────────────────────────────────────────
     if (data.email) {
       await resend.emails.send({
-        from: 'Triple J Metal <no-reply@triplejmetal.com>',
+        from: 'Triple J Metal <no-reply@triplejmetaltx.com>',
         to: data.email,
         subject: 'We got your quote request — Triple J Metal LLC',
         html: `

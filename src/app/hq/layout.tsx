@@ -12,7 +12,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           <Link href="/hq/quotes" className="hover:underline">Quotes</Link>
           <Link href="/hq/jobs" className="hover:underline">Jobs</Link>
           <Link href="/hq/gallery" className="hover:underline">Gallery</Link>
-          <Link href="/dashboard/settings/quickbooks" className="hover:underline">QuickBooks</Link>
+          <Link href="/hq/settings/quickbooks" className="hover:underline">QuickBooks</Link>
         </div>
       </nav>
       <main className="p-6 max-w-7xl mx-auto">{children}</main>
