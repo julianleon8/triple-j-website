@@ -41,22 +41,22 @@ export default function EditCustomerForm({ customer, onSave, onCancel }: Props) 
   }
 
   return (
-    <tr className="bg-yellow-50">
+    <tr className="bg-[color:var(--color-brand-50)]">
       <td colSpan={7} className="px-4 py-4">
         <form onSubmit={handleSubmit} className="grid grid-cols-2 md:grid-cols-3 gap-3">
           <input name="name" defaultValue={customer.name} placeholder="Name" required
-            className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-yellow-400" />
+            className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[color:var(--color-brand-500)]" />
           <input name="phone" defaultValue={customer.phone} placeholder="Phone" required
-            className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-yellow-400" />
+            className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[color:var(--color-brand-500)]" />
           <input name="email" defaultValue={customer.email ?? ''} placeholder="Email"
-            className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-yellow-400" />
+            className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[color:var(--color-brand-500)]" />
           <input name="city" defaultValue={customer.city ?? ''} placeholder="City"
-            className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-yellow-400" />
+            className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[color:var(--color-brand-500)]" />
           <textarea name="notes" defaultValue={customer.notes ?? ''} placeholder="Notes" rows={1}
-            className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-yellow-400 col-span-2 resize-none" />
+            className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[color:var(--color-brand-500)] col-span-2 resize-none" />
           <div className="flex gap-2 items-center">
             <button type="submit"
-              className="bg-yellow-500 hover:bg-yellow-400 text-black text-xs font-bold px-4 py-2 rounded-lg transition">
+              className="bg-[color:var(--color-brand-600)] hover:bg-[color:var(--color-brand-700)] text-white text-xs font-bold px-4 py-2 rounded-lg transition">
               Save
             </button>
             <button type="button" onClick={onCancel}

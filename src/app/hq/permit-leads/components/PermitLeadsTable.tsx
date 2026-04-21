@@ -38,7 +38,7 @@ const JURISDICTION_LABELS: Record<string, string> = {
 
 const STATUS_STYLES: Record<string, string> = {
   new: 'bg-blue-100 text-blue-700',
-  called: 'bg-yellow-100 text-yellow-700',
+  called: 'bg-amber-100 text-amber-700',
   qualified: 'bg-purple-100 text-purple-700',
   junk: 'bg-gray-100 text-gray-500',
   won: 'bg-green-100 text-green-700',
@@ -58,7 +58,7 @@ const STATUS_FILTERS = [
 function scoreColor(score: number | null): string {
   if (score === null) return 'bg-gray-100 text-gray-400';
   if (score >= 7) return 'bg-green-100 text-green-700';
-  if (score >= 4) return 'bg-yellow-100 text-yellow-700';
+  if (score >= 4) return 'bg-amber-100 text-amber-700';
   return 'bg-gray-100 text-gray-500';
 }
 

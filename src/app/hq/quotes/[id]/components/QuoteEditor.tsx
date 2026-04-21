@@ -109,7 +109,7 @@ export default function QuoteEditor({ quote, customers }: Props) {
               value={validUntil}
               onChange={e => setValidUntil(e.target.value)}
               disabled={!isDraft}
-              className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-yellow-400 disabled:bg-gray-50 disabled:text-gray-500"
+              className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[color:var(--color-brand-500)] disabled:bg-gray-50 disabled:text-gray-500"
             />
           </div>
         </div>
@@ -120,7 +120,7 @@ export default function QuoteEditor({ quote, customers }: Props) {
             onChange={e => setNotes(e.target.value)}
             disabled={!isDraft}
             rows={2}
-            className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-yellow-400 resize-none disabled:bg-gray-50 disabled:text-gray-500"
+            className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[color:var(--color-brand-500)] resize-none disabled:bg-gray-50 disabled:text-gray-500"
           />
         </div>
       </div>
@@ -141,21 +141,21 @@ export default function QuoteEditor({ quote, customers }: Props) {
               value={item.description}
               onChange={e => updateItem(i, 'description', e.target.value)}
               disabled={!isDraft}
-              className="col-span-6 border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-yellow-400 disabled:bg-gray-50"
+              className="col-span-6 border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[color:var(--color-brand-500)] disabled:bg-gray-50"
             />
             <input
               type="number" min="0.01" step="0.01"
               value={item.quantity}
               onChange={e => updateItem(i, 'quantity', parseFloat(e.target.value) || 0)}
               disabled={!isDraft}
-              className="col-span-2 border border-gray-200 rounded-lg px-3 py-2 text-sm text-center focus:outline-none focus:ring-2 focus:ring-yellow-400 disabled:bg-gray-50"
+              className="col-span-2 border border-gray-200 rounded-lg px-3 py-2 text-sm text-center focus:outline-none focus:ring-2 focus:ring-[color:var(--color-brand-500)] disabled:bg-gray-50"
             />
             <input
               type="number" min="0" step="0.01"
               value={item.unit_price}
               onChange={e => updateItem(i, 'unit_price', parseFloat(e.target.value) || 0)}
               disabled={!isDraft}
-              className="col-span-2 border border-gray-200 rounded-lg px-3 py-2 text-sm text-right focus:outline-none focus:ring-2 focus:ring-yellow-400 disabled:bg-gray-50"
+              className="col-span-2 border border-gray-200 rounded-lg px-3 py-2 text-sm text-right focus:outline-none focus:ring-2 focus:ring-[color:var(--color-brand-500)] disabled:bg-gray-50"
             />
             <div className="col-span-1 text-right text-sm font-medium text-gray-700">
               ${(item.quantity * item.unit_price).toFixed(2)}
@@ -190,7 +190,7 @@ export default function QuoteEditor({ quote, customers }: Props) {
       {isDraft && (
         <div className="flex gap-3 flex-wrap">
           <button type="button" onClick={handleSave} disabled={isSaving}
-            className="bg-yellow-500 hover:bg-yellow-400 disabled:bg-yellow-200 text-black font-bold px-6 py-2.5 rounded-lg transition text-sm">
+            className="bg-[color:var(--color-brand-600)] hover:bg-[color:var(--color-brand-700)] disabled:bg-[color:var(--color-brand-300)] text-white font-bold px-6 py-2.5 rounded-lg transition text-sm">
             {isSaving ? 'Saving…' : 'Save Changes'}
           </button>
           {!confirmSend ? (

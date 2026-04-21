@@ -78,7 +78,7 @@ export default function CustomersTable({ initialCustomers }: { initialCustomers:
                   <td className="px-4 py-3">
                     <button
                       onClick={() => setEditingId(editingId === customer.id ? null : customer.id)}
-                      className="text-xs text-yellow-700 bg-yellow-100 hover:bg-yellow-200 px-3 py-1 rounded-full font-semibold transition"
+                      className="text-xs text-[color:var(--color-brand-700)] bg-[color:var(--color-brand-50)] hover:bg-[color:var(--color-brand-100)] px-3 py-1 rounded-full font-semibold transition"
                     >
                       {editingId === customer.id ? 'Cancel' : 'Edit'}
                     </button>

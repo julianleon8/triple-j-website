@@ -2,6 +2,8 @@ export const dynamic = 'force-dynamic'
 
 import { notFound } from 'next/navigation'
 import { getAdminClient } from '@/lib/supabase/admin'
+import { Breadcrumbs } from '../../components/Breadcrumbs'
+import { PageHeader } from '../../components/PageHeader'
 import QuoteEditor from './components/QuoteEditor'
 
 export default async function QuoteDetailPage({
@@ -27,7 +29,12 @@ export default async function QuoteDetailPage({
 
   return (
     <div>
-      <h1 className="text-2xl font-bold mb-6">Quote {quote.quote_number}</h1>
+      <Breadcrumbs items={[{ label: 'Quotes', href: '/hq/quotes' }, { label: quote.quote_number }]} />
+      <PageHeader
+        eyebrow="Sales"
+        title={`Quote ${quote.quote_number}`}
+        subtitle={quote.customers?.name ? `For ${quote.customers.name}` : undefined}
+      />
       <QuoteEditor quote={quote} customers={customers ?? []} />
     </div>
   )

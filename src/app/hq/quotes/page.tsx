@@ -1,7 +1,8 @@
 export const dynamic = 'force-dynamic'
 
-import Link from 'next/link'
 import { getAdminClient } from '@/lib/supabase/admin'
+import { ButtonLink } from '@/components/ui/Button'
+import { PageHeader } from '../components/PageHeader'
 import QuotesTable from './components/QuotesTable'
 
 export default async function QuotesPage() {
@@ -12,15 +13,16 @@ export default async function QuotesPage() {
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold">Quotes</h1>
-        <Link
-          href="/hq/quotes/new"
-          className="bg-yellow-500 hover:bg-yellow-400 text-black font-bold text-sm px-4 py-2 rounded-lg transition"
-        >
-          + New Quote
-        </Link>
-      </div>
+      <PageHeader
+        eyebrow="Sales"
+        title="Quotes"
+        subtitle="Drafts, sent, accepted — every quote in one place."
+        actions={
+          <ButtonLink href="/hq/quotes/new" size="sm">
+            + New Quote
+          </ButtonLink>
+        }
+      />
       <QuotesTable quotes={quotes ?? []} />
     </div>
   )

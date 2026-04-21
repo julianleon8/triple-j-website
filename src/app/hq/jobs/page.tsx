@@ -1,6 +1,7 @@
 export const dynamic = 'force-dynamic'
 
 import { getAdminClient } from '@/lib/supabase/admin'
+import { PageHeader } from '../components/PageHeader'
 import JobsTable from './components/JobsTable'
 
 export default async function JobsPage() {
@@ -11,7 +12,11 @@ export default async function JobsPage() {
 
   return (
     <div>
-      <h1 className="text-2xl font-bold mb-6">Jobs</h1>
+      <PageHeader
+        eyebrow="Operations"
+        title="Jobs"
+        subtitle="Scheduled, in progress, and completed builds."
+      />
       <JobsTable initialJobs={jobs ?? []} />
     </div>
   )

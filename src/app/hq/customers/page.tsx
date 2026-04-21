@@ -1,6 +1,7 @@
 export const dynamic = 'force-dynamic'
 
 import { getAdminClient } from '@/lib/supabase/admin'
+import { PageHeader } from '../components/PageHeader'
 import CustomersTable from './components/CustomersTable'
 
 export default async function CustomersPage() {
@@ -11,7 +12,11 @@ export default async function CustomersPage() {
 
   return (
     <div>
-      <h1 className="text-2xl font-bold mb-6">Customers</h1>
+      <PageHeader
+        eyebrow="Relationships"
+        title="Customers"
+        subtitle="Everyone we've earned — past, present, and pipeline."
+      />
       <CustomersTable initialCustomers={customers ?? []} />
     </div>
   )

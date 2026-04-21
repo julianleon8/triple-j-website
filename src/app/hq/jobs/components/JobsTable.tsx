@@ -15,7 +15,7 @@ type Job = {
 
 const STATUS_STYLES: Record<string, string> = {
   scheduled: 'bg-blue-100 text-blue-700',
-  in_progress: 'bg-yellow-100 text-yellow-700',
+  in_progress: 'bg-amber-100 text-amber-700',
   completed: 'bg-green-100 text-green-700',
   on_hold: 'bg-orange-100 text-orange-700',
   cancelled: 'bg-red-100 text-red-700',
@@ -71,7 +71,7 @@ export default function JobsTable({ initialJobs }: { initialJobs: Job[] }) {
                   value={job.status}
                   disabled={updating === job.id}
                   onChange={e => handleStatusChange(job.id, e.target.value, job.status)}
-                  className={`px-2 py-1 rounded-full text-xs font-semibold border-0 cursor-pointer focus:outline-none focus:ring-2 focus:ring-yellow-400 disabled:opacity-50 ${STATUS_STYLES[job.status] ?? 'bg-gray-100 text-gray-600'}`}
+                  className={`px-2 py-1 rounded-full text-xs font-semibold border-0 cursor-pointer focus:outline-none focus:ring-2 focus:ring-[color:var(--color-brand-500)] disabled:opacity-50 ${STATUS_STYLES[job.status] ?? 'bg-gray-100 text-gray-600'}`}
                 >
                   {STATUS_OPTIONS.map(s => (
                     <option key={s} value={s} className="bg-white text-gray-800">{s.replace('_', ' ')}</option>

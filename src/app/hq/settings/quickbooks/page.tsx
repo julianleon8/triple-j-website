@@ -67,7 +67,7 @@ export default async function QuickBooksSettingsPage({
           className={`inline-flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-semibold transition ${
             isConnected
               ? 'bg-gray-100 hover:bg-gray-200 text-gray-700'
-              : 'bg-yellow-500 hover:bg-yellow-400 text-black'
+              : 'bg-[color:var(--color-brand-600)] hover:bg-[color:var(--color-brand-700)] text-white'
           }`}
         >
           {isConnected ? 'Reconnect QuickBooks' : 'Connect QuickBooks'}

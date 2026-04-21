@@ -116,7 +116,7 @@ export default function QuoteBuilderForm({ customers }: Props) {
             <select
               value={customerId}
               onChange={e => setCustomerId(e.target.value)}
-              className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-yellow-400"
+              className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[color:var(--color-brand-500)]"
             >
               <option value="">Select a customer…</option>
               {customers.map(c => (
@@ -130,7 +130,7 @@ export default function QuoteBuilderForm({ customers }: Props) {
               type="date"
               value={validUntil}
               onChange={e => setValidUntil(e.target.value)}
-              className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-yellow-400"
+              className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[color:var(--color-brand-500)]"
             />
           </div>
         </div>
@@ -141,7 +141,7 @@ export default function QuoteBuilderForm({ customers }: Props) {
             onChange={e => setNotes(e.target.value)}
             rows={2}
             placeholder="Payment terms, job details, special instructions…"
-            className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-yellow-400 resize-none"
+            className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[color:var(--color-brand-500)] resize-none"
           />
         </div>
       </div>
@@ -153,7 +153,7 @@ export default function QuoteBuilderForm({ customers }: Props) {
           <button
             type="button"
             onClick={loadTemplates}
-            className="text-xs text-yellow-700 bg-yellow-100 hover:bg-yellow-200 px-3 py-1.5 rounded-lg font-semibold transition"
+            className="text-xs text-[color:var(--color-brand-700)] bg-[color:var(--color-brand-50)] hover:bg-[color:var(--color-brand-100)] px-3 py-1.5 rounded-lg font-semibold transition"
           >
             + Add from Template
           </button>
@@ -161,10 +161,10 @@ export default function QuoteBuilderForm({ customers }: Props) {
 
         {/* Template picker */}
         {showTemplates && (
-          <div className="mb-4 border border-yellow-200 rounded-lg overflow-hidden">
-            <div className="bg-yellow-50 px-4 py-2 flex justify-between items-center">
-              <span className="text-xs font-semibold text-yellow-800">Select a template</span>
-              <button onClick={() => setShowTemplates(false)} className="text-xs text-yellow-600 hover:text-yellow-800">✕</button>
+          <div className="mb-4 border border-[color:var(--color-brand-100)] rounded-lg overflow-hidden">
+            <div className="bg-[color:var(--color-brand-50)] px-4 py-2 flex justify-between items-center">
+              <span className="text-xs font-semibold text-[color:var(--color-brand-800)]">Select a template</span>
+              <button onClick={() => setShowTemplates(false)} className="text-xs text-[color:var(--color-brand-600)] hover:text-[color:var(--color-brand-800)]">✕</button>
             </div>
             {templates.length === 0
               ? <p className="px-4 py-3 text-sm text-gray-400">No templates found.</p>
@@ -172,7 +172,7 @@ export default function QuoteBuilderForm({ customers }: Props) {
                 <button
                   key={t.id}
                   onClick={() => applyTemplate(t)}
-                  className="w-full text-left px-4 py-3 text-sm hover:bg-yellow-50 border-t border-yellow-100 transition"
+                  className="w-full text-left px-4 py-3 text-sm hover:bg-[color:var(--color-brand-50)] border-t border-[color:var(--color-brand-100)] transition"
                 >
                   <span className="font-medium">{t.name}</span>
                 </button>
@@ -196,7 +196,7 @@ export default function QuoteBuilderForm({ customers }: Props) {
               value={item.description}
               onChange={e => updateItem(i, 'description', e.target.value)}
               placeholder="Description"
-              className="col-span-6 border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-yellow-400"
+              className="col-span-6 border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[color:var(--color-brand-500)]"
             />
             <input
               type="number"
@@ -204,7 +204,7 @@ export default function QuoteBuilderForm({ customers }: Props) {
               step="0.01"
               value={item.quantity}
               onChange={e => updateItem(i, 'quantity', parseFloat(e.target.value) || 0)}
-              className="col-span-2 border border-gray-200 rounded-lg px-3 py-2 text-sm text-center focus:outline-none focus:ring-2 focus:ring-yellow-400"
+              className="col-span-2 border border-gray-200 rounded-lg px-3 py-2 text-sm text-center focus:outline-none focus:ring-2 focus:ring-[color:var(--color-brand-500)]"
             />
             <input
               type="number"
@@ -212,7 +212,7 @@ export default function QuoteBuilderForm({ customers }: Props) {
               step="0.01"
               value={item.unit_price}
               onChange={e => updateItem(i, 'unit_price', parseFloat(e.target.value) || 0)}
-              className="col-span-2 border border-gray-200 rounded-lg px-3 py-2 text-sm text-right focus:outline-none focus:ring-2 focus:ring-yellow-400"
+              className="col-span-2 border border-gray-200 rounded-lg px-3 py-2 text-sm text-right focus:outline-none focus:ring-2 focus:ring-[color:var(--color-brand-500)]"
             />
             <div className="col-span-1 text-right text-sm font-medium text-gray-700">
               ${(item.quantity * item.unit_price).toFixed(2)}
@@ -254,7 +254,7 @@ export default function QuoteBuilderForm({ customers }: Props) {
             type="button"
             onClick={handleSave}
             disabled={isSaving}
-            className="bg-yellow-500 hover:bg-yellow-400 disabled:bg-yellow-200 text-black font-bold px-6 py-2.5 rounded-lg transition text-sm"
+            className="bg-[color:var(--color-brand-600)] hover:bg-[color:var(--color-brand-700)] disabled:bg-[color:var(--color-brand-300)] text-white font-bold px-6 py-2.5 rounded-lg transition text-sm"
           >
             {isSaving ? 'Saving…' : 'Save Draft'}
           </button>
