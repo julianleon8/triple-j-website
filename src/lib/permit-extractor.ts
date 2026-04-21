@@ -94,19 +94,45 @@ function resolveUrl(href: string, indexUrl: string): string {
   }
 }
 
+const MONTH_INDEX: Record<string, number> = {
+  january: 0, february: 1, march: 2, april: 3, may: 4, june: 5,
+  july: 6, august: 7, september: 8, october: 9, november: 10, december: 11,
+  jan: 0, feb: 1, mar: 2, apr: 3, jun: 5, jul: 6, aug: 7, sep: 8, sept: 8, oct: 9, nov: 10, dec: 11,
+};
+
 function inferDateFromPath(href: string): Date | null {
-  // Matches 04-15-2026, 04_15_2026, 2026-04-15, April-15-2026
-  const numeric = href.match(/(\d{1,2})[-_\/](\d{1,2})[-_\/](\d{4})/);
+  const name = filenameOf(href);
+
+  // 04-15-2026, 04_15_2026
+  const numeric = name.match(/(\d{1,2})[-_\/](\d{1,2})[-_\/](\d{4})/);
   if (numeric) {
     const [, m, d, y] = numeric;
     const date = new Date(Number(y), Number(m) - 1, Number(d));
     if (!Number.isNaN(date.getTime())) return date;
   }
-  const iso = href.match(/(\d{4})[-_\/](\d{1,2})[-_\/](\d{1,2})/);
+  // 2026-04-15
+  const iso = name.match(/(\d{4})[-_\/](\d{1,2})[-_\/](\d{1,2})/);
   if (iso) {
     const [, y, m, d] = iso;
     const date = new Date(Number(y), Number(m) - 1, Number(d));
     if (!Number.isNaN(date.getTime())) return date;
+  }
+  // July_2025, April-2024 (Harker Heights EDR pattern)
+  const monthYear = name.match(/\b(january|february|march|april|may|june|july|august|september|october|november|december|jan|feb|mar|apr|jun|jul|aug|sept?|oct|nov|dec)[-_ ]?(\d{4})\b/i);
+  if (monthYear) {
+    const [, monthName, y] = monthYear;
+    const m = MONTH_INDEX[monthName.toLowerCase()];
+    if (m !== undefined) return new Date(Number(y), m, 1);
+  }
+  // 180730agenda.pdf / 260415agenda.pdf — 6-digit YYMMDD prefix (Bell County)
+  const yymmdd = name.match(/^(\d{2})(\d{2})(\d{2})/);
+  if (yymmdd) {
+    const [, yy, mm, dd] = yymmdd;
+    const y = 2000 + Number(yy);
+    const date = new Date(y, Number(mm) - 1, Number(dd));
+    if (!Number.isNaN(date.getTime()) && Number(mm) >= 1 && Number(mm) <= 12 && Number(dd) >= 1 && Number(dd) <= 31) {
+      return date;
+    }
   }
   return null;
 }
