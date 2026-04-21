@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { getAdminClient } from '@/lib/supabase/admin'
 import { Resend } from 'resend'
-import QuoteEmail from '@/emails/QuoteEmail'
+import QuoteEmail, { quoteEmailText } from '@/emails/QuoteEmail'
 
 export const dynamic = 'force-dynamic'
 
@@ -32,22 +32,29 @@ export async function POST(
 
   const acceptUrl = `${process.env.NEXT_PUBLIC_SITE_URL}/quotes/${quote.accept_token}`
 
+  const emailProps = {
+    customerName: quote.customers.name,
+    quoteNumber: quote.quote_number,
+    lineItems: quote.quote_line_items,
+    subtotal: quote.subtotal,
+    taxAmount: quote.tax_amount,
+    total: quote.total,
+    validUntil: quote.valid_until,
+    notes: quote.notes ?? undefined,
+    acceptUrl,
+  }
+
   await resend.emails.send({
     from: 'Triple J Metal <quotes@triplejmetaltx.com>',
     replyTo: 'julianleon@triplejmetaltx.com',
     to: quote.customers.email,
     subject: `Your Quote ${quote.quote_number} from Triple J Metal`,
-    react: QuoteEmail({
-      customerName: quote.customers.name,
-      quoteNumber: quote.quote_number,
-      lineItems: quote.quote_line_items,
-      subtotal: quote.subtotal,
-      taxAmount: quote.tax_amount,
-      total: quote.total,
-      validUntil: quote.valid_until,
-      notes: quote.notes ?? undefined,
-      acceptUrl,
-    }),
+    react: QuoteEmail(emailProps),
+    text: quoteEmailText(emailProps),
+    tags: [
+      { name: 'quote_id', value: id },
+      { name: 'email_type', value: 'quote_sent' },
+    ],
   })
 
   const sentAt = new Date().toISOString()

@@ -47,6 +47,7 @@ export default async function DashboardPage() {
     { data: jobs },
     { data: permitLeads },
     { data: recentLeadsForTable },
+    { data: recentEmailEvents },
   ] = await Promise.all([
     db.from('leads').select('status, timeline, created_at'),
     db.from('customers').select('created_at, lead_id'),
@@ -54,7 +55,20 @@ export default async function DashboardPage() {
     db.from('jobs').select('status, total_contract, completed_date, scheduled_date'),
     db.from('permit_leads').select('status'),
     db.from('leads').select('*').order('created_at', { ascending: false }).limit(100),
+    db
+      .from('email_events')
+      .select('lead_id, event_type, occurred_at')
+      .not('lead_id', 'is', null)
+      .in('event_type', ['email.opened', 'email.clicked', 'email.delivered'])
+      .order('occurred_at', { ascending: false })
+      .limit(500),
   ])
+
+  // Most-recent event per lead (first match wins because rows come back desc)
+  const latestEventByLead: Record<string, { event_type: string; occurred_at: string }> = {}
+  for (const e of (recentEmailEvents ?? []) as { lead_id: string; event_type: string; occurred_at: string }[]) {
+    if (!latestEventByLead[e.lead_id]) latestEventByLead[e.lead_id] = { event_type: e.event_type, occurred_at: e.occurred_at }
+  }
 
   const L = (leads ?? []) as Lead[]
   const C = (customers ?? []) as Customer[]
@@ -190,7 +204,7 @@ export default async function DashboardPage() {
       </div>
 
       <h2 className="text-lg font-bold mb-3">Recent Leads</h2>
-      <LeadsTable initialLeads={recentLeadsForTable ?? []} />
+      <LeadsTable initialLeads={recentLeadsForTable ?? []} emailEvents={latestEventByLead} />
     </div>
   )
 }

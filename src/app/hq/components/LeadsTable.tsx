@@ -42,7 +42,34 @@ const TIMELINE_LABELS: Record<string, string> = {
   planning:   '🗓️ Planning',
 }
 
-export default function LeadsTable({ initialLeads }: { initialLeads: Lead[] }) {
+type EmailEvent = { event_type: string; occurred_at: string }
+
+function relativeTime(iso: string): string {
+  const ms = Date.now() - new Date(iso).getTime()
+  const mins = Math.round(ms / 60_000)
+  if (mins < 1) return 'just now'
+  if (mins < 60) return `${mins}m ago`
+  const hrs = Math.round(mins / 60)
+  if (hrs < 24) return `${hrs}h ago`
+  return `${Math.round(hrs / 24)}d ago`
+}
+
+function emailIndicator(event?: EmailEvent) {
+  if (!event) return null
+  const t = event.event_type
+  if (t === 'email.clicked') return { emoji: '🔗', label: 'Clicked', color: 'text-green-700 bg-green-50' }
+  if (t === 'email.opened')  return { emoji: '📬', label: 'Opened',  color: 'text-blue-700 bg-blue-50' }
+  if (t === 'email.delivered') return { emoji: '📨', label: 'Delivered', color: 'text-gray-600 bg-gray-50' }
+  return null
+}
+
+export default function LeadsTable({
+  initialLeads,
+  emailEvents = {},
+}: {
+  initialLeads: Lead[]
+  emailEvents?: Record<string, EmailEvent>
+}) {
   const [leads, setLeads] = useState(initialLeads)
   const [updating, setUpdating] = useState<string | null>(null)
   const [lastRefresh, setLastRefresh] = useState<Date>(new Date())
@@ -144,6 +171,16 @@ export default function LeadsTable({ initialLeads }: { initialLeads: Lead[] }) {
                 {lead.is_military && (
                   <span className="text-[10px] font-bold text-blue-600 bg-blue-50 px-1.5 py-0.5 rounded">⭐ MIL/FR</span>
                 )}
+                {(() => {
+                  const ind = emailIndicator(emailEvents[lead.id])
+                  if (!ind) return null
+                  return (
+                    <div className={`mt-1 inline-flex items-center gap-1 text-[10px] font-medium px-1.5 py-0.5 rounded ${ind.color}`}>
+                      <span>{ind.emoji}</span>
+                      <span>{ind.label} {relativeTime(emailEvents[lead.id].occurred_at)}</span>
+                    </div>
+                  )
+                })()}
               </td>
               <td className="px-4 py-3">
                 <a href={`tel:${lead.phone}`} className="text-blue-600 hover:underline font-mono whitespace-nowrap">

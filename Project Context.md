@@ -73,9 +73,12 @@ _Historical: Previously listed "all code committed to GitHub, Vercel connected b
    - RESEND_API_KEY, OWNER_EMAIL, NEXT_PUBLIC_SITE_URL, SETUP_KEY
    - **ANTHROPIC_API_KEY** (Lead Engine — Claude permit-PDF extraction)
    - **CRON_SECRET** (Lead Engine — Vercel Cron Bearer auth)
+   - **RESEND_WEBHOOK_SECRET** (Svix `whsec_…` — verifies Resend open/click webhooks at `/api/webhooks/resend`)
 3. Update NEXT_PUBLIC_SITE_URL to real Vercel domain after first deploy
 4. Test quote form end-to-end (Supabase leads table + owner email)
 5. Run `supabase/migrations/004_permit_leads.sql` in Supabase SQL editor (Lead Engine table)
+6. Run `supabase/migrations/006_email_events.sql` in Supabase SQL editor (Resend open/click tracking)
+7. In Resend dashboard → Webhooks → add endpoint `https://triplejmetaltx.com/api/webhooks/resend`, subscribe to `email.delivered`, `email.opened`, `email.clicked`, `email.bounced`, `email.complained`, copy the `whsec_…` signing secret into `RESEND_WEBHOOK_SECRET`
 
 ### Pending / future work
 - Real Google reviews → fill testimonials.md → swap placeholder Testimonials cards
