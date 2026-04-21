@@ -273,7 +273,7 @@ Julian dropped critical context that reframes everything built today:
 
 **Brand infra locked:**
 - Domain: **triplejmetaltx.com** (Squarespace, ~$3 first-year)
-- Email: **julian@triplejmetaltx.com** (Google Workspace Basic)
+- Email: **julianleon@triplejmetaltx.com** (Google Workspace Basic)
 - Still on Wix `TripleJJMetal.com` — migration to Vercel pending
 
 **NOT yet built (tomorrow's full session):**

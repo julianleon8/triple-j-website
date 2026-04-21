@@ -45,7 +45,7 @@ Julian owns 20% equity per LegalZoom formation (paperwork verification pending �
 - Asset base: skid steer, Ram 2500, trailers all paid off. F350 at ~$900/mo. Lean overhead.
 - Team capacity: 2 in-house welders (Julian + Freddy). Can scale to $3-5M before hiring 3rd welder.
 - Cash: ~$16K incoming from recent contracts. Not broke. Full execution greenlit.
-- Domain: triplejmetaltx.com (migration DONE) · Email: julian@triplejmetaltx.com
+- Domain: triplejmetaltx.com (migration DONE) · Email: julianleon@triplejmetaltx.com
 - Lead Engine V1 MVP built (commit 2e273b5) — NOT YET DEPLOYED. Sitting on branch `claude/setup-new-project-wA6jt`.
 
 **Parallel family business — Mexicano Grill:**

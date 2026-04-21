@@ -18,7 +18,7 @@ _Last updated: 2026-04-21 (evening)_
 **Address:** 3319 Tem-Bel Ln, Temple, TX 76502
 **Phone:** 254-346-7764
 **Domain:** triplejmetaltx.com (migrated from Wix — **DONE**, professional)
-**Email:** julian@triplejmetaltx.com (Google Workspace Business Starter)
+**Email:** julianleon@triplejmetaltx.com (Google Workspace Business Starter)
 **Founded:** 2025 · 150+ projects completed · 50+ satisfied clients
 **Type:** Metal construction — welded + bolted red-iron carports, garages, barns, RV covers, house additions, lean-to patios
 **Location:** Central Texas (Temple base; serves Belton, Killeen, Harker Heights, Copperas Cove, Waco, Salado, Georgetown, Round Rock, Lampasas, Holland, Taylor, Troy, Nolanville)
