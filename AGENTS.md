@@ -22,9 +22,9 @@ This repo doubles as an Obsidian vault. The `.md` files at the root are the work
 - Supabase (Auth + Postgres + RLS) via `@supabase/ssr`
 - Resend (lead/customer email)
 - Stripe (future, phase 4)
-- Vercel (connected, **not yet deployed** — Julian must `git push origin main` from his Mac and set 7 env vars)
+- Vercel (**live** — GitHub integration auto-deploys on every push to `main`; env vars already configured)
 - MCP server: Supabase only (`.mcp.json`)
-- Repo: `julianleon8/triple-j-website` (sandbox cannot push — proxy blocks outbound git)
+- Repo: `julianleon8/triple-j-website` — push directly to `main` (authorized)
 
 ### Key source files (single sources of truth)
 - `src/lib/site.ts` — NAP, nav, services, cities. **Edit here first** for site-wide constants.
@@ -49,7 +49,7 @@ This repo doubles as an Obsidian vault. The `.md` files at the root are the work
 - **4,000 PSI concrete** (not standard 3,000 PSI) — technical authority callout on service/location pages.
 - **Design:** WolfSteel-inspired, no dark mode.
 - **ClickUp CRM:** on hold — revisit after live leads validate volume.
-- **Dashboard auth flow:** not built yet — on hold until Vercel is live.
+- **Dashboard auth flow:** not built yet — on hold (Vercel is live; revisit when needed).
 
 ### External memory systems
 - **Obsidian vault** = repo root (this file + the 8 vault `.md` files below). Working memory. Update in same turn when decisions are made.
@@ -76,4 +76,4 @@ This repo doubles as an Obsidian vault. The `.md` files at the root are the work
 - **Deep research / citations** — same rule: ask before spending tokens on multi-step research. The user prefers to spend tokens on execution, not planning.
 - **Code changes** — wait for the user's larger plan before touching `src/`. The user prefers to lay out the bigger picture first.
 - **Vault discipline** — when a decision is made or reversed in conversation, log it to `Decisions.md` in the same turn. Memory must stay in sync with reality.
-- **Git push** — sandbox proxy blocks outbound git push. Julian runs `git push origin main` from his Mac.
+- **Git push** — push directly to `main`. Vercel auto-deploys via GitHub integration on every merge to main.
