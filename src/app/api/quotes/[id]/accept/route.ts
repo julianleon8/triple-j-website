@@ -6,9 +6,10 @@ export const dynamic = 'force-dynamic'
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: Promise<{ token: string }> }
+  { params }: { params: Promise<{ id: string }> }
 ) {
-  const { token } = await params
+  const { id } = await params
+  const token = id
   const body = await request.json().catch(() => ({}))
   const action: 'accepted' | 'declined' = body.action === 'decline' ? 'declined' : 'accepted'
   const db = getAdminClient()
