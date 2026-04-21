@@ -47,3 +47,36 @@ export function describeGalleryColors(
 
   return { panel, trim, label }
 }
+
+// ─── Dashboard editor helpers ────────────────────────────────────────────────
+// Composite value "Turnium/Ash-Gray" keeps duplicate names (Ash Gray, Black,
+// Burnished Slate) distinguishable across lines. Server splits into
+// panel_color (lowercase slug) + panel_color_line (lowercase).
+
+export function colorOptionValue(c: PanelColor): string {
+  return `${c.line}/${c.slug}`
+}
+
+export function colorOptionLabel(c: PanelColor): string {
+  return `${c.name} (${c.line})`
+}
+
+export function colorValueFromDb(
+  color: string | null | undefined,
+  line: string | null | undefined,
+): string {
+  const match = resolve(color, line)
+  return match ? colorOptionValue(match) : ''
+}
+
+export type ParsedColorValue = { color: string; line: string }
+
+export function parseColorValue(
+  value: string | null | undefined,
+): ParsedColorValue | null {
+  if (!value) return null
+  const [line, slug] = value.split('/')
+  if (!line || !slug) return null
+  return { color: slug.toLowerCase(), line: line.toLowerCase() }
+}
+

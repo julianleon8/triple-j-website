@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { getAdminClient } from '@/lib/supabase/admin'
+import { parseColorValue } from '@/lib/gallery-colors'
 
 export const dynamic = 'force-dynamic'
 
@@ -29,6 +30,9 @@ export async function POST(request: NextRequest) {
   const type = (formData.get('type') as string | null)?.trim() || 'Carport'
   const tag = (formData.get('tag') as string | null)?.trim() || 'Welded'
   const alt_text = (formData.get('alt_text') as string | null)?.trim() || ''
+  const panelColorRaw = (formData.get('panel_color') as string | null)?.trim() || ''
+  const trimColorRaw = (formData.get('trim_color') as string | null)?.trim() || ''
+  const is_featured = formData.get('is_featured') === 'true'
 
   if (!file || !title) {
     return NextResponse.json({ error: 'File and title are required' }, { status: 400 })
@@ -63,12 +67,51 @@ export async function POST(request: NextRequest) {
 
   const sort_order = (maxRow?.sort_order ?? 0) + 1
 
-  const { data, error } = await getAdminClient()
+  const panel = parseColorValue(panelColorRaw)
+  const trim = parseColorValue(trimColorRaw)
+
+  const { data: item, error } = await getAdminClient()
     .from('gallery_items')
-    .insert({ title, city, type, tag, alt_text, image_url: publicUrl, sort_order })
+    .insert({
+      title,
+      city,
+      type,
+      tag,
+      alt_text,
+      image_url: publicUrl,
+      sort_order,
+      is_featured,
+      panel_color: panel?.color ?? null,
+      panel_color_line: panel?.line ?? null,
+      trim_color: trim?.color ?? null,
+      trim_color_line: trim?.line ?? null,
+    })
     .select()
     .single()
 
-  if (error) return NextResponse.json({ error: 'Database insert failed' }, { status: 500 })
-  return NextResponse.json({ item: data }, { status: 201 })
+  if (error || !item) {
+    return NextResponse.json({ error: 'Database insert failed' }, { status: 500 })
+  }
+
+  // Create the initial cover photo row in gallery_photos
+  const { data: coverPhoto, error: photoError } = await getAdminClient()
+    .from('gallery_photos')
+    .insert({
+      gallery_item_id: item.id,
+      image_url: publicUrl,
+      alt_text,
+      sort_order: 0,
+      is_cover: true,
+    })
+    .select()
+    .single()
+
+  if (photoError) {
+    // Roll back the item insert so we don't leave an orphan
+    await getAdminClient().from('gallery_items').delete().eq('id', item.id)
+    await getAdminClient().storage.from('gallery').remove([uploadData.path])
+    return NextResponse.json({ error: 'Photo record insert failed' }, { status: 500 })
+  }
+
+  return NextResponse.json({ item: { ...item, gallery_photos: [coverPhoto] } }, { status: 201 })
 }
