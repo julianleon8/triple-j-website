@@ -13,14 +13,18 @@ import type { PermitSource } from './permit-sources';
 // ── Fetch latest PDF URL from a Revize/Joomla index page ──────────────────────
 
 export type LatestPdf = {
-  pdfUrl: string;
+  // null when no PDF qualified after filtering (candidates may still be non-empty).
+  pdfUrl: string | null;
   // Best-effort parse of a date from the filename (e.g. Weekly-Permit-Report-04-15-2026.pdf)
   reportDate: Date | null;
+  // All PDF hrefs found on the index page (pre-filter), capped at 15.
+  // Surfaced in the UI so Julian can see what the scraper considered.
+  candidatesConsidered: string[];
 };
 
 export async function fetchLatestPdfUrl(
   source: PermitSource
-): Promise<LatestPdf | null> {
+): Promise<LatestPdf> {
   const res = await fetch(source.indexUrl, {
     headers: {
       // Some municipal CMSes 403 default fetch UAs.
@@ -42,24 +46,33 @@ export async function fetchLatestPdfUrl(
     hrefs.add(match[1]);
   }
 
-  if (hrefs.size === 0) return null;
+  const candidatesConsidered = [...hrefs].slice(0, 15);
+  if (hrefs.size === 0) {
+    return { pdfUrl: null, reportDate: null, candidatesConsidered };
+  }
 
-  const baseUrl = source.baseUrl ?? new URL(source.indexUrl).origin;
-  const indexDir = source.indexUrl.substring(
-    0,
-    source.indexUrl.lastIndexOf('/') + 1
-  );
-
-  // Filter to report-like PDFs (reduces noise: ignore forms, policies, etc.)
+  // Filter to report-like PDFs by FILENAME (not full href — directory segments like
+  // `commissioners_court/` can falsely match "court" filter otherwise).
   const candidates = [...hrefs]
     .map(h => ({
       href: h,
-      resolved: resolveUrl(h, baseUrl, indexDir),
+      resolved: resolveUrl(h, source.indexUrl),
       date: inferDateFromPath(h),
     }))
-    .filter(c => looksLikeReport(c.href, source));
+    .filter(c => looksLikeReport(c.href, source))
+    .filter(c => !isNoiseFilename(c.href))
+    .filter(c => {
+      // Weekly permit reports and court agendas should always have a date in
+      // the filename. Undated PDFs in these contexts are forms, packets, or
+      // stale policy docs.
+      if (source.reportType === 'weekly_permits') return c.date !== null;
+      if (source.reportType === 'commissioners_court') return c.date !== null;
+      return true;
+    });
 
-  if (candidates.length === 0) return null;
+  if (candidates.length === 0) {
+    return { pdfUrl: null, reportDate: null, candidatesConsidered };
+  }
 
   // Sort: most recent filename-date first, fall back to order-on-page (first wins).
   candidates.sort((a, b) => {
@@ -70,13 +83,15 @@ export async function fetchLatestPdfUrl(
   });
 
   const best = candidates[0];
-  return { pdfUrl: best.resolved, reportDate: best.date };
+  return { pdfUrl: best.resolved, reportDate: best.date, candidatesConsidered };
 }
 
-function resolveUrl(href: string, origin: string, dir: string): string {
-  if (/^https?:\/\//i.test(href)) return href;
-  if (href.startsWith('/')) return origin + href;
-  return dir + href;
+function resolveUrl(href: string, indexUrl: string): string {
+  try {
+    return new URL(href, indexUrl).toString();
+  } catch {
+    return href;
+  }
 }
 
 function inferDateFromPath(href: string): Date | null {
@@ -96,18 +111,35 @@ function inferDateFromPath(href: string): Date | null {
   return null;
 }
 
+function filenameOf(href: string): string {
+  const clean = href.split('?')[0].split('#')[0];
+  const slash = clean.lastIndexOf('/');
+  return (slash >= 0 ? clean.slice(slash + 1) : clean).toLowerCase();
+}
+
 function looksLikeReport(href: string, source: PermitSource): boolean {
-  const lower = href.toLowerCase();
+  const name = filenameOf(href);
   if (source.reportType === 'weekly_permits') {
-    return /permit|weekly|monthly|report/.test(lower);
+    return /permit|weekly|monthly|report/.test(name);
   }
   if (source.reportType === 'commissioners_court') {
-    return /commissioner|court|agenda|packet/.test(lower);
+    // "packet" is intentionally NOT here — many municipalities use it for
+    // board-packet bundles that are rarely the current agenda.
+    return /commissioner|court|agenda/.test(name);
   }
   if (source.reportType === 'edr') {
-    return /economic|edr|development|permit/.test(lower);
+    return /economic|edr|development|report/.test(name);
   }
   return true;
+}
+
+// Filenames that match the positive filters but are almost always noise on
+// municipal CMSes: blank forms, application packets, fee schedules, etc.
+function isNoiseFilename(href: string): boolean {
+  const name = filenameOf(href);
+  return /\b(packet|application|form|policy|sop|checklist|fee[_-]?schedule|schedule|template|blank|sample|guide|faq|instructions?|handbook|manual|ordinance|code)\b/.test(
+    name
+  );
 }
 
 // ── Claude extraction ─────────────────────────────────────────────────────────

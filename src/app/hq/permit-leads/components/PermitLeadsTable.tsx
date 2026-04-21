@@ -76,29 +76,42 @@ export default function PermitLeadsTable({
   initialLeads: PermitLead[];
   activeStatus: string;
 }) {
+  type ScrapeJurisdictionResult = {
+    inserted: number;
+    skipped: number;
+    errors: string[];
+    pdfUrl?: string;
+    candidatesConsidered?: string[];
+  };
+
   const [leads, setLeads] = useState(initialLeads);
   const [expanded, setExpanded] = useState<string | null>(null);
   const [updating, setUpdating] = useState<string | null>(null);
   const [scraping, setScraping] = useState(false);
   const [scrapeResult, setScrapeResult] = useState<string | null>(null);
+  const [scrapeDetail, setScrapeDetail] = useState<Record<string, ScrapeJurisdictionResult> | null>(null);
+  const [detailOpen, setDetailOpen] = useState(false);
   const [, startTransition] = useTransition();
   const router = useRouter();
 
   const runScrape = async () => {
     setScraping(true);
     setScrapeResult(null);
+    setScrapeDetail(null);
     try {
       const res = await fetch('/api/cron/scrape-permits', { method: 'POST' });
       const data = await res.json();
       if (!res.ok) {
         setScrapeResult(`Error: ${data.error ?? 'Scrape failed'}`);
       } else {
-        const summary = data.summary as Record<string, { inserted: number; skipped: number; errors: string[] }>;
+        const summary = data.summary as Record<string, ScrapeJurisdictionResult>;
         const total = Object.values(summary).reduce((sum, s) => sum + s.inserted, 0);
         const sources = Object.keys(summary).length;
         const errors = Object.entries(summary).filter(([, s]) => s.errors.length > 0);
         const errMsg = errors.length > 0 ? ` · ${errors.length} with errors` : '';
         setScrapeResult(`Scraped ${total} new permits across ${sources} jurisdictions${errMsg}`);
+        setScrapeDetail(summary);
+        setDetailOpen(errors.length > 0);
         startTransition(() => router.refresh());
       }
     } catch (err) {
@@ -184,6 +197,58 @@ export default function PermitLeadsTable({
           </button>
         </div>
       </div>
+
+      {scrapeDetail && Object.entries(scrapeDetail).some(([, s]) => s.errors.length > 0) && (
+        <div className="border border-amber-300 bg-amber-50 rounded-xl overflow-hidden">
+          <button
+            type="button"
+            onClick={() => setDetailOpen(o => !o)}
+            className="w-full flex items-center justify-between px-4 py-3 text-left"
+          >
+            <span className="text-sm font-semibold text-amber-900">
+              Scrape details — {Object.values(scrapeDetail).filter(s => s.errors.length > 0).length} jurisdiction(s) with errors
+            </span>
+            <span className="text-amber-700 text-xs">{detailOpen ? 'Hide' : 'Show'}</span>
+          </button>
+          {detailOpen && (
+            <div className="px-4 pb-4 space-y-3">
+              {Object.entries(scrapeDetail).map(([jur, s]) => (
+                <div key={jur} className="bg-white border border-amber-200 rounded-lg p-3 text-xs">
+                  <div className="flex items-baseline justify-between gap-2 mb-1">
+                    <span className="font-bold text-gray-800">{JURISDICTION_LABELS[jur] ?? jur}</span>
+                    <span className="text-gray-500">
+                      {s.inserted} inserted · {s.skipped} skipped · {s.errors.length} error(s)
+                    </span>
+                  </div>
+                  {s.errors.length > 0 && (
+                    <div className="text-red-700 mb-2">
+                      {s.errors.map((e, i) => <div key={i}>• {e}</div>)}
+                    </div>
+                  )}
+                  {s.pdfUrl && (
+                    <div className="mb-1">
+                      <span className="text-gray-500">Chosen PDF: </span>
+                      <a href={s.pdfUrl} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline break-all">{s.pdfUrl}</a>
+                    </div>
+                  )}
+                  {s.candidatesConsidered && s.candidatesConsidered.length > 0 && (
+                    <details>
+                      <summary className="cursor-pointer text-gray-500 hover:text-gray-700">
+                        Candidates considered ({s.candidatesConsidered.length})
+                      </summary>
+                      <ul className="mt-1 space-y-0.5 text-gray-600">
+                        {s.candidatesConsidered.slice(0, 10).map((h, i) => (
+                          <li key={i} className="break-all">• {h}</li>
+                        ))}
+                      </ul>
+                    </details>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
 
       {/* Table */}
       <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-x-auto">

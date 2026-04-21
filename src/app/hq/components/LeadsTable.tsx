@@ -77,8 +77,13 @@ export default function LeadsTable({
   const [deleting, setDeleting] = useState<string | null>(null)
   const [converting, setConverting] = useState<string | null>(null)
   const [convertedIds, setConvertedIds] = useState<Set<string>>(new Set())
+  // Gate time-dependent pills behind post-mount render so server and client
+  // HTML match exactly (React #418 fires otherwise because Date.now() differs
+  // between the SSR pass and hydration).
+  const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
+    setMounted(true)
     const poll = setInterval(async () => {
       const res = await fetch('/api/leads')
       if (res.ok) {
@@ -143,7 +148,7 @@ export default function LeadsTable({
     <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-x-auto">
       <div className="px-4 py-2 border-b border-gray-100 flex items-center gap-2 text-xs text-gray-400">
         <span className="h-2 w-2 rounded-full bg-green-400 animate-pulse" />
-        Live · refreshes every 30s · last updated {lastRefresh.toLocaleTimeString()}
+        Live · refreshes every 30s{mounted && ` · last updated ${lastRefresh.toLocaleTimeString()}`}
       </div>
       <table className="w-full text-sm min-w-[900px]">
         <thead className="bg-gray-50 text-gray-500 uppercase text-xs border-b">
@@ -171,7 +176,7 @@ export default function LeadsTable({
                 {lead.is_military && (
                   <span className="text-[10px] font-bold text-blue-600 bg-blue-50 px-1.5 py-0.5 rounded">⭐ MIL/FR</span>
                 )}
-                {(() => {
+                {mounted && (() => {
                   const ind = emailIndicator(emailEvents[lead.id])
                   if (!ind) return null
                   return (

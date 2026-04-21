@@ -18,6 +18,9 @@ type JurisdictionSummary = {
   errors: string[];
   pdfUrl?: string;
   reportDate?: string | null;
+  // First ~15 PDF hrefs seen on the index page before filtering. Lets the UI
+  // explain "we looked at these, none qualified" without needing DevTools.
+  candidatesConsidered?: string[];
 };
 
 async function runScrape() {
@@ -61,8 +64,13 @@ async function scrapeOne(source: PermitSource): Promise<JurisdictionSummary> {
 
   try {
     const latest = await fetchLatestPdfUrl(source);
-    if (!latest) {
-      s.errors.push('No candidate PDFs found on index page');
+    s.candidatesConsidered = latest.candidatesConsidered;
+    if (!latest.pdfUrl) {
+      s.errors.push(
+        latest.candidatesConsidered.length === 0
+          ? 'No PDFs linked on index page'
+          : 'No candidate PDFs passed filter (see candidatesConsidered)'
+      );
       return s;
     }
     s.pdfUrl = latest.pdfUrl;
@@ -86,7 +94,7 @@ async function scrapeOne(source: PermitSource): Promise<JurisdictionSummary> {
       return s;
     }
 
-    const rows = leads.map(l => toRow(l, source, latest));
+    const rows = leads.map(l => toRow(l, source, { pdfUrl: latest.pdfUrl!, reportDate: latest.reportDate }));
     // Skip rows without a permit number — unique dedup index requires one.
     // These are usually garbage (headers, footers Claude mis-categorized).
     const withKeys = rows.filter(r => r.permit_number);
