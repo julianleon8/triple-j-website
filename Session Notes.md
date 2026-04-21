@@ -1,3 +1,20 @@
+## 2026-04-21 — Phase 2c planning: Gallery v2 plan sliced into phases
+
+Full plan saved at `Gallery v2 Plan.md` (repo root). Five self-contained phases so each runs as a fresh Claude session with a single commit between them. Wave H (insulation) split into its own plan. Wave I (HEIC) promoted to its own phase after the dashboard editor ships.
+
+**Phase 2a post-merge todos (deferred — need company phone number in hand before any of this can happen):**
+
+1. Set Vercel env: `TWILIO_ACCOUNT_SID`, `TWILIO_AUTH_TOKEN`, `TWILIO_FROM` (E.164, e.g. `+12549876543`).
+2. Set `NEXT_PUBLIC_GOOGLE_REVIEW_URL` (post-GBP claim).
+3. Set `CRON_SECRET` (random 32+ char string). Confirm Vercel Cron can reach it.
+4. Apply `supabase/migrations/007_sms_events.sql` via Supabase dashboard or `supabase db push`.
+5. End-to-end test: POST a real lead → auto-reply SMS fires within seconds. Flip a test job to `completed` → override `scheduled_sms.send_at = now()` → hit cron manually → review SMS fires.
+6. After Phase 3 of gallery v2 merges: also apply `supabase/migrations/008_gallery_v2.sql`.
+
+**Rediscovered during planning:** `/services/colors` (39 MetalMax colors, backed by `src/lib/colors.ts`) and `/services/pbr-vs-pbu-panels` are already live. No new page work needed on those routes. `src/lib/colors.ts` is the canonical color source for the new gallery metadata — don't duplicate the catalog.
+
+---
+
 ## 2026-04-22 — Functional pass: email unify, manual customer create, manual scrape, `/hq` KPI grid
 
 **Context:** Site is live, dashboard is live, but Julian hit a string of bugs and friction points. This session was a functional pass (no design polish) that cleaned the rough edges and unlocked the dashboard as a daily command center.
