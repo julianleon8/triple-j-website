@@ -1,3 +1,25 @@
+## 2026-04-21 — Gallery v2 Phase 0 + Phase 2a post-merge todos parked
+
+**Gallery v2 Plan committed to vault:** `Gallery v2 Plan.md` at repo root. Five phases (P0 vault → P1 schema → P2 public read → P3 dashboard editor → P4 HEIC upload), each shipping on its own branch off `main`. Planning branch `claude/gallery-v2-phased-plan-JiZYc` holds only the plan doc + this session note + one Decisions row. No `src/` touched.
+
+**Why phased:** original Phase 2c was one monster session. Slicing into 5 self-contained phases lets Julian run each as a fresh Claude session and commit between them — narrow review surface, cold-start-friendly, independent ship.
+
+**Gotcha flagged in the plan:** `PANEL_COLORS` in `src/lib/colors.ts` uses capitalized `'Turnium' | 'Sheffield'`. New DB columns `panel_color_line` / `trim_color_line` store lowercase — the P2 helper (`src/lib/gallery-colors.ts`) handles the mapping.
+
+### Phase 2a (SMS) post-merge todos — deferred until Julian has the company phone number
+
+All of these are blocked on the Twilio number purchase (pending Julian grabbing the company line):
+
+1. **Vercel env vars** — set `TWILIO_ACCOUNT_SID`, `TWILIO_AUTH_TOKEN`, `TWILIO_FROM_NUMBER`, `NEXT_PUBLIC_GOOGLE_REVIEW_URL`, and confirm `CRON_SECRET` is live (should be from Phase 1 Lead Engine deploy).
+2. **Apply `supabase/migrations/007_sms_events.sql`** via Supabase dashboard — `sms_events` table for outbound SMS audit trail + retry state.
+3. **End-to-end SMS test** — fire a test lead through `/api/leads`, confirm auto-reply SMS lands on Julian's phone + `sms_events` row written. Retry path: mark one event failed, confirm cron retries within 15 min.
+4. **Review-velocity test** — flip a `jobs` row to `complete` 24+ hours old, confirm review-request SMS fires with `NEXT_PUBLIC_GOOGLE_REVIEW_URL` link.
+5. **Twilio A2P 10DLC registration** — required for US SMS deliverability. Julian files the brand + campaign registration from his Mac; takes ~3-7 days.
+
+None of these block Gallery v2. Phase 2a code is merged and inert until env vars + migration land.
+
+---
+
 ## 2026-04-22 — Functional pass: email unify, manual customer create, manual scrape, `/hq` KPI grid
 
 **Context:** Site is live, dashboard is live, but Julian hit a string of bugs and friction points. This session was a functional pass (no design polish) that cleaned the rough edges and unlocked the dashboard as a daily command center.
