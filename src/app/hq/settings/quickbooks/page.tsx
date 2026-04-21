@@ -79,7 +79,7 @@ export default async function QuickBooksSettingsPage({
             <code>QBO_REDIRECT_URI</code>, and <code>QBO_ENVIRONMENT</code> to your environment variables (Vercel
             dashboard or <code>.env.local</code>). Then create an app at{' '}
             <span className="font-mono">developer.intuit.com</span> and set your redirect URI to{' '}
-            <code>https://triplejmetal.com/api/qbo/callback</code>.
+            <code>https://triplejmetaltx.com/api/qbo/callback</code>.
           </div>
         )}
       </div>

@@ -33,9 +33,10 @@ export async function POST(
   const acceptUrl = `${process.env.NEXT_PUBLIC_SITE_URL}/quotes/${quote.accept_token}`
 
   await resend.emails.send({
-    from: 'Triple J Metal LLC <quotes@triplejmetalllc.com>',
+    from: 'Triple J Metal <quotes@triplejmetaltx.com>',
+    replyTo: 'julianleon@triplejmetaltx.com',
     to: quote.customers.email,
-    subject: `Your Quote ${quote.quote_number} from Triple J Metal LLC`,
+    subject: `Your Quote ${quote.quote_number} from Triple J Metal`,
     react: QuoteEmail({
       customerName: quote.customers.name,
       quoteNumber: quote.quote_number,

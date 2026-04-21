@@ -1,3 +1,50 @@
+## 2026-04-22 — Functional pass: email unify, manual customer create, manual scrape, `/hq` KPI grid
+
+**Context:** Site is live, dashboard is live, but Julian hit a string of bugs and friction points. This session was a functional pass (no design polish) that cleaned the rough edges and unlocked the dashboard as a daily command center.
+
+**What shipped:**
+
+1. **QuoteForm bypass (BUG FIX)** — Form was auto-submitting after Step 2, skipping the concrete/timeline/military step. Root cause: browser implicit-submit via Enter key / autofill / iOS "Go" button. Fix: removed `<form>` element entirely; converted to `<div>` with `onClick` handler on the submit button. Nuclear but correct — `step !== 3` guards alone weren't enough because the native form was still triggerable.
+2. **Lead delete + convert-to-customer** — Added two-click delete-confirm pattern on `/hq` leads table + `→ Customer` button that POSTs to a new `/api/customers` endpoint and auto-flips lead status to `quoted`. Unblocked the quote builder (customer dropdown was empty because there was no way to create customers).
+3. **Email sender unified to `@triplejmetaltx.com`** — Previously `quotes@triplejmetalllc.com` (3 L's, no `tx`) which didn't match the Resend-verified domain. All three send paths now use the same domain with `reply_to: julianleon@triplejmetaltx.com`. **Julian action required:** confirm `triplejmetaltx.com` shows "Verified" in resend.com dashboard (DKIM/SPF/DMARC green) — without this, every send bounces silently.
+4. **Old `triplejmetal.com` references scrubbed** — Blog metadata canonicals, QBO redirect doc strings, QBO source comments. Grep now shows zero stale references in `src/`.
+5. **Manual `+ New Customer` flow** — `/hq/customers` now has a `+ New Customer` button that expands inline form. Captures walk-ins, referrals, Juan's phone calls. No lead-first-then-convert required.
+6. **Manual `Run Scrape Now` button** — `/hq/permit-leads` now has a button to kick the permit scrape ad-hoc. `/api/cron/scrape-permits` supports dual auth: `Bearer CRON_SECRET` (Vercel Cron) + Supabase cookie (`/hq` UI). Daily 14:00 UTC cron unchanged. This is the first time Julian can kick off the Lead Engine without curl-ing with secrets.
+7. **`/hq` home KPI grid** — Replaced the 4-card lead-status row with a grouped KPI grid:
+   - **Pipeline:** Open leads · Active permit leads · Pipeline value (sum draft+sent quote totals)
+   - **Conversion:** Lead → Customer rate (30d) · Quote acceptance rate
+   - **Revenue:** Revenue this month · Avg deal size
+   - **Operations:** Jobs scheduled this week · Hot leads (ASAP + new)
+   - Lead pipeline pill row (New/Contacted/Quoted/Won) kept as a second tier.
+   - All numerical — graphs/charts deferred to Phase B.
+
+**Key realizations:**
+- Dashboard is the command center. Julian wants to work from phone in the truck AND laptop in the shop. Triple J-specific, zero multi-tenant bloat.
+- Permit Lead Engine has never been tested end-to-end live. Manual trigger button lets Julian kick it off himself to validate before trusting the cron.
+- All analytics for today's KPI grid were computable from existing tables. No schema changes.
+
+**Decisions resolved this session (see `Decisions.md` for full rows):**
+- Email domain = `triplejmetaltx.com` everywhere; Google Workspace aliases stay as inbound-only.
+- Manual scrape = shipped today.
+- Templates UI = deferred to Phase B design session.
+- Phase B = dedicated design session covering HQ nav redesign + Recharts/Tremor graphs + public-site polish + Spanish `/es/` + pricing page + templates UI.
+
+**Pending Julian actions:**
+- Confirm `triplejmetaltx.com` is "Verified" in Resend dashboard (DNS records green). Otherwise sends bounce.
+- Manually fire the `Run Scrape Now` button to validate Lead Engine end-to-end.
+- Sanity-check `/hq` KPI numbers against Supabase queries for a few cards.
+
+**What's queued for Phase B (design session):**
+- HQ nav redesign to steel-blue matching public site
+- Recharts graphs + sparkline trends on each KPI card
+- Funnel chart (Leads → Customers → Quotes → Jobs)
+- Pipeline-by-jurisdiction stacked bar for permit leads
+- Public-site hero refresh, Spanish `/es/` landing, pricing page
+- Quote templates UI at `/hq/quotes/templates`
+- Component sourcing: Tremor as base, 21st.dev accents, shadcn/ui charts wrapper
+
+---
+
 ## 2026-04-21 (end of session) — Final session addendum
 
 This section captures tonight's extended strategic conversation and is the closing summary for this session. New Claude sessions should read `Next Session Primer.md` + `FB Marketplace Intel.md` first, then this entry for nuance.

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getAdminClient } from '@/lib/supabase/admin';
+import { createClient } from '@/lib/supabase/server';
 import { getEnabledSources, type PermitSource } from '@/lib/permit-sources';
 import {
   fetchLatestPdfUrl,
@@ -19,14 +20,7 @@ type JurisdictionSummary = {
   reportDate?: string | null;
 };
 
-export async function GET(request: NextRequest) {
-  // Vercel Cron sends `Authorization: Bearer ${CRON_SECRET}` automatically
-  // when CRON_SECRET is set in project env vars.
-  const auth = request.headers.get('authorization');
-  if (auth !== `Bearer ${process.env.CRON_SECRET}`) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-  }
-
+async function runScrape() {
   const sources = getEnabledSources();
   const summary: Record<string, JurisdictionSummary> = {};
 
@@ -34,12 +28,32 @@ export async function GET(request: NextRequest) {
     summary[source.jurisdiction] = await scrapeOne(source);
   }
 
-  return NextResponse.json({
+  return {
     ok: true,
     ranAt: new Date().toISOString(),
     model: EXTRACTION_MODEL,
     summary,
-  });
+  };
+}
+
+export async function GET(request: NextRequest) {
+  // Dual auth: Vercel Cron uses Bearer CRON_SECRET; /hq UI uses Supabase cookie.
+  const auth = request.headers.get('authorization');
+  if (auth && auth === `Bearer ${process.env.CRON_SECRET}`) {
+    return NextResponse.json(await runScrape());
+  }
+
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+
+  return NextResponse.json(await runScrape());
+}
+
+export async function POST(request: NextRequest) {
+  return GET(request);
 }
 
 async function scrapeOne(source: PermitSource): Promise<JurisdictionSummary> {

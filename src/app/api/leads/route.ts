@@ -167,8 +167,9 @@ export async function POST(request: NextRequest) {
     if (data.email) {
       await resend.emails.send({
         from: 'Triple J Metal <no-reply@triplejmetaltx.com>',
+        replyTo: 'julianleon@triplejmetaltx.com',
         to: data.email,
-        subject: 'We got your quote request — Triple J Metal LLC',
+        subject: 'We got your quote request — Triple J Metal',
         html: `
           <div style="font-family:sans-serif;max-width:500px">
             <h2 style="color:#1e6bd6">Thanks, ${data.name}!</h2>

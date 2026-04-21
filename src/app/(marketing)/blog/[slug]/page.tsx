@@ -62,14 +62,14 @@ export default async function BlogPostPage({ params }: Props) {
     author: {
       '@type': 'Organization',
       name: SITE.name,
-      url: 'https://triplejmetal.com',
+      url: 'https://triplejmetaltx.com',
     },
     publisher: {
       '@type': 'Organization',
       name: SITE.name,
-      url: 'https://triplejmetal.com',
+      url: 'https://triplejmetaltx.com',
     },
-    url: `https://triplejmetal.com/blog/${post.slug}`,
+    url: `https://triplejmetaltx.com/blog/${post.slug}`,
     keywords: post.tags.join(', '),
   }
 

@@ -47,9 +47,12 @@ _Last updated: 2026-04-21 (evening)_
 
 ---
 
-## Current Site Status (as of 2026-04-15)
-**All code committed to GitHub (`julianleon8/triple-j-website`, commit 0c77415).**
-**Vercel is connected but NOT yet deployed** — Julian still needs to push + set env vars.
+## Current Site Status (as of 2026-04-22)
+**Site live at `triplejmetaltx.com`** · Dashboard live at `/hq` · Lead Engine deployed (cron daily 14:00 UTC) · Manual scrape trigger added · `/hq` home rebuilt as 9-card KPI grid · Manual customer create + lead delete/convert working · Email sender unified to `@triplejmetaltx.com`.
+
+**Pending Julian action:** confirm `triplejmetaltx.com` is "Verified" in Resend dashboard (DKIM/SPF/DMARC green), otherwise all outbound Resend sends bounce silently.
+
+_Historical: Previously listed "all code committed to GitHub, Vercel connected but NOT deployed" (2026-04-15). Domain migration + deploy completed 2026-04-21._
 
 ### What's in the repo (latest)
 - Full design system: Barlow Condensed headlines + Inter body, steel-blue tokens, fluid typography

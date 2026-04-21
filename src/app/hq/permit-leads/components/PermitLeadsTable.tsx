@@ -79,8 +79,34 @@ export default function PermitLeadsTable({
   const [leads, setLeads] = useState(initialLeads);
   const [expanded, setExpanded] = useState<string | null>(null);
   const [updating, setUpdating] = useState<string | null>(null);
+  const [scraping, setScraping] = useState(false);
+  const [scrapeResult, setScrapeResult] = useState<string | null>(null);
   const [, startTransition] = useTransition();
   const router = useRouter();
+
+  const runScrape = async () => {
+    setScraping(true);
+    setScrapeResult(null);
+    try {
+      const res = await fetch('/api/cron/scrape-permits', { method: 'POST' });
+      const data = await res.json();
+      if (!res.ok) {
+        setScrapeResult(`Error: ${data.error ?? 'Scrape failed'}`);
+      } else {
+        const summary = data.summary as Record<string, { inserted: number; skipped: number; errors: string[] }>;
+        const total = Object.values(summary).reduce((sum, s) => sum + s.inserted, 0);
+        const sources = Object.keys(summary).length;
+        const errors = Object.entries(summary).filter(([, s]) => s.errors.length > 0);
+        const errMsg = errors.length > 0 ? ` · ${errors.length} with errors` : '';
+        setScrapeResult(`Scraped ${total} new permits across ${sources} jurisdictions${errMsg}`);
+        startTransition(() => router.refresh());
+      }
+    } catch (err) {
+      setScrapeResult(`Error: ${err instanceof Error ? err.message : String(err)}`);
+    } finally {
+      setScraping(false);
+    }
+  };
 
   const patch = async (
     id: string,
@@ -126,21 +152,37 @@ export default function PermitLeadsTable({
 
   return (
     <div className="space-y-4">
-      {/* Status filter pills */}
-      <div className="flex gap-2 flex-wrap">
-        {STATUS_FILTERS.map(f => (
+      {/* Status filter pills + manual scrape */}
+      <div className="flex items-center justify-between gap-4 flex-wrap">
+        <div className="flex gap-2 flex-wrap">
+          {STATUS_FILTERS.map(f => (
+            <button
+              key={f.key}
+              onClick={() => changeStatusFilter(f.key)}
+              className={`px-3 py-1.5 rounded-full text-xs font-semibold transition ${
+                activeStatus === f.key
+                  ? 'bg-black text-white'
+                  : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+              }`}
+            >
+              {f.label}
+            </button>
+          ))}
+        </div>
+        <div className="flex items-center gap-3">
+          {scrapeResult && (
+            <span className={`text-xs ${scrapeResult.startsWith('Error') ? 'text-red-600' : 'text-green-700'}`}>
+              {scrapeResult}
+            </span>
+          )}
           <button
-            key={f.key}
-            onClick={() => changeStatusFilter(f.key)}
-            className={`px-3 py-1.5 rounded-full text-xs font-semibold transition ${
-              activeStatus === f.key
-                ? 'bg-black text-white'
-                : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-            }`}
+            onClick={runScrape}
+            disabled={scraping}
+            className="bg-blue-600 hover:bg-blue-500 disabled:bg-blue-300 text-white text-xs font-bold px-4 py-2 rounded-lg transition"
           >
-            {f.label}
+            {scraping ? 'Scraping…' : 'Run Scrape Now'}
           </button>
-        ))}
+        </div>
       </div>
 
       {/* Table */}

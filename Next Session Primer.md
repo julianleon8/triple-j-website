@@ -1,6 +1,26 @@
 # Next Session Primer — Read This First
 
-_Created: 2026-04-21 evening · For any Claude session picking up after 2026-04-21_
+_Created: 2026-04-21 evening · Last updated 2026-04-22 · For any Claude session picking up after 2026-04-22_
+
+---
+
+## What shipped 2026-04-22 (functional pass)
+
+**4 functional wins:**
+1. Email sender unified to `@triplejmetaltx.com` across all Resend send paths. `reply_to: julianleon@triplejmetaltx.com` added for quote + lead confirmation sends. **Julian must verify domain in Resend dashboard (DKIM/SPF/DMARC green), otherwise sends bounce silently.**
+2. Manual `+ New Customer` button on `/hq/customers` — walk-ins, referrals, phone calls now have a path. `POST /api/customers` endpoint exists.
+3. Manual `Run Scrape Now` button on `/hq/permit-leads` — kicks off permit scrape without curling with CRON_SECRET. Dual auth on `/api/cron/scrape-permits`: Bearer for cron, Supabase cookie for UI.
+4. `/hq` home = 9-card KPI grid (Pipeline · Conversion · Revenue · Operations) pulling from `leads`, `customers`, `quotes`, `jobs`, `permit_leads` in parallel. Lead-pipeline pill row preserved as second tier.
+
+**2 bug fixes earlier in the same session:**
+- QuoteForm implicit-submit bug NUKED by removing `<form>` element entirely (now `<div>` + `onClick`).
+- Lead delete with two-click confirm + `→ Customer` conversion button on `/hq` leads table.
+
+**Phase B = next logical session.** Dedicated design pass for both HQ dashboard and public site. Scope: steel-blue nav redesign, Recharts/Tremor graphs + sparklines, funnel chart, public hero refresh, Spanish `/es/` landing, pricing page, quote templates UI. Component libs: Tremor (base) + 21st.dev (accents) + shadcn/ui charts (wrapper).
+
+Reminder: `FB Marketplace Intel.md`, `Financing Research.md`, `Decisions.md` remain authoritative for strategy.
+
+---
 
 This document is the condensed context any new Claude session needs to skip the warm-up and start executing. It references the deeper vault files for full detail; read this first, then dive into specifics as needed.
 
