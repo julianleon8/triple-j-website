@@ -9,6 +9,7 @@ import {
   colorValueFromDb,
   describeGalleryColors,
 } from '@/lib/gallery-colors'
+import { normalizeUploadFile } from '@/lib/heic-convert'
 
 type Photo = {
   id: string
@@ -16,6 +17,12 @@ type Photo = {
   alt_text: string | null
   sort_order: number
   is_cover: boolean
+}
+
+type PhotoStatus = {
+  name: string
+  state: 'converting' | 'uploading' | 'done' | 'failed'
+  error?: string
 }
 
 type GalleryItem = {
@@ -101,11 +108,20 @@ export default function GalleryManager({ initialItems }: { initialItems: Gallery
     setUploadError(null)
     const form = e.currentTarget
     const data = new FormData(form)
-    if (!data.get('file') || !(data.get('file') as File).size) {
+    const rawFile = data.get('file') as File | null
+    if (!rawFile || !rawFile.size) {
       setUploadError('Please choose a photo.')
       return
     }
     setUploading(true)
+    try {
+      const prepared = await normalizeUploadFile(rawFile)
+      data.set('file', prepared, prepared.name)
+    } catch (err) {
+      setUploadError(err instanceof Error ? err.message : 'Could not prepare photo.')
+      setUploading(false)
+      return
+    }
     const res = await fetch('/api/gallery', { method: 'POST', body: data })
     if (res.ok) {
       const { item } = await res.json()
@@ -234,7 +250,10 @@ export default function GalleryManager({ initialItems }: { initialItems: Gallery
     const data = new FormData()
     data.append('file', file)
     const res = await fetch(`/api/gallery/${item.id}/photos`, { method: 'POST', body: data })
-    if (!res.ok) return
+    if (!res.ok) {
+      const { error } = await res.json().catch(() => ({ error: 'Upload failed' }))
+      throw new Error(error ?? 'Upload failed')
+    }
     const { photo } = await res.json()
     setItems((prev) =>
       prev.map((i) =>
@@ -343,10 +362,13 @@ export default function GalleryManager({ initialItems }: { initialItems: Gallery
                 ref={fileRef}
                 name="file"
                 type="file"
-                accept="image/*"
+                accept="image/*,.heic,.heif"
                 required
                 className="block w-full text-sm text-gray-600 file:mr-3 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 cursor-pointer"
               />
+              <p className="mt-1 text-[11px] text-gray-400">
+                iPhone HEIC photos are auto-converted to JPEG.
+              </p>
             </div>
             <div>
               <label className="block text-xs font-semibold text-gray-600 mb-1">
@@ -612,6 +634,7 @@ function EditPanel({
   onMovePhoto: (photo: Photo, direction: 'up' | 'down') => void
 }) {
   const [photoUploading, setPhotoUploading] = useState(false)
+  const [photoStatuses, setPhotoStatuses] = useState<PhotoStatus[]>([])
   const photoInputRef = useRef<HTMLInputElement>(null)
   const sorted = sortPhotos(item.gallery_photos)
 
@@ -619,8 +642,23 @@ function EditPanel({
     const files = Array.from(e.target.files ?? [])
     if (files.length === 0) return
     setPhotoUploading(true)
-    for (const file of files) {
-      await onUploadPhoto(file)
+    setPhotoStatuses(files.map((f) => ({ name: f.name, state: 'converting' })))
+    for (let i = 0; i < files.length; i++) {
+      try {
+        const prepared = await normalizeUploadFile(files[i])
+        setPhotoStatuses((prev) =>
+          prev.map((s, idx) => (idx === i ? { ...s, state: 'uploading' } : s)),
+        )
+        await onUploadPhoto(prepared)
+        setPhotoStatuses((prev) =>
+          prev.map((s, idx) => (idx === i ? { ...s, state: 'done' } : s)),
+        )
+      } catch (err) {
+        const msg = err instanceof Error ? err.message : 'Upload failed'
+        setPhotoStatuses((prev) =>
+          prev.map((s, idx) => (idx === i ? { ...s, state: 'failed', error: msg } : s)),
+        )
+      }
     }
     setPhotoUploading(false)
     if (photoInputRef.current) photoInputRef.current.value = ''
@@ -806,17 +844,45 @@ function EditPanel({
           <input
             ref={photoInputRef}
             type="file"
-            accept="image/*"
+            accept="image/*,.heic,.heif"
             multiple
             disabled={photoUploading}
             onChange={handlePhotoUpload}
             className="block w-full text-xs text-gray-600 file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 cursor-pointer disabled:opacity-50"
           />
-          {photoUploading && (
-            <p className="text-xs text-gray-500 mt-1">Uploading…</p>
+          <p className="mt-1 text-[11px] text-gray-400">
+            iPhone HEIC photos are auto-converted to JPEG.
+          </p>
+          {photoStatuses.length > 0 && (
+            <ul className="mt-2 space-y-1">
+              {photoStatuses.map((s, i) => (
+                <li key={i} className="flex items-center gap-2 text-[11px]">
+                  <span className="flex-1 truncate text-gray-600">{s.name}</span>
+                  <StatusPill status={s} />
+                </li>
+              ))}
+            </ul>
           )}
         </div>
       </div>
     </div>
+  )
+}
+
+function StatusPill({ status }: { status: PhotoStatus }) {
+  const map: Record<PhotoStatus['state'], { label: string; className: string }> = {
+    converting: { label: 'Converting…', className: 'bg-blue-50 text-blue-700' },
+    uploading:  { label: 'Uploading…',  className: 'bg-blue-50 text-blue-700' },
+    done:       { label: 'Done',        className: 'bg-green-50 text-green-700' },
+    failed:     { label: 'Failed',      className: 'bg-red-50 text-red-700' },
+  }
+  const { label, className } = map[status.state]
+  return (
+    <span
+      title={status.error ?? ''}
+      className={`shrink-0 px-2 py-0.5 rounded-full text-[10px] font-semibold ${className}`}
+    >
+      {label}
+    </span>
   )
 }
