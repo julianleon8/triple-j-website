@@ -82,47 +82,84 @@ export default async function GalleryPage() {
       {/* ── Project grid ── */}
       <section className="py-16 md:py-24 bg-white">
         <Container size="wide">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {(projects ?? []).map((project) => (
-              <article
-                key={project.id}
-                className="group rounded-2xl overflow-hidden border border-ink-100 bg-ink-50 hover:shadow-lg hover:-translate-y-0.5 transition-all"
-              >
-                <div className="relative aspect-4/3 overflow-hidden bg-ink-200">
-                  <Image
-                    src={project.image_url}
-                    alt={project.alt_text || project.title}
-                    fill
-                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                    className="object-cover transition-transform duration-500 group-hover:scale-105"
-                    unoptimized={project.image_url.startsWith('/')}
-                  />
-                </div>
-                <div className="p-5">
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-xs font-semibold text-ink-400 uppercase tracking-wide">
-                      {project.type} · {project.city}
-                    </span>
-                    <span className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full ${TAG_COLORS[project.tag] ?? 'bg-ink-100 text-ink-600'}`}>
-                      {project.tag}
-                    </span>
-                  </div>
-                  <h2 className="text-base font-bold text-ink-900 leading-snug">
-                    {project.title}
-                  </h2>
-                </div>
-              </article>
-            ))}
-          </div>
+          {(projects?.length ?? 0) > 0 ? (
+            <>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                {(projects ?? []).map((project) => {
+                  const altText =
+                    project.alt_text && project.alt_text.trim().length > 0
+                      ? project.alt_text
+                      : `${project.title} — ${SITE.shortName}${project.city ? `, ${project.city}` : ''}`
+                  return (
+                    <article
+                      key={project.id}
+                      className="group rounded-2xl overflow-hidden border border-ink-100 bg-ink-50 hover:shadow-lg hover:-translate-y-0.5 transition-all"
+                    >
+                      <div className="relative aspect-4/3 overflow-hidden bg-ink-200">
+                        <Image
+                          src={project.image_url}
+                          alt={altText}
+                          fill
+                          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                          className="object-cover transition-transform duration-500 group-hover:scale-105"
+                          unoptimized={project.image_url.startsWith('/')}
+                        />
+                      </div>
+                      <div className="p-5">
+                        <div className="flex items-center justify-between mb-2">
+                          <span className="text-xs font-semibold text-ink-400 uppercase tracking-wide">
+                            {project.type} · {project.city}
+                          </span>
+                          <span className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full ${TAG_COLORS[project.tag] ?? 'bg-ink-100 text-ink-600'}`}>
+                            {project.tag}
+                          </span>
+                        </div>
+                        <h2 className="text-base font-bold text-ink-900 leading-snug">
+                          {project.title}
+                        </h2>
+                      </div>
+                    </article>
+                  )
+                })}
+              </div>
 
-          <div className="mt-12 text-center">
-            <p className="text-ink-500 text-sm mb-6">
-              Showing {projects?.length ?? 0} of 150+ completed jobs. New photos added as projects finish.
-            </p>
-            <ButtonLink href="#quote" variant="primary" size="lg">
-              Get a Free Quote for Your Project
-            </ButtonLink>
-          </div>
+              <div className="mt-12 text-center">
+                <p className="text-ink-500 text-sm mb-6">
+                  Showing {projects?.length ?? 0} of 150+ completed jobs. New photos added as projects finish.
+                </p>
+                <ButtonLink href="#quote" variant="primary" size="lg">
+                  Get a Free Quote for Your Project
+                </ButtonLink>
+              </div>
+            </>
+          ) : (
+            <div className="rounded-2xl border border-dashed border-ink-200 bg-ink-50 px-6 py-20 text-center">
+              <div className="mx-auto max-w-md">
+                <div className="text-xs font-semibold uppercase tracking-[0.15em] text-brand-700">
+                  Project Gallery
+                </div>
+                <h2 className="mt-3 text-2xl md:text-3xl font-bold text-ink-900">
+                  Photos coming soon
+                </h2>
+                <p className="mt-4 text-ink-600 leading-relaxed">
+                  Our crew is on-site more than they&rsquo;re behind a camera. While we stage new
+                  project shots from recent Central Texas builds, call us directly — we&rsquo;ll
+                  walk you through past jobs and share references.
+                </p>
+                <div className="mt-8 flex flex-wrap justify-center gap-3">
+                  <ButtonLink href="#quote" variant="primary" size="lg">
+                    Start Your Free Quote
+                  </ButtonLink>
+                  <a
+                    href={SITE.phoneHref}
+                    className="inline-flex items-center justify-center h-12 px-6 rounded-lg border-2 border-ink-300 text-ink-800 font-semibold hover:border-ink-500 transition-colors text-sm"
+                  >
+                    Call {SITE.phone}
+                  </a>
+                </div>
+              </div>
+            </div>
+          )}
         </Container>
       </section>
 
