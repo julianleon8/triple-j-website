@@ -460,6 +460,9 @@ export function QuoteForm() {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+    // Only submit from the final step. Browsers can fire an implicit submit
+    // on Enter / autofill chains even when the visible button is type="button".
+    if (step !== 3) return;
     setStatus("submitting");
     setErrMsg("");
 
@@ -583,7 +586,22 @@ export function QuoteForm() {
                 </Button>
               </div>
             ) : (
-              <form onSubmit={handleSubmit} noValidate>
+              <form
+                onSubmit={handleSubmit}
+                onKeyDown={(e) => {
+                  // Block Enter from implicit-submitting on Steps 1 & 2.
+                  // Allow Enter inside textareas (Step 3 notes field).
+                  if (
+                    e.key === "Enter" &&
+                    step < 3 &&
+                    (e.target as HTMLElement).tagName !== "TEXTAREA"
+                  ) {
+                    e.preventDefault();
+                    if (canAdvance()) next();
+                  }
+                }}
+                noValidate
+              >
                 <StepIndicator current={step} />
 
                 {/* Step heading */}
