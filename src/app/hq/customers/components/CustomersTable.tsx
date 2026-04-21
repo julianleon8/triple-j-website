@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { Fragment, useState } from 'react'
 import EditCustomerForm from './EditCustomerForm'
 
 type Customer = {
@@ -41,8 +41,8 @@ export default function CustomersTable({ initialCustomers }: { initialCustomers:
             </tr>
           )}
           {customers.map(customer => (
-            <>
-              <tr key={customer.id} className="hover:bg-gray-50 transition-colors">
+            <Fragment key={customer.id}>
+              <tr className="hover:bg-gray-50 transition-colors">
                 <td className="px-4 py-3 text-gray-400 whitespace-nowrap">
                   {new Date(customer.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
                 </td>
@@ -66,13 +66,12 @@ export default function CustomersTable({ initialCustomers }: { initialCustomers:
               </tr>
               {editingId === customer.id && (
                 <EditCustomerForm
-                  key={`edit-${customer.id}`}
                   customer={customer}
                   onSave={handleSave}
                   onCancel={() => setEditingId(null)}
                 />
               )}
-            </>
+            </Fragment>
           ))}
         </tbody>
       </table>

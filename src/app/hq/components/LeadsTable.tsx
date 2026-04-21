@@ -7,6 +7,7 @@ type Lead = {
   created_at: string
   name: string
   phone: string
+  email: string | null
   city: string | null
   zip: string | null
   service_type: string
@@ -47,6 +48,8 @@ export default function LeadsTable({ initialLeads }: { initialLeads: Lead[] }) {
   const [lastRefresh, setLastRefresh] = useState<Date>(new Date())
   const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null)
   const [deleting, setDeleting] = useState<string | null>(null)
+  const [converting, setConverting] = useState<string | null>(null)
+  const [convertedIds, setConvertedIds] = useState<Set<string>>(new Set())
 
   useEffect(() => {
     const poll = setInterval(async () => {
@@ -85,6 +88,28 @@ export default function LeadsTable({ initialLeads }: { initialLeads: Lead[] }) {
     }
     setDeleting(null)
     setConfirmDeleteId(null)
+  }
+
+  const handleConvert = async (lead: Lead) => {
+    setConverting(lead.id)
+    const res = await fetch('/api/customers', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        name:    lead.name,
+        phone:   lead.phone,
+        email:   lead.email || undefined,
+        city:    lead.city || undefined,
+        zip:     lead.zip || undefined,
+        notes:   lead.message || undefined,
+        lead_id: lead.id,
+      }),
+    })
+    if (res.ok) {
+      setConvertedIds(prev => new Set(prev).add(lead.id))
+      setLeads(prev => prev.map(l => l.id === lead.id ? { ...l, status: 'quoted' } : l))
+    }
+    setConverting(null)
   }
 
   return (
@@ -156,32 +181,47 @@ export default function LeadsTable({ initialLeads }: { initialLeads: Lead[] }) {
                 </select>
               </td>
               <td className="px-4 py-3 whitespace-nowrap">
-                {confirmDeleteId === lead.id ? (
-                  <div className="flex gap-1 items-center">
+                <div className="flex gap-1 items-center">
+                  {convertedIds.has(lead.id) ? (
+                    <span className="px-2 py-1 text-xs font-semibold text-green-700 bg-green-50 rounded">
+                      ✓ Customer
+                    </span>
+                  ) : (
                     <button
-                      onClick={() => handleDelete(lead.id)}
-                      disabled={deleting === lead.id}
-                      className="px-2 py-1 text-xs font-semibold rounded bg-red-600 text-white hover:bg-red-700 disabled:opacity-50"
+                      onClick={() => handleConvert(lead)}
+                      disabled={converting === lead.id}
+                      className="px-2 py-1 text-xs font-semibold text-blue-600 bg-blue-50 hover:bg-blue-100 rounded transition-colors disabled:opacity-50"
                     >
-                      {deleting === lead.id ? '...' : 'Confirm'}
+                      {converting === lead.id ? '...' : '→ Customer'}
                     </button>
+                  )}
+                  {confirmDeleteId === lead.id ? (
+                    <>
+                      <button
+                        onClick={() => handleDelete(lead.id)}
+                        disabled={deleting === lead.id}
+                        className="px-2 py-1 text-xs font-semibold rounded bg-red-600 text-white hover:bg-red-700 disabled:opacity-50"
+                      >
+                        {deleting === lead.id ? '...' : 'Confirm'}
+                      </button>
+                      <button
+                        onClick={() => setConfirmDeleteId(null)}
+                        disabled={deleting === lead.id}
+                        className="px-2 py-1 text-xs font-semibold rounded bg-gray-100 text-gray-600 hover:bg-gray-200"
+                      >
+                        Cancel
+                      </button>
+                    </>
+                  ) : (
                     <button
-                      onClick={() => setConfirmDeleteId(null)}
-                      disabled={deleting === lead.id}
-                      className="px-2 py-1 text-xs font-semibold rounded bg-gray-100 text-gray-600 hover:bg-gray-200"
+                      onClick={() => setConfirmDeleteId(lead.id)}
+                      aria-label={`Delete lead from ${lead.name}`}
+                      className="px-2 py-1 text-xs font-semibold text-gray-400 hover:text-red-600 hover:bg-red-50 rounded transition-colors"
                     >
-                      Cancel
+                      Delete
                     </button>
-                  </div>
-                ) : (
-                  <button
-                    onClick={() => setConfirmDeleteId(lead.id)}
-                    aria-label={`Delete lead from ${lead.name}`}
-                    className="px-2 py-1 text-xs font-semibold text-gray-400 hover:text-red-600 hover:bg-red-50 rounded transition-colors"
-                  >
-                    Delete
-                  </button>
-                )}
+                  )}
+                </div>
               </td>
             </tr>
           ))}
