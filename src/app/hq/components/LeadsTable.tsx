@@ -43,6 +43,7 @@ const TIMELINE_LABELS: Record<string, string> = {
 }
 
 type EmailEvent = { event_type: string; occurred_at: string }
+type SmsEvent = { status: string; occurred_at: string }
 
 function relativeTime(iso: string): string {
   const ms = Date.now() - new Date(iso).getTime()
@@ -63,12 +64,23 @@ function emailIndicator(event?: EmailEvent) {
   return null
 }
 
+function smsIndicator(event?: SmsEvent) {
+  if (!event) return null
+  const s = event.status
+  if (s === 'delivered') return { emoji: '📱', label: 'Delivered', color: 'text-green-700 bg-green-50' }
+  if (s === 'sent' || s === 'queued') return { emoji: '📱', label: 'Sent', color: 'text-blue-700 bg-blue-50' }
+  if (s === 'failed' || s === 'undelivered') return { emoji: '📱', label: 'Failed', color: 'text-red-700 bg-red-50' }
+  return { emoji: '📱', label: s, color: 'text-gray-600 bg-gray-50' }
+}
+
 export default function LeadsTable({
   initialLeads,
   emailEvents = {},
+  smsEvents = {},
 }: {
   initialLeads: Lead[]
   emailEvents?: Record<string, EmailEvent>
+  smsEvents?: Record<string, SmsEvent>
 }) {
   const [leads, setLeads] = useState(initialLeads)
   const [updating, setUpdating] = useState<string | null>(null)
@@ -183,6 +195,16 @@ export default function LeadsTable({
                     <div className={`mt-1 inline-flex items-center gap-1 text-[10px] font-medium px-1.5 py-0.5 rounded ${ind.color}`}>
                       <span>{ind.emoji}</span>
                       <span>{ind.label} {relativeTime(emailEvents[lead.id].occurred_at)}</span>
+                    </div>
+                  )
+                })()}
+                {mounted && (() => {
+                  const ind = smsIndicator(smsEvents[lead.id])
+                  if (!ind) return null
+                  return (
+                    <div className={`mt-1 inline-flex items-center gap-1 text-[10px] font-medium px-1.5 py-0.5 rounded ${ind.color}`}>
+                      <span>{ind.emoji}</span>
+                      <span>{ind.label} {relativeTime(smsEvents[lead.id].occurred_at)}</span>
                     </div>
                   )
                 })()}

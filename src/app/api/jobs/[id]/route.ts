@@ -25,16 +25,47 @@ export async function PATCH(
     return NextResponse.json({ error: parsed.error.issues }, { status: 400 })
   }
 
-  const { data, error } = await getAdminClient()
+  const db = getAdminClient()
+
+  const { data: prev } = await db
+    .from('jobs')
+    .select('id, status')
+    .eq('id', id)
+    .single()
+
+  const { data, error } = await db
     .from('jobs')
     .update({ status: parsed.data.status, updated_at: new Date().toISOString() })
     .eq('id', id)
-    .select('id, status')
+    .select('id, status, customer_id, customers(name, phone)')
     .single()
 
   if (error || !data) {
     return NextResponse.json({ error: 'Job not found' }, { status: 404 })
   }
 
-  return NextResponse.json(data)
+  // When a job flips to 'completed', schedule a review-request SMS for 24h out.
+  // Customer must have a phone; otherwise silently skip.
+  const justCompleted =
+    parsed.data.status === 'completed' && prev?.status !== 'completed'
+  const customerRaw = data.customers as
+    | { name: string; phone: string | null }
+    | { name: string; phone: string | null }[]
+    | null
+  const customer = Array.isArray(customerRaw) ? customerRaw[0] ?? null : customerRaw
+
+  if (justCompleted && customer?.phone) {
+    const sendAt = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString()
+    await db.from('scheduled_sms').insert({
+      send_at: sendAt,
+      template: 'review_request',
+      variables: { customerName: customer.name },
+      to_phone: customer.phone,
+      customer_id: data.customer_id,
+      job_id: data.id,
+      status: 'pending',
+    })
+  }
+
+  return NextResponse.json({ id: data.id, status: data.status })
 }

@@ -5,6 +5,8 @@ import { getAdminClient } from '@/lib/supabase/admin'
 import { Resend } from 'resend'
 import LeadOwnerAlert, { leadOwnerAlertText } from '@/emails/LeadOwnerAlert'
 import LeadCustomerConfirmation, { leadCustomerConfirmationText } from '@/emails/LeadCustomerConfirmation'
+import { sendSms } from '@/lib/twilio'
+import { leadAutoReply } from '@/lib/sms-templates'
 
 export const dynamic = 'force-dynamic'
 
@@ -179,6 +181,15 @@ export async function POST(request: NextRequest) {
           { name: 'email_type', value: 'lead_customer_confirmation' },
         ],
       })
+    }
+
+    // ── SMS auto-reply (fire-and-forget, same pattern as Resend) ─────────
+    if (process.env.TWILIO_ACCOUNT_SID && process.env.TWILIO_FROM) {
+      void sendSms(
+        data.phone,
+        leadAutoReply({ name: data.name, service: data.service_type }),
+        { tags: { leadId: lead.id, template: 'lead_auto_reply' } }
+      ).catch(err => console.error('[Twilio] lead auto-reply failed:', err))
     }
 
     return NextResponse.json({ success: true, id: lead.id })

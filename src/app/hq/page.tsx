@@ -63,6 +63,7 @@ export default async function DashboardPage() {
     { data: permitLeads },
     { data: recentLeadsForTable },
     { data: recentEmailEvents },
+    { data: recentSmsEvents },
   ] = await Promise.all([
     db.from('leads').select('status, timeline, created_at'),
     db.from('customers').select('created_at, lead_id'),
@@ -77,11 +78,22 @@ export default async function DashboardPage() {
       .in('event_type', ['email.opened', 'email.clicked', 'email.delivered'])
       .order('occurred_at', { ascending: false })
       .limit(500),
+    db
+      .from('sms_events')
+      .select('lead_id, status, occurred_at')
+      .not('lead_id', 'is', null)
+      .order('occurred_at', { ascending: false })
+      .limit(500),
   ])
 
   const latestEventByLead: Record<string, { event_type: string; occurred_at: string }> = {}
   for (const e of (recentEmailEvents ?? []) as { lead_id: string; event_type: string; occurred_at: string }[]) {
     if (!latestEventByLead[e.lead_id]) latestEventByLead[e.lead_id] = { event_type: e.event_type, occurred_at: e.occurred_at }
+  }
+
+  const latestSmsByLead: Record<string, { status: string; occurred_at: string }> = {}
+  for (const s of (recentSmsEvents ?? []) as { lead_id: string; status: string; occurred_at: string }[]) {
+    if (!latestSmsByLead[s.lead_id]) latestSmsByLead[s.lead_id] = { status: s.status, occurred_at: s.occurred_at }
   }
 
   const L = (leads ?? []) as Lead[]
@@ -286,7 +298,11 @@ export default async function DashboardPage() {
         <div className="text-[11px] font-bold tracking-[0.2em] uppercase text-[color:var(--color-ink-400)] mb-3">
           Recent leads
         </div>
-        <LeadsTable initialLeads={recentLeadsForTable ?? []} emailEvents={latestEventByLead} />
+        <LeadsTable
+          initialLeads={recentLeadsForTable ?? []}
+          emailEvents={latestEventByLead}
+          smsEvents={latestSmsByLead}
+        />
       </section>
     </div>
   )
