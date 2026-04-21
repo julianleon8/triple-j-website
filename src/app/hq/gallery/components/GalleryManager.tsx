@@ -46,6 +46,8 @@ type GalleryItem = {
 
 const TYPE_OPTIONS = ['Carport', 'Garage', 'Barn', 'RV Cover', 'Lean-To', 'Porch Cover', 'Other']
 const TAG_OPTIONS = ['Welded', 'Bolted', 'Turnkey']
+const PANEL_PROFILE_OPTIONS = ['PBR', 'PBU']
+const GAUGE_OPTIONS = ['26', '29']
 
 const TAG_COLORS: Record<string, string> = {
   Welded:  'bg-blue-100 text-blue-700',
@@ -142,6 +144,9 @@ export default function GalleryManager({ initialItems }: { initialItems: Gallery
     const panel = panelRaw ? panelRaw.split('/') : null
     const trim = trimRaw ? trimRaw.split('/') : null
 
+    const panelProfileRaw = (data.get('panel_profile') as string) || ''
+    const gaugeRaw = (data.get('gauge') as string) || ''
+
     const body = {
       title: (data.get('title') as string).trim(),
       city: (data.get('city') as string).trim(),
@@ -152,6 +157,8 @@ export default function GalleryManager({ initialItems }: { initialItems: Gallery
       panel_color_line: panel ? panel[0].toLowerCase() : null,
       trim_color: trim ? trim[1].toLowerCase() : null,
       trim_color_line: trim ? trim[0].toLowerCase() : null,
+      panel_profile: panelProfileRaw || null,
+      gauge: gaugeRaw || null,
     }
 
     const res = await fetch(`/api/gallery/${item.id}`, {
@@ -415,6 +422,32 @@ export default function GalleryManager({ initialItems }: { initialItems: Gallery
             </div>
             <ColorSelect name="panel_color" label="Panel Color" />
             <ColorSelect name="trim_color" label="Trim Color" />
+            <div>
+              <label className="block text-xs font-semibold text-gray-600 mb-1">Panel Profile</label>
+              <select
+                name="panel_profile"
+                defaultValue=""
+                className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
+              >
+                <option value="">— None —</option>
+                {PANEL_PROFILE_OPTIONS.map((p) => (
+                  <option key={p} value={p}>{p}</option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <label className="block text-xs font-semibold text-gray-600 mb-1">Gauge</label>
+              <select
+                name="gauge"
+                defaultValue=""
+                className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
+              >
+                <option value="">— None —</option>
+                {GAUGE_OPTIONS.map((g) => (
+                  <option key={g} value={g}>{g} ga</option>
+                ))}
+              </select>
+            </div>
             <div className="sm:col-span-2">
               <label className="block text-xs font-semibold text-gray-600 mb-1">
                 Alt text (for accessibility)
@@ -727,6 +760,34 @@ function EditPanel({
             </select>
           </div>
           <div />
+        </div>
+        <div className="grid grid-cols-2 gap-3">
+          <div>
+            <label className="block text-xs font-semibold text-gray-600 mb-1">Panel Profile</label>
+            <select
+              name="panel_profile"
+              defaultValue={item.panel_profile ?? ''}
+              className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
+            >
+              <option value="">— None —</option>
+              {PANEL_PROFILE_OPTIONS.map((p) => (
+                <option key={p} value={p}>{p}</option>
+              ))}
+            </select>
+          </div>
+          <div>
+            <label className="block text-xs font-semibold text-gray-600 mb-1">Gauge</label>
+            <select
+              name="gauge"
+              defaultValue={item.gauge ?? ''}
+              className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
+            >
+              <option value="">— None —</option>
+              {GAUGE_OPTIONS.map((g) => (
+                <option key={g} value={g}>{g} ga</option>
+              ))}
+            </select>
+          </div>
         </div>
         <div className="grid grid-cols-2 gap-3">
           <ColorSelect

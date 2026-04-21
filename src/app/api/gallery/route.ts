@@ -32,6 +32,8 @@ export async function POST(request: NextRequest) {
   const alt_text = (formData.get('alt_text') as string | null)?.trim() || ''
   const panelColorRaw = (formData.get('panel_color') as string | null)?.trim() || ''
   const trimColorRaw = (formData.get('trim_color') as string | null)?.trim() || ''
+  const panelProfileRaw = (formData.get('panel_profile') as string | null)?.trim() || ''
+  const gaugeRaw = (formData.get('gauge') as string | null)?.trim() || ''
   const is_featured = formData.get('is_featured') === 'true'
 
   if (!file || !title) {
@@ -84,6 +86,8 @@ export async function POST(request: NextRequest) {
       panel_color_line: panel?.line ?? null,
       trim_color: trim?.color ?? null,
       trim_color_line: trim?.line ?? null,
+      panel_profile: panelProfileRaw || null,
+      gauge: gaugeRaw || null,
     })
     .select()
     .single()
