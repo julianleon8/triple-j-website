@@ -1,15 +1,21 @@
 @import "tailwindcss";
 
 /* =========================================================
-   Triple J Metal — Design Tokens
+   Triple J Metal — Design Tokens v2
    ---------------------------------------------------------
    Brand:  Steel blue (industrial, confident, high contrast)
-   Body:   White paper
-   Ink:    Near-black for headers, footers, hero
-   No dark-mode. Single-direction design.
+   Theme:  Light mode by default, follows iOS prefers-color-scheme.
+           Semantic tokens (--surface-*, --text-*, --border-*)
+           remap automatically; raw scales stay constant for
+           components that need a fixed color (e.g. brand-600
+           is always brand-600).
    ========================================================= */
 
 :root {
+  color-scheme: light dark;
+
+  /* ── Raw color scales — never change between themes ────── */
+
   /* Brand — steel blue */
   --color-brand-50:  #eef4ff;
   --color-brand-100: #d9e6ff;
@@ -22,9 +28,9 @@
   --color-brand-800: #12407a;
   --color-brand-900: #0d2f5c;
 
-  /* Ink / paper */
+  /* Ink (dark end) → paper (light end) */
   --color-ink-950:   #050505;
-  --color-ink-900:   #0a0a0a; /* header + footer bg */
+  --color-ink-900:   #0a0a0a;
   --color-ink-800:   #141414;
   --color-ink-700:   #1f1f1f;
   --color-ink-600:   #2a2a2a;
@@ -38,10 +44,56 @@
   --color-paper-2:   #fafafa;
 
   /* Accents */
-  --color-accent-amber: #f5a524;  /* for "48-Hour" callouts */
-  --color-accent-steel: #5f7a95;  /* muted steel */
+  --color-accent-amber: #f5a524;
+  --color-accent-steel: #5f7a95;
   --color-success:      #15803d;
   --color-danger:       #dc2626;
+
+  /* ── Semantic tokens — flip in dark mode ────────────────── */
+
+  /* Surfaces (page bg → most-elevated) */
+  --surface-1:       #ffffff; /* page background */
+  --surface-2:       #fafafa; /* card / panel */
+  --surface-3:       #f5f5f5; /* elevated card / sheet */
+  --surface-overlay: rgba(0, 0, 0, 0.4); /* sheet/modal backdrop */
+
+  /* Text */
+  --text-primary:   #0a0a0a;
+  --text-secondary: #4a4a4a;
+  --text-tertiary:  #9a9a9a;
+  --text-on-brand:  #ffffff;
+
+  /* Borders */
+  --border-subtle:  #e8e8e8;
+  --border-strong:  #d4d4d4;
+
+  /* Brand uses the same hue in both themes; tweak for dark contrast */
+  --brand-fg:       #1e6bd6;
+  --brand-fg-hover: #1851b5;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    /* Surfaces — true black-ish for OLED, slightly lifted for cards */
+    --surface-1:       #000000;
+    --surface-2:       #0e0e10;
+    --surface-3:       #1a1a1d;
+    --surface-overlay: rgba(0, 0, 0, 0.7);
+
+    /* Text — Apple HIG dark-mode text values */
+    --text-primary:   #f5f5f7;
+    --text-secondary: #a1a1a6;
+    --text-tertiary:  #6e6e73;
+    --text-on-brand:  #ffffff;
+
+    /* Borders — barely visible separators */
+    --border-subtle:  rgba(255, 255, 255, 0.08);
+    --border-strong:  rgba(255, 255, 255, 0.15);
+
+    /* Brand on dark needs +saturation/+lightness to stay vibrant */
+    --brand-fg:       #4d8dff;
+    --brand-fg-hover: #76a8ff;
+  }
 }
 
 /* Expose tokens to Tailwind's utility generator (v4 @theme) */
@@ -76,8 +128,23 @@
   --color-accent-amber: var(--color-accent-amber);
   --color-accent-steel: var(--color-accent-steel);
 
+  /* Semantic tokens — usable as bg-(--surface-1) / text-(--text-primary) etc. */
+  --color-surface-1:       var(--surface-1);
+  --color-surface-2:       var(--surface-2);
+  --color-surface-3:       var(--surface-3);
+  --color-surface-overlay: var(--surface-overlay);
+  --color-text-primary:    var(--text-primary);
+  --color-text-secondary:  var(--text-secondary);
+  --color-text-tertiary:   var(--text-tertiary);
+  --color-text-on-brand:   var(--text-on-brand);
+  --color-border-subtle:   var(--border-subtle);
+  --color-border-strong:   var(--border-strong);
+  --color-brand-fg:        var(--brand-fg);
+  --color-brand-fg-hover:  var(--brand-fg-hover);
+
   --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
   --font-display: var(--font-barlow), ui-sans-serif, system-ui, sans-serif;
+  --font-ios: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro", system-ui, sans-serif;
   --font-mono: ui-monospace, monospace;
 }
 
@@ -89,8 +156,8 @@ html {
 }
 
 body {
-  background: var(--color-paper);
-  color: var(--color-ink-900);
+  background: var(--surface-1);
+  color: var(--text-primary);
   font-family: var(--font-sans);
   font-feature-settings: "ss01", "cv11";
 }

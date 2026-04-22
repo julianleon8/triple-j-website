@@ -32,22 +32,22 @@ export default function HqChrome({ children }: { children: React.ReactNode }) {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 pb-[max(1rem,env(safe-area-inset-bottom))]">
-      <header className="sticky top-0 z-40 border-b border-black/10 bg-yellow-500 text-black shadow-sm pt-[env(safe-area-inset-top)]">
+    <div className="min-h-screen bg-(--surface-1) text-(--text-primary) pb-[max(1rem,env(safe-area-inset-bottom))]">
+      <header className="sticky top-0 z-40 border-b border-white/10 bg-brand-600 text-white shadow-sm pt-[env(safe-area-inset-top)]">
         <div className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 py-3 sm:px-6 sm:py-4">
           <Link
             href="/hq"
             className="min-h-11 min-w-0 shrink font-bold tracking-tight sm:text-xl"
           >
             <span className="block truncate leading-tight">Triple J Metal</span>
-            <span className="block text-[11px] font-semibold uppercase tracking-wider text-black/70 sm:text-xs">
+            <span className="block text-[11px] font-semibold uppercase tracking-wider text-white/70 sm:text-xs">
               Headquarters
             </span>
           </Link>
 
           <button
             type="button"
-            className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-lg border border-black/15 bg-black/5 text-black hover:bg-black/10 sm:hidden"
+            className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-lg border border-white/20 bg-white/10 text-white hover:bg-white/20 sm:hidden"
             aria-expanded={menuOpen}
             aria-controls="hq-nav-menu"
             onClick={() => setMenuOpen(o => !o)}
@@ -80,7 +80,7 @@ export default function HqChrome({ children }: { children: React.ReactNode }) {
             <button
               type="button"
               onClick={() => void signOut()}
-              className="ml-2 rounded-md border border-black/20 px-3 py-2 text-xs font-bold uppercase tracking-wide hover:bg-black/10"
+              className="ml-2 rounded-md border border-white/30 px-3 py-2 text-xs font-bold uppercase tracking-wide hover:bg-white/10"
             >
               Sign out
             </button>
@@ -90,7 +90,7 @@ export default function HqChrome({ children }: { children: React.ReactNode }) {
         {menuOpen && (
           <nav
             id="hq-nav-menu"
-            className="border-t border-black/10 bg-yellow-400 px-4 py-3 sm:hidden"
+            className="border-t border-white/10 bg-brand-700 px-4 py-3 sm:hidden"
           >
             <ul className="flex flex-col gap-1">
               {NAV.map(({ href, label }) => {
@@ -99,7 +99,7 @@ export default function HqChrome({ children }: { children: React.ReactNode }) {
                   <li key={href}>
                     <Link
                       href={href}
-                      className={`block min-h-11 rounded-lg px-3 py-3 text-base font-semibold hover:bg-black/10 ${active ? 'bg-black/10' : ''}`}
+                      className={`block min-h-11 rounded-lg px-3 py-3 text-base font-semibold hover:bg-white/10 ${active ? 'bg-white/15' : ''}`}
                     >
                       {label}
                     </Link>
@@ -110,7 +110,7 @@ export default function HqChrome({ children }: { children: React.ReactNode }) {
                 <button
                   type="button"
                   onClick={() => void signOut()}
-                  className="mt-1 w-full min-h-11 rounded-lg border border-black/20 px-3 py-3 text-left text-base font-bold hover:bg-black/10"
+                  className="mt-1 w-full min-h-11 rounded-lg border border-white/30 px-3 py-3 text-left text-base font-bold hover:bg-white/10"
                 >
                   Sign out
                 </button>

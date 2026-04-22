@@ -28,6 +28,10 @@ export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   viewportFit: "cover",
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#1e6bd6" },
+    { media: "(prefers-color-scheme: dark)",  color: "#000000" },
+  ],
 };
 
 export const metadata: Metadata = {
@@ -54,6 +58,15 @@ export const metadata: Metadata = {
     type: "website",
     locale: "en_US",
     siteName: SITE.name,
+  },
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "black-translucent",
+    title: "Triple J",
+  },
+  applicationName: "Triple J Metal HQ",
+  formatDetection: {
+    telephone: true,
   },
 };
 
