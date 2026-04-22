@@ -7,6 +7,7 @@ import "./globals.css";
 
 import { SITE } from "@/lib/site";
 import { getSiteUrl } from "@/lib/site-url";
+import { ServiceWorkerRegistrar } from "@/components/hq/ServiceWorkerRegistrar";
 
 const barlowCondensed = Barlow_Condensed({
   variable: "--font-barlow",
@@ -82,6 +83,7 @@ export default function RootLayout({
     >
       <body className="min-h-full flex flex-col">
         {children}
+        <ServiceWorkerRegistrar />
         <Analytics />
         <SpeedInsights />
       </body>

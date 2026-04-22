@@ -6,7 +6,11 @@ import QuoteAcceptedOwnerAlert, { quoteAcceptedOwnerAlertText } from '@/emails/Q
 
 export const dynamic = 'force-dynamic'
 
-const resend = new Resend(process.env.RESEND_API_KEY)
+let _resend: Resend | null = null
+function resend(): Resend {
+  if (!_resend) _resend = new Resend(process.env.RESEND_API_KEY)
+  return _resend
+}
 
 export async function POST(
   request: NextRequest,
@@ -70,7 +74,7 @@ export async function POST(
     jobNumber,
   }
   if (process.env.OWNER_EMAIL) {
-    resend.emails.send({
+    resend().emails.send({
       from: 'Triple J Metal <quotes@triplejmetaltx.com>',
       to: process.env.OWNER_EMAIL.split(','),
       subject: action === 'accepted'

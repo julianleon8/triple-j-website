@@ -1,4 +1,15 @@
 import type { NextConfig } from "next";
+import withSerwistInit from "@serwist/next";
+
+const withSerwist = withSerwistInit({
+  // Service worker source file — compiled by Serwist into /sw.js
+  swSrc: "src/app/sw.ts",
+  swDest: "public/sw.js",
+  cacheOnNavigation: true,
+  reloadOnOnline: false,
+  // Disable the generated SW in dev — it caches broken HMR chunks
+  disable: process.env.NODE_ENV === "development",
+});
 
 const nextConfig: NextConfig = {
   async redirects() {
@@ -70,4 +81,4 @@ const nextConfig: NextConfig = {
   },
 };
 
-export default nextConfig;
+export default withSerwist(nextConfig);

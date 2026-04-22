@@ -7,7 +7,11 @@ import QuoteEmail, { quoteEmailText } from '@/emails/QuoteEmail'
 export const dynamic = 'force-dynamic'
 export const maxDuration = 30
 
-const resend = new Resend(process.env.RESEND_API_KEY)
+let _resend: Resend | null = null
+function resend(): Resend {
+  if (!_resend) _resend = new Resend(process.env.RESEND_API_KEY)
+  return _resend
+}
 
 export async function POST(
   _request: NextRequest,
@@ -56,7 +60,7 @@ export async function POST(
   }
 
   try {
-    const { data: sendData, error: sendError } = await resend.emails.send({
+    const { data: sendData, error: sendError } = await resend().emails.send({
       from: 'Triple J Metal <quotes@triplejmetaltx.com>',
       replyTo: 'julianleon@triplejmetaltx.com',
       to: quote.customers.email,

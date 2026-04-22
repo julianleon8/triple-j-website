@@ -8,7 +8,12 @@ import LeadCustomerConfirmation, { leadCustomerConfirmationText } from '@/emails
 
 export const dynamic = 'force-dynamic'
 
-const resend = new Resend(process.env.RESEND_API_KEY)
+// Lazy-init so build-time static analysis doesn't require the key
+let _resend: Resend | null = null
+function resend(): Resend {
+  if (!_resend) _resend = new Resend(process.env.RESEND_API_KEY)
+  return _resend
+}
 
 // Simple ZIP → city lookup for Bell / Coryell counties
 const ZIP_CITIES: Record<string, string> = {
@@ -144,7 +149,7 @@ export async function POST(request: NextRequest) {
       submittedAt,
     }
 
-    await resend.emails.send({
+    await resend().emails.send({
       from: 'Triple J Metal <leads@triplejmetaltx.com>',
       to: process.env.OWNER_EMAIL!.split(','),
       replyTo: data.email || undefined,
@@ -167,7 +172,7 @@ export async function POST(request: NextRequest) {
         isMilitary: data.is_military,
         timeline: data.timeline || null,
       }
-      await resend.emails.send({
+      await resend().emails.send({
         from: 'Triple J Metal <no-reply@triplejmetaltx.com>',
         replyTo: 'julianleon@triplejmetaltx.com',
         to: data.email,

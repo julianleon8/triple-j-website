@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { useEffect, useRef, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
+import { OfflineBadge } from '@/components/hq/OfflineBadge'
 
 function titleFor(pathname: string, tab: string | null): string {
   if (pathname === '/hq') return tab === 'funnel' ? 'Funnel' : 'Now'
@@ -66,13 +67,16 @@ export function HqHeader() {
       style={{ paddingTop: 'env(safe-area-inset-top)' }}
     >
       <div className="flex items-center justify-between px-4 py-2">
-        <h1
-          className={`font-(--font-ios) font-bold text-(--text-primary) tracking-tight transition-all ${
-            scrolled ? 'text-[17px]' : 'text-[28px]'
-          }`}
-        >
-          {title}
-        </h1>
+        <div className="flex items-center gap-2 min-w-0">
+          <h1
+            className={`font-(--font-ios) font-bold text-(--text-primary) tracking-tight transition-all ${
+              scrolled ? 'text-[17px]' : 'text-[28px]'
+            }`}
+          >
+            {title}
+          </h1>
+          <OfflineBadge />
+        </div>
         <div ref={menuRef} className="relative">
           <button
             type="button"

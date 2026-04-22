@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
+import { InstallPrompt } from '@/components/hq/InstallPrompt'
 import { BottomTabBar } from './BottomTabBar'
 import { HqHeader } from './HqHeader'
 
@@ -76,6 +77,9 @@ export default function HqChrome({ children }: { children: React.ReactNode }) {
 
       {/* Mobile bottom tab bar (hidden on sm:+) */}
       <BottomTabBar />
+
+      {/* iOS install banner (mobile, visits-gated) */}
+      <InstallPrompt />
     </div>
   )
 }
