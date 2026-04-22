@@ -6,6 +6,8 @@ import { KPICard } from '@/components/hq/KPICard'
 import { ChartContainer } from '@/components/hq/ChartContainer'
 import { Sparkline } from '@/components/hq/Sparkline'
 import { Funnel } from '@/components/hq/Funnel'
+import { PipelineList } from '@/components/hq/PipelineList'
+import { buildPipeline } from '@/lib/pipeline'
 import LeadsTable from './components/LeadsTable'
 
 type Lead = { status: string; timeline: string | null; created_at: string }
@@ -81,9 +83,9 @@ type SearchParams = Promise<{ tab?: string; type?: string }>
 export default async function DashboardPage({ searchParams }: { searchParams: SearchParams }) {
   const { tab } = await searchParams
 
-  // Funnel tab placeholder for B1 — unified PipelineList ships in B2
+  // Funnel tab: unified pipeline of everything (B2)
   if (tab === 'funnel') {
-    return <FunnelPlaceholder />
+    return <FunnelTab />
   }
 
   const db = getAdminClient()
@@ -285,22 +287,49 @@ export default async function DashboardPage({ searchParams }: { searchParams: Se
   )
 }
 
-function FunnelPlaceholder() {
+async function FunnelTab() {
+  const db = getAdminClient()
+
+  const [
+    { data: leads },
+    { data: permits },
+    { data: customers },
+    { data: quotes },
+    { data: jobs },
+  ] = await Promise.all([
+    db.from('leads')
+      .select('id, created_at, name, phone, city, zip, service_type, structure_type, timeline, is_military, status')
+      .order('created_at', { ascending: false })
+      .limit(200),
+    db.from('permit_leads')
+      .select('id, created_at, jurisdiction, permit_number, permit_type, address, city, valuation, wheelhouse_score, status')
+      .order('created_at', { ascending: false })
+      .limit(200),
+    db.from('customers')
+      .select('id, created_at, name, phone, city')
+      .order('created_at', { ascending: false })
+      .limit(200),
+    db.from('quotes')
+      .select('id, created_at, quote_number, status, total, valid_until, customers(name)')
+      .order('created_at', { ascending: false })
+      .limit(200),
+    db.from('jobs')
+      .select('id, created_at, job_number, status, job_type, city, scheduled_date, total_contract, balance_due, customers(name)')
+      .order('created_at', { ascending: false })
+      .limit(200),
+  ])
+
+  const rows = buildPipeline({
+    leads:     (leads ?? []) as never,
+    permits:   (permits ?? []) as never,
+    customers: (customers ?? []) as never,
+    quotes:    (quotes ?? []) as never,
+    jobs:      (jobs ?? []) as never,
+  })
+
   return (
-    <div className="mx-auto max-w-md py-12 text-center">
-      <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-(--surface-3)">
-        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" className="text-(--brand-fg)">
-          <path d="M3 5h18l-7 9v6l-4-2v-4z" strokeLinecap="round" strokeLinejoin="round" />
-        </svg>
-      </div>
-      <h2 className="text-xl font-bold text-(--text-primary)">Funnel coming next</h2>
-      <p className="mt-2 text-sm text-(--text-secondary)">
-        Phase B2 will land a unified pipeline list — leads, permits, customers,
-        quotes, and jobs in one scrollable view with swipe actions and filters.
-      </p>
-      <p className="mt-6 text-xs text-(--text-tertiary)">
-        For now, use the Now tab or the avatar menu (Gallery, QuickBooks).
-      </p>
+    <div className="space-y-4">
+      <PipelineList rows={rows} />
     </div>
   )
 }
