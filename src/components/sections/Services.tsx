@@ -18,7 +18,7 @@ const SERVICE_CARDS = [
     image: "/images/carport-gable-residential.jpg",
   },
   {
-    slug: "garages",
+    slug: "metal-garages",
     title: "Metal Garages",
     blurb:
       "Fully-enclosed steel garages with roll-up doors, walk-through access, and insulation options.",

@@ -38,36 +38,19 @@ export const NAV_LINKS = [
   { href: "/contact", label: "Contact" },
 ] as const;
 
+/** Footer service links — `href` must match a real route (or `/contact` until a dedicated page exists). */
 export const SERVICES = [
+  { title: "Carports", href: "/services/carports" },
+  { title: "Metal Garages", href: "/services/metal-garages" },
+  { title: "Metal Barns", href: "/services/barns" },
+  { title: "RV & Boat Covers", href: "/services/rv-covers" },
   {
-    slug: "carports",
-    title: "Carports",
-    blurb: "Welded or bolted red iron carports — built and installed by our crew.",
-  },
-  {
-    slug: "garages",
-    title: "Metal Garages",
-    blurb: "Fully-enclosed red iron garages, single or multi-bay.",
-  },
-  {
-    slug: "barns",
-    title: "Metal Barns",
-    blurb: "Ag & ranch barns engineered for Central Texas storms.",
-  },
-  {
-    slug: "rv-covers",
-    title: "RV & Boat Covers",
-    blurb: "Tall-clearance structures for trailers, RVs, and boats.",
-  },
-  {
-    slug: "lean-to-patios",
     title: "Lean-To Patios",
-    blurb: "Steel-framed attached patio covers — any size, welded or bolted.",
+    href: "/contact",
   },
   {
-    slug: "house-additions",
     title: "House Additions",
-    blurb: "Steel-framed additions attached to your existing structure.",
+    href: "/contact",
   },
 ] as const;
 

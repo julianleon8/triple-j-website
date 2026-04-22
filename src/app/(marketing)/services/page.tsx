@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import { ButtonLink } from '@/components/ui/Button'
+import Link from 'next/link'
 import { Container } from '@/components/ui/Container'
 import { QuoteForm } from '@/components/sections/QuoteForm'
 import { SERVICES, SERVICE_SLUGS } from '@/lib/services'
@@ -99,6 +99,24 @@ export default function ServicesPage() {
                 <div className="text-xs text-white/60 mt-1 uppercase tracking-wide">{label}</div>
               </div>
             ))}
+          </div>
+        </Container>
+      </section>
+
+      {/* ── SEO helper links ── */}
+      <section className="bg-white py-8 border-y border-[color:var(--color-ink-100)]">
+        <Container>
+          <div className="flex flex-wrap items-center gap-3 text-sm">
+            <span className="font-semibold text-[color:var(--color-ink-700)]">More resources:</span>
+            <Link href="/locations" className="text-[color:var(--color-brand-700)] hover:underline">
+              Service locations
+            </Link>
+            <Link href="/services/colors" className="text-[color:var(--color-brand-700)] hover:underline">
+              Color chart
+            </Link>
+            <Link href="/services/pbr-vs-pbu-panels" className="text-[color:var(--color-brand-700)] hover:underline">
+              PBR vs PBU guide
+            </Link>
           </div>
         </Container>
       </section>

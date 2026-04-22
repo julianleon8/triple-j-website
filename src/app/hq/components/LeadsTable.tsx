@@ -77,9 +77,14 @@ export default function LeadsTable({ initialLeads }: { initialLeads: Lead[] }) {
 
   return (
     <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-x-auto">
-      <div className="px-4 py-2 border-b border-gray-100 flex items-center gap-2 text-xs text-gray-400">
-        <span className="h-2 w-2 rounded-full bg-green-400 animate-pulse" />
-        Live · refreshes every 30s · last updated {lastRefresh.toLocaleTimeString()}
+      <div className="flex flex-col gap-1 border-b border-gray-100 px-4 py-2 text-xs text-gray-400 sm:flex-row sm:items-center sm:gap-2">
+        <span className="flex items-center gap-2">
+          <span className="h-2 w-2 shrink-0 rounded-full bg-green-400 animate-pulse" />
+          Live · refreshes every 30s · last updated {lastRefresh.toLocaleTimeString()}
+        </span>
+        <span className="text-[11px] text-gray-400 sm:ml-auto sm:text-xs md:hidden">
+          Swipe the table sideways to see all columns.
+        </span>
       </div>
       <table className="w-full text-sm min-w-[900px]">
         <thead className="bg-gray-50 text-gray-500 uppercase text-xs border-b">

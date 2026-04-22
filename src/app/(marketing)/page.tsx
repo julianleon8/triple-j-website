@@ -83,6 +83,17 @@ export default function HomePage() {
                 Call {SITE.phone}
               </ButtonLink>
             </div>
+            <div className="mt-4 flex flex-wrap gap-4 text-sm">
+              <ButtonLink href="/locations" variant="outline-dark" size="sm">
+                Service locations
+              </ButtonLink>
+              <ButtonLink href="/services/colors" variant="outline-dark" size="sm">
+                Color chart
+              </ButtonLink>
+              <ButtonLink href="/services/pbr-vs-pbu-panels" variant="outline-dark" size="sm">
+                PBR vs PBU guide
+              </ButtonLink>
+            </div>
             <p className="mt-6 text-sm text-white/50">
               Family-owned · Temple, TX · {SITE.stats.projects} projects completed
             </p>

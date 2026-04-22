@@ -69,11 +69,8 @@ export function Footer() {
             </h3>
             <ul className="mt-5 space-y-2.5 text-sm">
               {SERVICES.map((s) => (
-                <li key={s.slug}>
-                  <Link
-                    href={`/services/${s.slug}`}
-                    className="text-white/70 hover:text-white"
-                  >
+                <li key={s.title}>
+                  <Link href={s.href} className="text-white/70 hover:text-white">
                     {s.title}
                   </Link>
                 </li>

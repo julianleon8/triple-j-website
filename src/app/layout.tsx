@@ -1,9 +1,12 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Barlow_Condensed, Inter } from "next/font/google";
+import { Analytics } from "@vercel/analytics/next";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 
 import "./globals.css";
 
 import { SITE } from "@/lib/site";
+import { getSiteUrl } from "@/lib/site-url";
 
 const barlowCondensed = Barlow_Condensed({
   variable: "--font-barlow",
@@ -19,10 +22,21 @@ const inter = Inter({
   display: "swap",
 });
 
+const siteUrl = getSiteUrl();
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
+};
+
 export const metadata: Metadata = {
   title: {
     default: `${SITE.name} | Metal Carports & Buildings in Central Texas`,
     template: `%s | ${SITE.name}`,
+  },
+  alternates: {
+    canonical: siteUrl,
   },
   description:
     "Triple J Metal builds welded or bolted metal carports, garages, and barns across Central Texas. Turnkey concrete included, same-week scheduling. Serving Temple, Belton, Killeen & more. Call 254-346-7764.",
@@ -53,7 +67,11 @@ export default function RootLayout({
       lang="en"
       className={`${barlowCondensed.variable} ${inter.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="min-h-full flex flex-col">
+        {children}
+        <Analytics />
+        <SpeedInsights />
+      </body>
     </html>
   );
 }

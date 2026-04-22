@@ -32,6 +32,15 @@ export function ServiceAreas() {
             and the surrounding rural counties. If you&rsquo;re within 90
             minutes of Temple, we&rsquo;ll come measure.
           </p>
+          <div className="mt-5">
+            <Link
+              href="/locations"
+              className="inline-flex items-center gap-2 text-sm font-semibold text-[color:var(--color-brand-700)] hover:text-[color:var(--color-brand-800)]"
+            >
+              View all service locations
+              <ArrowRightIcon className="h-4 w-4" />
+            </Link>
+          </div>
         </div>
 
         <div className="mt-12 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 md:gap-4">

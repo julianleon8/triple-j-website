@@ -24,34 +24,83 @@ const TAG_COLORS: Record<string, string> = {
   Turnkey: 'bg-amber-100 text-amber-700',
 }
 
+function fileBaseName(file: File) {
+  const n = file.name.replace(/\.[^.]+$/, '').replace(/[_-]+/g, ' ').trim()
+  return n || 'Photo'
+}
+
 export default function GalleryManager({ initialItems }: { initialItems: GalleryItem[] }) {
   const [items, setItems] = useState<GalleryItem[]>(initialItems)
   const [uploading, setUploading] = useState(false)
+  const [uploadProgress, setUploadProgress] = useState<string | null>(null)
+  const [selectedCount, setSelectedCount] = useState(0)
   const [busyId, setBusyId] = useState<string | null>(null)
   const [uploadError, setUploadError] = useState<string | null>(null)
   const fileRef = useRef<HTMLInputElement>(null)
 
-  // ── Upload ────────────────────────────────────────────────────────────────
+  // ── Upload (single or many; phones can pick multiple from library) ──────
   async function handleUpload(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
     setUploadError(null)
     const form = e.currentTarget
-    const data = new FormData(form)
-    if (!data.get('file') || !(data.get('file') as File).size) {
-      setUploadError('Please choose a photo.')
+    const files = fileRef.current?.files
+    if (!files?.length) {
+      setUploadError('Please choose at least one photo.')
       return
     }
-    setUploading(true)
-    const res = await fetch('/api/gallery', { method: 'POST', body: data })
-    if (res.ok) {
-      const { item } = await res.json()
-      setItems(prev => [...prev, item])
-      form.reset()
-    } else {
-      const { error } = await res.json().catch(() => ({ error: 'Upload failed' }))
-      setUploadError(error ?? 'Upload failed')
+    const fileArr = Array.from(files)
+    const fd = new FormData(form)
+    const titleInput = (fd.get('title') as string | null)?.trim() ?? ''
+    const city = (fd.get('city') as string | null)?.trim() || 'Central Texas'
+    const type = (fd.get('type') as string | null)?.trim() || 'Carport'
+    const tag = (fd.get('tag') as string | null)?.trim() || 'Welded'
+    const alt_text = (fd.get('alt_text') as string | null)?.trim() || ''
+
+    if (fileArr.length === 1 && !titleInput) {
+      setUploadError('Please enter a title for this photo.')
+      return
     }
+
+    setUploading(true)
+    let lastError: string | null = null
+
+    for (let i = 0; i < fileArr.length; i++) {
+      const file = fileArr[i]
+      setUploadProgress(
+        fileArr.length > 1 ? `Uploading ${i + 1} of ${fileArr.length}…` : 'Uploading…'
+      )
+      const base = fileBaseName(file)
+      const title =
+        fileArr.length === 1
+          ? titleInput
+          : titleInput
+            ? `${titleInput} — ${base}`
+            : base
+
+      const body = new FormData()
+      body.append('file', file)
+      body.append('title', title)
+      body.append('city', city)
+      body.append('type', type)
+      body.append('tag', tag)
+      body.append('alt_text', alt_text || title)
+
+      const res = await fetch('/api/gallery', { method: 'POST', body })
+      if (res.ok) {
+        const { item } = await res.json()
+        setItems(prev => [...prev, item])
+      } else {
+        const { error } = await res.json().catch(() => ({ error: 'Upload failed' }))
+        lastError = error ?? 'Upload failed'
+        break
+      }
+    }
+
+    setUploadProgress(null)
     setUploading(false)
+    form.reset()
+    setSelectedCount(0)
+    if (lastError) setUploadError(lastError)
   }
 
   // ── Toggle active ─────────────────────────────────────────────────────────
@@ -110,34 +159,50 @@ export default function GalleryManager({ initialItems }: { initialItems: Gallery
   return (
     <div className="space-y-8">
       {/* ── Upload form ── */}
-      <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
-        <h2 className="text-base font-bold text-gray-900 mb-4">Upload New Photo</h2>
+      <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-4 sm:p-6">
+        <h2 className="text-base font-bold text-gray-900 mb-1">Upload photos</h2>
+        <p className="text-xs text-gray-500 mb-4 sm:text-sm">
+          On your phone you can choose <strong className="font-semibold text-gray-700">Take Photo</strong> or{' '}
+          <strong className="font-semibold text-gray-700">Photo Library</strong>, and select many images at once.
+        </p>
         <form onSubmit={handleUpload} className="space-y-4">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="sm:col-span-2">
               <label className="block text-xs font-semibold text-gray-600 mb-1">
-                Photo <span className="text-red-500">*</span>
+                Photos <span className="text-red-500">*</span>
               </label>
               <input
                 ref={fileRef}
                 name="file"
                 type="file"
                 accept="image/*"
+                multiple
                 required
-                className="block w-full text-sm text-gray-600 file:mr-3 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 cursor-pointer"
+                onChange={e => setSelectedCount(e.target.files?.length ?? 0)}
+                className="block w-full text-sm text-gray-600 file:mr-3 file:min-h-11 file:py-2.5 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 cursor-pointer touch-manipulation"
               />
             </div>
             <div>
               <label className="block text-xs font-semibold text-gray-600 mb-1">
-                Title <span className="text-red-500">*</span>
+                Title{selectedCount > 1 ? ' (prefix for batch)' : ''}{' '}
+                {selectedCount <= 1 && <span className="text-red-500">*</span>}
               </label>
               <input
                 name="title"
                 type="text"
-                required
-                placeholder="e.g. 30x40 Welded Carport"
-                className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
+                required={selectedCount <= 1}
+                placeholder={
+                  selectedCount > 1
+                    ? 'e.g. Killeen install (optional — uses file names if empty)'
+                    : 'e.g. 30x40 Welded Carport'
+                }
+                className="w-full min-h-11 rounded-lg border border-gray-300 px-3 py-2.5 text-base sm:text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 touch-manipulation"
               />
+              {selectedCount > 1 && (
+                <p className="mt-1 text-[11px] text-gray-400">
+                  Each photo is titled &ldquo;prefix — filename&rdquo;, or just the filename if you leave this blank.
+                </p>
+              )}
             </div>
             <div>
               <label className="block text-xs font-semibold text-gray-600 mb-1">City</label>
@@ -146,18 +211,18 @@ export default function GalleryManager({ initialItems }: { initialItems: Gallery
                 type="text"
                 placeholder="e.g. Killeen, TX"
                 defaultValue="Central Texas"
-                className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
+                className="w-full min-h-11 rounded-lg border border-gray-300 px-3 py-2.5 text-base sm:text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 touch-manipulation"
               />
             </div>
             <div>
               <label className="block text-xs font-semibold text-gray-600 mb-1">Type</label>
-              <select name="type" className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400">
+              <select name="type" className="w-full min-h-11 rounded-lg border border-gray-300 px-3 py-2 text-base sm:text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 touch-manipulation">
                 {TYPE_OPTIONS.map(t => <option key={t}>{t}</option>)}
               </select>
             </div>
             <div>
               <label className="block text-xs font-semibold text-gray-600 mb-1">Tag</label>
-              <select name="tag" className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400">
+              <select name="tag" className="w-full min-h-11 rounded-lg border border-gray-300 px-3 py-2 text-base sm:text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 touch-manipulation">
                 {TAG_OPTIONS.map(t => <option key={t}>{t}</option>)}
               </select>
             </div>
@@ -167,25 +232,28 @@ export default function GalleryManager({ initialItems }: { initialItems: Gallery
                 name="alt_text"
                 type="text"
                 placeholder="Brief description of the photo"
-                className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
+                className="w-full min-h-11 rounded-lg border border-gray-300 px-3 py-2.5 text-base sm:text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 touch-manipulation"
               />
             </div>
           </div>
           {uploadError && (
             <p className="text-sm text-red-600 bg-red-50 rounded-lg px-3 py-2">{uploadError}</p>
           )}
+          {uploadProgress && (
+            <p className="text-sm font-medium text-blue-700 bg-blue-50 rounded-lg px-3 py-2">{uploadProgress}</p>
+          )}
           <button
             type="submit"
             disabled={uploading}
-            className="px-5 py-2.5 rounded-lg bg-blue-600 text-white text-sm font-semibold hover:bg-blue-700 disabled:opacity-50 transition-colors"
+            className="min-h-12 w-full rounded-lg bg-blue-600 px-5 py-3 text-base font-semibold text-white hover:bg-blue-700 disabled:opacity-50 transition-colors touch-manipulation sm:w-auto sm:py-2.5 sm:text-sm"
           >
-            {uploading ? 'Uploading…' : 'Upload Photo'}
+            {uploading ? 'Working…' : selectedCount > 1 ? `Upload ${selectedCount} photos` : 'Upload photo'}
           </button>
         </form>
       </div>
 
       {/* ── Current items ── */}
-      <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
+      <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-4 sm:p-6">
         <h2 className="text-base font-bold text-gray-900 mb-4">
           All Photos ({items.length})
         </h2>
@@ -229,30 +297,33 @@ export default function GalleryManager({ initialItems }: { initialItems: Gallery
               </div>
 
               {/* Controls */}
-              <div className="px-3 pb-3 flex items-center gap-2">
+              <div className="flex flex-wrap items-center gap-2 px-3 pb-3">
                 {/* Reorder */}
                 <button
+                  type="button"
                   onClick={() => move(item, 'up')}
                   disabled={idx === 0 || busyId === item.id}
                   title="Move up"
-                  className="p-1.5 rounded text-gray-400 hover:text-gray-700 hover:bg-gray-100 disabled:opacity-30 transition-colors"
+                  className="min-h-10 min-w-10 rounded-lg text-lg text-gray-500 hover:bg-gray-100 hover:text-gray-800 disabled:opacity-30 touch-manipulation"
                 >
                   ↑
                 </button>
                 <button
+                  type="button"
                   onClick={() => move(item, 'down')}
                   disabled={idx === items.length - 1 || busyId === item.id}
                   title="Move down"
-                  className="p-1.5 rounded text-gray-400 hover:text-gray-700 hover:bg-gray-100 disabled:opacity-30 transition-colors"
+                  className="min-h-10 min-w-10 rounded-lg text-lg text-gray-500 hover:bg-gray-100 hover:text-gray-800 disabled:opacity-30 touch-manipulation"
                 >
                   ↓
                 </button>
 
                 {/* Toggle visible */}
                 <button
+                  type="button"
                   onClick={() => toggleActive(item)}
                   disabled={busyId === item.id}
-                  className={`ml-auto text-xs font-semibold px-2.5 py-1 rounded-full transition-colors disabled:opacity-50 ${
+                  className={`min-h-10 rounded-full px-3 text-xs font-semibold transition-colors disabled:opacity-50 touch-manipulation sm:ml-auto ${
                     item.is_active
                       ? 'bg-green-100 text-green-700 hover:bg-green-200'
                       : 'bg-gray-100 text-gray-500 hover:bg-gray-200'
@@ -263,10 +334,11 @@ export default function GalleryManager({ initialItems }: { initialItems: Gallery
 
                 {/* Delete */}
                 <button
+                  type="button"
                   onClick={() => handleDelete(item)}
                   disabled={busyId === item.id}
                   title="Delete photo"
-                  className="p-1.5 rounded text-red-400 hover:text-red-600 hover:bg-red-50 disabled:opacity-50 transition-colors text-sm"
+                  className="min-h-10 min-w-10 rounded-lg text-lg text-red-400 hover:bg-red-50 hover:text-red-600 disabled:opacity-50 touch-manipulation"
                 >
                   ✕
                 </button>
