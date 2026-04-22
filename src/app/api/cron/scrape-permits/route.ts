@@ -8,6 +8,7 @@ import {
   EXTRACTION_MODEL,
   type ExtractedLead,
 } from '@/lib/permit-extractor';
+import { sendPushBackground } from '@/lib/push';
 
 export const dynamic = 'force-dynamic';
 export const maxDuration = 300; // 5 min — Claude calls + PDF parsing on Vercel Pro
@@ -113,6 +114,22 @@ async function scrapeOne(source: PermitSource): Promise<JurisdictionSummary> {
         s.errors.push(`Supabase upsert: ${error.message}`);
       } else {
         s.inserted = count ?? withKeys.length;
+
+        // Notify owner device(s) about high-value new permits (score ≥ 8).
+        // Summed across this jurisdiction so we don't blast 1 push per row.
+        const hotHits = leads.filter(l => (l.wheelhouse_score ?? 0) >= 8)
+        if (hotHits.length > 0 && s.inserted > 0) {
+          const top = hotHits[0]
+          const moreCount = hotHits.length - 1
+          sendPushBackground({
+            title: `🔥 ${hotHits.length} hot permit${hotHits.length === 1 ? '' : 's'}: ${source.jurisdiction.replace(/_/g, ' ')}`,
+            body: moreCount > 0
+              ? `${top.permit_type ?? 'permit'} · $${Math.round(Number(top.valuation ?? 0)).toLocaleString()} + ${moreCount} more`
+              : `${top.permit_type ?? 'permit'} · ${top.address ?? top.city ?? ''}`,
+            url: '/hq/permit-leads',
+            tag: `permits-${source.jurisdiction}-${Date.now()}`,
+          })
+        }
       }
     }
   } catch (err) {

@@ -3,6 +3,7 @@ import { getAdminClient } from '@/lib/supabase/admin'
 import { pushQuoteToQBO } from '@/lib/qbo'
 import { Resend } from 'resend'
 import QuoteAcceptedOwnerAlert, { quoteAcceptedOwnerAlertText } from '@/emails/QuoteAcceptedOwnerAlert'
+import { sendPushBackground } from '@/lib/push'
 
 export const dynamic = 'force-dynamic'
 
@@ -88,6 +89,17 @@ export async function POST(
       ],
     }).catch((err) => console.error('[Resend] quote-accept owner alert failed:', err))
   }
+
+  // Push notification to owner device(s)
+  const totalUsd = Number(quote.total ?? 0)
+  sendPushBackground({
+    title: action === 'accepted'
+      ? `💰 Quote accepted — ${customer?.name ?? ''}`
+      : `❌ Quote declined — ${customer?.name ?? ''}`,
+    body: `Quote ${quote.quote_number}${totalUsd > 0 ? ` · $${Math.round(totalUsd).toLocaleString()}` : ''}`,
+    url: `/hq/quotes/${quote.id}`,
+    tag: `quote-${quote.id}`,
+  })
 
   return NextResponse.json({ success: true, action, quote_number: quote.quote_number })
 }

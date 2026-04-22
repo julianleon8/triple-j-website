@@ -5,6 +5,7 @@ import { getAdminClient } from '@/lib/supabase/admin'
 import { Resend } from 'resend'
 import LeadOwnerAlert, { leadOwnerAlertText } from '@/emails/LeadOwnerAlert'
 import LeadCustomerConfirmation, { leadCustomerConfirmationText } from '@/emails/LeadCustomerConfirmation'
+import { sendPushBackground } from '@/lib/push'
 
 export const dynamic = 'force-dynamic'
 
@@ -185,6 +186,17 @@ export async function POST(request: NextRequest) {
         ],
       })
     }
+
+    // ── Push notification to owner devices ────────────────────────────────
+    const isHot = data.timeline === 'asap'
+    sendPushBackground({
+      title: isHot
+        ? `⚡ HOT lead: ${data.name}`
+        : `🔔 New lead: ${data.name}`,
+      body: [city, data.service_type.replace('_', ' '), sizeLine].filter(Boolean).join(' · '),
+      url: '/hq',
+      tag: `lead-${lead.id}`,
+    })
 
     return NextResponse.json({ success: true, id: lead.id })
   } catch (error) {

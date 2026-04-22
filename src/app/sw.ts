@@ -103,3 +103,59 @@ const serwist = new Serwist({
 })
 
 serwist.addEventListeners()
+
+// ──────────────────────────────────────────────────────────────────────────
+// Push notifications (B4)
+// Server posts a JSON payload { title, body, url?, tag? } via web-push.
+// SW renders the notification; click focuses the PWA and navigates to url.
+// ──────────────────────────────────────────────────────────────────────────
+
+type PushPayload = {
+  title: string
+  body: string
+  url?: string
+  tag?: string
+  icon?: string
+}
+
+self.addEventListener('push', (event: PushEvent) => {
+  if (!event.data) return
+  let payload: PushPayload
+  try {
+    payload = event.data.json() as PushPayload
+  } catch {
+    payload = { title: 'Triple J HQ', body: event.data.text() }
+  }
+
+  const { title, body, url, tag, icon } = payload
+  event.waitUntil(
+    self.registration.showNotification(title, {
+      body,
+      tag: tag ?? 'triple-j',
+      icon: icon ?? '/icon-192.png',
+      badge: '/icon-192.png',
+      data: { url: url ?? '/hq' },
+    }),
+  )
+})
+
+self.addEventListener('notificationclick', (event: NotificationEvent) => {
+  event.notification.close()
+  const targetUrl = (event.notification.data as { url?: string } | undefined)?.url ?? '/hq'
+
+  event.waitUntil(
+    (async () => {
+      const all = await self.clients.matchAll({ type: 'window', includeUncontrolled: true })
+      // If an HQ tab is already open, focus it and navigate.
+      for (const client of all) {
+        if (client.url.includes('/hq')) {
+          await client.focus()
+          if ('navigate' in client) await (client as WindowClient).navigate(targetUrl)
+          return
+        }
+      }
+      // Otherwise open a fresh window at the target URL.
+      await self.clients.openWindow(targetUrl)
+    })(),
+  )
+})

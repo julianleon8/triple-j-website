@@ -7,6 +7,7 @@ import { ChartContainer } from '@/components/hq/ChartContainer'
 import { Sparkline } from '@/components/hq/Sparkline'
 import { Funnel } from '@/components/hq/Funnel'
 import { PipelineList } from '@/components/hq/PipelineList'
+import { PushOptIn } from '@/components/hq/PushOptIn'
 import { buildPipeline } from '@/lib/pipeline'
 import LeadsTable from './components/LeadsTable'
 
@@ -201,6 +202,9 @@ export default async function DashboardPage({ searchParams }: { searchParams: Se
         </div>
         <LeadsTable initialLeads={recentLeadsForTable ?? []} emailEvents={latestEventByLead} />
       </section>
+
+      {/* Push notification opt-in (self-hides when subscribed or unsupported) */}
+      <PushOptIn />
 
       {/* Stats section — collapsed below leads. Full detail on /hq/stats (coming). */}
       <details className="group rounded-xl border border-(--border-subtle) bg-(--surface-2)">
