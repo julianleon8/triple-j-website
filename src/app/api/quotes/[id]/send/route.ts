@@ -5,6 +5,7 @@ import { Resend } from 'resend'
 import QuoteEmail, { quoteEmailText } from '@/emails/QuoteEmail'
 
 export const dynamic = 'force-dynamic'
+export const maxDuration = 30
 
 const resend = new Resend(process.env.RESEND_API_KEY)
 
@@ -15,6 +16,10 @@ export async function POST(
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+
+  if (!process.env.RESEND_API_KEY) {
+    return NextResponse.json({ error: 'RESEND_API_KEY is not configured' }, { status: 500 })
+  }
 
   const { id } = await params
   const db = getAdminClient()
@@ -30,38 +35,67 @@ export async function POST(
   if (!quote.quote_line_items?.length) return NextResponse.json({ error: 'Quote has no line items' }, { status: 400 })
   if (!quote.customers?.email) return NextResponse.json({ error: 'Customer has no email address' }, { status: 400 })
 
-  const acceptUrl = `${process.env.NEXT_PUBLIC_SITE_URL}/quotes/${quote.accept_token}`
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://triplejmetaltx.com'
+  const acceptUrl = `${siteUrl}/quotes/${quote.accept_token}`
 
   const emailProps = {
     customerName: quote.customers.name,
     quoteNumber: quote.quote_number,
-    lineItems: quote.quote_line_items,
-    subtotal: quote.subtotal,
-    taxAmount: quote.tax_amount,
-    total: quote.total,
+    lineItems: quote.quote_line_items.map((li: { description: string; quantity: number | string; unit_price: number | string; total_price: number | string }) => ({
+      description: li.description,
+      quantity: Number(li.quantity),
+      unit_price: Number(li.unit_price),
+      total_price: Number(li.total_price),
+    })),
+    subtotal: Number(quote.subtotal),
+    taxAmount: Number(quote.tax_amount),
+    total: Number(quote.total),
     validUntil: quote.valid_until,
     notes: quote.notes ?? undefined,
     acceptUrl,
   }
 
-  await resend.emails.send({
-    from: 'Triple J Metal <quotes@triplejmetaltx.com>',
-    replyTo: 'julianleon@triplejmetaltx.com',
-    to: quote.customers.email,
-    subject: `Your Quote ${quote.quote_number} from Triple J Metal`,
-    react: QuoteEmail(emailProps),
-    text: quoteEmailText(emailProps),
-    tags: [
-      { name: 'quote_id', value: id },
-      { name: 'email_type', value: 'quote_sent' },
-    ],
-  })
+  try {
+    const { data: sendData, error: sendError } = await resend.emails.send({
+      from: 'Triple J Metal <quotes@triplejmetaltx.com>',
+      replyTo: 'julianleon@triplejmetaltx.com',
+      to: quote.customers.email,
+      subject: `Your Quote ${quote.quote_number} from Triple J Metal`,
+      react: QuoteEmail(emailProps),
+      text: quoteEmailText(emailProps),
+      tags: [
+        { name: 'quote_id', value: id },
+        { name: 'email_type', value: 'quote_sent' },
+      ],
+    })
 
-  const sentAt = new Date().toISOString()
-  await db
-    .from('quotes')
-    .update({ status: 'sent', sent_at: sentAt, updated_at: sentAt })
-    .eq('id', id)
+    if (sendError) {
+      console.error('[quotes/send] Resend error:', sendError)
+      return NextResponse.json(
+        { error: `Email send failed: ${sendError.message ?? 'unknown error'}` },
+        { status: 502 },
+      )
+    }
 
-  return NextResponse.json({ sent_at: sentAt })
+    const sentAt = new Date().toISOString()
+    const { error: updateError } = await db
+      .from('quotes')
+      .update({ status: 'sent', sent_at: sentAt, updated_at: sentAt })
+      .eq('id', id)
+
+    if (updateError) {
+      console.error('[quotes/send] DB update error after send:', updateError)
+      return NextResponse.json(
+        { error: 'Email sent but quote status update failed', resend_id: sendData?.id },
+        { status: 500 },
+      )
+    }
+
+    return NextResponse.json({ sent_at: sentAt, resend_id: sendData?.id })
+  } catch (e) {
+    console.error('[quotes/send] unexpected error:', e)
+    const message = e instanceof Error ? e.message : 'Unexpected send error'
+    return NextResponse.json({ error: message }, { status: 500 })
+  }
 }
+
