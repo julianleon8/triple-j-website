@@ -17,9 +17,9 @@ export default async function DashboardGalleryPage() {
 
   return (
     <div>
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">Gallery</h1>
-        <p className="text-sm text-gray-500 mt-1">
+      <div className="hidden sm:block mb-6">
+        <h1 className="text-2xl font-bold text-(--text-primary)">Gallery</h1>
+        <p className="text-sm text-(--text-secondary) mt-1">
           Upload project photos and manage what appears on the public gallery page.
         </p>
       </div>

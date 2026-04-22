@@ -53,32 +53,31 @@ export default function NewCustomerForm({ onCreate, onCancel }: Props) {
   }
 
   return (
-    <tr className="bg-blue-50">
-      <td colSpan={7} className="px-4 py-4">
-        <form onSubmit={handleSubmit} className="grid grid-cols-2 md:grid-cols-3 gap-3">
-          <input name="name" placeholder="Name *" required
-            className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400" />
-          <input name="phone" placeholder="Phone *" required
-            className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400" />
-          <input name="email" type="email" placeholder="Email"
-            className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400" />
-          <input name="city" placeholder="City"
-            className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400" />
-          <textarea name="notes" placeholder="Notes" rows={1}
-            className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 col-span-2 resize-none" />
-          <div className="flex gap-2 items-center col-span-full md:col-span-1">
-            <button type="submit" disabled={saving}
-              className="bg-blue-600 hover:bg-blue-500 disabled:bg-blue-300 text-white text-xs font-bold px-4 py-2 rounded-lg transition">
-              {saving ? 'Saving…' : 'Create Customer'}
-            </button>
-            <button type="button" onClick={onCancel} disabled={saving}
-              className="bg-gray-100 hover:bg-gray-200 text-gray-700 text-xs font-bold px-4 py-2 rounded-lg transition">
-              Cancel
-            </button>
-            {error && <span className="text-xs text-red-600">{error}</span>}
-          </div>
-        </form>
-      </td>
-    </tr>
+    <form
+      onSubmit={handleSubmit}
+      className="rounded-xl border border-brand-500/40 bg-brand-600/5 p-4 space-y-3"
+    >
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <input name="name"  placeholder="Name *"  required className={INPUT} />
+        <input name="phone" placeholder="Phone *" required inputMode="tel" className={INPUT} />
+        <input name="email" type="email" placeholder="Email" className={INPUT} />
+        <input name="city"  placeholder="City" className={INPUT} />
+      </div>
+      <textarea name="notes" placeholder="Notes" rows={2} className={`${INPUT} resize-none w-full`} />
+      <div className="flex flex-wrap items-center gap-2">
+        <button type="submit" disabled={saving}
+          className="bg-brand-600 hover:bg-brand-700 disabled:opacity-50 text-white text-sm font-bold min-h-11 px-4 rounded-lg transition">
+          {saving ? 'Saving…' : 'Create Customer'}
+        </button>
+        <button type="button" onClick={onCancel} disabled={saving}
+          className="bg-(--surface-3) hover:opacity-80 text-(--text-primary) text-sm font-bold min-h-11 px-4 rounded-lg transition">
+          Cancel
+        </button>
+        {error && <span className="text-sm text-red-500">{error}</span>}
+      </div>
+    </form>
   )
 }
+
+const INPUT =
+  'min-h-11 rounded-lg border border-(--border-strong) bg-(--surface-1) text-(--text-primary) placeholder:text-(--text-tertiary) px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500'

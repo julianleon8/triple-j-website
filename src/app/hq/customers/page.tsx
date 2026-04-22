@@ -10,8 +10,7 @@ export default async function CustomersPage() {
     .order('created_at', { ascending: false })
 
   return (
-    <div>
-      <h1 className="text-2xl font-bold mb-6">Customers</h1>
+    <div className="space-y-4">
       <CustomersTable initialCustomers={customers ?? []} />
     </div>
   )

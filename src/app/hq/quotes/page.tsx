@@ -12,11 +12,11 @@ export default async function QuotesPage() {
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold">Quotes</h1>
+      <div className="flex items-center justify-between mb-4 sm:mb-6">
+        <h1 className="hidden sm:block text-2xl font-bold">Quotes</h1>
         <Link
           href="/hq/quotes/new"
-          className="bg-yellow-500 hover:bg-yellow-400 text-black font-bold text-sm px-4 py-2 rounded-lg transition"
+          className="ml-auto bg-brand-600 hover:bg-brand-700 text-white font-bold text-sm min-h-11 px-4 flex items-center rounded-lg transition"
         >
           + New Quote
         </Link>

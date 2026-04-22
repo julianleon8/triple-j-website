@@ -11,7 +11,7 @@ export default async function NewQuotePage() {
 
   return (
     <div>
-      <h1 className="text-2xl font-bold mb-6">New Quote</h1>
+      <h1 className="hidden sm:block text-2xl font-bold mb-6">New Quote</h1>
       <QuoteBuilderForm customers={customers ?? []} />
     </div>
   )

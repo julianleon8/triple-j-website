@@ -11,7 +11,7 @@ export default async function JobsPage() {
 
   return (
     <div>
-      <h1 className="text-2xl font-bold mb-6">Jobs</h1>
+      <h1 className="hidden sm:block text-2xl font-bold mb-6">Jobs</h1>
       <JobsTable initialJobs={jobs ?? []} />
     </div>
   )

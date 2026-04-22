@@ -27,7 +27,7 @@ export default async function QuoteDetailPage({
 
   return (
     <div>
-      <h1 className="text-2xl font-bold mb-6">Quote {quote.quote_number}</h1>
+      <h1 className="text-lg sm:text-2xl font-bold mb-4 sm:mb-6">Quote {quote.quote_number}</h1>
       <QuoteEditor quote={quote} customers={customers ?? []} />
     </div>
   )

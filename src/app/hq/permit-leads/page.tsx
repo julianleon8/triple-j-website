@@ -55,9 +55,9 @@ export default async function PermitLeadsPage({
 
   return (
     <div>
-      <div className="mb-6">
+      <div className="hidden sm:block mb-6">
         <h1 className="text-2xl font-bold">Permit Leads</h1>
-        <p className="text-sm text-gray-500 mt-1">
+        <p className="text-sm text-(--text-secondary) mt-1">
           Daily-scraped Central TX permits, scored against Triple J&apos;s wheelhouse.
           Sorted by fit score, newest first.
         </p>
