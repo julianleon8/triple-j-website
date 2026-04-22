@@ -190,82 +190,97 @@ export default async function DashboardPage({ searchParams }: { searchParams: Se
   ]
 
   return (
-    <div>
-      <h1 className="text-2xl font-bold mb-6">Dashboard</h1>
-
-      {/* Pipeline */}
-      <div className="mb-6">
-        <h2 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Pipeline</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          <KPICard label="Open leads" value={String(openLeads)} sub="Not won/lost" accent="blue">
-            <Sparkline data={leads30dSpark} color="#1e6bd6" />
-          </KPICard>
-          <KPICard label="Active permits" value={String(activePermitLeads)} sub="new · called · qualified" accent="indigo" />
-          <KPICard label="Pipeline value" value={fmtUSD(pipelineValue)} sub="Draft + sent quotes" accent="sky" />
+    <div className="space-y-6">
+      {/* Recent Leads — lives at the top so it's one glance away on mobile */}
+      <section>
+        <div className="flex items-baseline justify-between mb-3">
+          <h2 className="text-lg font-bold text-(--text-primary)">Recent Leads</h2>
+          <span className="text-xs text-(--text-tertiary)">{(recentLeadsForTable ?? []).length} shown</span>
         </div>
-      </div>
+        <LeadsTable initialLeads={recentLeadsForTable ?? []} emailEvents={latestEventByLead} />
+      </section>
 
-      {/* Conversion */}
-      <div className="mb-6">
-        <h2 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Conversion</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          <KPICard label="Lead → Customer" value={`${leadConvRate}%`} sub={`Last 30 days (${customers30d.length}/${leads30d.length})`} accent="purple" />
-          <KPICard label="Quote acceptance" value={`${quoteAcceptRate}%`} sub={`${accepted.length}/${sentOrAccepted.length} sent quotes`} accent="fuchsia" />
-        </div>
-      </div>
-
-      {/* Revenue */}
-      <div className="mb-6">
-        <h2 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Revenue</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          <KPICard label="Revenue this month" value={fmtUSD(revenueThisMonth)} sub="Completed jobs" accent="green">
-            <Sparkline data={revenueMtdSpark} color="#059669" />
-          </KPICard>
-          <KPICard label="Avg deal size" value={fmtUSD(Math.round(avgDealSize))} sub={`Across ${completedJobs.length} jobs`} accent="emerald" />
-        </div>
-      </div>
-
-      {/* Operations */}
-      <div className="mb-6">
-        <h2 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Operations</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          <KPICard label="Jobs this week" value={String(jobsThisWeek)} sub="Scheduled" accent="amber" />
-          <KPICard label="Hot leads" value={String(hotLeads)} sub="ASAP + new" accent="red" />
-        </div>
-      </div>
-
-      {/* Lead pipeline pill row */}
-      <div className="mb-8">
-        <h2 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Lead Pipeline</h2>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          {[
-            { label: 'New',       count: counts.new,       style: 'bg-blue-50 border-blue-200 text-blue-800' },
-            { label: 'Contacted', count: counts.contacted, style: 'bg-yellow-50 border-yellow-200 text-yellow-800' },
-            { label: 'Quoted',    count: counts.quoted,    style: 'bg-purple-50 border-purple-200 text-purple-800' },
-            { label: 'Won',       count: counts.won,       style: 'bg-green-50 border-green-200 text-green-800' },
-          ].map(({ label, count, style }) => (
-            <div key={label} className={`rounded-xl border p-4 ${style}`}>
-              <div className="text-3xl font-bold">{count}</div>
-              <div className="text-sm font-medium mt-1">{label}</div>
+      {/* Stats section — collapsed below leads. Full detail on /hq/stats (coming). */}
+      <details className="group rounded-xl border border-(--border-subtle) bg-(--surface-2)">
+        <summary className="flex cursor-pointer items-center justify-between px-4 py-3 text-sm font-semibold text-(--text-primary) select-none">
+          <span>Pipeline & stats</span>
+          <svg className="h-4 w-4 text-(--text-tertiary) transition-transform group-open:rotate-90" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M9 6l6 6-6 6" />
+          </svg>
+        </summary>
+        <div className="border-t border-(--border-subtle) p-4 space-y-6">
+          {/* Pipeline */}
+          <div>
+            <h3 className="text-xs font-semibold text-(--text-tertiary) uppercase tracking-wider mb-2">Pipeline</h3>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              <KPICard label="Open leads" value={String(openLeads)} sub="Not won/lost" accent="blue">
+                <Sparkline data={leads30dSpark} color="#1e6bd6" />
+              </KPICard>
+              <KPICard label="Active permits" value={String(activePermitLeads)} sub="new · called · qualified" accent="indigo" />
+              <KPICard label="Pipeline value" value={fmtUSD(pipelineValue)} sub="Draft + sent quotes" accent="sky" />
             </div>
-          ))}
+          </div>
+
+          {/* Conversion */}
+          <div>
+            <h3 className="text-xs font-semibold text-(--text-tertiary) uppercase tracking-wider mb-2">Conversion</h3>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              <KPICard label="Lead → Customer" value={`${leadConvRate}%`} sub={`Last 30 days (${customers30d.length}/${leads30d.length})`} accent="purple" />
+              <KPICard label="Quote acceptance" value={`${quoteAcceptRate}%`} sub={`${accepted.length}/${sentOrAccepted.length} sent quotes`} accent="fuchsia" />
+            </div>
+          </div>
+
+          {/* Revenue */}
+          <div>
+            <h3 className="text-xs font-semibold text-(--text-tertiary) uppercase tracking-wider mb-2">Revenue</h3>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              <KPICard label="Revenue this month" value={fmtUSD(revenueThisMonth)} sub="Completed jobs" accent="green">
+                <Sparkline data={revenueMtdSpark} color="#059669" />
+              </KPICard>
+              <KPICard label="Avg deal size" value={fmtUSD(Math.round(avgDealSize))} sub={`Across ${completedJobs.length} jobs`} accent="emerald" />
+            </div>
+          </div>
+
+          {/* Operations */}
+          <div>
+            <h3 className="text-xs font-semibold text-(--text-tertiary) uppercase tracking-wider mb-2">Operations</h3>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              <KPICard label="Jobs this week" value={String(jobsThisWeek)} sub="Scheduled" accent="amber" />
+              <KPICard label="Hot leads" value={String(hotLeads)} sub="ASAP + new" accent="red" />
+            </div>
+          </div>
+
+          {/* Lead pipeline pill row */}
+          <div>
+            <h3 className="text-xs font-semibold text-(--text-tertiary) uppercase tracking-wider mb-2">Lead Pipeline</h3>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              {[
+                { label: 'New',       count: counts.new,       style: 'bg-blue-50 border-blue-200 text-blue-800' },
+                { label: 'Contacted', count: counts.contacted, style: 'bg-yellow-50 border-yellow-200 text-yellow-800' },
+                { label: 'Quoted',    count: counts.quoted,    style: 'bg-purple-50 border-purple-200 text-purple-800' },
+                { label: 'Won',       count: counts.won,       style: 'bg-green-50 border-green-200 text-green-800' },
+              ].map(({ label, count, style }) => (
+                <div key={label} className={`rounded-xl border p-4 ${style}`}>
+                  <div className="text-3xl font-bold">{count}</div>
+                  <div className="text-sm font-medium mt-1">{label}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Funnel */}
+          <div>
+            <ChartContainer
+              title="Sales funnel"
+              subtitle="All-time lead → customer → quote → job conversion"
+              empty={L.length === 0}
+              emptyMessage="No leads yet. First lead will populate the funnel."
+            >
+              <Funnel data={funnelData} />
+            </ChartContainer>
+          </div>
         </div>
-      </div>
-
-      {/* Funnel */}
-      <div className="mb-8">
-        <ChartContainer
-          title="Sales funnel"
-          subtitle="All-time lead → customer → quote → job conversion"
-          empty={L.length === 0}
-          emptyMessage="No leads yet. First lead will populate the funnel."
-        >
-          <Funnel data={funnelData} />
-        </ChartContainer>
-      </div>
-
-      <h2 className="text-lg font-bold mb-3">Recent Leads</h2>
-      <LeadsTable initialLeads={recentLeadsForTable ?? []} emailEvents={latestEventByLead} />
+      </details>
     </div>
   )
 }
