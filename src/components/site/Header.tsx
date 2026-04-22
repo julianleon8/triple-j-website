@@ -70,6 +70,9 @@ export function Header() {
                   {SITE.phone}
                 </span>
               </a>
+              <span className="hidden md:inline text-[11px] font-medium text-white/50">
+                English · Español
+              </span>
               <span className="hidden sm:flex items-center gap-1.5 text-white/60">
                 <ClockIcon className="h-3.5 w-3.5" />
                 {SITE.hours}

@@ -15,10 +15,15 @@ export function MobileCallBar() {
       <div className="grid grid-cols-2 gap-2 p-2">
         <a
           href={SITE.phoneHref}
-          className="flex items-center justify-center gap-2 h-12 rounded-md bg-[color:var(--color-brand-600)] hover:bg-[color:var(--color-brand-700)] text-white font-bold tracking-tight transition-colors"
+          className="flex flex-col items-center justify-center h-12 rounded-md bg-[color:var(--color-brand-600)] hover:bg-[color:var(--color-brand-700)] text-white font-bold tracking-tight transition-colors"
         >
-          <PhoneIcon className="h-5 w-5" />
-          <span>Call Now</span>
+          <span className="flex items-center gap-2 leading-none">
+            <PhoneIcon className="h-5 w-5" />
+            <span>Call Now</span>
+          </span>
+          <span className="text-[10px] font-medium text-white/75 mt-0.5 tracking-wide">
+            English · Español
+          </span>
         </a>
         <Link
           href="/#quote"
