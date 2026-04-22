@@ -7,6 +7,7 @@ import {
   NetworkFirst,
   NetworkOnly,
   Serwist,
+  StaleWhileRevalidate,
 } from 'serwist'
 
 // TS augment for the SW global scope
@@ -48,19 +49,22 @@ const serwist = new Serwist({
       }),
     },
 
-    // ── HQ page shells — NetworkFirst on navigation so you see fresh
-    // server-rendered HTML when online, cached shell when offline.
+    // ── HQ page shells — StaleWhileRevalidate so cold launches paint the
+    // last cached shell in <50ms while the network revalidates in background.
+    // Trade-off: data may be a few minutes stale until revalidation completes
+    // (the streamed Suspense sections in /hq/page.tsx surface fresh data on
+    // their own once the revalidated HTML arrives). For owner field use this
+    // is the right call — instant feedback beats fresh-but-blocked.
     {
       matcher: ({ request, sameOrigin, url }) =>
         sameOrigin &&
         request.mode === 'navigate' &&
         url.pathname.startsWith('/hq'),
-      handler: new NetworkFirst({
+      handler: new StaleWhileRevalidate({
         cacheName: 'hq-pages',
-        networkTimeoutSeconds: 5,
         plugins: [
           new ExpirationPlugin({
-            maxEntries: 20,
+            maxEntries: 50,
             maxAgeSeconds: 60 * 60 * 24,
           }),
         ],
