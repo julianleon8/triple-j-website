@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import { Suspense } from 'react'
 import { usePathname, useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { InstallPrompt } from '@/components/hq/InstallPrompt'
@@ -31,7 +32,9 @@ export default function HqChrome({ children }: { children: React.ReactNode }) {
   return (
     <div className="min-h-screen bg-(--surface-1) text-(--text-primary)">
       {/* Mobile: iOS-style large header (sm:hidden inside the component) */}
-      <HqHeader />
+      <Suspense fallback={null}>
+        <HqHeader />
+      </Suspense>
 
       {/* Desktop top nav — hidden on mobile */}
       <header className="sticky top-0 z-30 hidden border-b border-white/10 bg-brand-600 text-white shadow-sm sm:block">
@@ -76,7 +79,9 @@ export default function HqChrome({ children }: { children: React.ReactNode }) {
       <main className="mx-auto max-w-7xl px-4 pt-4 pb-24 sm:px-6 sm:py-6 sm:pb-6">{children}</main>
 
       {/* Mobile bottom tab bar (hidden on sm:+) */}
-      <BottomTabBar />
+      <Suspense fallback={null}>
+        <BottomTabBar />
+      </Suspense>
 
       {/* iOS install banner (mobile, visits-gated) */}
       <InstallPrompt />
