@@ -160,6 +160,9 @@ body {
   color: var(--text-primary);
   font-family: var(--font-sans);
   font-feature-settings: "ss01", "cv11";
+  /* Stop iOS PWA's native pull-to-refresh / rubber-band from fighting
+     our custom gesture. Applies to the main document scroller. */
+  overscroll-behavior-y: contain;
 }
 
 /* Display/headline type — Barlow Condensed: bold, industrial, confident */

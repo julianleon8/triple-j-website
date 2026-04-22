@@ -84,40 +84,71 @@ export function PipelineList({ rows: initialRows, paramKey = 'type' }: PipelineL
     })
   }
 
+  const [refreshing, setRefreshing] = useState(false)
+  async function handleRefreshClick() {
+    if (refreshing) return
+    setRefreshing(true)
+    try { await refresh() } finally { setTimeout(() => setRefreshing(false), 400) }
+  }
+
   return (
     <PullToRefresh onRefresh={refresh}>
       <div className="space-y-3">
-        {/* Filter pills */}
-        <div
-          className="-mx-4 flex gap-2 overflow-x-auto px-4 pb-1 sm:mx-0 sm:px-0"
-          style={{ scrollbarWidth: 'none' }}
-          aria-label="Filter pipeline by type"
-        >
-          {FILTERS.map(({ key, label }) => {
-            const active = current === key
-            const count =
-              key === 'all'  ? rows.length :
-              key === 'done' ? rows.filter(isDone).length :
-                               rows.filter((r) => r.kind === key && !isDone(r)).length
-            return (
-              <button
-                key={key}
-                type="button"
-                onClick={() => setFilter(key)}
-                className={`whitespace-nowrap rounded-full px-3.5 py-1.5 text-[13px] font-semibold transition-colors ${
-                  active
-                    ? 'bg-brand-600 text-white'
-                    : 'bg-(--surface-2) text-(--text-secondary) hover:text-(--text-primary)'
-                }`}
-                aria-pressed={active}
-              >
-                {label}
-                <span className={`ml-1.5 text-[11px] ${active ? 'text-white/70' : 'text-(--text-tertiary)'}`}>
-                  {count}
-                </span>
-              </button>
-            )
-          })}
+        {/* Filter pills + explicit refresh button */}
+        <div className="flex items-center gap-2">
+          <div
+            className="-mx-4 flex flex-1 gap-2 overflow-x-auto px-4 pb-1 sm:mx-0 sm:px-0"
+            style={{ scrollbarWidth: 'none' }}
+            aria-label="Filter pipeline by type"
+          >
+            {FILTERS.map(({ key, label }) => {
+              const active = current === key
+              const count =
+                key === 'all'  ? rows.length :
+                key === 'done' ? rows.filter(isDone).length :
+                                 rows.filter((r) => r.kind === key && !isDone(r)).length
+              return (
+                <button
+                  key={key}
+                  type="button"
+                  onClick={() => setFilter(key)}
+                  className={`whitespace-nowrap rounded-full px-3.5 py-1.5 text-[13px] font-semibold transition-colors ${
+                    active
+                      ? 'bg-brand-600 text-white'
+                      : 'bg-(--surface-2) text-(--text-secondary) hover:text-(--text-primary)'
+                  }`}
+                  aria-pressed={active}
+                >
+                  {label}
+                  <span className={`ml-1.5 text-[11px] ${active ? 'text-white/70' : 'text-(--text-tertiary)'}`}>
+                    {count}
+                  </span>
+                </button>
+              )
+            })}
+          </div>
+          <button
+            type="button"
+            onClick={handleRefreshClick}
+            disabled={refreshing}
+            aria-label="Refresh"
+            className="shrink-0 h-9 w-9 inline-flex items-center justify-center rounded-full bg-(--surface-2) text-(--text-secondary) hover:text-(--text-primary) hover:bg-(--surface-3) disabled:opacity-50 transition-colors"
+          >
+            <svg
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2.2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className={refreshing ? 'animate-spin' : ''}
+            >
+              <path d="M21 12a9 9 0 11-9-9 9 9 0 016.7 3" />
+              <path d="M21 3v6h-6" />
+            </svg>
+          </button>
         </div>
 
         {/* List */}
