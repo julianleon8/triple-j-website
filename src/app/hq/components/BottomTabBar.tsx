@@ -1,9 +1,16 @@
 'use client'
 
 import Link from 'next/link'
+import dynamic from 'next/dynamic'
 import { usePathname, useSearchParams } from 'next/navigation'
 import { useState } from 'react'
-import { CreateActionSheet } from './CreateActionSheet'
+
+// CreateActionSheet pulls in framer-motion via Sheet. Lazy-load it so the
+// FAB tap is what triggers the chunk download, not every /hq page hydration.
+const CreateActionSheet = dynamic(
+  () => import('./CreateActionSheet').then((m) => m.CreateActionSheet),
+  { ssr: false },
+)
 
 type TabKey = 'now' | 'funnel'
 
