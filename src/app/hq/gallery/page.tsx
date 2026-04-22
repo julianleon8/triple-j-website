@@ -6,7 +6,13 @@ export const dynamic = 'force-dynamic'
 export default async function DashboardGalleryPage() {
   const { data: items } = await getAdminClient()
     .from('gallery_items')
-    .select('*')
+    .select(
+      `
+      *,
+      gallery_photos ( id, image_url, alt_text, sort_order, is_cover )
+      `,
+    )
+    .order('is_featured', { ascending: false })
     .order('sort_order', { ascending: true })
 
   return (

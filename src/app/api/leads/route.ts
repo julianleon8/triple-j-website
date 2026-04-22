@@ -3,6 +3,8 @@ import { z } from 'zod'
 import { createClient } from '@/lib/supabase/server'
 import { getAdminClient } from '@/lib/supabase/admin'
 import { Resend } from 'resend'
+import LeadOwnerAlert, { leadOwnerAlertText } from '@/emails/LeadOwnerAlert'
+import LeadCustomerConfirmation, { leadCustomerConfirmationText } from '@/emails/LeadCustomerConfirmation'
 
 export const dynamic = 'force-dynamic'
 
@@ -122,64 +124,60 @@ export async function POST(request: NextRequest) {
     if (error) throw error
 
     // ── Owner alert ──────────────────────────────────────────────────────
-    const urgencyBadge = data.timeline === 'asap'
-      ? '<span style="background:#dc2626;color:#fff;padding:2px 8px;border-radius:4px;font-size:12px;font-weight:bold">⚡ ASAP</span> '
-      : data.timeline === 'this_week'
-      ? '<span style="background:#d97706;color:#fff;padding:2px 8px;border-radius:4px;font-size:12px;font-weight:bold">This Week</span> '
-      : ''
-    const militaryBadge = data.is_military
-      ? '<span style="background:#1d4ed8;color:#fff;padding:2px 8px;border-radius:4px;font-size:12px;font-weight:bold">⭐ Military/FR</span> '
-      : ''
+    const submittedAt = `${new Date().toLocaleString('en-US', { timeZone: 'America/Chicago' })} CST`
+    const ownerAlertProps = {
+      leadId: lead.id,
+      name: data.name,
+      phone: data.phone,
+      email: data.email || null,
+      city,
+      zip: data.zip || null,
+      serviceType: data.service_type,
+      structureType: data.structure_type || null,
+      sizeLine,
+      needsConcreteLabel: data.needs_concrete ? label(data.needs_concrete, CONCRETE_LABELS) : null,
+      currentSurfaceLabel: data.current_surface ? label(data.current_surface, SURFACE_LABELS) : null,
+      timelineLabel: data.timeline ? label(data.timeline, TIMELINE_LABELS) : null,
+      timeline: data.timeline || null,
+      isMilitary: data.is_military,
+      message: data.message?.trim() || null,
+      submittedAt,
+    }
 
     await resend.emails.send({
-      from: 'Triple J Metal <leads@triplejmetal.com>',
+      from: 'Triple J Metal <leads@triplejmetaltx.com>',
       to: process.env.OWNER_EMAIL!.split(','),
+      replyTo: data.email || undefined,
       subject: `🔔 New Lead: ${data.name} — ${city} — ${data.service_type}${data.is_military ? ' ⭐' : ''}${data.timeline === 'asap' ? ' ⚡' : ''}`,
-      html: `
-        <div style="font-family:sans-serif;max-width:560px">
-          <h2 style="color:#1e6bd6;margin-bottom:4px">New Lead — Triple J Metal</h2>
-          <p style="margin:0 0 16px;color:#6b7280;font-size:13px">
-            ${urgencyBadge}${militaryBadge}${new Date().toLocaleString('en-US', { timeZone: 'America/Chicago' })} CST
-          </p>
-
-          <table style="width:100%;border-collapse:collapse;font-size:14px">
-            <tr style="background:#f9fafb"><td style="padding:8px 12px;font-weight:600;width:140px">Name</td><td style="padding:8px 12px">${data.name}</td></tr>
-            <tr><td style="padding:8px 12px;font-weight:600">Phone</td><td style="padding:8px 12px"><a href="tel:${data.phone}" style="color:#1e6bd6;font-weight:bold;font-size:16px">${data.phone}</a></td></tr>
-            ${data.email ? `<tr style="background:#f9fafb"><td style="padding:8px 12px;font-weight:600">Email</td><td style="padding:8px 12px">${data.email}</td></tr>` : ''}
-            <tr ${data.email ? '' : 'style="background:#f9fafb"'}><td style="padding:8px 12px;font-weight:600">Location</td><td style="padding:8px 12px">${city}${data.zip ? ` (${data.zip})` : ''}</td></tr>
-            <tr style="background:#f9fafb"><td style="padding:8px 12px;font-weight:600">Service</td><td style="padding:8px 12px;text-transform:capitalize">${data.service_type.replace('_', ' ')}</td></tr>
-            <tr><td style="padding:8px 12px;font-weight:600">Steel type</td><td style="padding:8px 12px;text-transform:capitalize">${data.structure_type || '—'}</td></tr>
-            ${sizeLine ? `<tr style="background:#f9fafb"><td style="padding:8px 12px;font-weight:600">Size</td><td style="padding:8px 12px">${sizeLine}</td></tr>` : ''}
-            <tr ${sizeLine ? '' : 'style="background:#f9fafb"'}><td style="padding:8px 12px;font-weight:600">Concrete pad?</td><td style="padding:8px 12px">${label(data.needs_concrete, CONCRETE_LABELS)}</td></tr>
-            ${data.current_surface ? `<tr style="background:#f9fafb"><td style="padding:8px 12px;font-weight:600">Current surface</td><td style="padding:8px 12px">${label(data.current_surface, SURFACE_LABELS)}</td></tr>` : ''}
-            <tr ${data.current_surface ? '' : 'style="background:#f9fafb"'}><td style="padding:8px 12px;font-weight:600">Timeline</td><td style="padding:8px 12px">${label(data.timeline, TIMELINE_LABELS)}</td></tr>
-            <tr style="background:#f9fafb"><td style="padding:8px 12px;font-weight:600">Military/FR</td><td style="padding:8px 12px">${data.is_military ? '✅ Yes — apply discount' : 'No'}</td></tr>
-            ${data.message ? `<tr><td style="padding:8px 12px;font-weight:600;vertical-align:top">Notes</td><td style="padding:8px 12px">${data.message}</td></tr>` : ''}
-          </table>
-
-          <hr style="margin:20px 0;border-color:#e5e7eb"/>
-          <p style="color:#9ca3af;font-size:11px">Lead ID: ${lead.id}</p>
-        </div>
-      `,
+      react: LeadOwnerAlert(ownerAlertProps),
+      text: leadOwnerAlertText(ownerAlertProps),
+      tags: [
+        { name: 'lead_id', value: lead.id },
+        { name: 'email_type', value: 'lead_owner_alert' },
+      ],
     })
 
     // ── Customer confirmation ─────────────────────────────────────────────
     if (data.email) {
+      const customerProps = {
+        name: data.name,
+        phone: data.phone,
+        city,
+        serviceType: data.service_type,
+        isMilitary: data.is_military,
+        timeline: data.timeline || null,
+      }
       await resend.emails.send({
-        from: 'Triple J Metal <no-reply@triplejmetal.com>',
+        from: 'Triple J Metal <no-reply@triplejmetaltx.com>',
+        replyTo: 'julianleon@triplejmetaltx.com',
         to: data.email,
-        subject: 'We got your quote request — Triple J Metal LLC',
-        html: `
-          <div style="font-family:sans-serif;max-width:500px">
-            <h2 style="color:#1e6bd6">Thanks, ${data.name}!</h2>
-            <p>We received your request for a <strong>${data.service_type.replace('_', ' ')}</strong> in <strong>${city}</strong>.</p>
-            <p>A real person — usually Julian or Juan — will call you at <strong>${data.phone}</strong> within 24 hours with an honest quote.</p>
-            ${data.is_military ? '<p style="background:#eff6ff;padding:12px;border-radius:6px">⭐ <strong>Military/First Responder discount noted.</strong> We appreciate your service.</p>' : ''}
-            ${data.timeline === 'asap' ? '<p style="background:#fef2f2;padding:12px;border-radius:6px">⚡ <strong>ASAP request flagged.</strong> We\'ll prioritize your call back.</p>' : ''}
-            <p style="margin-top:24px">— Juan & Julian, Triple J Metal LLC<br/>
-            <a href="tel:254-346-7764" style="color:#1e6bd6">254-346-7764</a> · Temple, TX</p>
-          </div>
-        `,
+        subject: 'We got your quote request — Triple J Metal',
+        react: LeadCustomerConfirmation(customerProps),
+        text: leadCustomerConfirmationText(customerProps),
+        tags: [
+          { name: 'lead_id', value: lead.id },
+          { name: 'email_type', value: 'lead_customer_confirmation' },
+        ],
       })
     }
 

@@ -34,19 +34,24 @@ export const PERMIT_SOURCES: PermitSource[] = [
   {
     jurisdiction: 'temple',
     label: 'City of Temple — Weekly Permit Report',
+    // The report exists (cms9files.revize.com/templetx/…/Weekly Report - June 6-June 13, 2025.pdf)
+    // but the listing page is a JS-hydrated Revize Document Center accordion — the
+    // static HTML has no direct PDF hrefs. Defer to Phase 2 Firecrawl.
     indexUrl:
       'https://www.templetx.gov/departments/city_departments/building_permits___inspections/permitreports.php',
-    // Temple posts Weekly-Permit-Report-<Month>-<Day>-<Year>.pdf under /files/
     pdfHrefPattern: /href=["']([^"']+\.pdf)["']/gi,
     reportType: 'weekly_permits',
     cms: 'revize',
-    enabled: true,
+    enabled: false,
   },
   {
     jurisdiction: 'bell_county',
     label: "Bell County — Commissioners' Court Agendas",
+    // Per-year listing (filenames follow YYMMDDagenda.pdf under /docs/).
+    // Bell County alternates between `year_{YYYY}.php` and `year_{YYYY}_1.php` —
+    // update this URL every January.
     indexUrl:
-      'https://www.bellcountytx.com/county_government/commissioners_court/index.php',
+      'https://www.bellcountytx.com/county_government/commissioners_court/year_2026.php',
     pdfHrefPattern: /href=["']([^"']+\.pdf)["']/gi,
     reportType: 'commissioners_court',
     cms: 'revize',
@@ -55,8 +60,9 @@ export const PERMIT_SOURCES: PermitSource[] = [
   {
     jurisdiction: 'harker_heights',
     label: 'City of Harker Heights — Economic Development Report',
+    // EDR PDFs live at /images/PDF/{Month}_{YYYY}_EDR.pdf, linked from this page.
     indexUrl:
-      'https://harkerheights.gov/index.php/building-permits-and-forms',
+      'https://harkerheights.gov/index.php/economic-development',
     pdfHrefPattern: /href=["']([^"']+\.pdf)["']/gi,
     reportType: 'edr',
     cms: 'joomla',

@@ -12,7 +12,7 @@ const NAV = [
   { href: '/hq/quotes', label: 'Quotes' },
   { href: '/hq/jobs', label: 'Jobs' },
   { href: '/hq/gallery', label: 'Gallery' },
-  { href: '/dashboard/settings/quickbooks', label: 'QuickBooks' },
+  { href: '/hq/settings/quickbooks', label: 'QuickBooks' },
 ] as const
 
 export default function HqChrome({ children }: { children: React.ReactNode }) {

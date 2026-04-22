@@ -458,8 +458,9 @@ export function QuoteForm() {
     if (step > 1) setStep((s) => (s - 1) as 1 | 2 | 3);
   }
 
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
+  async function handleSubmit() {
+    // Guard: only submit from the final step.
+    if (step !== 3) return;
     setStatus("submitting");
     setErrMsg("");
 
@@ -583,7 +584,19 @@ export function QuoteForm() {
                 </Button>
               </div>
             ) : (
-              <form onSubmit={handleSubmit} noValidate>
+              <div
+                onKeyDown={(e) => {
+                  // Enter on Steps 1 & 2 → advance. Textareas keep newline behavior.
+                  if (
+                    e.key === "Enter" &&
+                    step < 3 &&
+                    (e.target as HTMLElement).tagName !== "TEXTAREA"
+                  ) {
+                    e.preventDefault();
+                    if (canAdvance()) next();
+                  }
+                }}
+              >
                 <StepIndicator current={step} />
 
                 {/* Step heading */}
@@ -632,12 +645,13 @@ export function QuoteForm() {
                     </Button>
                   ) : (
                     <Button
-                      type="submit"
+                      type="button"
                       variant="primary"
                       size="lg"
                       disabled={status === "submitting"}
                       icon={<ArrowRightIcon className="h-5 w-5" />}
                       iconPosition="right"
+                      onClick={handleSubmit}
                       className="flex-1"
                     >
                       {status === "submitting" ? "Sending…" : "Request My Free Quote"}
@@ -648,7 +662,7 @@ export function QuoteForm() {
                 <p className="mt-4 text-xs text-[color:var(--color-ink-400)] text-center">
                   By submitting you consent to be contacted by phone, text, or email.
                 </p>
-              </form>
+              </div>
             )}
           </div>
         </div>

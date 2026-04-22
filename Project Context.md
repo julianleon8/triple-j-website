@@ -18,7 +18,7 @@ _Last updated: 2026-04-21 (evening)_
 **Address:** 3319 Tem-Bel Ln, Temple, TX 76502
 **Phone:** 254-346-7764
 **Domain:** triplejmetaltx.com (migrated from Wix — **DONE**, professional)
-**Email:** julian@triplejmetaltx.com (Google Workspace Business Starter)
+**Email:** julianleon@triplejmetaltx.com (Google Workspace Business Starter)
 **Founded:** 2025 · 150+ projects completed · 50+ satisfied clients
 **Type:** Metal construction — welded + bolted red-iron carports, garages, barns, RV covers, house additions, lean-to patios
 **Location:** Central Texas (Temple base; serves Belton, Killeen, Harker Heights, Copperas Cove, Waco, Salado, Georgetown, Round Rock, Lampasas, Holland, Taylor, Troy, Nolanville)
@@ -47,9 +47,12 @@ _Last updated: 2026-04-21 (evening)_
 
 ---
 
-## Current Site Status (as of 2026-04-15)
-**All code committed to GitHub (`julianleon8/triple-j-website`, commit 0c77415).**
-**Vercel is connected but NOT yet deployed** — Julian still needs to push + set env vars.
+## Current Site Status (as of 2026-04-22)
+**Site live at `triplejmetaltx.com`** · Dashboard live at `/hq` · Lead Engine deployed (cron daily 14:00 UTC) · Manual scrape trigger added · `/hq` home rebuilt as 9-card KPI grid · Manual customer create + lead delete/convert working · Email sender unified to `@triplejmetaltx.com`.
+
+**Pending Julian action:** confirm `triplejmetaltx.com` is "Verified" in Resend dashboard (DKIM/SPF/DMARC green), otherwise all outbound Resend sends bounce silently.
+
+_Historical: Previously listed "all code committed to GitHub, Vercel connected but NOT deployed" (2026-04-15). Domain migration + deploy completed 2026-04-21._
 
 ### What's in the repo (latest)
 - Full design system: Barlow Condensed headlines + Inter body, steel-blue tokens, fluid typography
@@ -70,9 +73,12 @@ _Last updated: 2026-04-21 (evening)_
    - RESEND_API_KEY, OWNER_EMAIL, NEXT_PUBLIC_SITE_URL, SETUP_KEY
    - **ANTHROPIC_API_KEY** (Lead Engine — Claude permit-PDF extraction)
    - **CRON_SECRET** (Lead Engine — Vercel Cron Bearer auth)
+   - **RESEND_WEBHOOK_SECRET** (Svix `whsec_…` — verifies Resend open/click webhooks at `/api/webhooks/resend`)
 3. Update NEXT_PUBLIC_SITE_URL to real Vercel domain after first deploy
 4. Test quote form end-to-end (Supabase leads table + owner email)
 5. Run `supabase/migrations/004_permit_leads.sql` in Supabase SQL editor (Lead Engine table)
+6. Run `supabase/migrations/006_email_events.sql` in Supabase SQL editor (Resend open/click tracking)
+7. In Resend dashboard → Webhooks → add endpoint `https://triplejmetaltx.com/api/webhooks/resend`, subscribe to `email.delivered`, `email.opened`, `email.clicked`, `email.bounced`, `email.complained`, copy the `whsec_…` signing secret into `RESEND_WEBHOOK_SECRET`
 
 ### Pending / future work
 - Real Google reviews → fill testimonials.md → swap placeholder Testimonials cards

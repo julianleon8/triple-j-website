@@ -5,7 +5,7 @@
  * Required env vars:
  *   QBO_CLIENT_ID
  *   QBO_CLIENT_SECRET
- *   QBO_REDIRECT_URI   (e.g. https://triplejmetal.com/api/qbo/callback)
+ *   QBO_REDIRECT_URI   (e.g. https://triplejmetaltx.com/api/qbo/callback)
  *   QBO_ENVIRONMENT    ("sandbox" or "production")
  */
 

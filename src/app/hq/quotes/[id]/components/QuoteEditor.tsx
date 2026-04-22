@@ -73,10 +73,19 @@ export default function QuoteEditor({ quote, customers }: Props) {
   const handleSend = async () => {
     setError('')
     setIsSending(true)
-    const res = await fetch(`/api/quotes/${quote.id}/send`, { method: 'POST' })
-    setIsSending(false)
-    if (!res.ok) { const d = await res.json(); setError(d.error ?? 'Send failed'); return }
-    router.refresh()
+    try {
+      const res = await fetch(`/api/quotes/${quote.id}/send`, { method: 'POST' })
+      if (!res.ok) {
+        const d = await res.json().catch(() => ({}))
+        setError(d.error ?? `Send failed (${res.status})`)
+        return
+      }
+      router.refresh()
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'Network error — try again')
+    } finally {
+      setIsSending(false)
+    }
   }
 
   return (

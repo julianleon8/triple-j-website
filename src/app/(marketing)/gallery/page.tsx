@@ -1,10 +1,29 @@
 import type { Metadata } from 'next'
 import Image from 'next/image'
+import Link from 'next/link'
 import { Container } from '@/components/ui/Container'
 import { ButtonLink } from '@/components/ui/Button'
 import { QuoteForm } from '@/components/sections/QuoteForm'
 import { SITE } from '@/lib/site'
 import { getAdminClient } from '@/lib/supabase/admin'
+import { describeGalleryColors } from '@/lib/gallery-colors'
+
+type GalleryPhoto = {
+  id: string
+  image_url: string
+  alt_text: string | null
+  sort_order: number
+  is_cover: boolean
+}
+
+function pickCover(
+  photos: GalleryPhoto[] | null | undefined,
+): { url: string; alt: string | null } | null {
+  const list = photos ?? []
+  const cover = list.find((p) => p.is_cover) ?? list[0]
+  if (!cover) return null
+  return { url: cover.image_url, alt: cover.alt_text }
+}
 
 export const metadata: Metadata = {
   title: 'Project Gallery | Triple J Metal LLC — 150+ Central Texas Builds',
@@ -27,8 +46,14 @@ const TAG_COLORS: Record<string, string> = {
 export default async function GalleryPage() {
   const { data: projects } = await getAdminClient()
     .from('gallery_items')
-    .select('*')
+    .select(
+      `
+      *,
+      gallery_photos ( id, image_url, alt_text, sort_order, is_cover )
+      `,
+    )
     .eq('is_active', true)
+    .order('is_featured', { ascending: false })
     .order('sort_order', { ascending: true })
   return (
     <>
@@ -83,36 +108,59 @@ export default async function GalleryPage() {
       <section className="py-16 md:py-24 bg-white">
         <Container size="wide">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {(projects ?? []).map((project) => (
-              <article
-                key={project.id}
-                className="group rounded-2xl overflow-hidden border border-ink-100 bg-ink-50 hover:shadow-lg hover:-translate-y-0.5 transition-all"
-              >
-                <div className="relative aspect-4/3 overflow-hidden bg-ink-200">
-                  <Image
-                    src={project.image_url}
-                    alt={project.alt_text || project.title}
-                    fill
-                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                    className="object-cover transition-transform duration-500 group-hover:scale-105"
-                    unoptimized={project.image_url.startsWith('/')}
-                  />
-                </div>
-                <div className="p-5">
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-xs font-semibold text-ink-400 uppercase tracking-wide">
-                      {project.type} · {project.city}
-                    </span>
-                    <span className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full ${TAG_COLORS[project.tag] ?? 'bg-ink-100 text-ink-600'}`}>
-                      {project.tag}
-                    </span>
-                  </div>
-                  <h2 className="text-base font-bold text-ink-900 leading-snug">
-                    {project.title}
-                  </h2>
-                </div>
-              </article>
-            ))}
+            {(projects ?? []).map((project) => {
+              const cover = pickCover(project.gallery_photos as GalleryPhoto[] | null)
+              if (!cover) return null
+              const colorLine = describeGalleryColors({
+                panelColor: project.panel_color,
+                panelColorLine: project.panel_color_line,
+                trimColor: project.trim_color,
+                trimColorLine: project.trim_color_line,
+              }).label
+              return (
+                <Link
+                  key={project.id}
+                  href={`/gallery/${project.id}`}
+                  className="group block rounded-2xl overflow-hidden border border-ink-100 bg-ink-50 hover:shadow-lg hover:-translate-y-0.5 transition-all"
+                >
+                  <article>
+                    <div className="relative aspect-4/3 overflow-hidden bg-ink-200">
+                      <Image
+                        src={cover.url}
+                        alt={cover.alt || project.title}
+                        fill
+                        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                        className="object-cover transition-transform duration-500 group-hover:scale-105"
+                        unoptimized={cover.url.startsWith('/')}
+                      />
+                      {project.is_featured && (
+                        <span className="absolute top-3 left-3 bg-brand-600 text-white text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded-full shadow">
+                          Featured
+                        </span>
+                      )}
+                    </div>
+                    <div className="p-5">
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="text-xs font-semibold text-ink-400 uppercase tracking-wide">
+                          {project.type} · {project.city}
+                        </span>
+                        <span className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full ${TAG_COLORS[project.tag] ?? 'bg-ink-100 text-ink-600'}`}>
+                          {project.tag}
+                        </span>
+                      </div>
+                      <h2 className="text-base font-bold text-ink-900 leading-snug">
+                        {project.title}
+                      </h2>
+                      {colorLine && (
+                        <p className="mt-1.5 text-xs text-ink-500">
+                          {colorLine}
+                        </p>
+                      )}
+                    </div>
+                  </article>
+                </Link>
+              )
+            })}
           </div>
 
           <div className="mt-12 text-center">
