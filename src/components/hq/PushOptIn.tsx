@@ -40,6 +40,8 @@ function isSupported(): boolean {
 export function PushOptIn() {
   const [state, setState] = useState<UiState>('idle')
   const [subscription, setSubscription] = useState<PushSubscription | null>(null)
+  const [testResult, setTestResult] = useState<string | null>(null)
+  const [testing, setTesting] = useState(false)
 
   useEffect(() => {
     if (!isSupported() || !VAPID_PUBLIC_KEY) {
@@ -94,6 +96,27 @@ export function PushOptIn() {
     }
   }
 
+  async function sendTest() {
+    setTestResult(null)
+    setTesting(true)
+    try {
+      const res = await fetch('/api/push/test', { method: 'POST' })
+      const data = await res.json().catch(() => ({}))
+      if (!res.ok) {
+        setTestResult(data.error ?? `Failed (${res.status})`)
+      } else if (data.sent === 0) {
+        setTestResult('No subscriptions reached — check Vercel logs')
+      } else {
+        setTestResult(`Sent to ${data.sent} device${data.sent === 1 ? '' : 's'}`)
+      }
+    } catch (err) {
+      setTestResult(err instanceof Error ? err.message : 'Network error')
+    } finally {
+      setTesting(false)
+      setTimeout(() => setTestResult(null), 6000)
+    }
+  }
+
   async function disable() {
     if (!subscription) return
     setState('working')
@@ -117,23 +140,38 @@ export function PushOptIn() {
 
   if (state === 'subscribed') {
     return (
-      <div className="rounded-xl border border-emerald-500/30 bg-emerald-500/5 p-4 flex items-start gap-3">
-        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-emerald-500 text-white">
-          <BellIcon filled />
+      <div className="rounded-xl border border-emerald-500/30 bg-emerald-500/5 p-4">
+        <div className="flex items-start gap-3">
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-emerald-500 text-white">
+            <BellIcon filled />
+          </div>
+          <div className="min-w-0 flex-1">
+            <h3 className="text-[15px] font-semibold text-(--text-primary)">Notifications on</h3>
+            <p className="mt-0.5 text-[13px] text-(--text-secondary)">
+              You&apos;ll get pinged for new leads, hot permits, and accepted quotes.
+            </p>
+          </div>
         </div>
-        <div className="min-w-0 flex-1">
-          <h3 className="text-[15px] font-semibold text-(--text-primary)">Notifications on</h3>
-          <p className="mt-0.5 text-[13px] text-(--text-secondary)">
-            You&apos;ll get pinged for new leads, hot permits, and accepted quotes.
-          </p>
+        <div className="mt-3 flex items-center gap-2">
+          <button
+            type="button"
+            onClick={sendTest}
+            disabled={testing}
+            className="flex-1 min-h-10 px-3 rounded-lg text-[13px] font-semibold bg-(--surface-2) text-(--text-primary) hover:bg-(--surface-3) disabled:opacity-50 transition-colors"
+          >
+            {testing ? 'Sending…' : 'Send test push'}
+          </button>
+          <button
+            type="button"
+            onClick={disable}
+            className="min-h-10 px-3 rounded-lg text-[13px] font-semibold text-(--text-secondary) hover:text-(--text-primary) hover:bg-(--surface-3) transition-colors"
+          >
+            Turn off
+          </button>
         </div>
-        <button
-          type="button"
-          onClick={disable}
-          className="shrink-0 min-h-9 px-3 rounded-lg text-[12px] font-semibold text-(--text-secondary) hover:text-(--text-primary) hover:bg-(--surface-3) transition-colors"
-        >
-          Turn off
-        </button>
+        {testResult && (
+          <p className="mt-2 text-[12px] text-(--text-tertiary)">{testResult}</p>
+        )}
       </div>
     )
   }
