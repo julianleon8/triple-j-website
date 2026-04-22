@@ -76,7 +76,16 @@ function cumulativeByDayOfMonth(
   return out
 }
 
-export default async function DashboardPage() {
+type SearchParams = Promise<{ tab?: string; type?: string }>
+
+export default async function DashboardPage({ searchParams }: { searchParams: SearchParams }) {
+  const { tab } = await searchParams
+
+  // Funnel tab placeholder for B1 — unified PipelineList ships in B2
+  if (tab === 'funnel') {
+    return <FunnelPlaceholder />
+  }
+
   const db = getAdminClient()
 
   const [
@@ -257,6 +266,26 @@ export default async function DashboardPage() {
 
       <h2 className="text-lg font-bold mb-3">Recent Leads</h2>
       <LeadsTable initialLeads={recentLeadsForTable ?? []} emailEvents={latestEventByLead} />
+    </div>
+  )
+}
+
+function FunnelPlaceholder() {
+  return (
+    <div className="mx-auto max-w-md py-12 text-center">
+      <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-(--surface-3)">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" className="text-(--brand-fg)">
+          <path d="M3 5h18l-7 9v6l-4-2v-4z" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+      </div>
+      <h2 className="text-xl font-bold text-(--text-primary)">Funnel coming next</h2>
+      <p className="mt-2 text-sm text-(--text-secondary)">
+        Phase B2 will land a unified pipeline list — leads, permits, customers,
+        quotes, and jobs in one scrollable view with swipe actions and filters.
+      </p>
+      <p className="mt-6 text-xs text-(--text-tertiary)">
+        For now, use the Now tab or the avatar menu (Gallery, QuickBooks).
+      </p>
     </div>
   )
 }
