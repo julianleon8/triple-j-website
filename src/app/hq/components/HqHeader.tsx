@@ -8,12 +8,16 @@ import { OfflineBadge } from '@/components/hq/OfflineBadge'
 
 function titleFor(pathname: string, tab: string | null): string {
   if (pathname === '/hq') return tab === 'funnel' ? 'Funnel' : 'Now'
-  if (pathname.startsWith('/hq/permit-leads')) return 'Permits'
-  if (pathname.startsWith('/hq/customers'))    return 'Customers'
-  if (pathname.startsWith('/hq/quotes'))       return 'Quotes'
-  if (pathname.startsWith('/hq/jobs'))         return 'Jobs'
-  if (pathname.startsWith('/hq/gallery'))      return 'Gallery'
-  if (pathname.startsWith('/hq/settings'))     return 'Settings'
+  if (pathname.startsWith('/hq/permit-leads'))           return 'Permits'
+  if (pathname.startsWith('/hq/customers'))              return 'Customers'
+  if (pathname.startsWith('/hq/quotes'))                 return 'Quotes'
+  if (pathname.startsWith('/hq/jobs'))                   return 'Jobs'
+  if (pathname.startsWith('/hq/gallery'))                return 'Gallery'
+  if (pathname.startsWith('/hq/settings/notifications')) return 'Notifications'
+  if (pathname.startsWith('/hq/settings/testing'))       return 'Testing'
+  if (pathname.startsWith('/hq/settings/logs'))          return 'Logs'
+  if (pathname.startsWith('/hq/settings/quickbooks'))    return 'QuickBooks'
+  if (pathname.startsWith('/hq/settings'))               return 'Settings'
   return 'Triple J'
 }
 
@@ -94,7 +98,7 @@ export function HqHeader() {
               className="absolute right-0 mt-2 w-52 overflow-hidden rounded-xl border border-(--border-subtle) bg-(--surface-2) shadow-lg"
             >
               <MenuItem href="/hq/gallery">Gallery</MenuItem>
-              <MenuItem href="/hq/settings/quickbooks">QuickBooks</MenuItem>
+              <MenuItem href="/hq/settings">Settings</MenuItem>
               <div className="border-t border-(--border-subtle)" />
               <button
                 type="button"
