@@ -135,7 +135,7 @@ export const LOCATIONS: Record<string, LocationData> = {
     areaContext:
       "We're based right here in Temple and serve all surrounding areas including North Temple, South Temple along I-35, East Temple near FM 93, and rural Bell County properties. We also service nearby Nolanville, Rogers, Belton, and Troy.",
     whyLocal:
-      "We're not a chain. Triple J Metal LLC was founded by a Temple family and operates out of Temple. Our suppliers are MetalMax in Waco and MetalMart — real Texas steel, real Texas builders. When other companies send a kit, we send a crew.",
+      "We're not a chain. Triple J Metal LLC was founded by a Temple family and operates out of Temple. We source from regional Texas steel suppliers — real Texas steel, real Texas builders, multi-source so a single supplier shortage never delays your build. When other companies send a kit, we send a crew.",
     services: [
       'Welded or bolted red iron carports',
       'Bolted metal carports',
@@ -226,7 +226,7 @@ export const LOCATIONS: Record<string, LocationData> = {
     areaContext:
       "We serve Waco and all of McLennan County, including Woodway, Hewitt, China Spring, and rural properties along the Brazos River corridor. We also serve neighboring communities like Hillsboro and Corsicana on larger projects.",
     whyLocal:
-      "National dealers like Viking Steel and The Carport Co. have Waco landing pages, but no local crew. Triple J Metal LLC makes the 45-minute drive from Temple with our own team, steel from MetalMax in Waco itself, and a turnkey concrete option that nobody else provides.",
+      "National dealers like Viking Steel and The Carport Co. have Waco landing pages, but no local crew. Triple J Metal LLC makes the 45-minute drive from Temple with our own team, steel from regional Texas suppliers (some right here in Waco), and a turnkey concrete option that nobody else provides.",
     services: [
       'Welded or bolted red iron carports',
       'Bolted metal carports',
@@ -255,7 +255,7 @@ export const LOCATIONS: Record<string, LocationData> = {
     areaContext:
       "We serve Georgetown and all of Williamson County, including Sun City, Berry Creek, and Teravista neighborhoods, as well as rural properties along Ronald Reagan Blvd and the Georgetown Lake area.",
     whyLocal:
-      "Georgetown is about 60 minutes from our Temple base — worth the drive when no local installer offers turnkey concrete. We bring our own crew, our own steel from MetalMax, and handle the full job start to finish.",
+      "Georgetown is about 60 minutes from our Temple base — worth the drive when no local installer offers turnkey concrete. We bring our own crew, our own Texas-sourced steel, and handle the full job start to finish.",
     services: [
       'Welded or bolted red iron carports',
       'Bolted metal carports',

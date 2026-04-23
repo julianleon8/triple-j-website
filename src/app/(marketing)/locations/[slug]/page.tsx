@@ -160,7 +160,7 @@ export default async function LocationPage(
               'Concrete pad pouring included in the same contract',
               'Same-week installs — no 4–16 week wait lists',
               'Licensed and insured',
-              'Steel from MetalMax (Waco) — 100% Texas supplier',
+              'Steel from regional Texas suppliers — 100% Texas-sourced',
               '4,000 PSI concrete for Bell County expansive clay soils',
             ].map((point) => (
               <li key={point} className="flex items-start gap-3 text-sm text-ink-700">

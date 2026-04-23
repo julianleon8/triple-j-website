@@ -156,7 +156,7 @@ export default async function ServicePage(
               <span className="text-[color:var(--color-brand-600)]">✓</span> Licensed &amp; Insured
             </div>
             <div className="flex items-center gap-2 text-sm font-semibold text-[color:var(--color-ink-700)]">
-              <span className="text-[color:var(--color-brand-600)]">✓</span> MetalMax Steel — Texas Supplier
+              <span className="text-[color:var(--color-brand-600)]">✓</span> Texas-Sourced Red Iron Steel
             </div>
             <div className="flex items-center gap-2 text-sm font-semibold text-[color:var(--color-ink-700)]">
               <span className="text-[color:var(--color-brand-600)]">✓</span> Temple-Based Crew

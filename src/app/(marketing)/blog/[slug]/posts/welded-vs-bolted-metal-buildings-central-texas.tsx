@@ -102,16 +102,16 @@ export default function WeldedVsBoltedPost() {
         correct anchor system &#8212; not a retrofit.
       </p>
 
-      <h2>Hail, UV, and the WeatherXL™ Finish System</h2>
+      <h2>Hail, UV, and the Painted Galvalume® Finish</h2>
       <p>
         Frame construction matters for wind. Panel choice and finish matter for the other Central Texas
         hazards &#8212; hail impact, UV degradation, and rust at cut edges and fastener points.
       </p>
       <p>
-        Triple J sources all panels from <strong>MetalMax in Waco, TX</strong>. MetalMax panels use Galvalume® substrate
-        &#8212; a zinc-aluminum alloy that resists rust at cut edges &#8212; coated with the WeatherXL™ color system.
-        26-gauge panels provide meaningful hail resistance compared to the 29-gauge panels used in many
-        lower-cost kits.
+        Triple J sources panels from <strong>leading regional Texas suppliers</strong>. The panels we install use
+        Galvalume® substrate &#8212; a zinc-aluminum alloy that resists rust at cut edges &#8212; with painted
+        finishes backed by a 40-year warranty engineered for high-UV climates. 26-gauge panels provide
+        meaningful hail resistance compared to the 29-gauge panels used in many lower-cost kits.
       </p>
       <p>
         Optional Drip Stop anti-condensation felt on the panel underside is worth considering for enclosed

@@ -14,7 +14,7 @@ This repo doubles as an Obsidian vault. The `.md` files at the root are the work
 - **Address:** 3319 Tem-Bel Ln, Temple, TX 76502 · **Phone:** 254-346-7764
 - Founded 2025 · 150+ projects · 50+ clients
 - Central Texas (Temple base; serves Belton, Killeen, Harker Heights, Copperas Cove, Waco, Salado, Georgetown, Round Rock, Lampasas, Holland, Taylor, Troy, Nolanville)
-- Suppliers: MetalMax (Waco, primary) + MetalMart
+- Suppliers: regional Texas steel — multi-source by design (do NOT name specific suppliers in vault, customer copy, or AI-facing files; see Decisions.md 2026-04-23 supplier-agnostic positioning)
 - Services: welded **or** bolted carports, garages, barns, RV/boat covers, equipment covers, metal porches, lean-to patios, house additions, ranch structures, barndominiums
 
 ### Stack

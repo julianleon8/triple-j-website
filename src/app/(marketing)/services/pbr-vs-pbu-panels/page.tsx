@@ -7,7 +7,7 @@ import { SITE } from '@/lib/site'
 export const metadata: Metadata = {
   title: 'PBR vs PBU Metal Roofing Panels | Which Is Right for You? | Triple J Metal LLC',
   description:
-    'Understand the difference between PBR and PBU metal roofing panels before you build. Triple J Metal LLC uses MetalMax panels in Central Texas — learn which panel type fits your project.',
+    'Understand the difference between PBR and PBU metal roofing panels before you build. Triple J Metal LLC builds with both across Central Texas — learn which panel type fits your project.',
   alternates: { canonical: '/services/pbr-vs-pbu-panels' },
   openGraph: {
     title: 'PBR vs PBU Metal Panels | Triple J Metal LLC',
@@ -148,7 +148,7 @@ export default function PbrVsPbuPage() {
                 {[
                   'Most economical panel option',
                   'Standard for carports, barns, and agricultural buildings',
-                  'Wide color and gauge availability from MetalMax',
+                  'Wide color and gauge availability from regional Texas suppliers',
                   'Proven decades of performance in Central Texas',
                 ].map((pt) => (
                   <li key={pt} className="flex items-start gap-2 text-sm text-ink-700">
@@ -248,12 +248,13 @@ export default function PbrVsPbuPage() {
           </div>
           <div className="mt-8 rounded-xl bg-brand-50 border border-(--color-brand-200) p-6">
             <p className="text-sm font-semibold text-(--color-brand-700) uppercase tracking-wider mb-2">
-              Our steel supplier
+              Our steel
             </p>
             <p className="text-ink-700 text-sm leading-relaxed">
-              Triple J Metal LLC sources all PBR and PBU panels from <strong>MetalMax in Waco, TX</strong> — a premier
-              Central Texas steel supplier. MetalMax&rsquo;s PBR and PBU panels come in Galvalume® and a full
-              range of WeatherXL™ painted colors, with 26-gauge and 29-gauge options depending on your application.
+              Triple J Metal LLC sources PBR and PBU panels from leading regional Texas suppliers — Galvalume®
+              substrate with painted finishes backed by a 40-year paint warranty, in 26-gauge and 29-gauge
+              depending on your application. Multi-source so we&rsquo;re never bottlenecked when a single supplier
+              runs short.
             </p>
           </div>
         </Container>

@@ -1,4 +1,4 @@
-import { PANEL_COLORS, type PanelColor } from './colors'
+import { PANEL_COLORS, LINE_LABELS, type PanelColor } from './colors'
 
 export type GalleryColorInput = {
   panelColor?: string | null
@@ -13,10 +13,11 @@ export type GalleryColorDescription = {
   label: string | null
 }
 
-// DB stores lowercase for `*_color_line` ('turnium' | 'sheffield') and may
-// store either slug form ('Hunter-Green') or display name ('Hunter Green')
-// for `*_color`. Resolver is permissive so future dashboard work can pick
-// either convention.
+// DB stores lowercase internal IDs for `*_color_line` ('turnium' | 'sheffield')
+// and may store either slug form ('Hunter-Green') or display name ('Hunter Green')
+// for `*_color`. Internal IDs are NOT brand names — the user-facing labels come
+// from LINE_LABELS in ./colors.ts. Resolver is permissive so future dashboard
+// work can pick either convention.
 function resolve(
   colorIdent: string | null | undefined,
   lineIdent: string | null | undefined,
@@ -49,16 +50,19 @@ export function describeGalleryColors(
 }
 
 // ─── Dashboard editor helpers ────────────────────────────────────────────────
-// Composite value "Turnium/Ash-Gray" keeps duplicate names (Ash Gray, Black,
-// Burnished Slate) distinguishable across lines. Server splits into
-// panel_color (lowercase slug) + panel_color_line (lowercase).
+// Composite value "Turnium/Ash-Gray" is an INTERNAL identifier (kept stable
+// for DB compatibility) — it lets duplicate names (Ash Gray, Black, Burnished
+// Slate) stay distinguishable across lines. Server splits into panel_color
+// (lowercase slug) + panel_color_line (lowercase). User-facing label uses
+// LINE_LABELS, so an editor sees "Burnished Slate (Standard Line)" not
+// "Burnished Slate (Turnium)".
 
 export function colorOptionValue(c: PanelColor): string {
   return `${c.line}/${c.slug}`
 }
 
 export function colorOptionLabel(c: PanelColor): string {
-  return `${c.name} (${c.line})`
+  return `${c.name} (${LINE_LABELS[c.line]})`
 }
 
 export function colorValueFromDb(

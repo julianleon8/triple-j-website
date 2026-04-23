@@ -4,16 +4,28 @@ import { Container } from '@/components/ui/Container'
 import { ButtonLink } from '@/components/ui/Button'
 import { QuoteForm } from '@/components/sections/QuoteForm'
 import { SITE } from '@/lib/site'
-import { TURNIUM_COLORS, SHEFFIELD_COLORS, getSwatchUrl, type PanelColor } from '@/lib/colors'
+import {
+  TURNIUM_COLORS,
+  SHEFFIELD_COLORS,
+  LINE_LABELS,
+  LINE_SUBTITLES,
+  getSwatchUrl,
+  type PanelColor,
+} from '@/lib/colors'
+
+const STANDARD_LABEL = LINE_LABELS.Turnium
+const PREMIUM_LABEL  = LINE_LABELS.Sheffield
+const STANDARD_SUB   = LINE_SUBTITLES.Turnium
+const PREMIUM_SUB    = LINE_SUBTITLES.Sheffield
 
 export const metadata: Metadata = {
-  title: 'Panel Colors & Options | MetalMax WeatherXL™ | Triple J Metal LLC',
+  title: 'Metal Panel Colors & Finishes | Triple J Metal LLC',
   description:
-    'Browse all available metal panel colors for your carport, garage, or barn in Central Texas. Triple J Metal LLC uses MetalMax WeatherXL™ panels in 26 & 29 gauge — Turnium and Sheffield lines.',
+    'Browse 39 metal panel colors for your carport, garage, or barn in Central Texas. 26 & 29-gauge Galvalume® steel with a 40-year paint warranty. Two lines: Standard exposed-fastener and Premium concealed-fastener.',
   alternates: { canonical: '/services/colors' },
   openGraph: {
-    title: 'Panel Colors & Options | Triple J Metal LLC',
-    description: 'Choose from 39 MetalMax WeatherXL™ panel colors for your Central Texas metal building.',
+    title: 'Metal Panel Colors & Finishes | Triple J Metal LLC',
+    description: 'Choose from 39 painted Galvalume® panel colors for your Central Texas metal building. Standard and Premium lines.',
     type: 'website',
   },
 }
@@ -56,9 +68,9 @@ export default function ColorsPage() {
             </span>
             <h1 className="mt-3 text-white">Metal Panel Colors & Finishes</h1>
             <p className="mt-5 text-lg text-white/75 leading-relaxed max-w-2xl">
-              Triple J Metal sources all panels from MetalMax in Waco, TX — Galvalume® steel with
-              WeatherXL™ color coating engineered for Central Texas sun, UV, and corrosion resistance.
-              Available in 26 and 29 gauge, 39 colors across two product lines.
+              Triple J Metal sources painted Galvalume® steel from leading regional Texas suppliers,
+              spec'd for high-UV, high-heat Central Texas conditions. Available in 26 and 29 gauge,
+              39 colors across two product lines.
             </p>
             <div className="mt-8 flex flex-wrap gap-4">
               <ButtonLink href="#quote" variant="primary" size="lg">
@@ -80,10 +92,10 @@ export default function ColorsPage() {
         <Container>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
             {[
-              { stat: '39',        label: 'Colors Available' },
-              { stat: '26 & 29',   label: 'Gauge Options' },
-              { stat: 'WeatherXL™',label: 'Color System' },
-              { stat: 'Galvalume®',label: 'Steel Substrate' },
+              { stat: '39',         label: 'Colors Available' },
+              { stat: '26 & 29',    label: 'Gauge Options' },
+              { stat: '40-Year',    label: 'Paint Warranty' },
+              { stat: 'Galvalume®', label: 'Steel Substrate' },
             ].map(({ stat, label }) => (
               <div key={label}>
                 <div className="text-xl font-extrabold">{stat}</div>
@@ -94,44 +106,44 @@ export default function ColorsPage() {
         </Container>
       </section>
 
-      {/* ── Turnium 26 & 29 gauge ── */}
+      {/* ── Standard Line ── */}
       <section className="py-16 md:py-24 bg-white">
         <Container size="wide">
           <div className="mb-10">
             <span className="text-xs font-semibold uppercase tracking-[0.15em] text-brand-700">
               26 &amp; 29 Gauge
             </span>
-            <h2 className="mt-2 text-ink-900">Turnium Line — {TURNIUM_COLORS.length} Colors</h2>
+            <h2 className="mt-2 text-ink-900">{STANDARD_LABEL} — {TURNIUM_COLORS.length} Colors</h2>
             <p className="mt-3 text-ink-500 max-w-2xl">
-              Available in both 26-gauge and 29-gauge. Standard residential and commercial panel for
-              carports, barns, garages, and RV covers. PBR and PBU profiles available in this line.
+              {STANDARD_SUB}. Standard residential and commercial panel for carports, barns, garages,
+              and RV covers. PBR and PBU profiles available.
             </p>
           </div>
           <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-7 gap-4">
             {TURNIUM_COLORS.map((color) => (
-              <ColorCard key={`turnium-${color.slug}`} color={color} />
+              <ColorCard key={`standard-${color.slug}`} color={color} />
             ))}
           </div>
         </Container>
       </section>
 
-      {/* ── Sheffield 26 gauge only ── */}
+      {/* ── Premium Line ── */}
       <section className="py-16 md:py-24 bg-ink-50 border-t border-ink-100">
         <Container size="wide">
           <div className="mb-10">
             <span className="text-xs font-semibold uppercase tracking-[0.15em] text-brand-700">
               26 Gauge Only
             </span>
-            <h2 className="mt-2 text-ink-900">Sheffield Line — {SHEFFIELD_COLORS.length} Colors</h2>
+            <h2 className="mt-2 text-ink-900">{PREMIUM_LABEL} — {SHEFFIELD_COLORS.length} Colors</h2>
             <p className="mt-3 text-ink-500 max-w-2xl">
-              Sheffield line is available in 26-gauge only. Includes concealed-fastener options
-              (MaxLoc, MaxSeam, MaxSnap) popular for HOA-governed neighborhoods like Heritage Oaks
-              and Bella Charca. Higher-end aesthetic with hidden fasteners.
+              {PREMIUM_SUB}. Concealed-fastener standing-seam options popular for HOA-governed
+              neighborhoods like Heritage Oaks and Bella Charca. Higher-end aesthetic with hidden
+              fasteners.
             </p>
           </div>
           <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-7 gap-4">
             {SHEFFIELD_COLORS.map((color) => (
-              <ColorCard key={`sheffield-${color.slug}`} color={color} />
+              <ColorCard key={`premium-${color.slug}`} color={color} />
             ))}
           </div>
           <div className="mt-6 inline-flex items-center gap-2 text-xs text-ink-500">
@@ -144,19 +156,20 @@ export default function ColorsPage() {
       {/* ── About the finish system ── */}
       <section className="py-16 md:py-20 bg-white">
         <Container size="narrow">
-          <h2 className="mb-6">WeatherXL™ — Built for Central Texas Sun</h2>
+          <h2 className="mb-6">Built for Central Texas Sun</h2>
           <div className="space-y-5 text-ink-600 leading-relaxed">
             <p>
-              MetalMax&rsquo;s WeatherXL™ finish system is engineered specifically for high-UV, high-heat
-              environments. The color coat bonds to Galvalume® substrate — a zinc-aluminum alloy that
-              resists rust at cut edges and fastener points, which is where standard painted steel panels
-              fail first in the Central Texas climate.
+              The painted finish on every panel is engineered specifically for high-UV, high-heat
+              environments. The color coat bonds to a Galvalume® substrate — a zinc-aluminum alloy
+              that resists rust at cut edges and fastener points, which is where standard painted
+              steel panels fail first in the Central Texas climate. Backed by a 40-year paint
+              warranty.
             </p>
             <p>
-              Every panel color on this page is available through MetalMax&rsquo;s Waco, TX facility. When
-              you fill out the quote form, just mention the color name and line (Turnium or Sheffield) —
-              or tell us your project type and we&rsquo;ll recommend colors that match common HOA palettes or
-              complement popular Central Texas home exterior colors.
+              When you fill out the quote form, just mention the color name and line ({STANDARD_LABEL.toLowerCase()}{' '}
+              or {PREMIUM_LABEL.toLowerCase()}) — or tell us your project type and we&rsquo;ll recommend
+              colors that match common HOA palettes or complement popular Central Texas home exterior
+              colors.
             </p>
           </div>
           <div className="mt-8 rounded-xl bg-amber-50 border border-amber-200 p-5 text-sm text-amber-900">

@@ -94,7 +94,7 @@ export default function FortCavazosPost() {
         Harker Heights, check your lease or HOA covenants before committing to a specific structure type.
         Some HOA communities require architectural review before a structure can be erected. We can
         work within those requirements &#8212; concealed-fastener standing seam panels, Board &amp; Batten profiles,
-        and specific color palettes are all available through our MetalMax partnership.
+        and specific color palettes are all available through our regional Texas panel suppliers.
       </p>
       <p>
         For renters, many landlords in the Killeen area will allow a freestanding carport that&#8217;s

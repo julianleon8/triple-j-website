@@ -162,21 +162,21 @@ export default function AboutPage() {
         <Container size="narrow">
           <h2 className="mb-6">Texas Steel. Texas Suppliers.</h2>
           <p className="text-ink-600 text-lg leading-relaxed mb-8">
-            We source our steel through MetalMax in Waco, TX — one of the premier metal building
-            material suppliers in Central Texas. MetalMax supplies us with PBR and PBU panels,
-            galvalume roofing, and premium standing seam options for HOA-grade builds. Keeping our
-            supply chain in Texas means faster turnarounds and direct support from people who know
-            the local climate.
+            We source steel from leading regional Texas suppliers — PBR and PBU panels, Galvalume®
+            roofing, and premium concealed-fastener standing-seam systems for HOA-grade builds.
+            Multi-source by design: we&rsquo;re never bottlenecked when a single supplier runs short
+            on a color or gauge. Keeping the supply chain in Texas means faster turnarounds and
+            direct support from people who know the local climate.
           </p>
           <div className="flex items-center gap-4 flex-wrap">
             <div className="flex items-center gap-2 text-sm font-semibold text-ink-700">
-              <span className="text-(--color-brand-600)">✓</span> MetalMax (Waco, TX) — Primary Supplier
+              <span className="text-(--color-brand-600)">✓</span> Regional Texas suppliers — multi-source
             </div>
             <div className="flex items-center gap-2 text-sm font-semibold text-ink-700">
               <span className="text-(--color-brand-600)">✓</span> 100% Texas-Sourced Materials
             </div>
             <div className="flex items-center gap-2 text-sm font-semibold text-ink-700">
-              <span className="text-(--color-brand-600)">✓</span> Galvalume® + WeatherXL™ Standard
+              <span className="text-(--color-brand-600)">✓</span> Galvalume® substrate · 40-year paint warranty
             </div>
           </div>
         </Container>

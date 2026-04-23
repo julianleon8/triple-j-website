@@ -86,7 +86,7 @@ export function WhyTripleJ() {
                   Welded On-Site
                 </div>
                 <p className="mt-3 text-white text-sm max-w-xs">
-                  Red-iron steel from MetalMax (Waco). 14-gauge standard,
+                  Texas-sourced red-iron steel. 14-gauge standard,
                   12-gauge storm upgrade. Every weld inspected before concrete
                   cures.
                 </p>

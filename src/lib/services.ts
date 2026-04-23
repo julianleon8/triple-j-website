@@ -81,13 +81,13 @@ export const SERVICES: Record<string, ServiceData> = {
           'Need a concrete slab poured first? We handle site prep and concrete in the same contract. No need to hire a separate concrete crew.',
       },
       {
-        title: 'MetalMax Steel — Texas Supplier',
+        title: 'Texas-Sourced Red Iron Steel',
         description:
-          'All panels sourced from MetalMax in Waco, TX. PBR/PBU R-Panels, Galvalume®, and WeatherXL™ coatings rated for Central Texas weather.',
+          'Panels sourced from leading regional Texas suppliers — PBR/PBU R-Panels on Galvalume® substrate with painted finishes rated for Central Texas weather. Multi-source so a single supplier shortage never delays your build.',
       },
     ],
     technicalAuthority:
-      'All Triple J carports are engineered for Central Texas conditions: 90 mph wind rating, 4,000 PSI concrete footings for Bell County\'s expansive clay soils, and WeatherXL™ panel coatings that resist UV degradation and hail impact. We\'re familiar with Bell County and Coryell County setback requirements and can advise on permit needs before we break ground.',
+      'All Triple J carports are engineered for Central Texas conditions: 90 mph wind rating, 4,000 PSI concrete footings for Bell County\'s expansive clay soils, and painted-Galvalume® panels backed by a 40-year paint warranty that resist UV degradation and hail impact. We\'re familiar with Bell County and Coryell County setback requirements and can advise on permit needs before we break ground.',
     competitorRows: [
       { them: 'Ships a kit — you arrange installation', us: 'We deliver, weld, and install everything' },
       { them: '4–16 week lead times (East Texas Carports)', us: 'Most builds scheduled within the week' },
@@ -239,7 +239,7 @@ export const SERVICES: Record<string, ServiceData> = {
       },
     ],
     technicalAuthority:
-      'All Triple J metal garages are built with MetalMax PBR/PBU R-Panels — the same commercial-grade paneling used on agricultural and industrial structures throughout Texas. Roofing is Galvalume® steel with WeatherXL™ coating, rated for Central Texas UV exposure and hail impact. We pull Bell County permits where required and ensure structures meet local setback requirements.',
+      'All Triple J metal garages are built with PBR/PBU R-Panels — the same commercial-grade paneling used on agricultural and industrial structures throughout Texas. Roofing is Galvalume® steel with a painted finish backed by a 40-year warranty, rated for Central Texas UV exposure and hail impact. We pull Bell County permits where required and ensure structures meet local setback requirements.',
     competitorRows: [
       { them: 'Standard catalog sizes only', us: 'Any dimension — we build to your spec' },
       { them: 'Kit delivery, self-install', us: 'Full installation by our crew' },
@@ -275,7 +275,7 @@ export const SERVICES: Record<string, ServiceData> = {
       'Triple J Metal builds metal barns and ranch structures across Bell and Coryell counties. Welded or bolted red iron, concrete available, same-week installs. Call 254-346-7764.',
     heroHeadline: 'Metal Barns Built for Central Texas Ranch Life',
     heroCopy:
-      'A Central Texas barn has to handle 90 mph gusts, hail the size of golf balls, and baking summer heat — then do it all again next season. Triple J Metal LLC builds welded red iron barns engineered for this climate: thick steel, proper anchoring, and MetalMax roofing rated for the punishment Texas delivers. We\'ve built structures across Bell and Coryell counties for livestock, equipment storage, hay, and mixed use. Our John Deere skid-steer reaches 40 feet — we can tackle larger structures that smaller crews can\'t.',
+      'A Central Texas barn has to handle 90 mph gusts, hail the size of golf balls, and baking summer heat — then do it all again next season. Triple J Metal LLC builds welded red iron barns engineered for this climate: thick steel, proper anchoring, and Texas-sourced Galvalume® roofing rated for the punishment Texas delivers. We\'ve built structures across Bell and Coryell counties for livestock, equipment storage, hay, and mixed use. Our John Deere skid-steer reaches 40 feet — we can tackle larger structures that smaller crews can\'t.',
     mainBenefit: 'Welded red iron barns engineered for Central Texas weather — livestock, equipment, hay, or mixed use.',
     features: [
       {
@@ -299,9 +299,9 @@ export const SERVICES: Record<string, ServiceData> = {
           'We pour concrete pads for equipment storage and workshops, or prep and grade gravel floors for livestock areas. Same contract.',
       },
       {
-        title: 'MetalMax Agricultural Panels',
+        title: 'Agricultural-Grade Panels',
         description:
-          'PBR/PBU R-Panels are the industry standard for agricultural buildings. Galvalume® base steel with WeatherXL™ coating resists corrosion and UV damage.',
+          'PBR/PBU R-Panels are the industry standard for agricultural buildings. Galvalume® base steel with a 40-year painted finish resists corrosion and UV damage.',
       },
       {
         title: 'GC Connections for Larger Builds',
@@ -421,13 +421,13 @@ export const SERVICES: Record<string, ServiceData> = {
       'Triple J Metal builds HOA-compliant metal carports, garages, and porches with architectural panel finishes for Heritage Oaks, Bella Charca, and Central Texas luxury subdivisions. Call 254-346-7764.',
     heroHeadline: 'HOA-Compliant Metal Structures for Central Texas Luxury Subdivisions',
     heroCopy:
-      'Heritage Oaks and Bella Charca homeowners know the challenge: your HOA has strict architectural guidelines, your builder only built the main house, and the secondary structures — the RV cover, the porch extension, the detached garage — are yours to figure out. National carport brands sell utility-grade sheds that HOAs reject on first review. Triple J Metal LLC builds premium architectural structures using MetalMax standing seam and Board & Batten panel systems that meet the strictest HOA guidelines in Central Texas — and we include concrete and site prep so you never have to manage a second contractor.',
-    mainBenefit: 'Architectural-grade MetalMax panels (standing seam, Board & Batten) that pass HOA review in Heritage Oaks, Bella Charca, and similar Central Texas luxury developments.',
+      'Heritage Oaks and Bella Charca homeowners know the challenge: your HOA has strict architectural guidelines, your builder only built the main house, and the secondary structures — the RV cover, the porch extension, the detached garage — are yours to figure out. National carport brands sell utility-grade sheds that HOAs reject on first review. Triple J Metal LLC builds premium architectural structures using concealed-fastener standing-seam and Board & Batten panel systems that meet the strictest HOA guidelines in Central Texas — and we include concrete and site prep so you never have to manage a second contractor.',
+    mainBenefit: 'Architectural-grade panel systems (concealed-fastener standing-seam, Board & Batten) that pass HOA review in Heritage Oaks, Bella Charca, and similar Central Texas luxury developments.',
     features: [
       {
-        title: 'Standing Seam Roofing (MaxSeam / MaxSnap)',
+        title: 'Concealed-Fastener Standing-Seam Roofing',
         description:
-          'MetalMax\'s MaxSeam and MaxSnap standing seam systems provide the clean architectural profile required by premium HOAs. No exposed fasteners, no utility-shed appearance.',
+          'Premium standing-seam systems provide the clean architectural profile required by HOAs — concealed fasteners, no exposed screws, no utility-shed appearance. We source from regional Texas suppliers in the gauge and color your HOA spec calls for.',
       },
       {
         title: 'Board & Batten Siding',
@@ -452,14 +452,14 @@ export const SERVICES: Record<string, ServiceData> = {
       {
         title: 'Color Matching',
         description:
-          'MetalMax panels are available in a wide color range. We can match your home\'s trim, roof, or body color for architectural continuity.',
+          'Our panel suppliers stock 39 painted colors across two lines. We can match your home\'s trim, roof, or body color for architectural continuity.',
       },
     ],
     technicalAuthority:
-      'Heritage Oaks and Bella Charca are developed by Saratoga Homes and Flintrock Building Texas in the Killeen–Harker Heights corridor — home prices from $500,000 to $900,000. HOA architectural guidelines typically require color continuity with the primary residence, no exposed fasteners on roofing, and framing gauges that meet residential engineering standards. MetalMax\'s standing seam and Board & Batten systems were designed for exactly this market. We\'ve worked in Bell County luxury neighborhoods and understand the approval process.',
+      'Heritage Oaks and Bella Charca are developed by Saratoga Homes and Flintrock Building Texas in the Killeen–Harker Heights corridor — home prices from $500,000 to $900,000. HOA architectural guidelines typically require color continuity with the primary residence, no exposed fasteners on roofing, and framing gauges that meet residential engineering standards. Our concealed-fastener standing-seam and Board & Batten systems are designed for exactly this market. We\'ve worked in Bell County luxury neighborhoods and understand the approval process.',
     competitorRows: [
       { them: 'Utility-grade panels — HOA rejection guaranteed', us: 'Standing seam + Board & Batten — HOA-ready' },
-      { them: 'Standard color palette of 6–8 options', us: 'Wide MetalMax color range with color-match service' },
+      { them: 'Standard color palette of 6–8 options', us: '39-color palette with color-match service' },
       { them: '14-gauge only — may not pass HOA engineering review', us: '12-gauge upgrade available for premium builds' },
       { them: 'No concrete — manage your own site prep', us: 'Concrete and site prep in the same contract' },
       { them: 'Weeks of neighborhood disruption', us: 'Same-week build — minimal neighborhood impact' },
@@ -475,7 +475,7 @@ export const SERVICES: Record<string, ServiceData> = {
       },
       {
         q: 'Can you match my home\'s exterior color exactly?',
-        a: 'MetalMax panels come in a wide color range. Bring your home\'s exterior color chip and we\'ll identify the closest match in their palette. For very specific custom colors, we can discuss powder coat options.',
+        a: 'Our panel suppliers stock 39 painted colors across two lines. Bring your home\'s exterior color chip and we\'ll identify the closest match. For very specific custom colors, we can discuss powder coat options.',
       },
       {
         q: 'Do you handle the HOA approval paperwork?',

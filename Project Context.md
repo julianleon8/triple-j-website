@@ -22,7 +22,7 @@ _Last updated: 2026-04-21 (evening)_
 **Founded:** 2025 · 150+ projects completed · 50+ satisfied clients
 **Type:** Metal construction — welded + bolted red-iron carports, garages, barns, RV covers, house additions, lean-to patios
 **Location:** Central Texas (Temple base; serves Belton, Killeen, Harker Heights, Copperas Cove, Waco, Salado, Georgetown, Round Rock, Lampasas, Holland, Taylor, Troy, Nolanville)
-**Suppliers:** MetalMax (Waco) — primary; MetalMart secondary; Capital Metal Buildings (Troy, Irvin Jimenez) — tertiary ≤30% of spend for specialty/overflow
+**Suppliers:** Regional Texas steel suppliers — multi-source by design. Specific supplier names are kept out of vault + customer-facing copy per the supplier-agnostic positioning shift (Decisions.md 2026-04-23). Operational records (purchase orders, invoices) are the system of record for actual supplier choices.
 
 **Crew capacity:** 2 welders in-house (Freddy + Julian). Juan = investor + relationships, not jobsite labor. Can scale to ~$3-5M revenue before needing a 3rd welder hire.
 

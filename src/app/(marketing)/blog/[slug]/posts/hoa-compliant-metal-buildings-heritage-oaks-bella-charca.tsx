@@ -43,16 +43,16 @@ export default function HoaCompliantPost() {
           ['PBR (standard exposed fastener)', 'Visible screws on face', 'Industrial/agricultural', 'Typically rejected', 'Low'],
           ['PBU (hidden fastener R-panel)', 'Concealed under rib', 'Cleaner, similar profile', 'Depends on HOA', 'Medium'],
           ['Board & Batten profile', 'Concealed', 'Farmhouse/craftsman', 'Often approved', 'Medium'],
-          ['MaxLoc standing seam', 'Fully concealed', 'Architectural premium', 'Widely approved', 'High'],
-          ['MaxSeam standing seam', 'Fully concealed', 'Architectural premium', 'Widely approved', 'High'],
-          ['MaxSnap standing seam', 'Fully concealed', 'Architectural premium', 'Widely approved', 'High'],
+          ['Snap-lock standing seam', 'Fully concealed', 'Architectural premium', 'Widely approved', 'High'],
+          ['Mechanical-lock standing seam', 'Fully concealed', 'Architectural premium', 'Widely approved', 'High'],
+          ['Concealed-clip standing seam', 'Fully concealed', 'Architectural premium', 'Widely approved', 'High'],
         ]}
       />
 
       <h2>Standing Seam: Why It&#8217;s the Default for HOA Luxury Builds</h2>
       <p>
-        Standing seam panels &#8212; including MetalMax&#8217;s MaxLoc, MaxSeam, and MaxSnap lines &#8212; have no
-        exposed fasteners on the roof or wall surface. The panels interlock at raised seams, and the
+        Standing seam panels &#8212; including snap-lock, mechanical-lock, and concealed-clip systems &#8212;
+        have no exposed fasteners on the roof or wall surface. The panels interlock at raised seams, and the
         fastener is hidden inside the seam. The result looks architectural rather than industrial &#8212;
         similar to what you&#8217;d see on a $400/sq ft custom home.
       </p>
@@ -72,7 +72,7 @@ export default function HoaCompliantPost() {
       <p>
         Most HOA communities require that accessory structure colors coordinate with the main dwelling
         exterior. Heritage Oaks and Bella Charca homes are built primarily in neutral palettes &#8212;
-        warm whites, tans, greiges, and gray-browns. The MetalMax Sheffield line colors that consistently
+        warm whites, tans, greiges, and gray-browns. The Premium-line concealed-fastener colors that consistently
         pass HOA review in these communities:
       </p>
       <ul>
@@ -82,9 +82,9 @@ export default function HoaCompliantPost() {
         <li>Burnished Slate &#8212; for modern farmhouse exteriors</li>
       </ul>
       <p>
-        If your HOA requires a specific color match, we can request physical samples from MetalMax
-        before finalizing the color selection. Don&#8217;t rely on monitor swatches for a HOA color-match
-        requirement &#8212; the physical sample is the only reliable way to compare.
+        If your HOA requires a specific color match, we can request physical samples from our panel
+        suppliers before finalizing the color selection. Don&#8217;t rely on monitor swatches for a HOA
+        color-match requirement &#8212; the physical sample is the only reliable way to compare.
       </p>
 
       <h2>The HOA Approval Process: What to Submit</h2>

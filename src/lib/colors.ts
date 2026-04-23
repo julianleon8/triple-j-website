@@ -1,14 +1,31 @@
 /**
- * MetalMax panel color data.
- * Turnium line: 26 & 29 gauge
- * Sheffield line: 26 gauge only
+ * Panel color catalog.
  *
- * Swatch image URL patterns:
- *   Turnium:  https://metalmax.com/wp-content/uploads/2025/12/MMRS_Turnium_{slug}_swatch-300x276.jpg
- *   Sheffield: https://metalmax.com/wp-content/uploads/2025/12/MMRS_Sheffield_{slug}_swatch-300x276.jpg
+ * `PanelLine` values are kept as 'Turnium' / 'Sheffield' as **internal
+ * identifiers only** (they map to existing rows in `gallery_items.panel_color_line`
+ * — renaming would orphan that data). Use LINE_LABELS for any user-facing
+ * display so the public site stays supplier-agnostic.
+ *
+ *   Standard Line: 26 & 29 gauge — exposed-fastener panels
+ *   Premium Line:  26 gauge only — concealed-fastener (HOA + architectural)
+ *
+ * Swatches are currently sourced from a third-party CDN — see getSwatchUrl().
+ * Mid-term: mirror to Supabase Storage so we don't depend on an external host.
  */
 
 export type PanelLine = 'Turnium' | 'Sheffield'
+
+/** Display labels — never expose `PanelLine` enum values directly to users. */
+export const LINE_LABELS: Record<PanelLine, string> = {
+  Turnium:   'Standard Line',
+  Sheffield: 'Premium Line',
+}
+
+/** Subtitle copy for each line — used on /services/colors. */
+export const LINE_SUBTITLES: Record<PanelLine, string> = {
+  Turnium:   '26 & 29-gauge exposed-fastener panels',
+  Sheffield: '26-gauge concealed-fastener panels for HOA + architectural projects',
+}
 
 export type PanelColor = {
   name: string

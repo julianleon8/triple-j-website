@@ -36,13 +36,13 @@
 - Ranch structures, Barndominiums (via ToolBelt/PlanHub GC connections)
 
 ## Suppliers
-- **MetalMax** (Waco) — primary
-- **MetalMart**
+- Regional Texas steel suppliers — multi-source by design (do NOT name specific suppliers in customer-facing copy; see Decisions.md 2026-04-23)
+- Operational supplier choices live in purchase orders / invoices, not in vault or web copy
 
 ## Material Tiers
-### Standard (48-hr builds)
-- 14-gauge steel + MetalMax PBR/PBU R-Panels + Galvalume® + WeatherXL™
+### Standard (same-week builds)
+- 14-gauge steel + PBR/PBU R-Panels on Galvalume® substrate + 40-year painted finish
 
 ### Premium Storm/HOA Upgrade
-- 12-gauge steel + Board & Batten or MaxSeam/MaxSnap standing seam + WeatherXL™
+- 12-gauge steel + Board & Batten or concealed-fastener standing-seam systems + 40-year painted finish
 - For luxury subdivisions (Heritage Oaks, Bella Charca) with strict HOA guidelines
