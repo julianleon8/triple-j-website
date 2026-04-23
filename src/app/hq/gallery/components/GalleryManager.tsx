@@ -16,6 +16,49 @@ function fileBaseName(file: File) {
   return n || 'Project photo'
 }
 
+const IMAGE_EXT_RE = /\.(jpe?g|png|heic|heif|webp|gif|tiff?|avif)$/i
+function isImageFile(f: File): boolean {
+  return f.type.startsWith('image/') || IMAGE_EXT_RE.test(f.name)
+}
+
+// Strip leading date prefixes ("2025-08", "2025_08_15"), normalize separators,
+// and Title-Case the result so a folder named "2025-08 killeen-smith garage"
+// becomes "Killeen Smith Garage".
+function folderNameToTitle(raw: string): string {
+  return raw
+    .replace(/^\d{4}[-_/.]?\d{0,2}[-_/.]?\d{0,2}\s*[-_.]?\s*/, '')
+    .replace(/[_-]+/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim()
+    .replace(/\b\w/g, (c) => c.toUpperCase())
+}
+
+// FileSystemDirectoryReader.readEntries only returns up to ~100 entries per
+// call; loop until it returns an empty batch to handle big folders.
+async function readAllEntries(reader: FileSystemDirectoryReader): Promise<FileSystemEntry[]> {
+  const all: FileSystemEntry[] = []
+  while (true) {
+    const batch: FileSystemEntry[] = await new Promise((resolve, reject) =>
+      reader.readEntries(resolve, reject),
+    )
+    if (batch.length === 0) break
+    all.push(...batch)
+  }
+  return all
+}
+
+async function walkEntry(entry: FileSystemEntry, out: File[]): Promise<void> {
+  if (entry.isFile) {
+    const f = await new Promise<File>((resolve, reject) =>
+      (entry as FileSystemFileEntry).file(resolve, reject),
+    )
+    if (isImageFile(f)) out.push(f)
+  } else if (entry.isDirectory) {
+    const reader = (entry as FileSystemDirectoryEntry).createReader()
+    for (const child of await readAllEntries(reader)) await walkEntry(child, out)
+  }
+}
+
 type Photo = {
   id: string
   image_url: string
@@ -108,9 +151,77 @@ export default function GalleryManager({ initialItems }: { initialItems: Gallery
   const [busyId, setBusyId] = useState<string | null>(null)
   const [uploadError, setUploadError] = useState<string | null>(null)
   const [expandedId, setExpandedId] = useState<string | null>(null)
+  const [folderName, setFolderName] = useState<string | null>(null)
   const fileRef = useRef<HTMLInputElement>(null)
+  const titleRef = useRef<HTMLInputElement>(null)
 
-  // ── New item upload (single cover or many — each becomes its own project) ─
+  // ── Bundle a folder of files into the form: one project, N photos ──────
+  function applyFiles(name: string | null, files: File[]) {
+    if (files.length === 0) {
+      setUploadError('No images found in that folder.')
+      return
+    }
+    const dt = new DataTransfer()
+    for (const f of files) dt.items.add(f)
+    if (fileRef.current) {
+      fileRef.current.files = dt.files
+    }
+    setSelectedCount(files.length)
+    setFolderName(name)
+    if (name && titleRef.current && !titleRef.current.value.trim()) {
+      titleRef.current.value = folderNameToTitle(name)
+    }
+    setUploadError(null)
+  }
+
+  async function handleFolderDrop(e: React.DragEvent<HTMLDivElement>) {
+    e.preventDefault()
+    e.stopPropagation()
+    const items = Array.from(e.dataTransfer.items ?? [])
+    const folderEntries = items
+      .map((i) => (i.kind === 'file' ? i.webkitGetAsEntry?.() : null))
+      .filter((entry): entry is FileSystemEntry => !!entry && entry.isDirectory)
+
+    if (folderEntries.length === 0) {
+      // Loose files dropped, not a folder — fall back to flat queue, no bundling
+      const files = Array.from(e.dataTransfer.files).filter(isImageFile)
+      if (files.length === 0) {
+        setUploadError('Drop a folder of photos, or use the file picker below.')
+        return
+      }
+      applyFiles(null, files)
+      return
+    }
+
+    const out: File[] = []
+    for (const entry of folderEntries) await walkEntry(entry, out)
+    applyFiles(folderEntries[0].name, out)
+  }
+
+  function handleFolderPick(e: React.ChangeEvent<HTMLInputElement>) {
+    const files = Array.from(e.target.files ?? []).filter(isImageFile)
+    if (files.length === 0) return
+    // webkitRelativePath is "FolderName/.../file.jpg" — first segment = root folder
+    const root = files[0].webkitRelativePath?.split('/')[0] ?? null
+    applyFiles(root, files)
+    // Reset the picker so re-picking the same folder fires onChange again
+    e.target.value = ''
+  }
+
+  function clearQueue() {
+    if (fileRef.current) fileRef.current.value = ''
+    if (titleRef.current) titleRef.current.value = ''
+    setFolderName(null)
+    setSelectedCount(0)
+    setUploadError(null)
+  }
+
+  // ── New item upload ────────────────────────────────────────────────────
+  // Two modes:
+  //   - bundle (folderName != null): one project, all files become photos of it.
+  //     Cover = first file. Title = form title (auto-filled from folder name).
+  //   - per-file (folderName == null, existing behavior): each file becomes its
+  //     own project. Title is used as a prefix.
   async function handleUpload(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
     setUploadError(null)
@@ -118,7 +229,7 @@ export default function GalleryManager({ initialItems }: { initialItems: Gallery
     const form = e.currentTarget
     const files = fileRef.current?.files
     if (!files?.length) {
-      setUploadError('Please choose at least one photo.')
+      setUploadError('Please choose at least one photo or drop a folder.')
       return
     }
     const fileArr = Array.from(files)
@@ -128,42 +239,96 @@ export default function GalleryManager({ initialItems }: { initialItems: Gallery
       setUploadError('Please enter a title for this project.')
       return
     }
+    if (folderName && !titlePrefix) {
+      setUploadError('Please enter a title for this project.')
+      return
+    }
 
     setUploading(true)
     let lastError: string | null = null
 
-    for (let i = 0; i < fileArr.length; i++) {
-      const rawFile = fileArr[i]
-      setUploadProgress(
-        fileArr.length > 1 ? `Uploading ${i + 1} of ${fileArr.length}…` : 'Uploading…',
-      )
-      const base = fileBaseName(rawFile)
-      const title =
-        fileArr.length === 1 ? titlePrefix : titlePrefix ? `${titlePrefix} — ${base}` : base
-
-      let prepared: File
+    if (folderName) {
+      // ── Bundle mode: one project + many photos ──
+      const titleValue = titlePrefix
+      setUploadProgress(`Preparing 1 of ${fileArr.length}…`)
+      let coverPrepared: File
       try {
-        prepared = await normalizeUploadFile(rawFile)
+        coverPrepared = await normalizeUploadFile(fileArr[0])
       } catch (err) {
-        lastError = err instanceof Error ? err.message : 'Could not prepare photo.'
-        break
+        lastError = err instanceof Error ? err.message : 'Could not prepare cover photo.'
       }
+      let createdItem: GalleryItem | null = null
+      if (!lastError) {
+        const data = new FormData(form)
+        data.delete('file')
+        data.set('file', coverPrepared!, coverPrepared!.name)
+        data.set('title', titleValue)
+        const alt = (data.get('alt_text') as string)?.trim()
+        if (!alt) data.set('alt_text', titleValue)
+        const res = await fetch('/api/gallery', { method: 'POST', body: data })
+        if (res.ok) {
+          const { item } = await res.json()
+          createdItem = item
+          setItems((prev) => [...prev, item])
+        } else {
+          const { error } = await res.json().catch(() => ({ error: 'Upload failed' }))
+          lastError = error ?? 'Upload failed'
+        }
+      }
+      // Add the rest as additional photos on the new project
+      if (createdItem && !lastError) {
+        for (let i = 1; i < fileArr.length; i++) {
+          setUploadProgress(`Uploading ${i + 1} of ${fileArr.length}…`)
+          let prepared: File
+          try {
+            prepared = await normalizeUploadFile(fileArr[i])
+          } catch (err) {
+            lastError = err instanceof Error ? err.message : 'Could not prepare photo.'
+            break
+          }
+          try {
+            await uploadPhoto(createdItem, prepared)
+          } catch (err) {
+            lastError = err instanceof Error ? err.message : 'Photo upload failed.'
+            break
+          }
+        }
+      }
+    } else {
+      // ── Per-file mode (existing) ──
+      for (let i = 0; i < fileArr.length; i++) {
+        const rawFile = fileArr[i]
+        setUploadProgress(
+          fileArr.length > 1 ? `Uploading ${i + 1} of ${fileArr.length}…` : 'Uploading…',
+        )
+        const base = fileBaseName(rawFile)
+        const title =
+          fileArr.length === 1 ? titlePrefix : titlePrefix ? `${titlePrefix} — ${base}` : base
 
-      const data = new FormData(form)
-      data.delete('file')
-      data.set('file', prepared, prepared.name)
-      data.set('title', title)
-      const alt = (data.get('alt_text') as string)?.trim()
-      if (!alt) data.set('alt_text', title)
+        let prepared: File
+        try {
+          prepared = await normalizeUploadFile(rawFile)
+        } catch (err) {
+          lastError = err instanceof Error ? err.message : 'Could not prepare photo.'
+          break
+        }
 
-      const res = await fetch('/api/gallery', { method: 'POST', body: data })
-      if (res.ok) {
-        const { item } = await res.json()
-        setItems((prev) => [...prev, item])
-      } else {
-        const { error } = await res.json().catch(() => ({ error: 'Upload failed' }))
-        lastError = error ?? 'Upload failed'
-        break
+        const data = new FormData(form)
+        data.delete('file')
+        data.set('file', prepared, prepared.name)
+        data.set('title', title)
+        const alt = (data.get('alt_text') as string)?.trim()
+        if (!alt) data.set('alt_text', title)
+
+        const res = await fetch('/api/gallery', { method: 'POST', body: data })
+        if (res.ok) {
+          const { item } = await res.json()
+          setItems((prev) => [...prev, item])
+        } else {
+          const { error } = await res.json().catch(() => ({ error: 'Upload failed' }))
+          lastError = error ?? 'Upload failed'
+          break
+        }
       }
     }
 
@@ -171,6 +336,7 @@ export default function GalleryManager({ initialItems }: { initialItems: Gallery
     setUploading(false)
     form.reset()
     setSelectedCount(0)
+    setFolderName(null)
     if (lastError) setUploadError(lastError)
   }
 
@@ -397,6 +563,64 @@ export default function GalleryManager({ initialItems }: { initialItems: Gallery
       {/* ── Upload form ── */}
       <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
         <h2 className="text-base font-bold text-gray-900 mb-4">Upload New Project</h2>
+
+        {/* Folder drop zone — drag a job folder from Finder, or pick one. All
+            photos in the folder become a single project, with the folder name
+            auto-filling the Title. */}
+        <div
+          onDragOver={(e) => {
+            e.preventDefault()
+            e.stopPropagation()
+          }}
+          onDrop={handleFolderDrop}
+          className={`mb-5 rounded-xl border-2 border-dashed px-4 py-5 text-center transition-colors ${
+            folderName
+              ? 'border-emerald-300 bg-emerald-50'
+              : 'border-blue-300 bg-blue-50 hover:border-blue-400'
+          }`}
+        >
+          {folderName ? (
+            <div>
+              <p className="text-sm font-semibold text-emerald-900">
+                📁 {folderName}
+              </p>
+              <p className="mt-0.5 text-xs text-emerald-800">
+                {selectedCount} photo{selectedCount === 1 ? '' : 's'} queued —
+                will become one project. First file is the cover.
+              </p>
+              <button
+                type="button"
+                onClick={clearQueue}
+                className="mt-2 text-xs font-semibold text-emerald-800 underline hover:text-emerald-900"
+              >
+                Clear and start over
+              </button>
+            </div>
+          ) : (
+            <div>
+              <p className="text-sm font-semibold text-blue-900">
+                Drop a job folder here
+              </p>
+              <p className="mt-1 text-xs text-blue-700">
+                All photos inside become one project. Folder name auto-fills
+                the Title. HEIC photos auto-convert.
+              </p>
+              <label className="mt-3 inline-block cursor-pointer rounded-lg border border-blue-300 bg-white px-3 py-1.5 text-xs font-semibold text-blue-700 hover:bg-blue-100">
+                Choose folder
+                <input
+                  type="file"
+                  multiple
+                  onChange={handleFolderPick}
+                  className="hidden"
+                  // @ts-expect-error webkitdirectory is non-standard but widely supported
+                  webkitdirectory=""
+                  directory=""
+                />
+              </label>
+            </div>
+          )}
+        </div>
+
         <form onSubmit={handleUpload} className="space-y-4">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="sm:col-span-2">
@@ -420,6 +644,7 @@ export default function GalleryManager({ initialItems }: { initialItems: Gallery
                 Title <span className="text-red-500">*</span>
               </label>
               <input
+                ref={titleRef}
                 name="title"
                 type="text"
                 required
@@ -519,7 +744,11 @@ export default function GalleryManager({ initialItems }: { initialItems: Gallery
             disabled={uploading}
             className="px-5 py-2.5 rounded-lg bg-blue-600 text-white text-sm font-semibold hover:bg-blue-700 disabled:opacity-50 transition-colors"
           >
-            {uploading ? 'Uploading…' : 'Upload Project'}
+            {uploading
+              ? uploadProgress ?? 'Uploading…'
+              : folderName && selectedCount > 0
+                ? `Upload ${selectedCount} photo${selectedCount === 1 ? '' : 's'} as one project`
+                : 'Upload Project'}
           </button>
         </form>
       </div>
