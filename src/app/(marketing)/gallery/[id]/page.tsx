@@ -6,6 +6,7 @@ import { ButtonLink } from '@/components/ui/Button'
 import { Container } from '@/components/ui/Container'
 import { QuoteForm } from '@/components/sections/QuoteForm'
 import { SITE } from '@/lib/site'
+import { getSiteUrl } from '@/lib/site-url'
 import { getAdminClient } from '@/lib/supabase/admin'
 import { describeGalleryColors } from '@/lib/gallery-colors'
 import { PhotoLightbox } from './PhotoLightbox'
@@ -86,8 +87,53 @@ export default async function GalleryDetailPage(
     trimColorLine: item.trim_color_line,
   })
 
+  // ImageGallery schema — feeds Google Image Search + AI Overviews.
+  // Each photo gets its own ImageObject with caption + contentLocation.
+  const galleryJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'ImageGallery',
+    name: `${item.title} — ${item.city}`,
+    description:
+      item.alt_text ||
+      `${item.type} built by Triple J Metal LLC in ${item.city}.`,
+    url: `${getSiteUrl()}/gallery/${id}`,
+    associatedMedia: photos.map((p) => ({
+      '@type': 'ImageObject',
+      url: p.image_url,
+      contentUrl: p.image_url,
+      caption: p.alt_text || item.title,
+      contentLocation: {
+        '@type': 'Place',
+        name: `${item.city}, TX`,
+        address: {
+          '@type': 'PostalAddress',
+          addressLocality: item.city,
+          addressRegion: 'TX',
+          addressCountry: 'US',
+        },
+      },
+      creator: {
+        '@type': 'Organization',
+        name: SITE.name,
+        url: getSiteUrl(),
+      },
+      copyrightHolder: {
+        '@type': 'Organization',
+        name: SITE.name,
+      },
+      acquireLicensePage: `${getSiteUrl()}/terms`,
+    })),
+  }
+
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(galleryJsonLd).replace(/</g, '\\u003c'),
+        }}
+      />
+
       {/* ── Hero ── */}
       <section className="relative bg-ink-900 text-white py-16 md:py-20 overflow-hidden">
         <div className="hero-glow absolute inset-0 pointer-events-none" aria-hidden="true" />

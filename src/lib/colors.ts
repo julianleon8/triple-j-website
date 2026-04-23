@@ -97,3 +97,46 @@ export function getSwatchUrl(color: PanelColor): string {
 
 export const TURNIUM_COLORS = PANEL_COLORS.filter(c => c.line === 'Turnium')
 export const SHEFFIELD_COLORS = PANEL_COLORS.filter(c => c.line === 'Sheffield')
+
+/**
+ * Lone-Star marketing names — Texas-evocative aliases for the most-asked-about
+ * colors. NOT a replacement for technical names (people search for "Burnished
+ * Slate metal panel"); shown as a subtitle under the technical name on the
+ * Colors page so a buyer can connect to a regional reference instead of a
+ * factory SKU. Only the colors with an obvious Texas analog are listed —
+ * generic neutrals fall through to the technical name only.
+ *
+ * Keyed by lowercase technical name (matches PanelColor.name lower-cased).
+ */
+export const LONE_STAR_NAMES: Record<string, string> = {
+  // Standard Line
+  'black':            'Bell County Black',
+  'brilliant white':  'Bandera White',
+  'polar white':      'Snowfall White',
+  'burgundy':         'Wine Country',
+  'burnished slate':  'Storm Cloud',
+  'charcoal':         'Hill Country Charcoal',
+  'copper penny':     'Pecan Copper',
+  'gallery blue':     'Bluebonnet Sky',
+  'galvalume':        'Bare Iron',
+  'hunter green':     'Pinto Green',
+  'light stone':      'Limestone',
+  'pewter gray':      'West Texas Pewter',
+  'rustic red':       'Hayloft Red',
+  'tan':              'Saddle Tan',
+  'fern green':       'Live Oak Fern',
+  // Premium Line
+  'regal white':      "Cattleman's White",
+  'evergreen':        'Cedar Evergreen',
+  'terra cotta':      'Big Bend Clay',
+  'dark bronze':      'Bronze Saddle',
+  'sandstone':        'Hill Country Sandstone',
+  'mansard brown':    'Mesquite Brown',
+  'sierra tan':       'Sierra Trail',
+  'slate gray':       'Slate Hill',
+  'dark gray':        'Thundercloud',
+}
+
+export function getLoneStarName(color: PanelColor): string | null {
+  return LONE_STAR_NAMES[color.name.toLowerCase()] ?? null
+}

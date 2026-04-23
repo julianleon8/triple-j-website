@@ -5,6 +5,7 @@ import { Container } from '@/components/ui/Container'
 import { ButtonLink } from '@/components/ui/Button'
 import { QuoteForm } from '@/components/sections/QuoteForm'
 import { SITE } from '@/lib/site'
+import { getSiteUrl } from '@/lib/site-url'
 import { getAdminClient } from '@/lib/supabase/admin'
 import { describeGalleryColors } from '@/lib/gallery-colors'
 
@@ -55,8 +56,44 @@ export default async function GalleryPage() {
     .eq('is_active', true)
     .order('is_featured', { ascending: false })
     .order('sort_order', { ascending: true })
+
+  // Index-level ImageGallery schema — feeds Google Image Search with the
+  // cover photos of every active project. Detail pages emit per-project
+  // schemas with all photos.
+  const indexCovers = (projects ?? []).slice(0, 24).map((proj) => {
+    const photoList = (proj.gallery_photos as { image_url: string; alt_text: string | null; is_cover: boolean }[] | null) ?? []
+    const cover = photoList.find((p) => p.is_cover) ?? photoList[0]
+    if (!cover) return null
+    return {
+      '@type': 'ImageObject' as const,
+      url: cover.image_url,
+      contentUrl: cover.image_url,
+      caption: cover.alt_text || proj.title,
+      contentLocation: {
+        '@type': 'Place' as const,
+        name: `${proj.city}, TX`,
+      },
+    }
+  }).filter(Boolean)
+
+  const indexJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'ImageGallery',
+    name: 'Triple J Metal LLC — Project Gallery',
+    description: '150+ completed metal carports, garages, barns, and RV covers across Central Texas.',
+    url: `${getSiteUrl()}/gallery`,
+    associatedMedia: indexCovers,
+  }
+
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(indexJsonLd).replace(/</g, '\\u003c'),
+        }}
+      />
+
       {/* ── Hero ── */}
       <section className="relative bg-ink-900 text-white py-20 md:py-28 overflow-hidden">
         <div className="hero-glow absolute inset-0 pointer-events-none" aria-hidden="true" />

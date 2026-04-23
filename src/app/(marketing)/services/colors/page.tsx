@@ -10,6 +10,7 @@ import {
   LINE_LABELS,
   LINE_SUBTITLES,
   getSwatchUrl,
+  getLoneStarName,
   type PanelColor,
 } from '@/lib/colors'
 
@@ -32,12 +33,13 @@ export const metadata: Metadata = {
 
 function ColorCard({ color }: { color: PanelColor }) {
   const swatchUrl = getSwatchUrl(color)
+  const loneStar = getLoneStarName(color)
   return (
     <div className="group flex flex-col items-center gap-2">
       <div className="relative w-full aspect-square rounded-xl overflow-hidden border border-ink-100 bg-ink-100 shadow-sm group-hover:shadow-md transition-shadow">
         <Image
           src={swatchUrl}
-          alt={`${color.name} metal panel swatch`}
+          alt={`${color.name} metal panel swatch${loneStar ? ` — also called "${loneStar}"` : ''}`}
           fill
           sizes="(max-width: 640px) 50vw, (max-width: 1024px) 25vw, 16vw"
           className="object-cover"
@@ -48,9 +50,14 @@ function ColorCard({ color }: { color: PanelColor }) {
           </span>
         )}
       </div>
-      <span className="text-xs font-semibold text-ink-700 text-center leading-tight">
-        {color.name}
-      </span>
+      <div className="text-center leading-tight">
+        <div className="text-xs font-semibold text-ink-700">{color.name}</div>
+        {loneStar && (
+          <div className="text-[10px] italic text-(--color-brand-600) mt-0.5">
+            "{loneStar}"
+          </div>
+        )}
+      </div>
     </div>
   )
 }

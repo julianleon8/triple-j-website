@@ -190,7 +190,8 @@ export default function AboutPage() {
             {[
               ['Show up when we say we will', 'If we schedule a build date, we\'re there. No rescheduling after you\'ve cleared the site.'],
               ['One company, start to finish', 'Site prep, concrete, steel structure, cleanup — all done by the same crew under one contract.'],
-              ['Permanent structures, not kits', 'We build things that last decades, not things that rattle loose in the first Texas thunderstorm.'],
+              ['Built to outlast the contract', 'Welded red iron + permanent bolts on Galvalume® substrate. These structures are real estate improvements that outlast the buyer who paid for them — your kids will inherit them in working condition.'],
+              ['Permanent, not portable', 'We don\'t ship kits that rattle loose in the first Texas thunderstorm. Every weld and every anchor bolt is rated for the wind loads our county actually sees.'],
               ['Honest pricing, no surprises', 'We quote the full job upfront — including concrete if you need it. No add-ons after the fact.'],
             ].map(([title, desc]) => (
               <li key={title as string} className="flex items-start gap-4">

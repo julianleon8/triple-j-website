@@ -6,13 +6,13 @@ import { QuoteForm } from '@/components/sections/QuoteForm'
 import { SITE } from '@/lib/site'
 
 export const metadata: Metadata = {
-  title: 'Service Areas | Metal Buildings Across Central Texas | Triple J Metal LLC',
+  title: 'Service Areas | Cities & Counties Across Central Texas | Triple J Metal LLC',
   description:
-    'Triple J Metal LLC serves Temple, Belton, Killeen, Harker Heights, Copperas Cove, Salado, Waco, Georgetown, Round Rock, and all of Central Texas. Local crew, same-week installs.',
+    'Triple J Metal LLC serves all of Bell, McLennan, Coryell, Williamson, Lampasas, Falls, Milam, and Burnet counties — 14 cities including Temple, Belton, Killeen, Harker Heights, Waco, Georgetown. Local crew, same-week installs.',
   alternates: { canonical: '/service-areas' },
   openGraph: {
     title: 'Service Areas | Triple J Metal LLC',
-    description: 'Metal building installation across Central Texas. Temple-based crew.',
+    description: 'Metal building installation across 8 Central Texas counties. Temple-based crew.',
     type: 'website',
   },
 }
@@ -118,6 +118,18 @@ const CITIES = [
   },
 ] as const
 
+// County-wide pages — broader SEO surfaces that serve every city in the county.
+const COUNTIES = [
+  { slug: 'bell-county',       name: 'Bell County',       seat: 'Belton',     note: 'Our home county — 150+ projects' },
+  { slug: 'mclennan-county',   name: 'McLennan County',   seat: 'Waco',       note: 'Waco metro + Brazos corridor' },
+  { slug: 'coryell-county',    name: 'Coryell County',    seat: 'Gatesville', note: 'Copperas Cove + ranch country' },
+  { slug: 'williamson-county', name: 'Williamson County', seat: 'Georgetown', note: 'Georgetown · Round Rock · Taylor' },
+  { slug: 'lampasas-county',   name: 'Lampasas County',   seat: 'Lampasas',   note: 'Hill Country ranch territory' },
+  { slug: 'falls-county',      name: 'Falls County',      seat: 'Marlin',     note: 'East rural ag — Marlin · Rosebud' },
+  { slug: 'milam-county',      name: 'Milam County',      seat: 'Cameron',    note: 'Cameron · Rockdale · Thorndale' },
+  { slug: 'burnet-county',     name: 'Burnet County',     seat: 'Burnet',     note: 'Hill Country + Highland Lakes' },
+] as const
+
 export default function ServiceAreasPage() {
   return (
     <>
@@ -155,8 +167,8 @@ export default function ServiceAreasPage() {
         <Container>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
             {[
-              { stat: '14+',       label: 'Cities Served' },
-              { stat: '90 min',    label: 'Max Drive from Temple' },
+              { stat: '14',        label: 'Cities Served' },
+              { stat: '8',         label: 'Counties Covered' },
               { stat: 'Same-Week', label: 'On-Site After Approval' },
               { stat: 'Zero',      label: 'Subcontractors — Ever' },
             ].map(({ stat, label }) => (
@@ -203,6 +215,38 @@ export default function ServiceAreasPage() {
                 <div className="text-xs text-ink-500 mt-2 font-medium">{city.note}</div>
                 <div className="mt-4 text-xs font-semibold text-(--color-brand-600) group-hover:underline">
                   View details →
+                </div>
+              </Link>
+            ))}
+          </div>
+        </Container>
+      </section>
+
+      {/* ── County grid (county-wide SEO surfaces) ── */}
+      <section className="py-16 md:py-24 bg-ink-50 border-y border-ink-100">
+        <Container>
+          <h2 className="mb-4">Counties We Serve</h2>
+          <p className="text-ink-500 text-lg mb-10 max-w-2xl">
+            County-wide pages with the local context for every property in the county — including
+            cities, towns, and rural ag properties not listed individually above.
+          </p>
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            {COUNTIES.map((county) => (
+              <Link
+                key={county.slug}
+                href={`/locations/${county.slug}`}
+                className="group flex flex-col rounded-xl border border-ink-100 bg-white p-5 hover:shadow-lg hover:-translate-y-0.5 hover:border-(--color-brand-300) hover:bg-brand-50 transition-all"
+              >
+                <div className="flex items-start justify-between mb-3">
+                  <svg className="w-4 h-4 text-(--color-brand-600) shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+                    <path fillRule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clipRule="evenodd" />
+                  </svg>
+                </div>
+                <div className="font-bold text-ink-900 text-base leading-tight">{county.name}</div>
+                <div className="text-xs text-ink-400 mt-0.5">Seat: {county.seat}</div>
+                <div className="text-xs text-ink-500 mt-2 font-medium">{county.note}</div>
+                <div className="mt-4 text-xs font-semibold text-(--color-brand-600) group-hover:underline">
+                  View county page →
                 </div>
               </Link>
             ))}
