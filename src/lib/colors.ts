@@ -1,16 +1,25 @@
 /**
  * Panel color catalog.
  *
- * `PanelLine` values are kept as 'Turnium' / 'Sheffield' as **internal
- * identifiers only** (they map to existing rows in `gallery_items.panel_color_line`
- * — renaming would orphan that data). Use LINE_LABELS for any user-facing
- * display so the public site stays supplier-agnostic.
+ * `name` is the **single canonical display name** used everywhere — the public
+ * Colors page, the HQ color picker, alt text, gallery cards, schema. There's
+ * no separate "marketing alias" anymore: when a customer says "Storm Cloud"
+ * Julian/Freddy see "Storm Cloud" in HQ, no translation needed.
+ *
+ * `legacyName` is the original supplier/technical name (e.g. "Burnished
+ * Slate"). Kept in source as a maintenance reference and for backward-compat
+ * matching in `gallery-colors.ts` resolve() — never rendered to anyone.
+ *
+ * `PanelLine` values stay 'Turnium' / 'Sheffield' as **internal identifiers
+ * only** — they map to existing rows in `gallery_items.panel_color_line`
+ * (renaming would orphan that data). User-facing labels come from
+ * LINE_LABELS.
  *
  *   Standard Line: 26 & 29 gauge — exposed-fastener panels
  *   Premium Line:  26 gauge only — concealed-fastener (HOA + architectural)
  *
- * Swatches are currently sourced from a third-party CDN — see getSwatchUrl().
- * Mid-term: mirror to Supabase Storage so we don't depend on an external host.
+ * Swatches are sourced from a third-party CDN — see getSwatchUrl(). Mid-term:
+ * mirror to Supabase Storage so we don't depend on an external host.
  */
 
 export type PanelLine = 'Turnium' | 'Sheffield'
@@ -28,67 +37,71 @@ export const LINE_SUBTITLES: Record<PanelLine, string> = {
 }
 
 export type PanelColor = {
+  /** Canonical display name — same on public site AND in HQ. */
   name: string
-  /** URL slug used in the swatch image filename */
+  /** Original supplier/technical name. Source-only reference for resolve()
+   *  backward-compat with rows that stored the old name. Never rendered. */
+  legacyName: string
+  /** URL slug used in the swatch image filename + DB storage. */
   slug: string
   line: PanelLine
-  /** Only Turnium is available in both 26 & 29 gauge */
+  /** Only Standard Line is available in both 26 & 29 gauge */
   gauges: ('26' | '29')[]
   /** True if this is a good match for HOA/luxury applications */
   hoaFriendly?: boolean
 }
 
-function turnium(name: string, slug: string, hoaFriendly?: boolean): PanelColor {
-  return { name, slug, line: 'Turnium', gauges: ['26', '29'], hoaFriendly }
+function standard(name: string, legacyName: string, slug: string, hoaFriendly?: boolean): PanelColor {
+  return { name, legacyName, slug, line: 'Turnium', gauges: ['26', '29'], hoaFriendly }
 }
 
-function sheffield(name: string, slug: string, hoaFriendly?: boolean): PanelColor {
-  return { name, slug, line: 'Sheffield', gauges: ['26'], hoaFriendly }
+function premium(name: string, legacyName: string, slug: string, hoaFriendly?: boolean): PanelColor {
+  return { name, legacyName, slug, line: 'Sheffield', gauges: ['26'], hoaFriendly }
 }
 
 export const PANEL_COLORS: PanelColor[] = [
-  // ── Turnium 26 & 29 gauge ──────────────────────────────────────────────────
-  turnium('Alamo White',    'Alamo-White'),
-  turnium('Ash Gray',       'Ash-Gray'),
-  turnium('Black',          'Black'),
-  turnium('Brite Red',      'Brite-Red'),
-  turnium('Brown',          'Brown'),
-  turnium('Brilliant White','Brilliant-White'),
-  turnium('Burgundy',       'Burgundy'),
-  turnium('Burnished Slate','Burnished-Slate', true),
-  turnium('Charcoal',       'Charcoal', true),
-  turnium('Copper Penny',   'Copper-Penny'),
-  turnium('Fern Green',     'Fern-Green'),
-  turnium('Gallery Blue',   'Gallery-Blue'),
-  turnium('Galvalume',      'Galvalume'),
-  turnium('Hunter Green',   'Hunter-Green'),
-  turnium('Light Stone',    'Light-Stone', true),
-  turnium('Ocean Blue',     'Ocean-Blue'),
-  turnium('Pewter Gray',    'Pewter-Gray', true),
-  turnium('Polar White',    'Polar-White', true),
-  turnium('Rustic Red',     'Rustic-Red'),
-  turnium('Tan',            'Tan'),
-  turnium('Taupe',          'Taupe', true),
+  // ── Standard Line — 26 & 29 gauge (legacy: Turnium) ────────────────────────
+  standard('Alamo Pearl',           'Alamo White',     'Alamo-White'),
+  standard('Caprock Ash',           'Ash Gray',        'Ash-Gray'),
+  standard('Bell County Black',     'Black',           'Black'),
+  standard('Texas Sunset',          'Brite Red',       'Brite-Red'),
+  standard('Cedar Bark',            'Brown',           'Brown'),
+  standard('Bandera White',         'Brilliant White', 'Brilliant-White'),
+  standard('Wine Country',          'Burgundy',        'Burgundy'),
+  standard('Storm Cloud',           'Burnished Slate', 'Burnished-Slate', true),
+  standard('Hill Country Charcoal', 'Charcoal',        'Charcoal', true),
+  standard('Pecan Copper',          'Copper Penny',    'Copper-Penny'),
+  standard('Live Oak Fern',         'Fern Green',      'Fern-Green'),
+  standard('Bluebonnet Sky',        'Gallery Blue',    'Gallery-Blue'),
+  standard('Bare Iron',             'Galvalume',       'Galvalume'),
+  standard('Pinto Green',           'Hunter Green',    'Hunter-Green'),
+  standard('Limestone',             'Light Stone',     'Light-Stone', true),
+  standard('Gulf Coast Blue',       'Ocean Blue',      'Ocean-Blue'),
+  standard('West Texas Pewter',     'Pewter Gray',     'Pewter-Gray', true),
+  standard('Snowfall White',        'Polar White',     'Polar-White', true),
+  standard('Hayloft Red',           'Rustic Red',      'Rustic-Red'),
+  standard('Saddle Tan',            'Tan',             'Tan'),
+  standard('Mesa Taupe',            'Taupe',           'Taupe', true),
 
-  // ── Sheffield 26 gauge only ────────────────────────────────────────────────
-  sheffield('Regal White',               'Regal-White', true),
-  sheffield('Dove Gray',                 'Dove-Gray', true),
-  sheffield('Slate Gray',                'Slate-Gray', true),
-  sheffield('Ash Gray',                  'Ash-Gray'),
-  sheffield('Dark Gray',                 'Dark-Gray', true),
-  sheffield('Charcoal Gray',             'Charcoal-Gray', true),
-  sheffield('Evergreen',                 'Evergreen'),
-  sheffield('Black',                     'Black', true),
-  sheffield('Antique',                   'Antique'),
-  sheffield('Colonial Red',              'Colonial-Red'),
-  sheffield('Terra Cotta',               'Terra-Cotta'),
-  sheffield('Dark Bronze',               'Dark-Bronze', true),
-  sheffield('Medium Bronze',             'Medium-Bronze', true),
-  sheffield('Sandstone',                 'Sandstone', true),
-  sheffield('Sierra Tan',                'Sierra-Tan', true),
-  sheffield('Mansard Brown',             'Mansard-Brown'),
-  sheffield('Burnished Slate',           'Burnished-Slate', true),
-  sheffield('Acrylic-Coated Galvalume',  'Acrylic-Coated-Galvalume'),
+  // ── Premium Line — 26 gauge only (legacy: Sheffield) ───────────────────────
+  premium('Cattleman\'s White',     'Regal White',                'Regal-White', true),
+  premium('Mourning Dove',          'Dove Gray',                  'Dove-Gray', true),
+  premium('Slate Hill',             'Slate Gray',                 'Slate-Gray', true),
+  premium('Caprock Ash',            'Ash Gray',                   'Ash-Gray'),
+  premium('Thundercloud',           'Dark Gray',                  'Dark-Gray', true),
+  premium('Pecos Charcoal',         'Charcoal Gray',              'Charcoal-Gray', true),
+  premium('Cedar Evergreen',        'Evergreen',                  'Evergreen'),
+  premium('Bell County Black',      'Black',                      'Black', true),
+  premium('Heritage Antique',       'Antique',                    'Antique'),
+  premium('Lone Star Red',          'Colonial Red',               'Colonial-Red'),
+  premium('Big Bend Clay',          'Terra Cotta',                'Terra-Cotta'),
+  premium('Bronze Saddle',          'Dark Bronze',                'Dark-Bronze', true),
+  premium('Brushed Bronze',         'Medium Bronze',              'Medium-Bronze', true),
+  premium('Hill Country Sandstone', 'Sandstone',                  'Sandstone', true),
+  premium('Sierra Trail',           'Sierra Tan',                 'Sierra-Tan', true),
+  premium('Mesquite Brown',         'Mansard Brown',              'Mansard-Brown'),
+  premium('Storm Cloud',            'Burnished Slate',            'Burnished-Slate', true),
+  premium('Bare Iron — Sealed','Acrylic-Coated Galvalume',   'Acrylic-Coated-Galvalume'),
 ]
 
 export function getSwatchUrl(color: PanelColor): string {
@@ -97,46 +110,3 @@ export function getSwatchUrl(color: PanelColor): string {
 
 export const TURNIUM_COLORS = PANEL_COLORS.filter(c => c.line === 'Turnium')
 export const SHEFFIELD_COLORS = PANEL_COLORS.filter(c => c.line === 'Sheffield')
-
-/**
- * Lone-Star marketing names — Texas-evocative aliases for the most-asked-about
- * colors. NOT a replacement for technical names (people search for "Burnished
- * Slate metal panel"); shown as a subtitle under the technical name on the
- * Colors page so a buyer can connect to a regional reference instead of a
- * factory SKU. Only the colors with an obvious Texas analog are listed —
- * generic neutrals fall through to the technical name only.
- *
- * Keyed by lowercase technical name (matches PanelColor.name lower-cased).
- */
-export const LONE_STAR_NAMES: Record<string, string> = {
-  // Standard Line
-  'black':            'Bell County Black',
-  'brilliant white':  'Bandera White',
-  'polar white':      'Snowfall White',
-  'burgundy':         'Wine Country',
-  'burnished slate':  'Storm Cloud',
-  'charcoal':         'Hill Country Charcoal',
-  'copper penny':     'Pecan Copper',
-  'gallery blue':     'Bluebonnet Sky',
-  'galvalume':        'Bare Iron',
-  'hunter green':     'Pinto Green',
-  'light stone':      'Limestone',
-  'pewter gray':      'West Texas Pewter',
-  'rustic red':       'Hayloft Red',
-  'tan':              'Saddle Tan',
-  'fern green':       'Live Oak Fern',
-  // Premium Line
-  'regal white':      "Cattleman's White",
-  'evergreen':        'Cedar Evergreen',
-  'terra cotta':      'Big Bend Clay',
-  'dark bronze':      'Bronze Saddle',
-  'sandstone':        'Hill Country Sandstone',
-  'mansard brown':    'Mesquite Brown',
-  'sierra tan':       'Sierra Trail',
-  'slate gray':       'Slate Hill',
-  'dark gray':        'Thundercloud',
-}
-
-export function getLoneStarName(color: PanelColor): string | null {
-  return LONE_STAR_NAMES[color.name.toLowerCase()] ?? null
-}

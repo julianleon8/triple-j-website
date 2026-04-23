@@ -14,10 +14,11 @@ export type GalleryColorDescription = {
 }
 
 // DB stores lowercase internal IDs for `*_color_line` ('turnium' | 'sheffield')
-// and may store either slug form ('Hunter-Green') or display name ('Hunter Green')
-// for `*_color`. Internal IDs are NOT brand names — the user-facing labels come
-// from LINE_LABELS in ./colors.ts. Resolver is permissive so future dashboard
-// work can pick either convention.
+// and may store either slug form ('Hunter-Green'), the current display name
+// ('Pinto Green'), or the LEGACY display name ('Hunter Green') for `*_color`.
+// Resolver checks all three so a rename of the canonical name doesn't orphan
+// existing gallery rows. Internal IDs are NOT brand names — the user-facing
+// labels come from LINE_LABELS + PanelColor.name in ./colors.ts.
 function resolve(
   colorIdent: string | null | undefined,
   lineIdent: string | null | undefined,
@@ -29,8 +30,9 @@ function resolve(
     PANEL_COLORS.find((c) => {
       const slugMatch = c.slug.toLowerCase() === target
       const nameMatch = c.name.toLowerCase() === target
+      const legacyMatch = c.legacyName.toLowerCase() === target
       const lineMatch = !targetLine || c.line.toLowerCase() === targetLine
-      return (slugMatch || nameMatch) && lineMatch
+      return (slugMatch || nameMatch || legacyMatch) && lineMatch
     }) ?? null
   )
 }
