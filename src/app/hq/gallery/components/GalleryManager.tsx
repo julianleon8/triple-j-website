@@ -92,7 +92,7 @@ type GalleryItem = {
   gallery_photos: Photo[]
 }
 
-const TYPE_OPTIONS = ['Carport', 'Garage', 'Barn', 'RV Cover', 'Lean-To', 'Porch Cover', 'Other']
+const TYPE_OPTIONS = ['Carport', 'Garage', 'Barn', 'RV Cover', 'Lean-To', 'Porch Cover', 'Hybrid', 'Other']
 const TAG_OPTIONS = ['Welded', 'Bolted', 'Turnkey']
 const PANEL_PROFILE_OPTIONS = ['PBR', 'PBU']
 const GAUGE_OPTIONS = ['26', '29']
