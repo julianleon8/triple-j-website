@@ -74,7 +74,7 @@ export default function AboutPage() {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
             {[
               { stat: '150+',      label: 'Projects Completed' },
-              { stat: '50+',       label: 'Satisfied Clients' },
+              { stat: 'Mon–Sat',   label: 'On-Site Availability' },
               { stat: 'Same-Week', label: 'On-Site After Approval' },
               { stat: 'Temple TX', label: 'Family Business' },
             ].map(({ stat, label }) => (

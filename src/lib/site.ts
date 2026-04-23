@@ -21,7 +21,6 @@ export const SITE = {
   established: 2025,
   stats: {
     projects: "150+",
-    clients: "50+",
   },
   social: {
     facebook: "", // TODO
