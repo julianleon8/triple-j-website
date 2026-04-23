@@ -129,14 +129,6 @@ export function Footer() {
                   Get a Free Quote →
                 </Link>
               </li>
-              <li className="pt-2 mt-2 border-t border-white/10">
-                <Link
-                  href="/partners"
-                  className="text-white/50 text-xs uppercase tracking-wider hover:text-white"
-                >
-                  For Suppliers & GCs →
-                </Link>
-              </li>
             </ul>
           </div>
         </div>
