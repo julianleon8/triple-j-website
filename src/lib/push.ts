@@ -15,6 +15,11 @@ import webpush from 'web-push'
 import { getAdminClient } from '@/lib/supabase/admin'
 
 let vapidConfigured = false
+let lastVapidError: string | null = null
+
+export function getVapidError(): string | null {
+  return lastVapidError
+}
 
 function ensureVapid(): boolean {
   if (vapidConfigured) return true
@@ -22,11 +27,24 @@ function ensureVapid(): boolean {
   const privateKey = process.env.VAPID_PRIVATE_KEY
   const subject = process.env.VAPID_SUBJECT || 'mailto:julianleon@triplejmetaltx.com'
 
-  if (!publicKey || !privateKey) return false
+  if (!publicKey || !privateKey) {
+    lastVapidError = `Missing env: ${!publicKey ? 'NEXT_PUBLIC_VAPID_PUBLIC_KEY ' : ''}${!privateKey ? 'VAPID_PRIVATE_KEY' : ''}`.trim()
+    return false
+  }
 
-  webpush.setVapidDetails(subject, publicKey, privateKey)
-  vapidConfigured = true
-  return true
+  try {
+    webpush.setVapidDetails(subject, publicKey, privateKey)
+    vapidConfigured = true
+    lastVapidError = null
+    return true
+  } catch (err) {
+    // Malformed keys (wrong length, bad base64, swapped, etc.) throw here.
+    // Capture the reason so the test endpoint can surface it instead of a
+    // generic 500.
+    lastVapidError = err instanceof Error ? err.message : String(err)
+    console.error('[push] setVapidDetails failed:', lastVapidError)
+    return false
+  }
 }
 
 export type PushPayload = {
