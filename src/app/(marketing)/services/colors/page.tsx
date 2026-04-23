@@ -42,14 +42,24 @@ function ColorCard({ color }: { color: PanelColor }) {
           sizes="(max-width: 640px) 50vw, (max-width: 1024px) 25vw, 16vw"
           className="object-cover"
         />
+        {color.mostEconomical && (
+          <span className="absolute top-2 left-2 bg-emerald-600 text-[9px] font-bold uppercase tracking-wider text-white px-1.5 py-0.5 rounded-full shadow-sm">
+            Best Value
+          </span>
+        )}
         {color.hoaFriendly && (
           <span className="absolute top-2 right-2 bg-white/90 text-[9px] font-bold uppercase tracking-wider text-brand-700 px-1.5 py-0.5 rounded-full border border-brand-200">
             HOA
           </span>
         )}
       </div>
-      <div className="text-xs font-semibold text-ink-700 text-center leading-tight">
-        {color.name}
+      <div className="text-center leading-tight">
+        <div className="text-xs font-semibold text-ink-700">{color.name}</div>
+        {color.mostEconomical && (
+          <div className="text-[10px] font-semibold text-emerald-700 mt-0.5">
+            Cheapest option
+          </div>
+        )}
       </div>
     </div>
   )
@@ -146,9 +156,15 @@ export default function ColorsPage() {
               <ColorCard key={`premium-${color.slug}`} color={color} />
             ))}
           </div>
-          <div className="mt-6 inline-flex items-center gap-2 text-xs text-ink-500">
-            <span className="bg-white border border-brand-200 text-brand-700 font-bold px-1.5 py-0.5 rounded-full text-[9px] uppercase tracking-wider">HOA</span>
-            badge = commonly used in HOA-governed subdivisions
+          <div className="mt-6 flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-5 text-xs text-ink-500">
+            <span className="inline-flex items-center gap-2">
+              <span className="bg-white border border-brand-200 text-brand-700 font-bold px-1.5 py-0.5 rounded-full text-[9px] uppercase tracking-wider">HOA</span>
+              = commonly used in HOA-governed subdivisions
+            </span>
+            <span className="inline-flex items-center gap-2">
+              <span className="bg-emerald-600 text-white font-bold px-1.5 py-0.5 rounded-full text-[9px] uppercase tracking-wider">Best Value</span>
+              = our most economical panel option
+            </span>
           </div>
         </Container>
       </section>

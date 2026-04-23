@@ -49,14 +49,29 @@ export type PanelColor = {
   gauges: ('26' | '29')[]
   /** True if this is a good match for HOA/luxury applications */
   hoaFriendly?: boolean
+  /** Cheapest pricing tier — ~$0.50–$1/sheet less than painted panels.
+   *  Surfaces a "Best Value" badge on the Colors page swatch. */
+  mostEconomical?: boolean
 }
 
-function standard(name: string, legacyName: string, slug: string, hoaFriendly?: boolean): PanelColor {
-  return { name, legacyName, slug, line: 'Turnium', gauges: ['26', '29'], hoaFriendly }
+function standard(
+  name: string,
+  legacyName: string,
+  slug: string,
+  hoaFriendly?: boolean,
+  mostEconomical?: boolean,
+): PanelColor {
+  return { name, legacyName, slug, line: 'Turnium', gauges: ['26', '29'], hoaFriendly, mostEconomical }
 }
 
-function premium(name: string, legacyName: string, slug: string, hoaFriendly?: boolean): PanelColor {
-  return { name, legacyName, slug, line: 'Sheffield', gauges: ['26'], hoaFriendly }
+function premium(
+  name: string,
+  legacyName: string,
+  slug: string,
+  hoaFriendly?: boolean,
+  mostEconomical?: boolean,
+): PanelColor {
+  return { name, legacyName, slug, line: 'Sheffield', gauges: ['26'], hoaFriendly, mostEconomical }
 }
 
 export const PANEL_COLORS: PanelColor[] = [
@@ -73,7 +88,7 @@ export const PANEL_COLORS: PanelColor[] = [
   standard('Pecan Copper',          'Copper Penny',    'Copper-Penny'),
   standard('Live Oak Fern',         'Fern Green',      'Fern-Green'),
   standard('Bluebonnet Sky',        'Gallery Blue',    'Gallery-Blue'),
-  standard('Galvalume',             'Galvalume',       'Galvalume'),  // kept as "Galvalume" — pricing signal (~$0.50–$1/sheet cheaper); customers search for this name
+  standard('Galvalume',             'Galvalume',       'Galvalume',       undefined, true),  // kept as "Galvalume" — pricing signal (~$0.50–$1/sheet cheaper); customers search for this name
   standard('Pinto Green',           'Hunter Green',    'Hunter-Green'),
   standard('Limestone',             'Light Stone',     'Light-Stone', true),
   standard('Gulf Coast Blue',       'Ocean Blue',      'Ocean-Blue'),
@@ -101,7 +116,7 @@ export const PANEL_COLORS: PanelColor[] = [
   premium('Sierra Trail',           'Sierra Tan',                 'Sierra-Tan', true),
   premium('Mesquite Brown',         'Mansard Brown',              'Mansard-Brown'),
   premium('Storm Cloud',            'Burnished Slate',            'Burnished-Slate', true),
-  premium('Acrylic-Coated Galvalume', 'Acrylic-Coated Galvalume', 'Acrylic-Coated-Galvalume'),  // kept functional — sealed variant of the Galvalume pricing tier; same rationale as Standard Galvalume
+  premium('Acrylic-Coated Galvalume', 'Acrylic-Coated Galvalume', 'Acrylic-Coated-Galvalume', undefined, true),  // kept functional — sealed variant of the Galvalume pricing tier; same rationale as Standard Galvalume
 ]
 
 export function getSwatchUrl(color: PanelColor): string {
