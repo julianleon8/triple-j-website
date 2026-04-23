@@ -73,7 +73,7 @@ export const PANEL_COLORS: PanelColor[] = [
   standard('Pecan Copper',          'Copper Penny',    'Copper-Penny'),
   standard('Live Oak Fern',         'Fern Green',      'Fern-Green'),
   standard('Bluebonnet Sky',        'Gallery Blue',    'Gallery-Blue'),
-  standard('Bare Iron',             'Galvalume',       'Galvalume'),
+  standard('Galvalume',             'Galvalume',       'Galvalume'),  // kept as "Galvalume" — pricing signal (~$0.50–$1/sheet cheaper); customers search for this name
   standard('Pinto Green',           'Hunter Green',    'Hunter-Green'),
   standard('Limestone',             'Light Stone',     'Light-Stone', true),
   standard('Gulf Coast Blue',       'Ocean Blue',      'Ocean-Blue'),
@@ -101,7 +101,7 @@ export const PANEL_COLORS: PanelColor[] = [
   premium('Sierra Trail',           'Sierra Tan',                 'Sierra-Tan', true),
   premium('Mesquite Brown',         'Mansard Brown',              'Mansard-Brown'),
   premium('Storm Cloud',            'Burnished Slate',            'Burnished-Slate', true),
-  premium('Bare Iron — Sealed','Acrylic-Coated Galvalume',   'Acrylic-Coated-Galvalume'),
+  premium('Acrylic-Coated Galvalume', 'Acrylic-Coated Galvalume', 'Acrylic-Coated-Galvalume'),  // kept functional — sealed variant of the Galvalume pricing tier; same rationale as Standard Galvalume
 ]
 
 export function getSwatchUrl(color: PanelColor): string {
