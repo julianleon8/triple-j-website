@@ -102,6 +102,14 @@ export function Footer() {
                   </Link>
                 </li>
               ))}
+              <li>
+                <Link
+                  href="/service-areas"
+                  className="text-white/50 hover:text-white"
+                >
+                  View all service areas →
+                </Link>
+              </li>
             </ul>
           </div>
 

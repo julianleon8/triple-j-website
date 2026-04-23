@@ -32,7 +32,6 @@ export const NAV_LINKS = [
   { href: "/services", label: "Services" },
   { href: "/gallery", label: "Gallery" },
   { href: "/blog", label: "Blog" },
-  { href: "/service-areas", label: "Service Areas" },
   { href: "/partners", label: "Partners" },
   { href: "/about", label: "About" },
   { href: "/contact", label: "Contact" },
