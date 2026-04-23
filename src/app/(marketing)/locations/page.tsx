@@ -21,7 +21,7 @@ export default function LocationsPage() {
       '@type': 'ListItem',
       position: index + 1,
       name: `Metal Carports ${LOCATIONS[slug].name}, TX`,
-      url: `https://triplejjjmetal.com/locations/${slug}`,
+      url: `https://www.triplejmetaltx.com/locations/${slug}`,
     })),
   }
 
@@ -41,7 +41,7 @@ export default function LocationsPage() {
             Triple J Metal LLC is based in Temple, TX and installs metal carports,
             garages, barns, and RV covers across Central Texas. We serve Bell County
             and surrounding areas — call{' '}
-            <a href="tel:254-346-7764">254-346-7764</a> for same-week availability.
+            <a href="tel:+12543467764">254-346-7764</a> for same-week availability.
           </p>
         </section>
 
@@ -69,7 +69,7 @@ export default function LocationsPage() {
           <h2>Don&apos;t See Your City?</h2>
           <p>
             We serve all of Central Texas. If your city isn&apos;t listed, call us at{' '}
-            <a href="tel:254-346-7764">254-346-7764</a> — chances are we work
+            <a href="tel:+12543467764">254-346-7764</a> — chances are we work
             in your area.
           </p>
           <a href="/get-a-quote">Request a Free Quote</a>

@@ -1,4 +1,5 @@
 import Image from "next/image";
+import type { Metadata } from "next";
 
 import { Gallery } from "@/components/sections/Gallery";
 import { HowItWorks } from "@/components/sections/HowItWorks";
@@ -12,6 +13,20 @@ import { ButtonLink } from "@/components/ui/Button";
 import { Container } from "@/components/ui/Container";
 import { ArrowRightIcon, PhoneIcon } from "@/components/ui/icons";
 import { SITE } from "@/lib/site";
+
+export const metadata: Metadata = {
+  title: "Metal Carports, Garages & Barns in Temple, Central Texas",
+  description:
+    "Turnkey metal buildings welded or bolted on-site by Triple J Metal LLC — Temple, TX. Carports, garages, barns, RV covers with concrete pads. Same-week scheduling across Bell, Coryell, and McLennan counties. Call 254-346-7764.",
+  alternates: { canonical: "/" },
+  openGraph: {
+    title: "Metal Carports, Garages & Barns in Central Texas — Triple J Metal",
+    description:
+      "Welded or bolted metal buildings built by our Temple TX crew — turnkey with concrete, same-week scheduling.",
+    url: "/",
+    type: "website",
+  },
+};
 
 /**
  * Homepage.

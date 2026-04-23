@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation'
 import { ButtonLink } from '@/components/ui/Button'
 import { Container } from '@/components/ui/Container'
 import { QuoteForm } from '@/components/sections/QuoteForm'
+import { BreadcrumbJsonLd } from '@/components/seo/BreadcrumbJsonLd'
 import { SERVICES, SERVICE_SLUGS } from '@/lib/services'
 import { SITE } from '@/lib/site'
 
@@ -76,6 +77,12 @@ export default async function ServicePage(
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, '\\u003c') }}
+      />
+      <BreadcrumbJsonLd
+        items={[
+          { name: 'Services', path: '/services' },
+          { name: svc.title, path: `/services/${slug}` },
+        ]}
       />
 
       {/* ── Hero ── */}

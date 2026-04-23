@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation'
 import { ButtonLink } from '@/components/ui/Button'
 import { Container } from '@/components/ui/Container'
 import { QuoteForm } from '@/components/sections/QuoteForm'
+import { BreadcrumbJsonLd } from '@/components/seo/BreadcrumbJsonLd'
 import { LOCATIONS, LOCATION_SLUGS } from '@/lib/locations'
 import { SITE } from '@/lib/site'
 
@@ -45,7 +46,7 @@ export default async function LocationPage(
     name: `${SITE.name} — ${loc.name} TX`,
     description: loc.metaDescription,
     telephone: SITE.phone,
-    url: `https://triplejjjmetal.com/locations/${slug}`,
+    url: `https://www.triplejmetaltx.com/locations/${slug}`,
     address: {
       '@type': 'PostalAddress',
       streetAddress: SITE.address.street,
@@ -65,6 +66,12 @@ export default async function LocationPage(
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, '\\u003c') }}
+      />
+      <BreadcrumbJsonLd
+        items={[
+          { name: 'Service Areas', path: '/locations' },
+          { name: loc.name, path: `/locations/${slug}` },
+        ]}
       />
 
       {/* ── Hero ── */}

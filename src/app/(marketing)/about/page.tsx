@@ -22,7 +22,7 @@ const jsonLd = {
   name: SITE.name,
   description: 'Temple, TX metal building contractor — welded or bolted carports, garages, barns, and RV covers with turnkey concrete.',
   telephone: SITE.phone,
-  url: 'https://triplejjjmetal.com/about',
+  url: 'https://www.triplejmetaltx.com/about',
   address: {
     '@type': 'PostalAddress',
     streetAddress: SITE.address.street,

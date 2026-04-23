@@ -59,6 +59,21 @@ export const metadata: Metadata = {
     type: "website",
     locale: "en_US",
     siteName: SITE.name,
+    images: [
+      {
+        url: "/og-default.jpg",
+        width: 1200,
+        height: 630,
+        alt: `${SITE.name} — metal carports, garages, and barns in Central Texas`,
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: SITE.name,
+    description:
+      "Welded or bolted metal buildings in Central Texas — built turnkey with concrete by our Temple, TX crew.",
+    images: ["/og-default.jpg"],
   },
   appleWebApp: {
     capable: true,

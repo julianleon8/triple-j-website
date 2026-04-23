@@ -28,7 +28,7 @@ export function Footer() {
             >
               <Image
                 src="/images/logo-lion.png"
-                alt=""
+                alt="Triple J Metal Buildings lion emblem"
                 width={44}
                 height={44}
                 className="h-11 w-11 object-contain"

@@ -22,7 +22,7 @@ const jsonLd = {
   name: SITE.name,
   telephone: SITE.phone,
   email: SITE.email,
-  url: 'https://triplejjjmetal.com/contact',
+  url: 'https://www.triplejmetaltx.com/contact',
   address: {
     '@type': 'PostalAddress',
     streetAddress: SITE.address.street,

@@ -3,6 +3,7 @@ import type { ReactNode } from "react";
 import { Footer } from "@/components/site/Footer";
 import { Header } from "@/components/site/Header";
 import { MobileCallBar } from "@/components/site/MobileCallBar";
+import { OrganizationJsonLd } from "@/components/seo/OrganizationJsonLd";
 
 /**
  * Layout for the public marketing site.
@@ -24,6 +25,7 @@ export default function MarketingLayout({
       className="bg-white text-[color:var(--color-ink-900)] flex-1 flex flex-col"
       style={{ colorScheme: "light" }}
     >
+      <OrganizationJsonLd />
       <Header />
       <main className="flex-1">{children}</main>
       <Footer />

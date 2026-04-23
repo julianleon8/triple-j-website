@@ -149,7 +149,7 @@ export default function QuoteAcceptView({ quote, token }: Props) {
           {error && <p className="text-red-500 text-sm mt-3">{error}</p>}
 
           <p className="text-center text-xs text-gray-400 mt-8">
-            Questions? Call or text <a href="tel:2543467764" className="underline">254-346-7764</a>
+            Questions? Call or text <a href="tel:+12543467764" className="underline">254-346-7764</a>
           </p>
         </div>
       </div>
