@@ -42,6 +42,14 @@ export default async function SettingsHubPage() {
         />
       </SettingsGroup>
 
+      <SettingsGroup label="Inboxes">
+        <SettingsRow
+          href="/hq/partners"
+          title="Partner Inquiries"
+          subtitle="B2B referrals from suppliers, manufacturers, GCs"
+        />
+      </SettingsGroup>
+
       <SettingsGroup label="Integrations">
         <SettingsRow
           href="/hq/settings/quickbooks"
