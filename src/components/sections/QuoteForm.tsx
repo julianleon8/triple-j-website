@@ -1,11 +1,14 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
+import HCaptcha from "@hcaptcha/react-hcaptcha";
 
 import { Button } from "@/components/ui/Button";
 import { Container } from "@/components/ui/Container";
 import { ArrowRightIcon, PhoneIcon } from "@/components/ui/icons";
 import { SITE } from "@/lib/site";
+
+const HCAPTCHA_SITE_KEY = process.env.NEXT_PUBLIC_HCAPTCHA_SITE_KEY;
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -439,6 +442,8 @@ export function QuoteForm() {
   const [step, setStep] = useState<1 | 2 | 3>(1);
   const [form, setForm] = useState<FormState>(INITIAL);
   const [status, setStatus] = useState<"idle" | "submitting" | "ok" | "err">("idle");
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
+  const captchaRef = useRef<HCaptcha | null>(null);
   const [errMsg, setErrMsg] = useState("");
 
   function update<K extends keyof FormState>(key: K, value: FormState[K]) {
@@ -461,6 +466,13 @@ export function QuoteForm() {
   async function handleSubmit() {
     // Guard: only submit from the final step.
     if (step !== 3) return;
+    // Captcha required if the site key is configured (prod). In dev without
+    // a site key, we let submission through.
+    if (HCAPTCHA_SITE_KEY && !captchaToken) {
+      setStatus("err");
+      setErrMsg("Please complete the captcha check below.");
+      return;
+    }
     setStatus("submitting");
     setErrMsg("");
 
@@ -479,6 +491,7 @@ export function QuoteForm() {
       timeline:        form.timeline || undefined,
       is_military:     form.is_military,
       message:         form.message.trim() || undefined,
+      captcha_token:   captchaToken ?? undefined,
     };
 
     try {
@@ -498,9 +511,14 @@ export function QuoteForm() {
       setStatus("ok");
       setForm(INITIAL);
       setStep(1);
+      setCaptchaToken(null);
+      captchaRef.current?.resetCaptcha();
     } catch (err) {
       setStatus("err");
       setErrMsg(err instanceof Error ? err.message : "Unknown error");
+      // Reset captcha so the user gets a fresh challenge on retry.
+      setCaptchaToken(null);
+      captchaRef.current?.resetCaptcha();
     }
   }
 
@@ -610,6 +628,20 @@ export function QuoteForm() {
                 {step === 1 && <Step1 form={form} update={update} />}
                 {step === 2 && <Step2 form={form} update={update} />}
                 {step === 3 && <Step3 form={form} update={update} />}
+
+                {/* Captcha — only on step 3. Skipped in dev when site key
+                    isn't set so local dev doesn't block form testing. */}
+                {step === 3 && HCAPTCHA_SITE_KEY && (
+                  <div className="mt-5 flex justify-center">
+                    <HCaptcha
+                      ref={captchaRef}
+                      sitekey={HCAPTCHA_SITE_KEY}
+                      onVerify={(token) => setCaptchaToken(token)}
+                      onExpire={() => setCaptchaToken(null)}
+                      onError={() => setCaptchaToken(null)}
+                    />
+                  </div>
+                )}
 
                 {/* Error */}
                 {status === "err" && (

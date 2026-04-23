@@ -6,6 +6,8 @@ import { Resend } from 'resend'
 import LeadOwnerAlert, { leadOwnerAlertText } from '@/emails/LeadOwnerAlert'
 import LeadCustomerConfirmation, { leadCustomerConfirmationText } from '@/emails/LeadCustomerConfirmation'
 import { sendPushBackground } from '@/lib/push'
+import { verifyHCaptchaToken } from '@/lib/captcha'
+import { checkRateLimit, getClientIp } from '@/lib/rate-limit'
 
 export const dynamic = 'force-dynamic'
 
@@ -79,6 +81,9 @@ const leadSchema = z.object({
   timeline:         z.enum(['asap', 'this_week', 'this_month', 'planning']).optional(),
   is_military:      z.boolean().default(false),
   message:          z.string().max(1000).optional(),
+  // hCaptcha token (validated by verifyHCaptchaToken before insert).
+  // Optional in dev when HCAPTCHA_SECRET_KEY is unset.
+  captcha_token:    z.string().optional(),
 })
 
 export async function GET() {
@@ -98,8 +103,29 @@ export async function GET() {
 
 export async function POST(request: NextRequest) {
   try {
+    // Rate limit: 5 submissions per IP per hour. Spam deterrent only — a
+    // determined attacker rotating IPs across function instances bypasses,
+    // which is fine. The captcha layer below stops bots that pass this.
+    const ip = getClientIp(request)
+    const rl = checkRateLimit(ip, 'leads', 5, 60 * 60 * 1000)
+    if (!rl.allowed) {
+      return NextResponse.json(
+        { error: 'Too many submissions from your IP. Please wait an hour or call 254-346-7764.' },
+        { status: 429, headers: { 'Retry-After': String(rl.retryAfterSec ?? 3600) } },
+      )
+    }
+
     const body = await request.json()
     const data = leadSchema.parse(body)
+
+    // Captcha verification — skipped in dev if HCAPTCHA_SECRET_KEY unset.
+    const captcha = await verifyHCaptchaToken(data.captcha_token, ip)
+    if (!captcha.success) {
+      return NextResponse.json(
+        { error: 'Captcha verification failed. Please try again.' },
+        { status: 400 },
+      )
+    }
 
     const city = cityFromZip(data.zip ?? '')
     const sizeLine = data.width && data.length

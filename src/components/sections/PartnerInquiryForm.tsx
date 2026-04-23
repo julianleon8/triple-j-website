@@ -1,6 +1,9 @@
 'use client'
 
-import { useState } from 'react'
+import { useRef, useState } from 'react'
+import HCaptcha from '@hcaptcha/react-hcaptcha'
+
+const HCAPTCHA_SITE_KEY = process.env.NEXT_PUBLIC_HCAPTCHA_SITE_KEY
 
 type CompanyType = 'manufacturer' | 'supplier' | 'dealer' | 'gc' | 'developer' | 'architect' | 'other'
 type Volume = '' | 'exploring' | '1-5' | '6-20' | '20-50' | '50+'
@@ -51,6 +54,8 @@ export function PartnerInquiryForm() {
   const [form, setForm] = useState<FormState>(EMPTY)
   const [status, setStatus] = useState<'idle' | 'submitting' | 'ok' | 'err'>('idle')
   const [errorMsg, setErrorMsg] = useState<string | null>(null)
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null)
+  const captchaRef = useRef<HCaptcha | null>(null)
 
   function update<K extends keyof FormState>(key: K, value: FormState[K]) {
     setForm((f) => ({ ...f, [key]: value }))
@@ -62,25 +67,35 @@ export function PartnerInquiryForm() {
       setErrorMsg('Please fill in company name, your name, email, company type, and a short message (10+ characters).')
       return
     }
+    if (HCAPTCHA_SITE_KEY && !captchaToken) {
+      setErrorMsg('Please complete the captcha check below.')
+      return
+    }
     setStatus('submitting')
     try {
       const res = await fetch('/api/partner-inquiries', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(form),
+        body: JSON.stringify({ ...form, captcha_token: captchaToken ?? undefined }),
       })
       if (!res.ok) {
         const data = await res.json().catch(() => ({}))
         const message = typeof data?.error === 'string' ? data.error : 'Submission failed. Please try again or call 254-346-7764.'
         setErrorMsg(message)
         setStatus('err')
+        setCaptchaToken(null)
+        captchaRef.current?.resetCaptcha()
         return
       }
       setStatus('ok')
       setForm(EMPTY)
+      setCaptchaToken(null)
+      captchaRef.current?.resetCaptcha()
     } catch {
       setErrorMsg('Network error. Please try again or call 254-346-7764.')
       setStatus('err')
+      setCaptchaToken(null)
+      captchaRef.current?.resetCaptcha()
     }
   }
 
@@ -204,6 +219,18 @@ export function PartnerInquiryForm() {
           />
         </Field>
       </div>
+
+      {HCAPTCHA_SITE_KEY && (
+        <div className="mt-5 flex justify-center">
+          <HCaptcha
+            ref={captchaRef}
+            sitekey={HCAPTCHA_SITE_KEY}
+            onVerify={(token) => setCaptchaToken(token)}
+            onExpire={() => setCaptchaToken(null)}
+            onError={() => setCaptchaToken(null)}
+          />
+        </div>
+      )}
 
       {errorMsg && (
         <div className="mt-5 rounded-lg bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-800">

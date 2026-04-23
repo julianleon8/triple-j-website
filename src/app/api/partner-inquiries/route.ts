@@ -6,6 +6,8 @@ import { Resend } from 'resend'
 import PartnerInquiryOwnerAlert, { partnerInquiryOwnerAlertText } from '@/emails/PartnerInquiryOwnerAlert'
 import PartnerInquiryConfirmation, { partnerInquiryConfirmationText } from '@/emails/PartnerInquiryConfirmation'
 import { sendPushBackground } from '@/lib/push'
+import { verifyHCaptchaToken } from '@/lib/captcha'
+import { checkRateLimit, getClientIp } from '@/lib/rate-limit'
 
 export const dynamic = 'force-dynamic'
 
@@ -43,6 +45,7 @@ const partnerInquirySchema = z.object({
   message:          z.string().min(10).max(2000),
   estimated_volume: z.enum(['exploring', '1-5', '6-20', '20-50', '50+']).optional().or(z.literal('')),
   referral_source:  z.string().max(200).optional().or(z.literal('')),
+  captcha_token:    z.string().optional(),
 })
 
 export async function GET() {
@@ -62,8 +65,27 @@ export async function GET() {
 
 export async function POST(request: NextRequest) {
   try {
+    // Rate limit: 3 per IP per hour. B2B inquiries should be much rarer than
+    // retail leads — the lower threshold catches automated scraping faster.
+    const ip = getClientIp(request)
+    const rl = checkRateLimit(ip, 'partner-inquiries', 3, 60 * 60 * 1000)
+    if (!rl.allowed) {
+      return NextResponse.json(
+        { error: 'Too many submissions from your IP. Please wait an hour or call 254-346-7764.' },
+        { status: 429, headers: { 'Retry-After': String(rl.retryAfterSec ?? 3600) } },
+      )
+    }
+
     const body = await request.json()
     const data = partnerInquirySchema.parse(body)
+
+    const captcha = await verifyHCaptchaToken(data.captcha_token, ip)
+    if (!captcha.success) {
+      return NextResponse.json(
+        { error: 'Captcha verification failed. Please try again.' },
+        { status: 400 },
+      )
+    }
 
     const { data: inquiry, error } = await getAdminClient()
       .from('partner_inquiries')

@@ -29,10 +29,10 @@ export const LOCATIONS: Record<string, LocationData> = {
     zip: '76548',
     lat: 31.0804,
     lng: -97.6477,
-    metaTitle: 'Metal Carports Harker Heights TX | 48-Hour Install | Triple J Metal LLC',
+    metaTitle: 'Metal Carports Harker Heights TX | Same-Week Install | Triple J Metal LLC',
     metaDescription:
       'Triple J Metal builds welded or bolted metal carports in Harker Heights, TX — same-week installs, concrete pad included, Fort Cavazos military discount. Call 254-346-7764.',
-    heroHeadline: 'Metal Carports in Harker Heights, TX — Built in Under 48 Hours',
+    heroHeadline: 'Metal Carports in Harker Heights, TX — Same-Week Installs',
     heroCopy:
       "Harker Heights homeowners trust Triple J Metal LLC for durable metal carports installed fast. We're a local Central Texas company — not a national kit seller — which means we show up, weld it, and stand behind our work. PCS'ing to Fort Cavazos? We'll protect your vehicles before your household goods arrive.",
     areaContext:
