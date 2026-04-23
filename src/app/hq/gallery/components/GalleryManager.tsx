@@ -143,6 +143,43 @@ function ColorSelect({
   )
 }
 
+// Per-file status for the new-project upload pipeline. Lets us continue on
+// failure (was: break-on-first-error) and surface a per-file list so the
+// user can see exactly what succeeded vs failed.
+type UploadFileStatus = {
+  name: string
+  state: 'pending' | 'preparing' | 'uploading' | 'done' | 'failed'
+  error?: string
+}
+
+// Per-request fetch timeout. iOS Safari's default is ~5min for hung requests
+// — far too long when a batch upload is stuck. 60s is enough for a 5MB JPEG
+// over LTE but short enough to surface failures while the user is watching.
+const FETCH_TIMEOUT_MS = 60_000
+
+// Retry config: 1 initial attempt + 1 retry on transient failure (server 5xx
+// or network error). Backoff: 1.5s before the retry. 4xx errors don't retry
+// (the request is malformed, retrying won't help).
+async function fetchWithRetry(input: RequestInfo, init: RequestInit): Promise<Response> {
+  let lastErr: unknown
+  for (let attempt = 1; attempt <= 2; attempt++) {
+    try {
+      const res = await fetch(input, {
+        ...init,
+        signal: AbortSignal.timeout(FETCH_TIMEOUT_MS),
+      })
+      // Don't retry client errors — they won't get better.
+      if (res.ok || (res.status >= 400 && res.status < 500)) return res
+      lastErr = new Error(`Server returned ${res.status}`)
+    } catch (err) {
+      lastErr = err
+    }
+    if (attempt === 1) await new Promise((r) => setTimeout(r, 1500))
+  }
+  if (lastErr instanceof Error) throw lastErr
+  throw new Error('Upload failed after retry.')
+}
+
 export default function GalleryManager({ initialItems }: { initialItems: GalleryItem[] }) {
   const [items, setItems] = useState<GalleryItem[]>(initialItems)
   const [uploading, setUploading] = useState(false)
@@ -152,6 +189,7 @@ export default function GalleryManager({ initialItems }: { initialItems: Gallery
   const [uploadError, setUploadError] = useState<string | null>(null)
   const [expandedId, setExpandedId] = useState<string | null>(null)
   const [folderName, setFolderName] = useState<string | null>(null)
+  const [uploadStatuses, setUploadStatuses] = useState<UploadFileStatus[]>([])
   const fileRef = useRef<HTMLInputElement>(null)
   const titleRef = useRef<HTMLInputElement>(null)
 
@@ -214,14 +252,42 @@ export default function GalleryManager({ initialItems }: { initialItems: Gallery
     setFolderName(null)
     setSelectedCount(0)
     setUploadError(null)
+    setUploadStatuses([])
+  }
+
+  // Cover-photo input onChange. iOS Photos picker fully supports multi-select;
+  // when the user picks more than one photo, default to bundling them as a
+  // single project (the most-common intent on mobile). Single-pick keeps the
+  // original one-project-one-file behavior. No toggle, no checkbox — just
+  // the right default.
+  function handleCoverPick(e: React.ChangeEvent<HTMLInputElement>) {
+    const files = Array.from(e.target.files ?? [])
+    if (files.length > 1) {
+      // Multi-select bundle: synthetic folderName activates the bundle code path
+      setFolderName('Multi-photo upload')
+      setSelectedCount(files.length)
+    } else if (files.length === 1) {
+      setFolderName(null)
+      setSelectedCount(1)
+    } else {
+      setSelectedCount(0)
+    }
+    setUploadError(null)
+    setUploadStatuses([])
   }
 
   // ── New item upload ────────────────────────────────────────────────────
-  // Two modes:
-  //   - bundle (folderName != null): one project, all files become photos of it.
-  //     Cover = first file. Title = form title (auto-filled from folder name).
-  //   - per-file (folderName == null, existing behavior): each file becomes its
-  //     own project. Title is used as a prefix.
+  // Two modes (selected by folderName state):
+  //   - bundle (folderName != null): one project, all files become photos of
+  //     it. Cover = first file. Triggered by folder drop, folder pick, OR
+  //     multi-select on the cover input (handleCoverPick auto-bundles).
+  //   - per-file (folderName == null, single-file pick): one project per file.
+  //     Title is used as a prefix.
+  //
+  // Reliability: per-file try/catch, continue-on-error (one bad file doesn't
+  // wipe out the rest), retry-with-backoff via fetchWithRetry, hard 60s fetch
+  // timeout via AbortSignal, per-file status surfaced in `uploadStatuses` so
+  // the user sees exactly what succeeded vs failed.
   async function handleUpload(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
     setUploadError(null)
@@ -244,100 +310,173 @@ export default function GalleryManager({ initialItems }: { initialItems: Gallery
       return
     }
 
+    // Initialize per-file status. Use a local mutable copy so we have
+    // synchronous read-after-write inside the loops; mirror to React state
+    // after each change so the UI updates live.
+    const local: UploadFileStatus[] = fileArr.map((f) => ({
+      name: f.name,
+      state: 'pending',
+    }))
+    const updateStatus = (i: number, patch: Partial<UploadFileStatus>) => {
+      local[i] = { ...local[i], ...patch }
+      setUploadStatuses([...local])
+    }
+    setUploadStatuses([...local])
     setUploading(true)
-    let lastError: string | null = null
 
     if (folderName) {
       // ── Bundle mode: one project + many photos ──
       const titleValue = titlePrefix
       setUploadProgress(`Preparing 1 of ${fileArr.length}…`)
-      let coverPrepared: File
+      updateStatus(0, { state: 'preparing' })
+
+      let coverPrepared: File | null = null
       try {
         coverPrepared = await normalizeUploadFile(fileArr[0])
       } catch (err) {
-        lastError = err instanceof Error ? err.message : 'Could not prepare cover photo.'
+        updateStatus(0, {
+          state: 'failed',
+          error: err instanceof Error ? err.message : 'Could not prepare cover photo.',
+        })
       }
+
       let createdItem: GalleryItem | null = null
-      if (!lastError) {
-        const data = new FormData(form)
-        data.delete('file')
-        data.set('file', coverPrepared!, coverPrepared!.name)
-        data.set('title', titleValue)
-        const alt = (data.get('alt_text') as string)?.trim()
-        if (!alt) data.set('alt_text', titleValue)
-        const res = await fetch('/api/gallery', { method: 'POST', body: data })
-        if (res.ok) {
-          const { item } = await res.json()
-          createdItem = item
-          setItems((prev) => [...prev, item])
-        } else {
-          const { error } = await res.json().catch(() => ({ error: 'Upload failed' }))
-          lastError = error ?? 'Upload failed'
+      if (coverPrepared) {
+        updateStatus(0, { state: 'uploading' })
+        setUploadProgress(`Uploading cover (1 of ${fileArr.length})…`)
+        try {
+          const data = new FormData(form)
+          data.delete('file')
+          data.set('file', coverPrepared, coverPrepared.name)
+          data.set('title', titleValue)
+          const alt = (data.get('alt_text') as string)?.trim()
+          if (!alt) data.set('alt_text', titleValue)
+          const res = await fetchWithRetry('/api/gallery', { method: 'POST', body: data })
+          if (res.ok) {
+            const { item } = await res.json()
+            createdItem = item
+            setItems((prev) => [...prev, item])
+            updateStatus(0, { state: 'done' })
+          } else {
+            const { error } = await res.json().catch(() => ({ error: 'Upload failed' }))
+            updateStatus(0, { state: 'failed', error: error ?? 'Upload failed' })
+          }
+        } catch (err) {
+          updateStatus(0, {
+            state: 'failed',
+            error: err instanceof Error ? err.message : 'Upload failed',
+          })
         }
       }
-      // Add the rest as additional photos on the new project
-      if (createdItem && !lastError) {
+
+      // Add the rest as additional photos on the new project — only if the
+      // cover succeeded. If cover failed, mark the rest as skipped (we have
+      // no project to attach them to).
+      if (createdItem) {
         for (let i = 1; i < fileArr.length; i++) {
-          setUploadProgress(`Uploading ${i + 1} of ${fileArr.length}…`)
-          let prepared: File
+          updateStatus(i, { state: 'preparing' })
+          setUploadProgress(`Preparing ${i + 1} of ${fileArr.length}…`)
+          let prepared: File | null = null
           try {
             prepared = await normalizeUploadFile(fileArr[i])
           } catch (err) {
-            lastError = err instanceof Error ? err.message : 'Could not prepare photo.'
-            break
+            updateStatus(i, {
+              state: 'failed',
+              error: err instanceof Error ? err.message : 'Conversion failed',
+            })
+            continue
           }
+          updateStatus(i, { state: 'uploading' })
+          setUploadProgress(`Uploading ${i + 1} of ${fileArr.length}…`)
           try {
             await uploadPhoto(createdItem, prepared)
+            updateStatus(i, { state: 'done' })
           } catch (err) {
-            lastError = err instanceof Error ? err.message : 'Photo upload failed.'
-            break
+            updateStatus(i, {
+              state: 'failed',
+              error: err instanceof Error ? err.message : 'Upload failed',
+            })
+            continue
           }
+        }
+      } else {
+        for (let i = 1; i < fileArr.length; i++) {
+          updateStatus(i, { state: 'failed', error: 'Skipped — cover photo failed' })
         }
       }
     } else {
-      // ── Per-file mode (existing) ──
+      // ── Per-file mode: each file is its own project ──
       for (let i = 0; i < fileArr.length; i++) {
         const rawFile = fileArr[i]
+        updateStatus(i, { state: 'preparing' })
         setUploadProgress(
-          fileArr.length > 1 ? `Uploading ${i + 1} of ${fileArr.length}…` : 'Uploading…',
+          fileArr.length > 1 ? `Preparing ${i + 1} of ${fileArr.length}…` : 'Preparing…',
         )
         const base = fileBaseName(rawFile)
         const title =
           fileArr.length === 1 ? titlePrefix : titlePrefix ? `${titlePrefix} — ${base}` : base
 
-        let prepared: File
+        let prepared: File | null = null
         try {
           prepared = await normalizeUploadFile(rawFile)
         } catch (err) {
-          lastError = err instanceof Error ? err.message : 'Could not prepare photo.'
-          break
+          updateStatus(i, {
+            state: 'failed',
+            error: err instanceof Error ? err.message : 'Conversion failed',
+          })
+          continue
         }
+        updateStatus(i, { state: 'uploading' })
+        setUploadProgress(
+          fileArr.length > 1 ? `Uploading ${i + 1} of ${fileArr.length}…` : 'Uploading…',
+        )
 
-        const data = new FormData(form)
-        data.delete('file')
-        data.set('file', prepared, prepared.name)
-        data.set('title', title)
-        const alt = (data.get('alt_text') as string)?.trim()
-        if (!alt) data.set('alt_text', title)
+        try {
+          const data = new FormData(form)
+          data.delete('file')
+          data.set('file', prepared, prepared.name)
+          data.set('title', title)
+          const alt = (data.get('alt_text') as string)?.trim()
+          if (!alt) data.set('alt_text', title)
 
-        const res = await fetch('/api/gallery', { method: 'POST', body: data })
-        if (res.ok) {
-          const { item } = await res.json()
-          setItems((prev) => [...prev, item])
-        } else {
-          const { error } = await res.json().catch(() => ({ error: 'Upload failed' }))
-          lastError = error ?? 'Upload failed'
-          break
+          const res = await fetchWithRetry('/api/gallery', { method: 'POST', body: data })
+          if (res.ok) {
+            const { item } = await res.json()
+            setItems((prev) => [...prev, item])
+            updateStatus(i, { state: 'done' })
+          } else {
+            const { error } = await res.json().catch(() => ({ error: 'Upload failed' }))
+            updateStatus(i, { state: 'failed', error: error ?? 'Upload failed' })
+          }
+        } catch (err) {
+          updateStatus(i, {
+            state: 'failed',
+            error: err instanceof Error ? err.message : 'Upload failed',
+          })
         }
       }
     }
 
-    setUploadProgress(null)
+    // Final summary. Don't auto-reset the form on partial failure — the user
+    // wants to see what failed and may want to retry the bad ones manually.
+    const succeeded = local.filter((s) => s.state === 'done').length
+    const failed = local.filter((s) => s.state === 'failed').length
     setUploading(false)
-    form.reset()
-    setSelectedCount(0)
-    setFolderName(null)
-    if (lastError) setUploadError(lastError)
+    if (failed === 0) {
+      setUploadProgress(`Uploaded ${succeeded} of ${fileArr.length} photos.`)
+      form.reset()
+      setSelectedCount(0)
+      setFolderName(null)
+    } else if (succeeded === 0) {
+      setUploadProgress(null)
+      setUploadError(
+        `Upload failed — 0 of ${fileArr.length} photos. See the list below for the per-file error.`,
+      )
+    } else {
+      setUploadProgress(
+        `Uploaded ${succeeded} of ${fileArr.length} — ${failed} failed (see list below).`,
+      )
+    }
   }
 
   // ── Metadata save from the inline edit panel ─────────────────────────────
@@ -573,10 +712,15 @@ export default function GalleryManager({ initialItems }: { initialItems: Gallery
             e.stopPropagation()
           }}
           onDrop={handleFolderDrop}
+          // Drop zone is desktop-only — iOS doesn't support webkitdirectory,
+          // and the multi-select bundle default on the cover input below
+          // covers the mobile use case. When a queue is active (folderName
+          // set) we DO show this on mobile so the user can see the summary
+          // and Clear button.
           className={`mb-5 rounded-xl border-2 border-dashed px-4 py-5 text-center transition-colors ${
             folderName
               ? 'border-emerald-300 bg-emerald-50'
-              : 'border-blue-300 bg-blue-50 hover:border-blue-400'
+              : 'hidden sm:block border-blue-300 bg-blue-50 hover:border-blue-400'
           }`}
         >
           {folderName ? (
@@ -632,11 +776,13 @@ export default function GalleryManager({ initialItems }: { initialItems: Gallery
                 name="file"
                 type="file"
                 accept="image/*,.heic,.heif"
+                multiple
                 required
+                onChange={handleCoverPick}
                 className="block w-full text-sm text-gray-600 file:mr-3 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 cursor-pointer"
               />
               <p className="mt-1 text-[11px] text-gray-400">
-                iPhone HEIC photos are auto-converted to JPEG.
+                iPhone HEIC photos are auto-converted to JPEG. Pick multiple photos to bundle them as one project — first one becomes the cover.
               </p>
             </div>
             <div>
@@ -739,6 +885,47 @@ export default function GalleryManager({ initialItems }: { initialItems: Gallery
           {uploadError && (
             <p className="text-sm text-red-600 bg-red-50 rounded-lg px-3 py-2">{uploadError}</p>
           )}
+
+          {/* Per-file upload status list — visible during upload + persists
+              after so the user can see which files failed and why. */}
+          {uploadStatuses.length > 0 && (
+            <div className="rounded-lg border border-gray-200 bg-gray-50 p-3 space-y-1.5 max-h-72 overflow-y-auto">
+              <div className="flex items-center justify-between mb-1">
+                <p className="text-[11px] font-semibold uppercase tracking-wider text-gray-500">
+                  {uploading ? 'Uploading…' : uploadProgress ?? 'Upload complete'}
+                </p>
+                {!uploading && (
+                  <button
+                    type="button"
+                    onClick={() => setUploadStatuses([])}
+                    className="text-[11px] font-semibold text-gray-500 hover:text-gray-700 underline"
+                  >
+                    Dismiss
+                  </button>
+                )}
+              </div>
+              <ul className="space-y-1">
+                {uploadStatuses.map((s, i) => (
+                  <li key={`${s.name}-${i}`} className="flex items-start gap-2 text-[12px]">
+                    <span className="shrink-0 w-4 mt-0.5" aria-hidden="true">
+                      {s.state === 'done'       && <span className="text-emerald-600">✓</span>}
+                      {s.state === 'failed'     && <span className="text-red-600">✗</span>}
+                      {s.state === 'preparing'  && <span className="text-amber-600 animate-pulse">…</span>}
+                      {s.state === 'uploading'  && <span className="text-blue-600 animate-pulse">↑</span>}
+                      {s.state === 'pending'    && <span className="text-gray-400">○</span>}
+                    </span>
+                    <span className="flex-1 min-w-0">
+                      <span className="font-medium text-gray-700 truncate block">{s.name}</span>
+                      {s.error && (
+                        <span className="text-red-600 text-[11px] block leading-snug">{s.error}</span>
+                      )}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+
           <button
             type="submit"
             disabled={uploading}
@@ -748,7 +935,9 @@ export default function GalleryManager({ initialItems }: { initialItems: Gallery
               ? uploadProgress ?? 'Uploading…'
               : folderName && selectedCount > 0
                 ? `Upload ${selectedCount} photo${selectedCount === 1 ? '' : 's'} as one project`
-                : 'Upload Project'}
+                : selectedCount === 1
+                  ? 'Upload Project'
+                  : 'Upload'}
           </button>
         </form>
       </div>
