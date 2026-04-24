@@ -408,6 +408,51 @@ export default async function LocationPage(
         </Container>
       </section>
 
+      {/* ─── Premium / secondary-market callout (per-city, optional) ─── */}
+      {loc.premiumCallout ? (
+        <section
+          aria-labelledby="premium-callout-heading"
+          className="relative py-16 md:py-20 bg-white"
+        >
+          <Container size="wide">
+            <Reveal>
+              <Link
+                href={loc.premiumCallout.ctaHref}
+                className="group block relative overflow-hidden rounded-2xl border border-[color:var(--color-brand-400)]/30 bg-gradient-to-br from-[color:var(--color-brand-600)]/8 via-white to-white shadow-lg hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 ease-out"
+              >
+                {/* Soft brand-blue radial wash in the upper-right */}
+                <div
+                  aria-hidden="true"
+                  className="pointer-events-none absolute -top-20 -right-20 h-64 w-64 rounded-full bg-[color:var(--color-brand-400)]/15 blur-3xl"
+                />
+                <div className="relative grid grid-cols-1 md:grid-cols-5 gap-6 md:gap-10 p-8 md:p-10 lg:p-12 items-center">
+                  <div className="md:col-span-3">
+                    <span className="inline-flex items-center rounded-full bg-[color:var(--color-brand-600)] px-3 py-1 text-[11px] font-bold uppercase tracking-[0.18em] text-white shadow-sm">
+                      {loc.premiumCallout.eyebrow}
+                    </span>
+                    <h2
+                      id="premium-callout-heading"
+                      className="mt-5 font-display font-extrabold uppercase tracking-tight leading-[0.95] text-[color:var(--color-ink-900)] text-3xl sm:text-4xl md:text-5xl"
+                    >
+                      {loc.premiumCallout.headline}
+                    </h2>
+                    <p className="mt-5 text-base sm:text-lg leading-relaxed text-[color:var(--color-ink-600)]">
+                      {loc.premiumCallout.blurb}
+                    </p>
+                  </div>
+                  <div className="md:col-span-2 flex md:justify-end">
+                    <span className="inline-flex items-center gap-2 text-sm font-bold uppercase tracking-wider text-[color:var(--color-brand-700)] group-hover:gap-3 transition-all">
+                      {loc.premiumCallout.ctaLabel}
+                      <ArrowRightIcon className="h-4 w-4" />
+                    </span>
+                  </div>
+                </div>
+              </Link>
+            </Reveal>
+          </Container>
+        </section>
+      ) : null}
+
       {/* ─── Why Triple J in {city} (dark editorial spread) ───────────── */}
       <section
         aria-labelledby="why-local-heading"

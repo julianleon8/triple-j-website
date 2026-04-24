@@ -17,6 +17,25 @@ export type Landmark = {
   imageAlt?: string
 }
 
+/**
+ * Optional standalone callout section that sits between Services and Why-local
+ * on a city page. Used for cities with a clear secondary-market angle worth
+ * featuring (e.g. Temple's HOA-grade premium residential market). Brand-blue
+ * tinted card.
+ */
+export type CityCallout = {
+  /** Small uppercase label above the headline (e.g. "Premium Residential") */
+  eyebrow: string
+  /** Barlow huge headline */
+  headline: string
+  /** 1-2 sentence body */
+  blurb: string
+  /** CTA label (e.g. "See HOA-compliant builds →") */
+  ctaLabel: string
+  /** CTA href (typically an internal /services/[slug] link) */
+  ctaHref: string
+}
+
 export type LocationData = {
   // ── Identity / SEO (existing, all required) ───────────────────────────────
   slug: string
@@ -68,6 +87,10 @@ export type LocationData = {
   /** 4 punchy bullets for the dark-editorial 'Why Triple J in {city}' section.
    *  At least one bullet should weave in soil/climate authority. */
   whyLocalBullets?: string[]
+  /** Optional standalone callout section between Services and Why-local.
+   *  Use for secondary-market angles worth featuring (HOA-grade for Temple,
+   *  ranch/ag for Lampasas, etc.). */
+  premiumCallout?: CityCallout
 }
 
 export const LOCATIONS: Record<string, LocationData> = {
@@ -221,12 +244,13 @@ export const LOCATIONS: Record<string, LocationData> = {
     zip: '76501',
     lat: 31.0982,
     lng: -97.3428,
-    metaTitle: 'Metal Carports Temple TX | Local Builder | Triple J Metal LLC',
+    metaTitle: 'Metal Carports Temple TX | HQ · 3319 Tem-Bel Ln | Triple J Metal LLC',
     metaDescription:
-      'Triple J Metal LLC is based in Temple, TX — your local metal carport builder. 150+ completed projects, welded and bolted red iron steel, concrete pad included. Call 254-346-7764.',
-    heroHeadline: "Temple's Local Metal Carport Builders — 150+ Projects Completed",
+      "Triple J Metal LLC's home shop is in Temple, TX. Welded or bolted carports, garages, RV covers, and HOA-grade residential builds — same-week across Western Hills, Lake Belton, and all of Temple. Hablamos español. Call 254-346-7764.",
+    // Legacy fallbacks (used if new fields below aren't populated)
+    heroHeadline: "Built in Temple. Built where we live.",
     heroCopy:
-      "Triple J Metal LLC is a Temple, TX company — this is our home base. We've completed over 150 carports, garages, and barns across Bell County. When you call us, you're talking to a local family that knows this area, knows the weather, and knows how to build a structure that lasts. One contract covers site prep, concrete, and installation.",
+      "Triple J's shop sits on Tem-Bel Lane in Temple. This isn't a service area for us — it's home. Welded or bolted carports, garages, and lakeside RV covers built same-week across the city we live in.",
     areaContext:
       "We're based right here in Temple and serve all surrounding areas including North Temple, South Temple along I-35, East Temple near FM 93, and rural Bell County properties. We also service nearby Nolanville, Rogers, Belton, and Troy.",
     whyLocal:
@@ -243,6 +267,66 @@ export const LOCATIONS: Record<string, LocationData> = {
       'Lean-to patios',
       'House additions',
     ],
+
+    // ── NEW personalization (HQ-pride + lakeside lifestyle, per 2026-04-23 design pass) ──
+    // Photo TODO: hero + 3 landmark images currently use placeholder (hero = existing
+    // Triple J residential photo). Replace with real Lake Belton + Santa Fe Depot +
+    // Scott & White + Temple-area shots when sourced from Unsplash/Pexels and dropped
+    // into /public/images/locations/temple/. Alt text already accurate.
+    heroImage: '/images/carport-gable-residential.jpg',
+    heroImageAlt: 'Lake Belton near Temple, Texas',
+    customHeadline: {
+      line1: 'Built in Temple.',
+      line2: 'Built where we live.',
+    },
+    heroSubhead:
+      "Triple J's shop, yard, and crew all live here. From Lake Belton's lakeside neighborhoods to Western Hills residential streets, we build same-week across the city we call home.",
+    distanceFromTemple: '0 mi · Where we live',
+    habla: true,
+    localIntro:
+      "This is where we live and where we work. Triple J's shop sits on Tem-Bel Lane, our crew lives across town, and Temple's a railroad town — we weld like one. From Lake Belton's lakeside properties to the Western Hills residential corridor, we build same-week across the city we call home. Hablamos español con Juan y Freddy.",
+    landmarks: [
+      {
+        name: 'Lake Belton',
+        blurb:
+          "Temple's weekend center. Lakeside properties need RV covers, boat covers, and shoreline barns engineered for Lake Belton's wind exposure — we build same-week before storm season.",
+        // imageSrc TODO: Unsplash 'lake belton texas' / 'central texas lake'
+      },
+      {
+        name: 'Santa Fe Depot',
+        blurb:
+          "The 1910 depot anchors downtown Temple and the city's railroad heritage. Built to last over a century — the same standard we hold ourselves to with welded red-iron framing.",
+        // imageSrc TODO: Unsplash 'santa fe depot temple texas' / 'historic train depot texas'
+      },
+      {
+        name: 'Scott & White',
+        blurb:
+          "Baylor Scott & White is Temple's biggest employer and pulls professional families into Western Hills, Heritage Acres, and the lakeside developments — the residential market we know best.",
+        // imageSrc TODO: Unsplash 'medical center texas' / 'modern hospital exterior'
+      },
+    ],
+    neighborhoods: [
+      'Western Hills',
+      'Lake Belton / Lakeside',
+      'Sammons Trail',
+      'Stagecoach Trail',
+      'All of Temple',
+    ],
+    topServices: ['carports', 'metal-garages', 'turnkey-carports-with-concrete'],
+    whyLocalBullets: [
+      'Our shop, our yard, our crew — all on Tem-Bel Lane in Temple. No driving in from out of state, no kit in a box.',
+      "Welded OR bolted red-iron — your choice for Texas wind, hail, and Lake Belton shoreline gusts.",
+      "4,000 PSI concrete poured for Bell County's expansive clay soils — in the same contract.",
+      'Same-week scheduling — most calls become a build before the weekend.',
+    ],
+    premiumCallout: {
+      eyebrow: 'Premium Residential',
+      headline: "Built for Temple's HOA-grade neighborhoods.",
+      blurb:
+        "Concealed-fastener standing-seam, Board & Batten siding, color-matched to your home — for Western Hills, Heritage Acres, and Lake Belton subdivisions where the architectural guidelines are strict and the builds need to read residential, not utility.",
+      ctaLabel: 'See HOA-compliant builds',
+      ctaHref: '/services/hoa-compliant-structures',
+    },
   },
 
   belton: {
