@@ -17,7 +17,20 @@ type Lead = {
   is_military: boolean | null
   message: string | null
   status: string
+  source: string | null
 }
+
+// Leads that came in via a Facebook Messenger DM have no real phone —
+// we render a "Reply on Messenger" link instead of a tel:.
+// Matches both the current sentinel ('messenger') and the older
+// `FB-PSID-...` format that earlier test leads still carry.
+function isMessengerLead(lead: Lead): boolean {
+  return lead.source === 'facebook_messenger'
+      || lead.phone === 'messenger'
+      || lead.phone?.startsWith('FB-PSID-')
+}
+
+const FB_INBOX_URL = 'https://business.facebook.com/latest/inbox/messages'
 
 const STATUS_STYLES: Record<string, string> = {
   new:       'bg-blue-100 text-blue-700',
@@ -215,17 +228,31 @@ export default function LeadsTable({
                 </div>
               )}
 
-              {/* Row 5: phone (big tap target) + status */}
+              {/* Row 5: contact action (big tap target) + status */}
               <div className="mt-3 flex items-center gap-2">
-                <a
-                  href={`tel:${lead.phone}`}
-                  className="flex-1 min-h-11 inline-flex items-center justify-center gap-1.5 rounded-lg bg-brand-600 text-white text-[15px] font-semibold px-3 py-2 active:scale-95 transition-transform"
-                >
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.12.96.33 1.9.63 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.91.3 1.85.51 2.81.63A2 2 0 0122 16.92z" />
-                  </svg>
-                  {lead.phone}
-                </a>
+                {isMessengerLead(lead) ? (
+                  <a
+                    href={FB_INBOX_URL}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex-1 min-h-11 inline-flex items-center justify-center gap-1.5 rounded-lg bg-[#0084ff] text-white text-[15px] font-semibold px-3 py-2 active:scale-95 transition-transform"
+                  >
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M12 2C6.5 2 2 6.14 2 11.25c0 2.88 1.43 5.45 3.67 7.14V22l3.35-1.84c.89.25 1.83.38 2.8.38 5.5 0 10-4.14 10-9.25S17.5 2 12 2zm.91 12.46l-2.4-2.56-4.81 2.56 5.3-5.63 2.5 2.56 4.71-2.56-5.3 5.63z" />
+                    </svg>
+                    Reply on Messenger
+                  </a>
+                ) : (
+                  <a
+                    href={`tel:${lead.phone}`}
+                    className="flex-1 min-h-11 inline-flex items-center justify-center gap-1.5 rounded-lg bg-brand-600 text-white text-[15px] font-semibold px-3 py-2 active:scale-95 transition-transform"
+                  >
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.12.96.33 1.9.63 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.91.3 1.85.51 2.81.63A2 2 0 0122 16.92z" />
+                    </svg>
+                    {lead.phone}
+                  </a>
+                )}
                 <select
                   aria-label={`Lead status for ${lead.name}`}
                   value={lead.status}
@@ -319,9 +346,23 @@ export default function LeadsTable({
                   })()}
                 </td>
                 <td className="px-4 py-3">
-                  <a href={`tel:${lead.phone}`} className="text-(--brand-fg) hover:underline font-mono whitespace-nowrap">
-                    {lead.phone}
-                  </a>
+                  {isMessengerLead(lead) ? (
+                    <a
+                      href={FB_INBOX_URL}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1 text-[#0084ff] hover:underline whitespace-nowrap font-semibold text-sm"
+                    >
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 2C6.5 2 2 6.14 2 11.25c0 2.88 1.43 5.45 3.67 7.14V22l3.35-1.84c.89.25 1.83.38 2.8.38 5.5 0 10-4.14 10-9.25S17.5 2 12 2zm.91 12.46l-2.4-2.56-4.81 2.56 5.3-5.63 2.5 2.56 4.71-2.56-5.3 5.63z" />
+                      </svg>
+                      Messenger
+                    </a>
+                  ) : (
+                    <a href={`tel:${lead.phone}`} className="text-(--brand-fg) hover:underline font-mono whitespace-nowrap">
+                      {lead.phone}
+                    </a>
+                  )}
                 </td>
                 <td className="px-4 py-3 whitespace-nowrap">
                   <div>{lead.city || '—'}</div>

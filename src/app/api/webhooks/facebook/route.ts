@@ -199,9 +199,11 @@ async function handleMessenger(senderId: string, text: string) {
     .from('leads')
     .insert({
       name,
-      // Messenger doesn't give us a phone. Placeholder tagged with the PSID
-      // so Julian can reply via Messenger Send API to collect one.
-      phone: `FB-PSID-${senderId}`,
+      // Messenger doesn't give us a phone. HQ's LeadsTable renders a
+      // "Reply on Messenger" button when source === 'facebook_messenger'
+      // instead of a tel: link, so this is just a sentinel that satisfies
+      // the NOT NULL constraint on leads.phone.
+      phone: 'messenger',
       email: null,
       message: text.trim(),
       service_type: 'other',
