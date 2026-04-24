@@ -256,6 +256,18 @@ p { line-height: 1.6; }
   background-size: 64px 64px;
 }
 
+/* Dot-grid texture — used on light sections that need a different
+   ornament than .bg-grid-decoration. Reads as a refined blueprint
+   without the heaviness of full grid lines. Apply opacity from the
+   parent (e.g. opacity-[0.06]). */
+.bg-dot-grid {
+  background-image: radial-gradient(
+    var(--color-ink-900) 1px,
+    transparent 1px
+  );
+  background-size: 22px 22px;
+}
+
 /* =========================================================
    Motion language — restrained, magazine-quality.
    One easing curve everywhere: cubic-bezier(0.22, 1, 0.36, 1)
