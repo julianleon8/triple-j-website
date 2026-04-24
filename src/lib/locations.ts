@@ -87,10 +87,11 @@ export type LocationData = {
   /** 4 punchy bullets for the dark-editorial 'Why Triple J in {city}' section.
    *  At least one bullet should weave in soil/climate authority. */
   whyLocalBullets?: string[]
-  /** Optional standalone callout section between Services and Why-local.
+  /** Optional standalone callout sections between Services and Why-local.
    *  Use for secondary-market angles worth featuring (HOA-grade for Temple,
-   *  ranch/ag for Lampasas, etc.). */
-  premiumCallout?: CityCallout
+   *  Permit Advisory + Ranch/Ag for Belton, etc.). Multiple callouts stack
+   *  vertically in array order. */
+  callouts?: CityCallout[]
 }
 
 export const LOCATIONS: Record<string, LocationData> = {
@@ -319,14 +320,16 @@ export const LOCATIONS: Record<string, LocationData> = {
       "4,000 PSI concrete poured for Bell County's expansive clay soils — in the same contract.",
       'Same-week scheduling — most calls become a build before the weekend.',
     ],
-    premiumCallout: {
-      eyebrow: 'Premium Residential',
-      headline: "Built for Temple's HOA-grade neighborhoods.",
-      blurb:
-        "Concealed-fastener standing-seam, Board & Batten siding, color-matched to your home — for Western Hills, Heritage Acres, and Lake Belton subdivisions where the architectural guidelines are strict and the builds need to read residential, not utility.",
-      ctaLabel: 'See HOA-compliant builds',
-      ctaHref: '/services/hoa-compliant-structures',
-    },
+    callouts: [
+      {
+        eyebrow: 'Premium Residential',
+        headline: "Built for Temple's HOA-grade neighborhoods.",
+        blurb:
+          "Concealed-fastener standing-seam, Board & Batten siding, color-matched to your home — for Western Hills, Heritage Acres, and Lake Belton subdivisions where the architectural guidelines are strict and the builds need to read residential, not utility.",
+        ctaLabel: 'See HOA-compliant builds',
+        ctaHref: '/services/hoa-compliant-structures',
+      },
+    ],
   },
 
   belton: {
@@ -336,12 +339,13 @@ export const LOCATIONS: Record<string, LocationData> = {
     zip: '76513',
     lat: 31.0557,
     lng: -97.4641,
-    metaTitle: 'Metal Carports Belton TX | Carports with Concrete | Triple J Metal LLC',
+    metaTitle: "Metal Carports Belton TX | Bell County's Home Crew | Triple J Metal LLC",
     metaDescription:
-      'Need a metal carport in Belton, TX? Triple J Metal LLC installs welded and bolted carports with concrete pads in Belton and all of Bell County. Local Temple-based crew. Call 254-346-7764.',
-    heroHeadline: 'Metal Carport Installation in Belton, TX — Concrete Pad Included',
+      "Belton's local metal building crew — 15 minutes from our Temple shop, the closest city to HQ. Welded or bolted carports, ranch barns, and lakeside RV covers across Bell County. Permits handled. Hablamos español. Call 254-346-7764.",
+    // Legacy fallbacks (used if new fields below aren't populated)
+    heroHeadline: "Built in Belton. Bell County's home crew.",
     heroCopy:
-      "Belton is right in Triple J Metal LLC's backyard. We're based in Temple, just minutes away, and we've built carports, garages, and barns throughout Bell County. If you're a Belton homeowner or rancher looking for a local builder who includes site prep and concrete — not a national brand shipping a flat-pack — you've found the right company.",
+      "Belton runs the county courthouse, and we know everyone in the permit office. The 1885 courthouse still stands. We build with that kind of intention. Welded or bolted carports, ranch barns, and lakeside RV covers — same-week across all of Bell County, 15 minutes from our Temple shop.",
     areaContext:
       "We serve all of Belton and the Lake Belton area, including communities along US-190, FM 2271, and rural Bell County ranches. We're also close to Salado and Jarrell for customers on the southern end of Bell County.",
     whyLocal:
@@ -356,6 +360,77 @@ export const LOCATIONS: Record<string, LocationData> = {
       'Ranch structures',
       'Lean-to patios',
       'House additions',
+    ],
+
+    // ── NEW personalization (county-seat authority + range, per 2026-04-23 design pass) ──
+    // Photo TODO: hero + 3 landmark images currently use placeholder Triple J photos.
+    // Replace with real Bell County Courthouse + Lake Belton + Pendleton ranch + downtown
+    // Belton shots when sourced from Unsplash/Pexels into /public/images/locations/belton/.
+    // Alt text already accurate.
+    heroImage: '/images/double-carport-install.jpg',
+    heroImageAlt: 'Bell County Courthouse in downtown Belton, Texas',
+    customHeadline: {
+      line1: 'Built in Belton.',
+      line2: "Bell County's home crew.",
+    },
+    heroSubhead:
+      "10 minutes south of HQ. The closest Bell County city to our Temple shop, the courthouse where every permit gets pulled, and the ranch country that opens up beyond city limits.",
+    distanceFromTemple: '10 mi south · 15 min from HQ',
+    habla: true,
+    localIntro:
+      "Belton runs the county courthouse, and we know everyone in the permit office. The 1885 courthouse still stands — we build with that kind of intention. From Lakeshore Drive lake-houses to Pendleton ranch land, we build same-week across all of Bell County. Hablamos español con Juan y Freddy.",
+    landmarks: [
+      {
+        name: 'Bell County Courthouse',
+        blurb:
+          "1885 limestone landmark and the seat of permit authority for the whole county. We've pulled permits through these doors more times than we can count — it's part of what 'local' actually means.",
+        // imageSrc TODO: Unsplash 'bell county courthouse' / 'historic texas courthouse'
+      },
+      {
+        name: 'Lake Belton & BLORA',
+        blurb:
+          "Belton's lake country runs along the western edge — Lakeshore Drive properties, weekend barns, RV and boat covers. Lakeside structures we've been building for years.",
+        // imageSrc TODO: Unsplash 'lake belton texas' / 'central texas lake'
+      },
+      {
+        name: 'Pendleton & Ranch Country',
+        blurb:
+          "South Bell County opens into pasture, ranch land, and rural property. Welded red-iron barns, equipment sheds, and lean-tos — the structures rural buyers actually need.",
+        // imageSrc TODO: Unsplash 'texas ranch pasture' / 'rural texas farm'
+      },
+    ],
+    neighborhoods: [
+      'Lakeshore Drive',
+      'Heritage Place',
+      'North Belton',
+      'Pendleton',
+      'Sparta',
+      'All of Bell County',
+    ],
+    topServices: ['carports', 'barns', 'rv-covers'],
+    whyLocalBullets: [
+      "We know the Bell County permit office by first name — pulling permits in Belton is part of our regular week.",
+      "15 min from our Temple shop — fastest install in Bell County, no national-dealer dispatch lag.",
+      "4,000 PSI concrete poured for Bell County's expansive clay soils — same contract.",
+      "Welded OR bolted red-iron — your choice for Texas wind, hail, and the long haul.",
+    ],
+    callouts: [
+      {
+        eyebrow: 'Permit Advisory',
+        headline: 'Bell County permits handled.',
+        blurb:
+          "Included in your contract — no 4-week back-and-forth with the county office on your end. We know the process, we know the timelines, and we file the paperwork.",
+        ctaLabel: 'Talk to us about your permit',
+        ctaHref: '/contact',
+      },
+      {
+        eyebrow: 'Ranch & Agricultural',
+        headline: "Built for Bell County's ranch country.",
+        blurb:
+          "Welded red-iron barns, equipment sheds, and lean-tos engineered for Pendleton, Sparta, and the rural Bell County properties beyond the city limits — where the soil's tougher and the structures need to outlast the herd.",
+        ctaLabel: 'See ranch barn builds',
+        ctaHref: '/services/barns',
+      },
     ],
   },
 
