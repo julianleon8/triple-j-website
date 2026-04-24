@@ -54,7 +54,7 @@ export default function HomePage() {
           additional accent colors. When better hero photos land in
           public/images/hero/, swap the `src` below — treatment stays.
           -------------------------------------------------------------- */}
-      <section className="relative bg-black text-white overflow-hidden">
+      <section className="relative -mt-20 bg-black text-white overflow-hidden">
         {/* Background image with slow ken-burns motion */}
         <div className="absolute inset-0 bg-kenburns">
           <Image

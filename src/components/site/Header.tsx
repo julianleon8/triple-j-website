@@ -113,15 +113,15 @@ export function Header() {
               <Image
                 src="/images/logo-lion.png"
                 alt=""
-                width={48}
-                height={48}
+                width={44}
+                height={44}
                 priority
-                className={`transition-all duration-300 ${
-                  scrolled ? "h-10 w-10" : "h-12 w-12"
+                className={`transition-all duration-300 shrink-0 ${
+                  scrolled ? "h-9 w-9" : "h-11 w-11"
                 } object-contain`}
               />
               <div className="hidden sm:flex flex-col leading-none">
-                <span className="font-display font-extrabold uppercase tracking-tight text-white text-2xl leading-none">
+                <span className="font-display font-extrabold uppercase tracking-tight text-white text-2xl leading-none whitespace-nowrap">
                   Triple J
                   <span className="text-[color:var(--color-brand-400)]">
                     {" "}/ Metal
