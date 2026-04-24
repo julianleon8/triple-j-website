@@ -4,7 +4,21 @@ export type MilitarySection = {
   keywords: string[]
 }
 
+/**
+ * One landmark card in the per-city landmark grid.
+ * `imageSrc` is optional — when absent, the card renders as a typography-only
+ * card (brand-blue accent + name + blurb) instead of a photo card. This keeps
+ * landmark sections useful even before photos are sourced.
+ */
+export type Landmark = {
+  name: string
+  blurb: string
+  imageSrc?: string
+  imageAlt?: string
+}
+
 export type LocationData = {
+  // ── Identity / SEO (existing, all required) ───────────────────────────────
   slug: string
   name: string
   county: string
@@ -13,12 +27,47 @@ export type LocationData = {
   lng: number
   metaTitle: string
   metaDescription: string
+
+  // ── Legacy copy fields (still required; used as fallbacks when new
+  //    personalization fields below aren't populated for a city) ────────────
   heroHeadline: string
   heroCopy: string
   areaContext: string
   whyLocal: string
   services: string[]
-  military?: MilitarySection   // only Killeen + Harker Heights
+  military?: MilitarySection   // Killeen + Harker Heights only
+
+  // ── NEW per-city personalization (all optional) ───────────────────────────
+  /** Hero background photo path (preferably city landmark). Falls back to
+   *  a generic Triple J industrial photo when absent. */
+  heroImage?: string
+  heroImageAlt?: string
+  /** Per-city custom two-line headline. line2 renders in brand-blue.
+   *  Overrides `heroHeadline` when present. */
+  customHeadline?: { line1: string; line2: string }
+  /** 1-2 sentence subhead under the headline. Falls back to `heroCopy`
+   *  when absent. */
+  heroSubhead?: string
+  /** Driving distance + time from Temple HQ — e.g. "25 mi · 30 min".
+   *  Featured as a hero stat. */
+  distanceFromTemple?: string
+  /** Show the 'Hablamos español' chip in the hero alongside the county pill.
+   *  Used for cities with bilingual demand (Killeen, etc.). */
+  habla?: boolean
+  /** Local intro paragraph shown directly under the hero, before landmarks.
+   *  More personal than `areaContext`. */
+  localIntro?: string
+  /** Up to 3 city landmarks for the landmark card grid. Section is skipped
+   *  entirely when absent. */
+  landmarks?: Landmark[]
+  /** Neighborhood names for the 'Where We Build' chip grid. */
+  neighborhoods?: string[]
+  /** Top 3 service slugs to feature in the per-city services mini-grid.
+   *  References slugs in `src/lib/services.ts`. */
+  topServices?: string[]
+  /** 4 punchy bullets for the dark-editorial 'Why Triple J in {city}' section.
+   *  At least one bullet should weave in soil/climate authority. */
+  whyLocalBullets?: string[]
 }
 
 export const LOCATIONS: Record<string, LocationData> = {
@@ -63,12 +112,13 @@ export const LOCATIONS: Record<string, LocationData> = {
     zip: '76541',
     lat: 31.1171,
     lng: -97.7278,
-    metaTitle: 'Metal Carports Killeen TX | Turnkey + Concrete | Triple J Metal LLC',
+    metaTitle: 'Metal Carports Killeen TX | Built for Fort Cavazos Timelines | Triple J Metal LLC',
     metaDescription:
-      "Killeen's local metal carport installer. Triple J Metal builds welded or bolted carports with concrete pads in Killeen, TX — same-week installs, Fort Cavazos military discount. Call 254-346-7764.",
-    heroHeadline: "Killeen's Local Metal Carport Builder — Turnkey, Concrete Included",
+      "Killeen's local metal building crew — welded or bolted carports, RV covers, and garages built same-week for Fort Cavazos PCS timelines. Concrete pad included. Hablamos español. Call 254-346-7764.",
+    // Legacy fallbacks (used if new fields below aren't populated)
+    heroHeadline: "Built in Killeen. Built for Fort Cavazos.",
     heroCopy:
-      "Killeen has no shortage of national companies selling carport kits — but Triple J Metal LLC is the only local Central Texas builder who shows up and installs it, pours the concrete pad, and hands you the keys. We serve the entire Killeen area including neighborhoods near Fort Cavazos, and we offer a military discount for active duty and veterans.",
+      "Killeen has no shortage of national companies selling carport kits — but Triple J Metal LLC is the only local Central Texas builder who shows up and installs it, pours the concrete pad, and hands you the keys. PCS orders don't wait, and neither do we.",
     areaContext:
       "We serve all of Killeen, including areas near Fort Cavazos, Killeen-Fort Hood Regional Airport, Rosewood Heights, Westcliff, and the US-190 corridor into Copperas Cove. Rural properties welcome.",
     whyLocal:
@@ -84,10 +134,55 @@ export const LOCATIONS: Record<string, LocationData> = {
       'House additions',
     ],
     military: {
-      headline: 'Fort Cavazos Military Discount — Killeen',
-      copy: "Fort Cavazos drives a constant flow of PCS moves through Killeen. Military families arrive on short notice and need vehicle protection immediately — not after a 12-week wait list. Triple J Metal LLC builds RV covers and carports same-week and offers a Fort Cavazos military and first responder discount. We use military-friendly language: BAH, VA Loans, PCS timelines — because we know this community.",
+      headline: 'Fort Cavazos Timelines — Built In',
+      copy: "Fort Cavazos drives a constant flow of PCS moves through Killeen. Military families arrive on short notice and need vehicle protection immediately — not after a 12-week wait list. Triple J Metal builds RV covers and carports same-week and honors a Fort Cavazos military and first-responder discount. We speak the language: BAH, VA loans, PCS timelines, base-area HOA rules.",
       keywords: ['turnkey carports Killeen', 'carports Fort Cavazos', 'military carport Killeen TX'],
     },
+
+    // ── NEW personalization (military-first per 2026-04-23 design pass) ──
+    // Photo TODO: hero + landmark images currently use placeholder Triple J
+    // photos. Replace with real Fort Cavazos main gate + Stillhouse Hollow
+    // shots when sourced from Unsplash / Pexels — alt text already accurate.
+    heroImage: '/images/red-iron-frame-hero.jpg',
+    heroImageAlt: 'Fort Cavazos main gate near Killeen, Texas',
+    customHeadline: {
+      line1: 'Built in Killeen.',
+      line2: 'Built for Fort Cavazos.',
+    },
+    heroSubhead:
+      "PCS orders don't wait, and we don't either. Welded carports, RV covers, and garages built same-week across Killeen — from arriving families to retiring veterans.",
+    distanceFromTemple: '25 mi southwest · 30 min from HQ',
+    habla: true,
+    localIntro:
+      "Killeen runs on Fort Cavazos. PCS season hits, hail season hits, and military families need vehicles and equipment under cover before household goods arrive. Triple J Metal is 25 minutes up the road in Temple — a real local crew with welded red-iron carports, RV covers, and garages built same-week. We honor a Fort Cavazos military and first-responder discount on every install. Hablamos español con Juan y Freddy.",
+    landmarks: [
+      {
+        name: 'Fort Cavazos',
+        blurb:
+          "We build for the Fort Cavazos community across every PCS season — from incoming families needing carports to retiring veterans protecting RVs and tools.",
+        // imageSrc TODO: Unsplash search 'fort hood gate' / 'army base gate texas'
+      },
+      {
+        name: 'Stillhouse Hollow Lake',
+        blurb:
+          "South Killeen's lake-and-marina country. RVs, boats, and trailers belong under cover before hail season — we build extra-tall clearance covers same-week.",
+        // imageSrc TODO: Unsplash search 'central texas lake' / 'stillhouse hollow'
+      },
+    ],
+    neighborhoods: [
+      'Cedar Ridge',
+      'Heritage Park',
+      'Westcliff',
+      'Rosewood Heights',
+      'All of Killeen',
+    ],
+    topServices: ['carports', 'rv-covers', 'metal-garages'],
+    whyLocalBullets: [
+      '25 minutes from Temple HQ — a real local crew, not a national kit shipped from out of state',
+      "Welded OR bolted red-iron — your choice for Texas wind, hail, and Fort Cavazos timelines",
+      "4,000 PSI concrete poured for Bell County's expansive clay soils — in the same contract",
+      'Same-week scheduling — built around PCS arrivals and hail-season urgency, not a 12-week wait list',
+    ],
   },
 
   'copperas-cove': {
