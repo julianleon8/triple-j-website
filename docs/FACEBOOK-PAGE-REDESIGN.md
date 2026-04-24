@@ -81,10 +81,7 @@ We support Fort Cavazos military families with flexible scheduling around PCS or
 
 Free quotes. No deposit to get quoted. Quotes valid 30 days.
 
-Typical ranges (varies with size, site prep, and options):
-– Carports: $4,000–$18,000
-– Garages: $15,000–$60,000
-– Barns: $25,000–$120,000
+Every build is priced to the job — dimensions, site prep, concrete, and finishes all move the number. Call, send your measurements or a photo of the site, and we'll quote you on the spot or same-day.
 
 Call 254-346-7764 · julianleon@triplejmetaltx.com · triplejmetaltx.com
 ```
@@ -95,9 +92,11 @@ Call 254-346-7764 · julianleon@triplejmetaltx.com · triplejmetaltx.com
 
 Add each of these in **Business Suite → Services** as a separate service entry.
 
+> **Pricing: leave the "Starting price" field blank on every service for now.**
+> Julian is pricing-constrained on public numbers until receipts are in the margin calculator and real per-job math settles. Every service below gets a description and a photo; pricing comes back in a v2 pass. Customers click "Send message" / "Get a quote" to ask — no public number anchors them to an old baseline.
+
 **Service 1 — Metal Carports**
 - Name: `Metal Carports — Welded or Bolted`
-- Starting price: `4000`
 - Description:
   ```
   Welded red-iron or bolted metal carports in any width, length, and height. Single-car to 8-car agricultural. Concrete pad included in turnkey builds. Same-week scheduling.
@@ -105,7 +104,6 @@ Add each of these in **Business Suite → Services** as a separate service entry
 
 **Service 2 — Metal Garages**
 - Name: `Custom Metal Garages`
-- Starting price: `15000`
 - Description:
   ```
   Fully-enclosed residential or commercial garages. Roll-up or walk-in doors, insulation package optional, full slab and framing included.
@@ -113,7 +111,6 @@ Add each of these in **Business Suite → Services** as a separate service entry
 
 **Service 3 — Metal Barns**
 - Name: `Metal Barns & Ranch Structures`
-- Starting price: `25000`
 - Description:
   ```
   Horse, hay, and equipment barns. Center-aisle, monitor-style, or open-front. Up to 60ft clear spans. Built for Central Texas wind and hail loads.
@@ -121,7 +118,6 @@ Add each of these in **Business Suite → Services** as a separate service entry
 
 **Service 4 — RV & Boat Covers**
 - Name: `RV & Boat Covers`
-- Starting price: `4500`
 - Description:
   ```
   14ft+ clearance standard. Drive-through and single-entry designs. Taller bays for fifth-wheels and toy haulers. Fort Cavazos military discount available.
@@ -129,7 +125,6 @@ Add each of these in **Business Suite → Services** as a separate service entry
 
 **Service 5 — Lean-to Patios & House Additions**
 - Name: `Lean-to Patios & Additions`
-- Starting price: `3500`
 - Description:
   ```
   Attached covered structures with panel profile and trim matching your existing home.
@@ -137,7 +132,6 @@ Add each of these in **Business Suite → Services** as a separate service entry
 
 **Service 6 — HOA-Compliant Structures**
 - Name: `HOA-Compliant Metal Structures`
-- Starting price: `6500`
 - Description:
   ```
   Standing-seam concealed-fastener panels and architectural finishes that pass HOA review in Heritage Oaks, Bella Charca, and other Central Texas luxury subdivisions.
@@ -145,7 +139,6 @@ Add each of these in **Business Suite → Services** as a separate service entry
 
 **Service 7 — Turnkey Carports with Concrete**
 - Name: `Turnkey Carport + Concrete (One Contract)`
-- Starting price: `7500`
 - Description:
   ```
   Site prep, 4,000 PSI concrete pad, and welded or bolted carport on a single contract. The only Central Texas builder that includes every step.
