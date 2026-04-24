@@ -275,6 +275,77 @@ export function jobToRow(job: JobForRow): PipelineRow {
   }
 }
 
+// ── Urgency scoring (Today feed) ───────────────────────────────────────────
+
+/**
+ * Returns a 0–100 urgency score for a pipeline row.
+ * 0 = don't surface in Today's Needs Attention feed.
+ * Higher = more urgent. Used by NextActionCard (top row) + NeedsAttentionFeed (all > 0).
+ *
+ * Rubric (intentionally conservative — we'd rather miss than cry-wolf):
+ *   NEW lead:                70  (+20 asap, +5 military)
+ *   HOT permit (score>=8):   80
+ *   Quote expiring <=48h:    75
+ *   Quote sent + silence 72h: 55
+ *   Job scheduled today:     65
+ *   + recency boost:         +min(10, hours since creation capped at 10)
+ */
+export function urgencyScore(row: PipelineRow): number {
+  let score = 0
+
+  const status = extractRowStatus(row)
+  const hoursSinceCreated = Math.max(
+    0,
+    (Date.now() - new Date(row.created_at).getTime()) / 3_600_000,
+  )
+
+  switch (row.kind) {
+    case 'lead': {
+      if (status === 'new') {
+        score = 70
+        if (row.badges?.some((b) => b.tone === 'asap')) score += 20
+        if (row.badges?.some((b) => b.tone === 'mil')) score += 5
+      }
+      break
+    }
+    case 'permit': {
+      const isHot = row.badges?.some((b) => b.tone === 'hot')
+      if (isHot && status === 'new') score = 80
+      break
+    }
+    case 'quote': {
+      // Quotes reach NeedsAttention when sent + either near-expiry or stale.
+      const sub = row.trailing?.type === 'amount' ? row.trailing.sub : null
+      if (sub === 'sent') {
+        const expiringSoon = row.badges?.some((b) => b.tone === 'warn')
+        if (expiringSoon) {
+          score = 75
+        } else if (hoursSinceCreated >= 72) {
+          score = 55
+        }
+      }
+      break
+    }
+    case 'job': {
+      if (row.badges?.some((b) => b.tone === 'today')) score = 65
+      break
+    }
+    case 'customer':
+      // Customers never bubble into the attention feed on their own.
+      break
+  }
+
+  if (score > 0) score += Math.min(10, Math.floor(hoursSinceCreated))
+  return Math.min(100, score)
+}
+
+function extractRowStatus(row: PipelineRow): string | null {
+  if (!row.trailing) return null
+  if (row.trailing.type === 'status') return row.trailing.value
+  if (row.trailing.type === 'amount') return row.trailing.sub ?? null
+  return null
+}
+
 /**
  * Builds the unified pipeline row list from the 5 entity arrays.
  * Sorted by created_at desc (newest first).

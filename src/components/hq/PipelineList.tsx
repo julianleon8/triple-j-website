@@ -36,9 +36,10 @@ function isDone(r: PipelineRow): boolean {
 type PipelineListProps = {
   rows: PipelineRow[]
   paramKey?: string
+  hideFilters?: boolean
 }
 
-export function PipelineList({ rows: initialRows, paramKey = 'type' }: PipelineListProps) {
+export function PipelineList({ rows: initialRows, paramKey = 'type', hideFilters = false }: PipelineListProps) {
   const router = useRouter()
   const searchParams = useSearchParams()
   const current = (searchParams.get(paramKey) ?? 'all') as FilterKey
@@ -95,6 +96,7 @@ export function PipelineList({ rows: initialRows, paramKey = 'type' }: PipelineL
     <PullToRefresh onRefresh={refresh}>
       <div className="space-y-3">
         {/* Filter pills + explicit refresh button */}
+        {!hideFilters && (
         <div className="flex items-center gap-2">
           <div
             className="-mx-4 flex flex-1 gap-2 overflow-x-auto px-4 pb-1 sm:mx-0 sm:px-0"
@@ -150,6 +152,7 @@ export function PipelineList({ rows: initialRows, paramKey = 'type' }: PipelineL
             </svg>
           </button>
         </div>
+        )}
 
         {/* List */}
         {filtered.length === 0 ? (

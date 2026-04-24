@@ -9,13 +9,11 @@ import { BottomTabBar } from './BottomTabBar'
 import { HqHeader } from './HqHeader'
 
 const NAV = [
-  { href: '/hq', label: 'Leads' },
-  { href: '/hq/permit-leads', label: 'Permits' },
-  { href: '/hq/customers', label: 'Customers' },
-  { href: '/hq/quotes', label: 'Quotes' },
-  { href: '/hq/jobs', label: 'Jobs' },
+  { href: '/hq',         label: 'Today' },
+  { href: '/hq/leads',   label: 'Leads' },
+  { href: '/hq/jobs',    label: 'Jobs' },
   { href: '/hq/gallery', label: 'Gallery' },
-  { href: '/hq/settings', label: 'Settings' },
+  { href: '/hq/more',    label: 'More' },
 ] as const
 
 export default function HqChrome({ children }: { children: React.ReactNode }) {

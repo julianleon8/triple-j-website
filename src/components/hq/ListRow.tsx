@@ -2,21 +2,22 @@ import Link from 'next/link'
 import type { PipelineBadge, PipelineKind, PipelineRow, PipelineTrailing } from '@/lib/pipeline'
 
 /**
- * iOS-style 3-zone list row.
- * - Leading: 40x40 colored circle + kind glyph
- * - Content: bold primary (17px) + secondary (15px) stacked
- * - Trailing: status pill / score badge / amount / chevron
+ * iOS Messages-style row.
+ * - Leading: 40×40 circular avatar with initials on kind-colored bg
+ * - 2-line: bold primary + dimmed secondary
+ * - Trailing top: relative timestamp
+ * - Trailing bottom: status pill / score / amount / unread dot / chevron (per kind)
  *
- * Dark-mode aware via semantic tokens (--surface-2, --text-primary, etc.).
- * 64px min-height (Apple HIG).
+ * Dark-mode aware via semantic tokens. 64px min-height (Apple HIG).
  */
 export function ListRow({ row }: { row: PipelineRow }) {
+  const unread = isUnreadLead(row)
   return (
     <Link
       href={row.href}
       className="flex items-center gap-3 px-4 py-3 min-h-16 bg-(--surface-2) active:bg-(--surface-3) transition-colors"
     >
-      <LeadingGlyph kind={row.kind} />
+      <Avatar row={row} />
       <div className="min-w-0 flex-1">
         <div className="flex items-center gap-1.5 flex-wrap">
           <span className="text-[17px] font-semibold text-(--text-primary) truncate">
@@ -28,28 +29,45 @@ export function ListRow({ row }: { row: PipelineRow }) {
           {row.secondary}
         </p>
       </div>
-      <TrailingSlot trailing={row.trailing} />
+      <div className="flex flex-col items-end gap-1 shrink-0">
+        <span className="text-[12px] text-(--text-tertiary) tabular-nums">
+          {formatRelative(row.created_at)}
+        </span>
+        <TrailingSlot row={row} unread={unread} />
+      </div>
     </Link>
   )
 }
 
-// ── Leading circle ──────────────────────────────────────────────────────────
+// ── Leading avatar with initials ───────────────────────────────────────────
 
-const KIND_STYLE: Record<PipelineKind, { bg: string; label: string }> = {
-  lead:     { bg: 'bg-blue-500',    label: 'L' },
-  permit:   { bg: 'bg-purple-500',  label: 'P' },
-  customer: { bg: 'bg-green-500',   label: 'C' },
-  quote:    { bg: 'bg-amber-500',   label: 'Q' },
-  job:      { bg: 'bg-rose-500',    label: 'J' },
+const KIND_STYLE: Record<PipelineKind, { bg: string; fallback: string }> = {
+  lead:     { bg: 'bg-blue-500',    fallback: 'L' },
+  permit:   { bg: 'bg-purple-500',  fallback: 'P' },
+  customer: { bg: 'bg-green-500',   fallback: 'C' },
+  quote:    { bg: 'bg-amber-500',   fallback: 'Q' },
+  job:      { bg: 'bg-rose-500',    fallback: 'J' },
 }
 
-function LeadingGlyph({ kind }: { kind: PipelineKind }) {
-  const { bg, label } = KIND_STYLE[kind]
+function Avatar({ row }: { row: PipelineRow }) {
+  const { bg, fallback } = KIND_STYLE[row.kind]
+  const initials = initialsFrom(row.primary, fallback)
   return (
-    <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-white text-[15px] font-bold ${bg}`}>
-      {label}
+    <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-white text-[14px] font-bold ${bg}`}>
+      {initials}
     </div>
   )
+}
+
+function initialsFrom(primary: string, fallback: string): string {
+  const letters = primary
+    .split(/\s+/)
+    .map((w) => w[0])
+    .filter((c): c is string => !!c && /[A-Za-z]/.test(c))
+    .slice(0, 2)
+    .join('')
+    .toUpperCase()
+  return letters || fallback
 }
 
 // ── Badges (small pills next to primary) ────────────────────────────────────
@@ -74,12 +92,17 @@ function Badge({ badge }: { badge: PipelineBadge }) {
 
 // ── Trailing slot ───────────────────────────────────────────────────────────
 
-function TrailingSlot({ trailing }: { trailing?: PipelineTrailing }) {
+function TrailingSlot({ row, unread }: { row: PipelineRow; unread: boolean }) {
+  if (unread) return <UnreadDot />
+  const trailing: PipelineTrailing | undefined = row.trailing
   if (!trailing) return <Chevron />
   switch (trailing.type) {
     case 'status':
+      // For leads that aren't "new", the status pill feels loud next to the timestamp.
+      // Drop it for leads; keep for other kinds (permits).
+      if (row.kind === 'lead') return <Chevron />
       return (
-        <span className={`shrink-0 rounded-full px-2 py-1 text-[11px] font-semibold capitalize ${trailing.statusClass}`}>
+        <span className={`shrink-0 rounded-full px-2 py-0.5 text-[11px] font-semibold capitalize ${trailing.statusClass}`}>
           {trailing.value}
         </span>
       )
@@ -87,20 +110,23 @@ function TrailingSlot({ trailing }: { trailing?: PipelineTrailing }) {
       return <ScoreBadge score={trailing.value} />
     case 'amount':
       return (
-        <div className="flex flex-col items-end">
-          <span className="text-[15px] font-semibold text-(--text-primary) tabular-nums">
-            {trailing.value}
-          </span>
-          {trailing.sub && (
-            <span className={`mt-0.5 rounded-full px-1.5 py-0.5 text-[10px] font-semibold capitalize ${trailing.statusClass ?? ''}`}>
-              {trailing.sub}
-            </span>
-          )}
-        </div>
+        <span className="text-[15px] font-semibold text-(--text-primary) tabular-nums">
+          {trailing.value}
+        </span>
       )
     case 'chevron':
       return <Chevron />
   }
+}
+
+function isUnreadLead(row: PipelineRow): boolean {
+  if (row.kind !== 'lead') return false
+  if (!row.trailing || row.trailing.type !== 'status') return false
+  return row.trailing.value === 'new'
+}
+
+function UnreadDot() {
+  return <span className="h-2.5 w-2.5 rounded-full bg-(--brand-fg)" aria-label="Unread" />
 }
 
 function ScoreBadge({ score }: { score: number }) {
@@ -110,7 +136,7 @@ function ScoreBadge({ score }: { score: number }) {
     score >= 4 ? 'bg-yellow-400 text-black' :
                  'bg-gray-300 text-gray-700 dark:bg-white/10 dark:text-gray-300'
   return (
-    <div className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-[13px] font-bold ${tone}`}>
+    <div className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-[12px] font-bold ${tone}`}>
       {score}
     </div>
   )
@@ -118,8 +144,24 @@ function ScoreBadge({ score }: { score: number }) {
 
 function Chevron() {
   return (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="shrink-0 text-(--text-tertiary)">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="shrink-0 text-(--text-tertiary)">
       <path d="M9 6l6 6-6 6" />
     </svg>
   )
+}
+
+// ── Relative time helper ────────────────────────────────────────────────────
+
+function formatRelative(iso: string): string {
+  const t = new Date(iso).getTime()
+  if (Number.isNaN(t)) return ''
+  const diffMs = Date.now() - t
+  const minutes = Math.floor(diffMs / 60_000)
+  if (minutes < 1) return 'now'
+  if (minutes < 60) return `${minutes}m`
+  const hours = Math.floor(minutes / 60)
+  if (hours < 24) return `${hours}h`
+  const days = Math.floor(hours / 24)
+  if (days < 7) return `${days}d`
+  return new Date(iso).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
 }

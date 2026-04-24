@@ -70,6 +70,9 @@
   /* Brand uses the same hue in both themes; tweak for dark contrast */
   --brand-fg:       #1e6bd6;
   --brand-fg-hover: #1851b5;
+
+  /* Urgency — COLD banner / overdue badge (Phase 2+). */
+  --urgent-bg:      #dc2626;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -93,6 +96,9 @@
     /* Brand on dark needs +saturation/+lightness to stay vibrant */
     --brand-fg:       #4d8dff;
     --brand-fg-hover: #76a8ff;
+
+    /* Urgency — brighter red on dark for contrast. */
+    --urgent-bg:      #ef4444;
   }
 }
 

@@ -1,18 +1,20 @@
 'use client'
 
-import Link from 'next/link'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { useEffect, useRef, useState } from 'react'
-import { createClient } from '@/lib/supabase/client'
+import { Plus } from 'lucide-react'
 import { OfflineBadge } from '@/components/hq/OfflineBadge'
+import { CreatePopover } from '@/components/hq/CreatePopover'
 
 function titleFor(pathname: string, tab: string | null): string {
-  if (pathname === '/hq') return tab === 'funnel' ? 'Funnel' : 'Now'
+  if (pathname === '/hq') return tab === 'funnel' ? 'Funnel' : 'Today'
+  if (pathname.startsWith('/hq/leads'))                  return 'Leads'
   if (pathname.startsWith('/hq/permit-leads'))           return 'Permits'
   if (pathname.startsWith('/hq/customers'))              return 'Customers'
   if (pathname.startsWith('/hq/quotes'))                 return 'Quotes'
   if (pathname.startsWith('/hq/jobs'))                   return 'Jobs'
   if (pathname.startsWith('/hq/gallery'))                return 'Gallery'
+  if (pathname.startsWith('/hq/more'))                   return 'More'
   if (pathname.startsWith('/hq/settings/notifications')) return 'Notifications'
   if (pathname.startsWith('/hq/settings/testing'))       return 'Testing'
   if (pathname.startsWith('/hq/settings/logs'))          return 'Logs'
@@ -22,19 +24,17 @@ function titleFor(pathname: string, tab: string | null): string {
 }
 
 /**
- * iOS-style large title header for HQ.
- * - Mobile-only (sm:hidden)
- * - Large 34px title at scroll=0, collapses to compact 17px on scroll
- * - Right side: profile avatar dropdown (Gallery, QuickBooks, Sign out)
- * - Sits below status bar via safe-area-inset-top
+ * iOS-style large-title header for HQ.
+ * - Large 28px title at scroll=0, collapses to compact 17px on scroll
+ * - Right side: Plus button (opens CreatePopover) + avatar (tap → /hq/settings)
  */
 export function HqHeader() {
   const pathname = usePathname()
   const searchParams = useSearchParams()
   const router = useRouter()
   const [scrolled, setScrolled] = useState(false)
-  const [menuOpen, setMenuOpen] = useState(false)
-  const menuRef = useRef<HTMLDivElement>(null)
+  const [createOpen, setCreateOpen] = useState(false)
+  const plusRef = useRef<HTMLButtonElement>(null)
 
   const title = titleFor(pathname, searchParams.get('tab'))
 
@@ -46,24 +46,8 @@ export function HqHeader() {
   }, [])
 
   useEffect(() => {
-    setMenuOpen(false)
+    setCreateOpen(false)
   }, [pathname, searchParams])
-
-  useEffect(() => {
-    if (!menuOpen) return
-    function handler(e: MouseEvent) {
-      if (menuRef.current && !menuRef.current.contains(e.target as Node)) setMenuOpen(false)
-    }
-    document.addEventListener('mousedown', handler)
-    return () => document.removeEventListener('mousedown', handler)
-  }, [menuOpen])
-
-  async function signOut() {
-    const supabase = createClient()
-    await supabase.auth.signOut()
-    router.push('/login')
-    router.refresh()
-  }
 
   return (
     <header
@@ -81,49 +65,33 @@ export function HqHeader() {
           </h1>
           <OfflineBadge />
         </div>
-        <div ref={menuRef} className="relative">
+        <div className="relative flex items-center gap-1.5">
+          <button
+            ref={plusRef}
+            type="button"
+            onClick={() => setCreateOpen((o) => !o)}
+            className="flex h-9 w-9 items-center justify-center rounded-full text-(--text-primary) bg-(--surface-2) border border-(--border-subtle) active:scale-95 transition-transform"
+            aria-haspopup="menu"
+            aria-expanded={createOpen}
+            aria-label="Create new"
+          >
+            <Plus size={20} strokeWidth={2.3} />
+          </button>
           <button
             type="button"
-            onClick={() => setMenuOpen(o => !o)}
+            onClick={() => router.push('/hq/settings')}
             className="flex h-9 w-9 items-center justify-center rounded-full bg-brand-600 text-white text-sm font-bold active:scale-95 transition-transform"
-            aria-haspopup="menu"
-            aria-expanded={menuOpen}
-            aria-label="Menu"
+            aria-label="Settings"
           >
             JL
           </button>
-          {menuOpen && (
-            <div
-              role="menu"
-              className="absolute right-0 mt-2 w-52 overflow-hidden rounded-xl border border-(--border-subtle) bg-(--surface-2) shadow-lg"
-            >
-              <MenuItem href="/hq/gallery">Gallery</MenuItem>
-              <MenuItem href="/hq/settings">Settings</MenuItem>
-              <div className="border-t border-(--border-subtle)" />
-              <button
-                type="button"
-                onClick={() => void signOut()}
-                className="block w-full px-4 py-3 text-left text-[15px] font-medium text-(--text-primary) hover:bg-(--surface-3)"
-                role="menuitem"
-              >
-                Sign out
-              </button>
-            </div>
-          )}
+          <CreatePopover
+            open={createOpen}
+            onClose={() => setCreateOpen(false)}
+            anchorRef={plusRef}
+          />
         </div>
       </div>
     </header>
-  )
-}
-
-function MenuItem({ href, children }: { href: string; children: React.ReactNode }) {
-  return (
-    <Link
-      href={href}
-      className="block px-4 py-3 text-[15px] font-medium text-(--text-primary) hover:bg-(--surface-3)"
-      role="menuitem"
-    >
-      {children}
-    </Link>
   )
 }

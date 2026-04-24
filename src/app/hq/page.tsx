@@ -1,108 +1,63 @@
 export const dynamic = 'force-dynamic'
 
 import { Suspense } from 'react'
-import { getAdminClient } from '@/lib/supabase/admin'
-import { PipelineList } from '@/components/hq/PipelineList'
-import { buildPipeline } from '@/lib/pipeline'
-import { RecentLeadsSection } from './components/RecentLeadsSection'
-import { StatsSection } from './components/StatsSection'
+import { redirect } from 'next/navigation'
+import { NextActionCard } from './components/NextActionCard'
+import { NeedsAttentionFeed } from './components/NeedsAttentionFeed'
+import { CompactKPIStrip } from './components/CompactKPIStrip'
 
 type SearchParams = Promise<{ tab?: string; type?: string }>
 
-export default async function DashboardPage({ searchParams }: { searchParams: SearchParams }) {
+export default async function TodayPage({ searchParams }: { searchParams: SearchParams }) {
   const { tab } = await searchParams
 
-  if (tab === 'funnel') {
-    return <FunnelTab />
-  }
+  // Phase 1 stub: saved bookmarks of /hq?tab=funnel should now land on /hq/leads (Phase 2).
+  if (tab === 'funnel') redirect('/hq/leads')
 
   return (
-    <div className="space-y-6">
-      <Suspense fallback={<RecentLeadsFallback />}>
-        <RecentLeadsSection />
+    <div className="space-y-5">
+      <Suspense fallback={<NextActionFallback />}>
+        <NextActionCard />
       </Suspense>
 
-      <Suspense fallback={<StatsFallback />}>
-        <StatsSection />
+      <Suspense fallback={<FeedFallback />}>
+        <NeedsAttentionFeed />
+      </Suspense>
+
+      <Suspense fallback={<KPIStripFallback />}>
+        <CompactKPIStrip />
       </Suspense>
     </div>
   )
 }
 
-function RecentLeadsFallback() {
+function NextActionFallback() {
   return (
-    <section>
-      <div className="flex items-baseline justify-between mb-3">
-        <h2 className="text-lg font-bold text-(--text-primary)">Recent Leads</h2>
-        <span className="text-xs text-(--text-tertiary)">Loading…</span>
-      </div>
-      <div className="space-y-2">
-        {Array.from({ length: 5 }).map((_, i) => (
-          <div
-            key={i}
-            className="h-24 rounded-xl border border-(--border-subtle) bg-(--surface-2) animate-pulse"
-            aria-hidden="true"
-          />
+    <div
+      aria-hidden="true"
+      className="h-40 rounded-3xl border border-(--border-subtle) bg-(--surface-2) animate-pulse"
+    />
+  )
+}
+
+function FeedFallback() {
+  return (
+    <section aria-hidden="true" className="space-y-2">
+      <div className="h-4 w-28 rounded-full bg-(--surface-2) animate-pulse" />
+      <div className="space-y-1.5">
+        {Array.from({ length: 4 }).map((_, i) => (
+          <div key={i} className="h-16 rounded-xl bg-(--surface-2) animate-pulse" />
         ))}
       </div>
     </section>
   )
 }
 
-function StatsFallback() {
+function KPIStripFallback() {
   return (
-    <div className="rounded-xl border border-(--border-subtle) bg-(--surface-2)">
-      <div className="flex items-center justify-between px-4 py-3 text-sm font-semibold text-(--text-tertiary)">
-        <span>Pipeline & stats</span>
-        <span className="text-xs">Loading…</span>
-      </div>
-    </div>
-  )
-}
-
-async function FunnelTab() {
-  const db = getAdminClient()
-
-  const [
-    { data: leads },
-    { data: permits },
-    { data: customers },
-    { data: quotes },
-    { data: jobs },
-  ] = await Promise.all([
-    db.from('leads')
-      .select('id, created_at, name, phone, city, zip, service_type, structure_type, timeline, is_military, status')
-      .order('created_at', { ascending: false })
-      .limit(200),
-    db.from('permit_leads')
-      .select('id, created_at, jurisdiction, permit_number, permit_type, address, city, valuation, wheelhouse_score, status')
-      .order('created_at', { ascending: false })
-      .limit(200),
-    db.from('customers')
-      .select('id, created_at, name, phone, city')
-      .order('created_at', { ascending: false })
-      .limit(200),
-    db.from('quotes')
-      .select('id, created_at, quote_number, status, total, valid_until, customers(name)')
-      .order('created_at', { ascending: false })
-      .limit(200),
-    db.from('jobs')
-      .select('id, created_at, job_number, status, job_type, city, scheduled_date, total_contract, balance_due, customers(name)')
-      .order('created_at', { ascending: false })
-      .limit(200),
-  ])
-
-  const rows = buildPipeline({
-    leads:     (leads ?? []) as never,
-    permits:   (permits ?? []) as never,
-    customers: (customers ?? []) as never,
-    quotes:    (quotes ?? []) as never,
-    jobs:      (jobs ?? []) as never,
-  })
-
-  return (
-    <div className="space-y-4">
-      <PipelineList rows={rows} />
-    </div>
+    <div
+      aria-hidden="true"
+      className="h-16 rounded-2xl border border-(--border-subtle) bg-(--surface-2) animate-pulse"
+    />
   )
 }
