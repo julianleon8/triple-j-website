@@ -37,6 +37,11 @@ yarn-error.log*
 # vercel
 .vercel
 
+# local-only archive of browser-saved HTML and retired canvas files
+/_archive/
+# local audit scratch (regenerable)
+/.seo-audit-tmp/
+
 # serwist-generated service worker (rebuilt on every build)
 /public/sw.js
 /public/sw.js.map
