@@ -1,17 +1,21 @@
 export const dynamic = 'force-dynamic'
 
 import { getAdminClient } from '@/lib/supabase/admin'
-import CustomersTable from './components/CustomersTable'
+import { customerToRow, type CustomerForRow } from '@/lib/pipeline'
+import { CustomersList } from './components/CustomersList'
 
 export default async function CustomersPage() {
-  const { data: customers } = await getAdminClient()
+  const { data } = await getAdminClient()
     .from('customers')
-    .select('*')
+    .select('id, created_at, name, phone, city')
     .order('created_at', { ascending: false })
+    .limit(500)
+
+  const rows = ((data ?? []) as CustomerForRow[]).map(customerToRow)
 
   return (
-    <div className="space-y-4">
-      <CustomersTable initialCustomers={customers ?? []} />
+    <div>
+      <CustomersList rows={rows} />
     </div>
   )
 }

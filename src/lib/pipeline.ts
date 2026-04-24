@@ -29,6 +29,20 @@ export type PipelineRow = {
   trailing?: PipelineTrailing
   badges?: PipelineBadge[]
   created_at: string
+  /** Non-visual hints carried alongside the row (phone for swipe-to-call, etc.). */
+  meta?: { phone?: string | null }
+}
+
+/** Leads past this age with no contact are "cold" — surfaced with a red banner/bar. */
+export const COLD_THRESHOLD_HOURS = 12
+
+/** True when the row is a still-new lead older than COLD_THRESHOLD_HOURS. */
+export function isCold(row: PipelineRow): boolean {
+  if (row.kind !== 'lead') return false
+  if (!row.trailing || row.trailing.type !== 'status') return false
+  if (row.trailing.value !== 'new') return false
+  const ageH = (Date.now() - new Date(row.created_at).getTime()) / 3_600_000
+  return ageH > COLD_THRESHOLD_HOURS
 }
 
 // ── Entity shapes (subset we need for mapping) ────────────────────────────
@@ -162,7 +176,7 @@ export function leadToRow(lead: LeadForRow): PipelineRow {
   return {
     kind: 'lead',
     id: lead.id,
-    href: '/hq',
+    href: `/hq/leads/${lead.id}`,
     primary: lead.name,
     secondary: secondary || 'Recent lead',
     trailing: {
@@ -172,6 +186,7 @@ export function leadToRow(lead: LeadForRow): PipelineRow {
     },
     badges,
     created_at: lead.created_at,
+    meta: { phone: lead.phone },
   }
 }
 
@@ -207,11 +222,12 @@ export function customerToRow(customer: CustomerForRow): PipelineRow {
   return {
     kind: 'customer',
     id: customer.id,
-    href: '/hq/customers',
+    href: `/hq/customers/${customer.id}`,
     primary: customer.name,
     secondary: locationBits || 'Customer',
     trailing: { type: 'chevron' },
     created_at: customer.created_at,
+    meta: { phone: customer.phone },
   }
 }
 
@@ -261,7 +277,7 @@ export function jobToRow(job: JobForRow): PipelineRow {
   return {
     kind: 'job',
     id: job.id,
-    href: '/hq/jobs',
+    href: `/hq/jobs/${job.id}`,
     primary: customerName,
     secondary: [`#${job.job_number}`, job.job_type, scheduledBit, job.city].filter(Boolean).join(' · '),
     trailing: {
@@ -305,6 +321,7 @@ export function urgencyScore(row: PipelineRow): number {
         score = 70
         if (row.badges?.some((b) => b.tone === 'asap')) score += 20
         if (row.badges?.some((b) => b.tone === 'mil')) score += 5
+        if (hoursSinceCreated > COLD_THRESHOLD_HOURS) score += 15
       }
       break
     }

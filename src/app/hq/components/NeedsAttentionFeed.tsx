@@ -60,7 +60,7 @@ export async function NeedsAttentionFeed() {
           <p className="text-[14px] text-(--text-secondary)">Inbox zero. Nice.</p>
         </div>
       ) : (
-        <PipelineList rows={needsAttention} hideFilters />
+        <PipelineList rows={needsAttention} hideFilters variant="messages" />
       )}
     </section>
   )

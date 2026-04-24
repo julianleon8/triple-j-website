@@ -8,6 +8,10 @@ import { CreatePopover } from '@/components/hq/CreatePopover'
 
 function titleFor(pathname: string, tab: string | null): string {
   if (pathname === '/hq') return tab === 'funnel' ? 'Funnel' : 'Today'
+  // Detail routes (singular) — checked before list-prefix matches.
+  if (/^\/hq\/leads\/[^/]+$/.test(pathname))     return 'Lead'
+  if (/^\/hq\/jobs\/[^/]+$/.test(pathname))      return 'Job'
+  if (/^\/hq\/customers\/[^/]+$/.test(pathname)) return 'Customer'
   if (pathname.startsWith('/hq/leads'))                  return 'Leads'
   if (pathname.startsWith('/hq/permit-leads'))           return 'Permits'
   if (pathname.startsWith('/hq/customers'))              return 'Customers'

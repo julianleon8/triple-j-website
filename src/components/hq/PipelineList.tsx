@@ -5,6 +5,7 @@ import { useMemo, useState, useTransition } from 'react'
 import type { PipelineKind, PipelineRow } from '@/lib/pipeline'
 import { LEAD_STATUS_CLASS, PERMIT_STATUS_CLASS, QUOTE_STATUS_CLASS, JOB_STATUS_CLASS } from '@/lib/pipeline'
 import { ListRow } from './ListRow'
+import { MessagesRow } from './MessagesRow'
 import { PullToRefresh } from './PullToRefresh'
 import { SwipeActions, type SwipeAction } from './SwipeActions'
 
@@ -37,9 +38,12 @@ type PipelineListProps = {
   rows: PipelineRow[]
   paramKey?: string
   hideFilters?: boolean
+  /** 'default' = ListRow (Jobs, Funnel). 'messages' = MessagesRow + force-hide filter pills (Today's feed, Customers). */
+  variant?: 'default' | 'messages'
 }
 
-export function PipelineList({ rows: initialRows, paramKey = 'type', hideFilters = false }: PipelineListProps) {
+export function PipelineList({ rows: initialRows, paramKey = 'type', hideFilters = false, variant = 'default' }: PipelineListProps) {
+  const filtersHidden = hideFilters || variant === 'messages'
   const router = useRouter()
   const searchParams = useSearchParams()
   const current = (searchParams.get(paramKey) ?? 'all') as FilterKey
@@ -96,7 +100,7 @@ export function PipelineList({ rows: initialRows, paramKey = 'type', hideFilters
     <PullToRefresh onRefresh={refresh}>
       <div className="space-y-3">
         {/* Filter pills + explicit refresh button */}
-        {!hideFilters && (
+        {!filtersHidden && (
         <div className="flex items-center gap-2">
           <div
             className="-mx-4 flex flex-1 gap-2 overflow-x-auto px-4 pb-1 sm:mx-0 sm:px-0"
@@ -169,8 +173,8 @@ export function PipelineList({ rows: initialRows, paramKey = 'type', hideFilters
               const actions = actionsForRow(row, patchRow, removeRow)
               return (
                 <li key={`${row.kind}-${row.id}`}>
-                  <SwipeActions leading={actions.leading} trailing={actions.trailing}>
-                    <ListRow row={row} />
+                  <SwipeActions leading={actions.leading} trailing={actions.trailing} hapticOnCommit="success">
+                    {variant === 'messages' ? <MessagesRow row={row} /> : <ListRow row={row} />}
                   </SwipeActions>
                 </li>
               )
@@ -360,8 +364,19 @@ function actionsForRow(
         },
       }
 
-    case 'customer':
-      // No inline action yet — tap navigates to /hq/customers where edit happens
-      return {}
+    case 'customer': {
+      const phone = row.meta?.phone
+      if (!phone) return {}
+      return {
+        leading: {
+          label: 'Call',
+          tone: 'positive',
+          exec: async () => {
+            if (typeof window !== 'undefined') window.location.href = `tel:${phone}`
+            return false
+          },
+        },
+      }
+    }
   }
 }

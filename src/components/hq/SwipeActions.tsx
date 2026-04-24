@@ -2,6 +2,7 @@
 
 import { motion, useMotionValue, useTransform, animate } from 'framer-motion'
 import { useRef, useState } from 'react'
+import { useHaptics } from '@/lib/hq/haptics'
 
 export type SwipeActionTone = 'positive' | 'destructive' | 'neutral' | 'warn'
 
@@ -17,6 +18,8 @@ type SwipeActionsProps = {
   leading?: SwipeAction
   /** Action revealed on left-swipe (from right edge). Typically destructive — "Delete". */
   trailing?: SwipeAction
+  /** Haptic fired after exec() resolves (does not fire on throw). */
+  hapticOnCommit?: 'success' | 'warn' | 'error'
   children: React.ReactNode
 }
 
@@ -39,11 +42,12 @@ const TONE_STYLE: Record<SwipeActionTone, string> = {
  * - Tap revealed action → calls exec(); removes row if exec() returns true
  * - Tapping the row surface while revealed just closes the sheet (no nav)
  */
-export function SwipeActions({ leading, trailing, children }: SwipeActionsProps) {
+export function SwipeActions({ leading, trailing, hapticOnCommit, children }: SwipeActionsProps) {
   const x = useMotionValue(0)
   const containerRef = useRef<HTMLDivElement>(null)
   const [hidden, setHidden] = useState(false)
   const [busy, setBusy] = useState<'leading' | 'trailing' | null>(null)
+  const haptics = useHaptics()
 
   // Visually scale each action panel so only one side reveals at a time
   const leadingOpacity = useTransform(x, [0, REVEAL], [0, 1])
@@ -59,6 +63,7 @@ export function SwipeActions({ leading, trailing, children }: SwipeActionsProps)
     setBusy(which)
     try {
       const removed = await action.exec()
+      if (hapticOnCommit) haptics[hapticOnCommit]()
       if (removed) {
         // animate out
         await animate(x, which === 'leading' ? 600 : -600, { duration: 0.2 })
