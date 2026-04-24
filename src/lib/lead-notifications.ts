@@ -97,7 +97,7 @@ export async function notifyNewLead({ lead, sizeLine = null }: NotifyNewLeadInpu
 
   const subject = `${sourcePrefix}: ${lead.name} — ${city} — ${serviceType}${lead.is_military ? ' ⭐' : ''}${lead.timeline === 'asap' ? ' ⚡' : ''}`
 
-  await resend().emails.send({
+  const ownerResult = await resend().emails.send({
     from: 'Triple J Metal <leads@triplejmetaltx.com>',
     to: process.env.OWNER_EMAIL!.split(','),
     replyTo: lead.email || undefined,
@@ -109,6 +109,9 @@ export async function notifyNewLead({ lead, sizeLine = null }: NotifyNewLeadInpu
       { name: 'email_type', value: 'lead_owner_alert' },
     ],
   })
+  if (ownerResult.error) {
+    console.error('[notifyNewLead] owner alert Resend error:', ownerResult.error)
+  }
 
   if (lead.email) {
     const customerProps = {
@@ -119,7 +122,7 @@ export async function notifyNewLead({ lead, sizeLine = null }: NotifyNewLeadInpu
       isMilitary: !!lead.is_military,
       timeline: lead.timeline,
     }
-    await resend().emails.send({
+    const customerResult = await resend().emails.send({
       from: 'Triple J Metal <no-reply@triplejmetaltx.com>',
       replyTo: 'julianleon@triplejmetaltx.com',
       to: lead.email,
@@ -131,6 +134,9 @@ export async function notifyNewLead({ lead, sizeLine = null }: NotifyNewLeadInpu
         { name: 'email_type', value: 'lead_customer_confirmation' },
       ],
     })
+    if (customerResult.error) {
+      console.error('[notifyNewLead] customer confirm Resend error:', customerResult.error)
+    }
   }
 
   const isHot = lead.timeline === 'asap'
