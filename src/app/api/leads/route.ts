@@ -2,21 +2,11 @@ import { NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod'
 import { createClient } from '@/lib/supabase/server'
 import { getAdminClient } from '@/lib/supabase/admin'
-import { Resend } from 'resend'
-import LeadOwnerAlert, { leadOwnerAlertText } from '@/emails/LeadOwnerAlert'
-import LeadCustomerConfirmation, { leadCustomerConfirmationText } from '@/emails/LeadCustomerConfirmation'
-import { sendPushBackground } from '@/lib/push'
+import { notifyNewLead } from '@/lib/lead-notifications'
 import { verifyHCaptchaToken } from '@/lib/captcha'
 import { checkRateLimit, getClientIp } from '@/lib/rate-limit'
 
 export const dynamic = 'force-dynamic'
-
-// Lazy-init so build-time static analysis doesn't require the key
-let _resend: Resend | null = null
-function resend(): Resend {
-  if (!_resend) _resend = new Resend(process.env.RESEND_API_KEY)
-  return _resend
-}
 
 // Simple ZIP → city lookup for Bell / Coryell counties
 const ZIP_CITIES: Record<string, string> = {
@@ -38,29 +28,6 @@ const ZIP_CITIES: Record<string, string> = {
 
 function cityFromZip(zip: string): string {
   return ZIP_CITIES[zip?.trim()] ?? zip ?? 'Not provided'
-}
-
-function label(value: string | undefined, map: Record<string, string>, fallback = '—'): string {
-  if (!value) return fallback
-  return map[value] ?? value
-}
-
-const CONCRETE_LABELS: Record<string, string> = {
-  yes: 'Yes — include concrete pad',
-  already_have: 'Already have a slab',
-  unsure: 'Not sure yet',
-}
-const SURFACE_LABELS: Record<string, string> = {
-  dirt: 'Dirt / bare ground',
-  gravel: 'Gravel',
-  asphalt: 'Asphalt',
-  concrete: 'Existing concrete',
-}
-const TIMELINE_LABELS: Record<string, string> = {
-  asap: 'ASAP — this week if possible',
-  this_week: 'This week',
-  this_month: 'This month',
-  planning: 'Just planning ahead',
 }
 
 const leadSchema = z.object({
@@ -155,74 +122,7 @@ export async function POST(request: NextRequest) {
 
     if (error) throw error
 
-    // ── Owner alert ──────────────────────────────────────────────────────
-    const submittedAt = `${new Date().toLocaleString('en-US', { timeZone: 'America/Chicago' })} CST`
-    const ownerAlertProps = {
-      leadId: lead.id,
-      name: data.name,
-      phone: data.phone,
-      email: data.email || null,
-      city,
-      zip: data.zip || null,
-      serviceType: data.service_type,
-      structureType: data.structure_type || null,
-      sizeLine,
-      needsConcreteLabel: data.needs_concrete ? label(data.needs_concrete, CONCRETE_LABELS) : null,
-      currentSurfaceLabel: data.current_surface ? label(data.current_surface, SURFACE_LABELS) : null,
-      timelineLabel: data.timeline ? label(data.timeline, TIMELINE_LABELS) : null,
-      timeline: data.timeline || null,
-      isMilitary: data.is_military,
-      message: data.message?.trim() || null,
-      submittedAt,
-    }
-
-    await resend().emails.send({
-      from: 'Triple J Metal <leads@triplejmetaltx.com>',
-      to: process.env.OWNER_EMAIL!.split(','),
-      replyTo: data.email || undefined,
-      subject: `🔔 New Lead: ${data.name} — ${city} — ${data.service_type}${data.is_military ? ' ⭐' : ''}${data.timeline === 'asap' ? ' ⚡' : ''}`,
-      react: LeadOwnerAlert(ownerAlertProps),
-      text: leadOwnerAlertText(ownerAlertProps),
-      tags: [
-        { name: 'lead_id', value: lead.id },
-        { name: 'email_type', value: 'lead_owner_alert' },
-      ],
-    })
-
-    // ── Customer confirmation ─────────────────────────────────────────────
-    if (data.email) {
-      const customerProps = {
-        name: data.name,
-        phone: data.phone,
-        city,
-        serviceType: data.service_type,
-        isMilitary: data.is_military,
-        timeline: data.timeline || null,
-      }
-      await resend().emails.send({
-        from: 'Triple J Metal <no-reply@triplejmetaltx.com>',
-        replyTo: 'julianleon@triplejmetaltx.com',
-        to: data.email,
-        subject: 'We got your quote request — Triple J Metal',
-        react: LeadCustomerConfirmation(customerProps),
-        text: leadCustomerConfirmationText(customerProps),
-        tags: [
-          { name: 'lead_id', value: lead.id },
-          { name: 'email_type', value: 'lead_customer_confirmation' },
-        ],
-      })
-    }
-
-    // ── Push notification to owner devices ────────────────────────────────
-    const isHot = data.timeline === 'asap'
-    sendPushBackground({
-      title: isHot
-        ? `⚡ HOT lead: ${data.name}`
-        : `🔔 New lead: ${data.name}`,
-      body: [city, data.service_type.replace('_', ' '), sizeLine].filter(Boolean).join(' · '),
-      url: '/hq',
-      tag: `lead-${lead.id}`,
-    })
+    await notifyNewLead({ lead, sizeLine })
 
     return NextResponse.json({ success: true, id: lead.id })
   } catch (error) {
