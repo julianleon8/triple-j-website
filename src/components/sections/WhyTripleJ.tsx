@@ -1,6 +1,7 @@
 import Image from "next/image";
 
 import { Container } from "@/components/ui/Container";
+import { Reveal } from "@/components/ui/Reveal";
 
 /**
  * Why Triple J — the welded-vs-bolted explainer section.
@@ -52,7 +53,7 @@ export function WhyTripleJ() {
     >
       <Container size="wide">
         {/* Header */}
-        <div className="max-w-3xl">
+        <Reveal className="max-w-3xl">
           <span className="text-xs font-semibold uppercase tracking-[0.15em] text-[color:var(--color-brand-700)]">
             Why Triple J
           </span>
@@ -67,12 +68,12 @@ export function WhyTripleJ() {
             and the labor. Triple J is the whole job — one number, one crew, one
             contract.
           </p>
-        </div>
+        </Reveal>
 
         {/* Photo callout + comparison */}
         <div className="mt-12 grid grid-cols-1 lg:grid-cols-5 gap-8 items-start">
           {/* Photo column */}
-          <div className="lg:col-span-2">
+          <Reveal className="lg:col-span-2">
             <div className="relative aspect-[4/5] overflow-hidden rounded-2xl bg-[color:var(--color-ink-900)]">
               <Image
                 src="/images/carport-truck-concrete-hero.jpg"
@@ -92,10 +93,10 @@ export function WhyTripleJ() {
                 </p>
               </div>
             </div>
-          </div>
+          </Reveal>
 
           {/* Comparison table */}
-          <div className="lg:col-span-3">
+          <Reveal className="lg:col-span-3" delay={100}>
             <div className="overflow-hidden rounded-2xl border border-[color:var(--color-ink-100)] bg-white shadow-sm">
               <div className="grid grid-cols-3 bg-[color:var(--color-ink-50)] text-xs font-bold uppercase tracking-wider text-[color:var(--color-ink-500)]">
                 <div className="p-4">What you&rsquo;re paying for</div>
@@ -147,7 +148,7 @@ export function WhyTripleJ() {
                 </div>
               ))}
             </div>
-          </div>
+          </Reveal>
         </div>
       </Container>
     </section>

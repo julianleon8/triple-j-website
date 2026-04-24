@@ -256,6 +256,67 @@ p { line-height: 1.6; }
   background-size: 64px 64px;
 }
 
+/* =========================================================
+   Motion language — restrained, magazine-quality.
+   One easing curve everywhere: cubic-bezier(0.22, 1, 0.36, 1)
+   (smooth ease-out, no overshoot, no bounce). All animations
+   respect prefers-reduced-motion.
+   ========================================================= */
+
+/* Scroll-triggered reveal (used by <Reveal /> wrapper).
+   Element starts hidden + offset; flips to visible when its
+   `data-revealed` attribute becomes "true" (set by an
+   IntersectionObserver in src/lib/use-reveal.ts). One-shot —
+   the observer disconnects after the first intersection. */
+.reveal {
+  opacity: 0;
+  transform: translateY(20px);
+  transition:
+    opacity 600ms cubic-bezier(0.22, 1, 0.36, 1) var(--reveal-delay, 0ms),
+    transform 600ms cubic-bezier(0.22, 1, 0.36, 1) var(--reveal-delay, 0ms);
+  will-change: opacity, transform;
+}
+.reveal[data-revealed="true"] {
+  opacity: 1;
+  transform: none;
+}
+
+/* Hero entrance choreography — fires on page load.
+   Each element opts in with .hero-anim and a per-element
+   --reveal-delay. Animation: fade + 12px slide-up. */
+@keyframes hero-rise {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: none; }
+}
+
+.hero-anim {
+  opacity: 0;
+  animation: hero-rise 700ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  will-change: opacity, transform;
+}
+
+/* Hero entrance timeline — single source of truth for the choreography.
+   Steps cascade ~120ms apart for a rhythmic reveal. Total ~1.7s. */
+.hero-anim[data-hero-step="1"]  { animation-delay:  100ms; } /* eyebrow pill */
+.hero-anim[data-hero-step="2"]  { animation-delay:  250ms; } /* headline line 1 */
+.hero-anim[data-hero-step="3"]  { animation-delay:  370ms; } /* headline line 2 */
+.hero-anim[data-hero-step="4"]  { animation-delay:  490ms; } /* headline line 3 */
+.hero-anim[data-hero-step="5"]  { animation-delay:  610ms; } /* headline line 4 */
+.hero-anim[data-hero-step="6"]  { animation-delay:  850ms; } /* subhead */
+.hero-anim[data-hero-step="7"]  { animation-delay: 1000ms; } /* CTAs */
+.hero-anim[data-hero-step="8"]  { animation-delay: 1200ms; } /* trust line */
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal,
+  .reveal[data-revealed="true"],
+  .hero-anim {
+    opacity: 1;
+    transform: none;
+    transition: none;
+    animation: none;
+  }
+}
+
 /* Reserve space at page bottom on mobile for the sticky Call bar */
 @media (max-width: 768px) {
   body {

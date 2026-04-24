@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 
 import { Container } from "@/components/ui/Container";
+import { Reveal } from "@/components/ui/Reveal";
 import { ArrowRightIcon } from "@/components/ui/icons";
 import { getAdminClient } from "@/lib/supabase/admin";
 
@@ -42,7 +43,7 @@ export async function Gallery() {
       className="py-20 md:py-28 bg-paper-2 border-t border-ink-100"
     >
       <Container size="wide">
-        <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 max-w-4xl">
+        <Reveal className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 max-w-4xl">
           <div>
             <span className="text-xs font-semibold uppercase tracking-[0.15em] text-brand-700">
               Recent Builds
@@ -61,7 +62,7 @@ export async function Gallery() {
             See full portfolio
             <ArrowRightIcon className="h-4 w-4" />
           </Link>
-        </div>
+        </Reveal>
 
         {/* Asymmetric grid — first cell spans 2 columns on desktop.
             is_featured-sorted first from the query so the hero cell

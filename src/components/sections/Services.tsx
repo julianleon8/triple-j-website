@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 
 import { Container } from "@/components/ui/Container";
+import { Reveal } from "@/components/ui/Reveal";
 import { ArrowRightIcon } from "@/components/ui/icons";
 
 /**
@@ -63,7 +64,7 @@ export function Services() {
 
       <Container size="wide" className="relative">
         {/* Section header — mirrors the hero's red pill + Barlow huge */}
-        <div className="max-w-3xl">
+        <Reveal className="max-w-3xl">
           <span className="inline-flex items-center rounded-full bg-red-600 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.18em] text-white shadow-sm">
             What We Build
           </span>
@@ -80,13 +81,15 @@ export function Services() {
             turnkey — site prep, concrete pad, and installation all under one
             contract. No kits, no subcontractors.
           </p>
-        </div>
+        </Reveal>
 
-        {/* Grid — 2x2 at lg for breathing room, 1-up on mobile */}
+        {/* Grid — 2x2 at lg for breathing room, 1-up on mobile.
+            Each card is its own Reveal with a stagger so they cascade
+            in (~80ms apart) as the grid enters the viewport. */}
         <div className="mt-14 grid grid-cols-1 sm:grid-cols-2 gap-6">
-          {SERVICE_CARDS.map((service) => (
+          {SERVICE_CARDS.map((service, i) => (
+            <Reveal key={service.slug} delay={i * 80}>
             <Link
-              key={service.slug}
               href={`/services/${service.slug}`}
               className="group relative flex flex-col overflow-hidden rounded-2xl bg-[color:var(--color-ink-900)] shadow-md hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 ease-out"
             >
@@ -131,6 +134,7 @@ export function Services() {
                 </span>
               </div>
             </Link>
+            </Reveal>
           ))}
         </div>
 

@@ -73,30 +73,46 @@ export default function HomePage() {
 
         <Container size="wide" className="relative py-28 sm:py-36 lg:py-48">
           <div className="max-w-3xl">
-            {/* Red eyebrow pill — single concentrated pop of red on the page */}
-            <span className="inline-flex items-center rounded-full bg-red-600 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.18em] text-white shadow-sm">
+            {/* Red eyebrow pill — single concentrated pop of red on the page.
+                Hero entrance choreography: each element wears .hero-anim +
+                a data-hero-step="N" — the timeline lives in globals.css. */}
+            <span
+              data-hero-step="1"
+              className="hero-anim inline-flex items-center rounded-full bg-red-600 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.18em] text-white shadow-sm"
+            >
               Built in Texas
             </span>
 
-            {/* Massive Barlow Condensed headline. Three "BUILT _____."
-                lines, each on its own line for rhythm. No specific time
-                promise. Echoes the locked tagline. */}
+            {/* Massive Barlow Condensed headline. Each "BUILT _____." line
+                wrapped in its own block-span so they reveal in sequence
+                (~120ms apart) for a rhythmic stagger. */}
             <h1 className="mt-6 font-display font-extrabold uppercase tracking-tight leading-[0.95] text-white text-6xl sm:text-7xl md:text-8xl lg:text-9xl">
-              Built right.
-              <br />
-              Built fast.
-              <br />
-              Built across
-              <br />
-              Central Texas.
+              <span data-hero-step="2" className="hero-anim block">
+                Built right.
+              </span>
+              <span data-hero-step="3" className="hero-anim block">
+                Built fast.
+              </span>
+              <span data-hero-step="4" className="hero-anim block">
+                Built across
+              </span>
+              <span data-hero-step="5" className="hero-anim block">
+                Central Texas.
+              </span>
             </h1>
 
-            <p className="mt-8 text-lg sm:text-xl leading-relaxed text-white/75 max-w-2xl">
+            <p
+              data-hero-step="6"
+              className="hero-anim mt-8 text-lg sm:text-xl leading-relaxed text-white/75 max-w-2xl"
+            >
               Custom welded carports, garages, and barns — engineered, fabricated, and
               installed on your property by an in-house crew. No kits. No subs.
             </p>
 
-            <div className="mt-10 flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-6">
+            <div
+              data-hero-step="7"
+              className="hero-anim mt-10 flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-6"
+            >
               <ButtonLink
                 href="#quote"
                 variant="primary"
@@ -118,7 +134,7 @@ export default function HomePage() {
               </a>
             </div>
 
-            <p className="mt-10 text-sm text-white/55">
+            <p data-hero-step="8" className="hero-anim mt-10 text-sm text-white/55">
               Family-owned · Temple, TX · {SITE.stats.projects} projects · Founded{" "}
               {SITE.established}
             </p>

@@ -1,4 +1,5 @@
 import { Container } from "@/components/ui/Container";
+import { Reveal } from "@/components/ui/Reveal";
 
 /**
  * How It Works — 3-step process.
@@ -45,7 +46,7 @@ export function HowItWorks() {
       />
 
       <Container size="wide" className="relative">
-        <div className="max-w-2xl">
+        <Reveal className="max-w-2xl">
           <span className="text-xs font-semibold uppercase tracking-[0.15em] text-[color:var(--color-brand-400)]">
             How It Works
           </span>
@@ -57,12 +58,11 @@ export function HowItWorks() {
             contractor: the endless coordination. You call once — we take it
             from there.
           </p>
-        </div>
+        </Reveal>
 
         <ol className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
           {STEPS.map((step, idx) => (
-            <li
-              key={step.n}
+            <Reveal key={step.n} as="li" delay={idx * 100}
               className="relative bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-7 hover:bg-white/10 hover:border-[color:var(--color-brand-400)]/40 transition-colors"
             >
               <div className="flex items-center justify-between">
@@ -84,7 +84,7 @@ export function HowItWorks() {
               <p className="mt-3 text-sm leading-relaxed text-white/70">
                 {step.blurb}
               </p>
-            </li>
+            </Reveal>
           ))}
         </ol>
       </Container>

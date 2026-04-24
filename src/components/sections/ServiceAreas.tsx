@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 import { Container } from "@/components/ui/Container";
+import { Reveal } from "@/components/ui/Reveal";
 import { ArrowRightIcon, PinIcon } from "@/components/ui/icons";
 import { SERVICE_CITIES } from "@/lib/site";
 
@@ -17,7 +18,7 @@ export function ServiceAreas() {
       className="py-20 md:py-28"
     >
       <Container size="wide">
-        <div className="max-w-2xl">
+        <Reveal className="max-w-2xl">
           <span className="text-xs font-semibold uppercase tracking-[0.15em] text-[color:var(--color-brand-700)]">
             Where We Build
           </span>
@@ -41,7 +42,7 @@ export function ServiceAreas() {
               <ArrowRightIcon className="h-4 w-4" />
             </Link>
           </div>
-        </div>
+        </Reveal>
 
         <div className="mt-12 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 md:gap-4">
           {SERVICE_CITIES.map((c) => (

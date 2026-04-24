@@ -1,4 +1,5 @@
 import { Container } from "@/components/ui/Container";
+import { Reveal } from "@/components/ui/Reveal";
 
 /**
  * Trust bar — sits directly under the hero.
@@ -19,7 +20,7 @@ export function TrustBar() {
       className="bg-[color:var(--color-ink-950)] text-white border-b border-white/5"
     >
       <Container size="wide">
-        <div className="grid grid-cols-2 md:grid-cols-4 divide-x divide-white/10 border-y border-white/10">
+        <Reveal className="grid grid-cols-2 md:grid-cols-4 divide-x divide-white/10 border-y border-white/10">
           {STATS.map((stat) => (
             <div
               key={stat.label}
@@ -33,7 +34,7 @@ export function TrustBar() {
               </div>
             </div>
           ))}
-        </div>
+        </Reveal>
       </Container>
     </section>
   );
