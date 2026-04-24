@@ -307,6 +307,24 @@ p { line-height: 1.6; }
   will-change: opacity, transform;
 }
 
+/* Multi-step form step transition — slide in from the right when
+   advancing, used by QuoteForm. Re-fires on every step change because
+   React re-creates the DOM element via the `key={step}` prop. */
+@keyframes step-slide-in {
+  from { opacity: 0; transform: translateX(24px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+.step-slide-in {
+  animation: step-slide-in 300ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .step-slide-in {
+    animation: none;
+  }
+}
+
 /* Hero entrance timeline — single source of truth for the choreography.
    Steps cascade ~120ms apart for a rhythmic reveal. Total ~1.7s. */
 .hero-anim[data-hero-step="1"]  { animation-delay:  100ms; } /* eyebrow pill */
