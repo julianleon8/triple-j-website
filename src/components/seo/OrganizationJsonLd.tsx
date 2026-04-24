@@ -59,6 +59,7 @@ export function OrganizationJsonLd() {
       },
     ],
     areaServed,
+    sameAs: Object.values(SITE.social).filter(Boolean),
     knowsAbout: [
       'metal carports',
       'metal garages',

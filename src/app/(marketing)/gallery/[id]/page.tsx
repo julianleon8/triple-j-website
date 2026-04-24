@@ -38,7 +38,7 @@ export async function generateMetadata(
     .eq('is_active', true)
     .maybeSingle()
   if (!item) return {}
-  const title = `${item.title} — ${item.city} | Triple J Metal LLC Gallery`
+  const title = `${item.title} — ${item.city}`
   const description =
     item.alt_text ||
     `${item.type} built by Triple J Metal LLC in ${item.city}. Welded or bolted, same-week scheduling, Temple TX crew.`

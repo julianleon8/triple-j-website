@@ -5,9 +5,9 @@ import { QuoteForm } from '@/components/sections/QuoteForm'
 import { SITE } from '@/lib/site'
 
 export const metadata: Metadata = {
-  title: 'Contact Triple J Metal LLC | Temple, TX | Free Quote',
+  title: 'Contact | Temple, TX | Free Quote',
   description:
-    'Contact Triple J Metal LLC in Temple, TX. Call 254-346-7764 for a same-day callback. We build metal carports, garages, barns, and RV covers across Central Texas.',
+    'Call 254-346-7764 for a same-day callback. Temple-based metal building crew — carports, garages, barns, and RV covers across Central Texas.',
   alternates: { canonical: '/contact' },
   openGraph: {
     title: 'Contact Triple J Metal LLC | Temple, TX',

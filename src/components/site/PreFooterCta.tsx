@@ -23,7 +23,7 @@ export function PreFooterCta() {
       <div className="absolute inset-0">
         <Image
           src="/images/carport-gable-residential.jpg"
-          alt=""
+          alt="Residential gable-roof metal carport installed by Triple J Metal"
           fill
           sizes="100vw"
           className="object-cover opacity-60"

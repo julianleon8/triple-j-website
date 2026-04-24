@@ -108,7 +108,7 @@ function ServiceChipCard({
       <div className="relative aspect-[5/4] overflow-hidden">
         <Image
           src={chip.image}
-          alt=""
+          alt={`${chip.label} — ${chip.sublabel}`}
           fill
           sizes="(max-width: 640px) 50vw, 25vw"
           className={`object-cover transition-all duration-500 ${

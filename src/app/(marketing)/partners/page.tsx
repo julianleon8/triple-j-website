@@ -27,9 +27,9 @@ function pickCover(
 }
 
 export const metadata: Metadata = {
-  title: 'For Suppliers, Manufacturers & GCs | Become a Triple J Install Partner',
+  title: 'For GCs, Manufacturers & Suppliers | Install Partner',
   description:
-    'Triple J Metal LLC is the Central Texas install crew for suppliers, manufacturers, dealers, and commercial GCs. Welded + bolted construction, named in-house crew, no subcontractors. Inquire about partnership.',
+    'Triple J is the Central Texas install crew for manufacturers, dealers, and GCs. Welded + bolted, named in-house crew, no subcontractors.',
   alternates: { canonical: '/partners' },
   openGraph: {
     title: 'Become a Triple J Install Partner | Triple J Metal LLC',

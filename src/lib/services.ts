@@ -47,9 +47,9 @@ export const SERVICES: Record<string, ServiceData> = {
     title: 'Custom Metal Carports',
     shortTitle: 'Carports',
     keywordGap: 2,
-    metaTitle: 'Custom Metal Carports Temple TX | Welded & Bolted | Triple J Metal',
+    metaTitle: 'Custom Metal Carports Temple TX | Welded & Bolted',
     metaDescription:
-      'Triple J Metal builds welded or bolted metal carports in Temple, Belton, Killeen & Central Texas. Same-week installs, concrete pad included. Call 254-346-7764.',
+      'Welded or bolted metal carports in Temple, Belton, Killeen & Central Texas. Same-week installs, concrete pad included.',
     heroHeadline: 'Custom Metal Carports — Welded or Bolted, Same-Week Installs',
     heroCopy:
       'Most carport companies ship you a kit and leave. Triple J Metal LLC shows up with a crew, welds or bolts your structure on-site, and cleans up before we leave. Welded red iron steel is a permanent real estate improvement — it doesn\'t rattle loose in Texas storms. Bolted red iron is the affordable option when a kit-level investment fits your budget. Either way, we build it right the first time.',
@@ -123,9 +123,9 @@ export const SERVICES: Record<string, ServiceData> = {
     title: 'Turnkey Carports with Concrete',
     shortTitle: 'Turnkey + Concrete',
     keywordGap: 1,
-    metaTitle: 'Carports With Concrete Pads Central Texas | One Contract | Triple J Metal',
+    metaTitle: 'Carports With Concrete Pads Central Texas | One Contract',
     metaDescription:
-      'Triple J Metal is the only Central Texas carport builder that includes site prep and concrete pad pouring in a single contract. No coordinating multiple contractors. Call 254-346-7764.',
+      'The only Central Texas carport builder that includes site prep and concrete pouring in a single contract. No coordinating multiple contractors.',
     heroHeadline: 'Carports with Concrete — One Contract, Start to Finish',
     heroCopy:
       'Every other carport company in Central Texas has the same fine print: "Customer is responsible for site preparation and concrete." That means you\'re calling a concrete contractor, waiting on permits, getting a separate quote, coordinating schedules — before the carport people will even show up. Triple J Metal LLC is the only local installer that handles site grading, concrete pad pouring, and structure installation under one contract. One call. One crew. One invoice.',
@@ -199,9 +199,9 @@ export const SERVICES: Record<string, ServiceData> = {
     title: 'Metal Garages',
     shortTitle: 'Garages',
     keywordGap: null,
-    metaTitle: 'Custom Metal Garages Temple & Belton TX | Triple J Metal LLC',
+    metaTitle: 'Custom Metal Garages Temple & Belton TX',
     metaDescription:
-      'Triple J Metal builds fully-enclosed custom metal garages in Temple, Belton, Killeen & Central Texas. Single and multi-bay, welded or bolted, concrete available. Call 254-346-7764.',
+      'Fully-enclosed custom metal garages in Temple, Belton, Killeen & Central Texas. Single and multi-bay, welded or bolted, concrete available.',
     heroHeadline: 'Custom Metal Garages — Fully Enclosed, Built to Order',
     heroCopy:
       'A metal garage from Triple J Metal LLC isn\'t a shed from a big-box store. It\'s a fully-enclosed red iron steel structure, custom-welded or bolted to your exact dimensions, installed on your property with site prep and concrete pad included if needed. Single-bay, double-bay, or multi-car — we build every configuration in Central Texas.',
@@ -270,9 +270,9 @@ export const SERVICES: Record<string, ServiceData> = {
     title: 'Metal Barns & Ranch Structures',
     shortTitle: 'Barns',
     keywordGap: null,
-    metaTitle: 'Metal Barns Central Texas | Ranch & Ag Structures | Triple J Metal LLC',
+    metaTitle: 'Metal Barns Central Texas | Ranch & Ag Structures',
     metaDescription:
-      'Triple J Metal builds metal barns and ranch structures across Bell and Coryell counties. Welded or bolted red iron, concrete available, same-week installs. Call 254-346-7764.',
+      'Metal barns and ranch structures across Bell and Coryell counties. Welded or bolted red iron, concrete available, same-week installs.',
     heroHeadline: 'Metal Barns Built for Central Texas Ranch Life',
     heroCopy:
       'A Central Texas barn has to handle 90 mph gusts, hail the size of golf balls, and baking summer heat — then do it all again next season. Triple J Metal LLC builds welded red iron barns engineered for this climate: thick steel, proper anchoring, and Texas-sourced Galvalume® roofing rated for the punishment Texas delivers. We\'ve built structures across Bell and Coryell counties for livestock, equipment storage, hay, and mixed use. Our John Deere skid-steer reaches 40 feet — we can tackle larger structures that smaller crews can\'t.',
@@ -343,7 +343,7 @@ export const SERVICES: Record<string, ServiceData> = {
     keywordGap: 3,
     metaTitle: 'RV Covers Central Texas | Same-Week Installs | Fort Cavazos Military Discount',
     metaDescription:
-      'Triple J Metal builds custom RV and boat covers fast across Central Texas — same-week scheduling, military discount available, concrete pad included. Call 254-346-7764.',
+      'Custom RV and boat covers across Central Texas — same-week scheduling, military discount, concrete pad included.',
     heroHeadline: 'RV & Boat Covers — Same-Week Installs, Texas Hail Won\'t Wait',
     heroCopy:
       'Texas hail season doesn\'t send a calendar invite. A single storm can total an unprotected RV or boat in minutes. Triple J Metal LLC builds tall-clearance RV and boat covers faster than any competitor in Central Texas — most jobs are scheduled and on-site within days of your approval. East Texas Carports quotes 4–16 weeks. If you just bought an RV, just PCS\'d to Fort Cavazos, or just had a close call with hail — call us today.',
@@ -416,9 +416,9 @@ export const SERVICES: Record<string, ServiceData> = {
     title: 'HOA-Compliant Metal Structures',
     shortTitle: 'HOA Structures',
     keywordGap: 4,
-    metaTitle: 'HOA-Compliant Metal Carports & Porches | Heritage Oaks Bella Charca | Triple J Metal',
+    metaTitle: 'HOA-Compliant Metal Carports & Porches | Heritage Oaks Bella Charca',
     metaDescription:
-      'Triple J Metal builds HOA-compliant metal carports, garages, and porches with architectural panel finishes for Heritage Oaks, Bella Charca, and Central Texas luxury subdivisions. Call 254-346-7764.',
+      'HOA-compliant metal carports, garages, and porches with architectural panel finishes for Heritage Oaks, Bella Charca, and Central Texas luxury subdivisions.',
     heroHeadline: 'HOA-Compliant Metal Structures for Central Texas Luxury Subdivisions',
     heroCopy:
       'Heritage Oaks and Bella Charca homeowners know the challenge: your HOA has strict architectural guidelines, your builder only built the main house, and the secondary structures — the RV cover, the porch extension, the detached garage — are yours to figure out. National carport brands sell utility-grade sheds that HOAs reject on first review. Triple J Metal LLC builds premium architectural structures using concealed-fastener standing-seam and Board & Batten panel systems that meet the strictest HOA guidelines in Central Texas — and we include concrete and site prep so you never have to manage a second contractor.',

@@ -19,9 +19,9 @@ const STANDARD_SUB   = LINE_SUBTITLES.Turnium
 const PREMIUM_SUB    = LINE_SUBTITLES.Sheffield
 
 export const metadata: Metadata = {
-  title: 'Metal Panel Colors & Finishes | Triple J Metal LLC',
+  title: 'Metal Panel Colors & Finishes',
   description:
-    'Browse 39 metal panel colors for your carport, garage, or barn in Central Texas. 26 & 29-gauge Galvalume® steel with a 40-year paint warranty. Two lines: Standard exposed-fastener and Premium concealed-fastener.',
+    'Browse 39 metal panel colors for your Central Texas carport, garage, or barn. 26 & 29-gauge Galvalume® steel with a 40-year paint warranty.',
   alternates: { canonical: '/services/colors' },
   openGraph: {
     title: 'Metal Panel Colors & Finishes | Triple J Metal LLC',

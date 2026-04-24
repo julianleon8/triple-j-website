@@ -23,8 +23,9 @@ export const SITE = {
     projects: "150+",
   },
   social: {
-    facebook: "", // TODO
-    google: "", // TODO
+    instagram: "https://www.instagram.com/triplejmetal/",
+    facebook: "https://www.facebook.com/profile.php?id=61579877376850",
+    google: "", // fill once GBP verifies; goes into sameAs + adds Knowledge Panel signal
   },
 } as const;
 

@@ -28,9 +28,9 @@ function pickCover(
 }
 
 export const metadata: Metadata = {
-  title: 'Hybrid Projects | Horse Stalls, Warehouses, Decks & One-Off Builds | Triple J Metal',
+  title: 'Hybrid Projects | Horse Stalls, Warehouses, Decks',
   description:
-    'Triple J Metal LLC builds the projects that don\'t fit a standard catalog — horse stalls, all-black warehouses, decks, custom commercial. Welded + bolted construction, Central Texas crew. Call 254-346-7764.',
+    'Triple J builds projects that don\'t fit a catalog — horse stalls, warehouses, decks, custom commercial. Welded + bolted, Central Texas crew.',
   alternates: { canonical: '/services/hybrid-projects' },
   openGraph: {
     title: 'Hybrid Projects | Triple J Metal LLC',

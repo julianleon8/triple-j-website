@@ -5,9 +5,9 @@ import { QuoteForm } from '@/components/sections/QuoteForm'
 import { SITE } from '@/lib/site'
 
 export const metadata: Metadata = {
-  title: 'PBR vs PBU Metal Roofing Panels | Which Is Right for You? | Triple J Metal LLC',
+  title: 'PBR vs PBU Metal Roofing Panels | Which to Choose',
   description:
-    'Understand the difference between PBR and PBU metal roofing panels before you build. Triple J Metal LLC builds with both across Central Texas — learn which panel type fits your project.',
+    'PBR vs PBU metal roofing panels: when to use each. Triple J Metal builds with both across Central Texas — which panel type fits your project?',
   alternates: { canonical: '/services/pbr-vs-pbu-panels' },
   openGraph: {
     title: 'PBR vs PBU Metal Panels | Triple J Metal LLC',

@@ -6,9 +6,9 @@ import { BLOG_POSTS, type BlogCategory } from '@/lib/blog'
 import { SITE } from '@/lib/site'
 
 export const metadata: Metadata = {
-  title: 'Blog | Central Texas Metal Building Guides | Triple J Metal LLC',
+  title: 'Blog | Central Texas Metal Building Guides',
   description:
-    'Local guides, permit walkthroughs, and metal building education for Central Texas homeowners. Written by the Triple J Metal LLC crew in Temple, TX.',
+    'Local guides, permit walkthroughs, and metal building education for Central Texas. Written by the Triple J Metal crew in Temple, TX.',
   alternates: { canonical: '/blog' },
   openGraph: {
     title: 'Blog | Triple J Metal LLC',

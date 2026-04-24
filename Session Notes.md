@@ -1,3 +1,71 @@
+## 2026-04-23 — Phase B shipped: HQ iOS PWA + full public-site magazine redesign + SEO/security hardening
+
+**Context:** The "Phase B = next session" framing from 2026-04-22 is obsolete. Phase B shipped end-to-end in a single long-form session. Latest prod: commit `005bfba`, Vercel deployment `dpl_98A4EooFWQ3jcVxR7vwPtWKwZveU` (READY). `Next Session Primer.md` rewritten to match.
+
+### HQ → iOS PWA (commits `5fa93db` → `3bf2e2d`)
+- Phase B0-B5 complete: foundations + iOS two-tab IA (Now/Funnel) + real Funnel tab (unified `PipelineList` across 5 entity types) + swipe actions + pull-to-refresh + offline-first reads + install prompt + **push notifications** (phone buzzes on new leads / hot permits / accepted quotes) + settings hub
+- Dark mode shipped as iOS `prefers-color-scheme` default — **reverses** the 2026-04-14 "no dark mode" lock. Steel-blue retuned for dark contrast (`--brand-fg: #4d8dff` in dark, `#1e6bd6` in light). Semantic tokens remap inside `@media (prefers-color-scheme: dark)`. No user toggle.
+- HQ perf: streaming shell + per-section Suspense (kills 2-5s blank screen), SW StaleWhileRevalidate, lazy-load Recharts + framer-motion off critical bundle
+- Favicon multi-size ICO + regen'd PWA icons (white lion on brand-blue + black detailed/simple variants)
+- **Marketing layout scoped to light-only** — dark mode is HQ-only
+
+### Public-site magazine redesign (commits `07e2e5f` → `005bfba`)
+Full rebuild against a locked design language: full-bleed dark hero + diagonal gradient, red eyebrow pill, Barlow Condensed huge headlines with brand-blue accent words, magazine editorial labels.
+- **Hero v2** — "BUILT RIGHT. / BUILT FAST. / BUILT ACROSS / CENTRAL TEXAS." — finally kills the stale "Built in Under 48 Hours" copy on the homepage centerpiece (2026-04-15 lock, never executed)
+- **Services / WhyTripleJ / Testimonials / ServiceAreas** — all redesigned to the magazine language (photo-dominant, dark editorial spreads, brand-blue glows, dot-grid textures)
+- **Site chrome** — route-aware Header (transparent over `/` hero, dark+blur elsewhere), magazine wordmark lockup, new `<PreFooterCta />` band between `<main>` and `<Footer>` (bookends the hero on every marketing page), upgraded Footer brand column
+- **Motion language** — hero entrance choreography + scroll reveals via `useReveal` hook, single easing curve `cubic-bezier(0.22, 1, 0.36, 1)`, all respects `prefers-reduced-motion`, no framer-motion in public bundle
+- **QuoteForm** — cinematic glass card over full-bleed red-iron hero, 2-step (revises 2026-04-15 3-step lock), service-chip-first, magazine editorial labels, redirects to new `/thank-you` page, step transitions slide-in from right
+- **/services list** — magazine hero + featured Carports flagship split card + 3-up grid + Resources dark card
+- **/locations/[slug] template redesigned** (12 template + 8 per-city decisions). New `LocationData` fields: `heroImage`, `customHeadline`, `heroSubhead`, `distanceFromTemple`, `habla`, `localIntro`, `landmarks[]`, `neighborhoods[]`, `topServices[]`, `whyLocalBullets[]`, `callouts[]` (array). All optional with legacy fallbacks so unpersonalized cities still render.
+- **3 cities personalized** (Killeen → Temple → Belton): military-first / HQ-pride-lakeside / county-seat-authority positioning respectively. Belton introduced `callouts[]` array — Temple's old `premiumCallout` migrated to array form, zero behavior change.
+
+### SEO + positioning pass (commits `557e486` → `3656e97`)
+- Root Organization schema + BreadcrumbList + canonical URL fix + og:image + llms.txt rewrite for GEO
+- **8 new county pages** — `/locations/[county-slug]` for Bell / McLennan / Coryell / Williamson / Lampasas / Falls / Milam / Burnet. Mirrors Caliber Metal's 18-location approach (now 14 cities + 8 counties = 22 location surfaces). Bell + Coryell get military section (Fort Cavazos).
+- Image sitemap + `ImageGallery` JSON-LD schema
+- **Supplier-agnostic positioning** (commit `5dc30c9`) — removed all customer-facing references to MetalMax, MetalMart, WeatherXL™, Turnium, Sheffield, MaxLoc/MaxSeam/MaxSnap across site copy, blog, location pages, service-page data, vault docs. Reads as "leading regional Texas suppliers — multi-source" so supplier churn or dual-sourcing requires zero web rewrite. `gallery_items.panel_color_line` still uses internal `'turnium' | 'sheffield'` IDs for back-compat; user-facing labels are "Standard Line" / "Premium Line" via `LINE_LABELS`.
+- **Lone-Star color names become canonical** — 39 colors renamed (Storm Cloud / Bell County Black / Wine Country / Pinto Green / Saddle Tan / etc.), used everywhere (public site + HQ picker + alt text + gallery cards). Exception: **Galvalume + Acrylic-Coated Galvalume kept as functional names** (cheapest panels — price signal customers shop on). "Best Value" emerald badge added to Galvalume swatches.
+
+### New pages
+- **`/services/hybrid-projects`** — catch-all for non-standard builds (horse stalls, all-black warehouses, decks, custom commercial). Auto-pulls photos from `gallery_items WHERE type = 'Hybrid'`. Sales-link URL for commercial leads.
+- **`/partners`** — B2B install-partnership funnel. Promoted to main nav (not footer). Posts to new `partner_inquiries` table (migration `011_partner_inquiries.sql` applied to prod), HQ inbox at `/hq/partners` with status pills + notes autosave.
+- **`/thank-you`** — `robots: { index: false }`, QuoteForm redirect target.
+
+### Security pass (commit `1cd2cef`)
+- **hCaptcha** (chosen over Turnstile) — server-side verify + client widget on QuoteForm + PartnerInquiryForm. Env vars `NEXT_PUBLIC_HCAPTCHA_SITE_KEY` + `HCAPTCHA_SECRET_KEY` (Sensitive). Skip-if-unset for dev.
+- **Per-IP rate limiting** — in-memory LRU, 5/hr on `/api/leads`, 3/hr on `/api/partner-inquiries`. Spam deterrent only, not DDoS shield.
+- **Harker Heights copy fix** — `48-hour` → `same-week` in `metaTitle` + `heroHeadline` (was contradicting the 2026-04-15 lock).
+- CSP flip from Report-Only → enforced **deferred** to a separate commit after 24h monitoring.
+
+### Nav + brand polish
+- **Service Areas demoted** main nav → footer-only (Partners took the 7th slot, footer already has the full Service Areas column)
+- **"English · Español"** tag under phone number
+- Logo cleanup: circular mask + trim on `public/images/logo-lion.png`
+- Positioning: "Clients" stat → "Mon–Sat" (availability, not vanity metric)
+
+### Key engineering realizations
+- **"Welded" at Triple J = welded + bolted** (logged as a Decisions.md row, 2026-04-23). To weld red-iron on-site the crew first bolts everything into position, then welds. Bolts stay (rubber gaskets prevent leaks). Copy implication: "welded structures are reinforced with permanent bolts" — credibility upgrade, not a contradiction of the welded-or-bolted tagline.
+- hCaptcha secret was sent through chat — **must rotate** in dashboard + re-add via `vercel env add HCAPTCHA_SECRET_KEY production --sensitive` once integration is verified.
+
+### Pending Julian actions (all unchanged from 2026-04-22 + additions)
+- Resend domain verification (still critical — silent bounce otherwise)
+- Fire `Run Scrape Now` button to validate Lead Engine end-to-end
+- Source real photos into `/public/images/locations/{killeen,temple,belton}/` (hero + landmark photos — current placeholders use `red-iron-frame-hero.jpg` / `carport-gable-residential.jpg`; landmarks render as typography-only cards until real photos arrive, intentional magazine treatment)
+- Rotate hCaptcha secret
+- Review the welded-vs-bolted blog post against the "welded always includes bolts" engineering reality (currently frames them as mutually exclusive)
+
+### What's actually queued next
+- **Personalize remaining 11 cities** using the Killeen/Temple/Belton template (Harker Heights → Copperas Cove → Waco → Salado → Georgetown → Round Rock → Lampasas → Holland → Taylor → Troy → Nolanville)
+- Spanish `/es/` landing + carports/garages/barns
+- `/pricing` page with transparent ranges + calculator from `jobs` table
+- Quote templates UI at `/hq/quotes/templates`
+- Permit Lead Engine end-to-end test + CivicPlus jurisdictions (Killeen, Copperas Cove, Waco, McLennan Co.)
+- Real photo sourcing into `/public/images/locations/` (all cities)
+- Reviews velocity automation + Twilio SMS speed-to-response (Phase 2 core, still not built)
+
+---
+
 ## 2026-04-22 — Functional pass: email unify, manual customer create, manual scrape, `/hq` KPI grid
 
 **Context:** Site is live, dashboard is live, but Julian hit a string of bugs and friction points. This session was a functional pass (no design polish) that cleaned the rough edges and unlocked the dashboard as a daily command center.

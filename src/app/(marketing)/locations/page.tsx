@@ -3,9 +3,9 @@ import Link from 'next/link'
 import { LOCATIONS, LOCATION_SLUGS } from '@/lib/locations'
 
 export const metadata: Metadata = {
-  title: 'Metal Carport Service Areas in Central Texas | Triple J Metal LLC',
+  title: 'Metal Carport Service Areas in Central Texas',
   description:
-    'Triple J Metal LLC installs metal carports, garages, and barns across Central Texas. Serving Temple, Harker Heights, Killeen, Copperas Cove, Belton, and surrounding Bell County areas.',
+    'Triple J Metal installs carports, garages, and barns across Central Texas — Temple, Harker Heights, Killeen, Copperas Cove, Belton, Bell County.',
   alternates: {
     canonical: '/locations',
   },

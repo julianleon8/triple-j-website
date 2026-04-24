@@ -5,9 +5,9 @@ import { QuoteForm } from '@/components/sections/QuoteForm'
 import { SITE } from '@/lib/site'
 
 export const metadata: Metadata = {
-  title: 'About Triple J Metal LLC | Temple, TX Local Metal Building Family',
+  title: 'About — Temple, TX Metal Building Family',
   description:
-    'Triple J Metal LLC is a Temple, TX family business — Juan Luis Leon and Julian Leon Alvarez. 150+ completed projects, welded red iron steel, turnkey concrete. Not a national chain.',
+    'Temple, TX family metal building contractor. 150+ completed projects, welded red iron steel, turnkey concrete. Not a national chain.',
   alternates: { canonical: '/about' },
   openGraph: {
     title: 'About Triple J Metal LLC | Temple, TX',

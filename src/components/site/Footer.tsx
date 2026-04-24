@@ -2,7 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 
 import { Container } from "@/components/ui/Container";
-import { PhoneIcon, PinIcon } from "@/components/ui/icons";
+import { FacebookIcon, InstagramIcon, PhoneIcon, PinIcon } from "@/components/ui/icons";
 import { NAV_LINKS, SERVICES, SERVICE_CITIES, SITE } from "@/lib/site";
 
 /**
@@ -83,6 +83,29 @@ export function Footer() {
                 </a>
               </div>
             </address>
+
+            {/* Social profile links — visible signal that pairs with
+                LocalBusiness sameAs in OrganizationJsonLd.tsx. */}
+            <div className="mt-6 flex items-center gap-3">
+              <a
+                href={SITE.social.instagram}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Triple J Metal on Instagram"
+                className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-white/15 text-white/70 hover:text-white hover:border-[color:var(--color-brand-400)] transition-colors"
+              >
+                <InstagramIcon className="h-4 w-4" />
+              </a>
+              <a
+                href={SITE.social.facebook}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Triple J Metal on Facebook"
+                className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-white/15 text-white/70 hover:text-white hover:border-[color:var(--color-brand-400)] transition-colors"
+              >
+                <FacebookIcon className="h-4 w-4" />
+              </a>
+            </div>
           </div>
 
           {/* Col 2 — Services */}

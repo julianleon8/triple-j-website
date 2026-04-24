@@ -102,9 +102,9 @@ export const LOCATIONS: Record<string, LocationData> = {
     zip: '76548',
     lat: 31.0804,
     lng: -97.6477,
-    metaTitle: 'Metal Carports Harker Heights TX | Same-Week Install | Triple J Metal LLC',
+    metaTitle: 'Metal Carports Harker Heights TX | Same-Week Install',
     metaDescription:
-      'Triple J Metal builds welded or bolted metal carports in Harker Heights, TX — same-week installs, concrete pad included, Fort Cavazos military discount. Call 254-346-7764.',
+      'Welded or bolted metal carports in Harker Heights, TX — same-week installs, concrete pad included, Fort Cavazos military discount.',
     heroHeadline: 'Metal Carports in Harker Heights, TX — Same-Week Installs',
     heroCopy:
       "Harker Heights homeowners trust Triple J Metal LLC for durable metal carports installed fast. We're a local Central Texas company — not a national kit seller — which means we show up, weld it, and stand behind our work. PCS'ing to Fort Cavazos? We'll protect your vehicles before your household goods arrive.",
@@ -136,9 +136,9 @@ export const LOCATIONS: Record<string, LocationData> = {
     zip: '76541',
     lat: 31.1171,
     lng: -97.7278,
-    metaTitle: 'Metal Carports Killeen TX | Built for Fort Cavazos Timelines | Triple J Metal LLC',
+    metaTitle: 'Metal Carports Killeen TX | Built for Fort Cavazos Timelines',
     metaDescription:
-      "Killeen's local metal building crew — welded or bolted carports, RV covers, and garages built same-week for Fort Cavazos PCS timelines. Concrete pad included. Hablamos español. Call 254-346-7764.",
+      "Killeen's local metal building crew — welded or bolted carports, RV covers, and garages built same-week for Fort Cavazos PCS timelines. Concrete included. Hablamos español.",
     // Legacy fallbacks (used if new fields below aren't populated)
     heroHeadline: "Built in Killeen. Built for Fort Cavazos.",
     heroCopy:
@@ -216,9 +216,9 @@ export const LOCATIONS: Record<string, LocationData> = {
     zip: '76522',
     lat: 31.1224,
     lng: -97.907,
-    metaTitle: 'Metal Carports Copperas Cove TX | Triple J Metal LLC',
+    metaTitle: 'Metal Carports Copperas Cove TX',
     metaDescription:
-      'Triple J Metal LLC installs affordable metal carports in Copperas Cove, TX — welded or bolted red iron steel, concrete pad available, same-week installs. Call 254-346-7764 for a free quote.',
+      'Affordable metal carports in Copperas Cove, TX — welded or bolted red iron steel, concrete pad available, same-week installs. Call for a free quote.',
     heroHeadline: 'Affordable Metal Carports in Copperas Cove, TX',
     heroCopy:
       "Copperas Cove homeowners searching for a carport builder get hit with national kit companies that ship a package and walk away. Triple J Metal LLC is different — we're a local Central Texas crew that installs everything ourselves. Welded or bolted, residential or ranch, concrete pad included if needed.",
@@ -245,9 +245,9 @@ export const LOCATIONS: Record<string, LocationData> = {
     zip: '76501',
     lat: 31.0982,
     lng: -97.3428,
-    metaTitle: 'Metal Carports Temple TX | HQ · 3319 Tem-Bel Ln | Triple J Metal LLC',
+    metaTitle: 'Metal Carports Temple TX | HQ · 3319 Tem-Bel Ln',
     metaDescription:
-      "Triple J Metal LLC's home shop is in Temple, TX. Welded or bolted carports, garages, RV covers, and HOA-grade residential builds — same-week across Western Hills, Lake Belton, and all of Temple. Hablamos español. Call 254-346-7764.",
+      "Triple J's home shop in Temple, TX. Welded or bolted carports, garages, RV covers — same-week across Western Hills, Lake Belton, and all of Temple. Hablamos español.",
     // Legacy fallbacks (used if new fields below aren't populated)
     heroHeadline: "Built in Temple. Built where we live.",
     heroCopy:
@@ -339,9 +339,9 @@ export const LOCATIONS: Record<string, LocationData> = {
     zip: '76513',
     lat: 31.0557,
     lng: -97.4641,
-    metaTitle: "Metal Carports Belton TX | Bell County's Home Crew | Triple J Metal LLC",
+    metaTitle: "Metal Carports Belton TX | Bell County's Home Crew",
     metaDescription:
-      "Belton's local metal building crew — 15 minutes from our Temple shop, the closest city to HQ. Welded or bolted carports, ranch barns, and lakeside RV covers across Bell County. Permits handled. Hablamos español. Call 254-346-7764.",
+      "Belton's local metal building crew — 15 min from our Temple shop. Welded or bolted carports, ranch barns, and lakeside RV covers. Permits handled. Hablamos español.",
     // Legacy fallbacks (used if new fields below aren't populated)
     heroHeadline: "Built in Belton. Bell County's home crew.",
     heroCopy:
@@ -441,9 +441,9 @@ export const LOCATIONS: Record<string, LocationData> = {
     zip: '76571',
     lat: 30.9452,
     lng: -97.5344,
-    metaTitle: 'Metal Carports Salado TX | Turnkey + Concrete | Triple J Metal LLC',
+    metaTitle: 'Metal Carports Salado TX | Turnkey + Concrete',
     metaDescription:
-      'Triple J Metal LLC builds custom metal carports in Salado, TX — welded or bolted red iron, concrete pad included, same-week installs. Local Temple crew 20 min away. Call 254-346-7764.',
+      'Custom metal carports in Salado, TX — welded or bolted red iron, concrete pad included, same-week installs. Local Temple crew 20 min away.',
     heroHeadline: 'Metal Carports in Salado, TX — Local Builder, Concrete Included',
     heroCopy:
       "Salado homeowners and ranchers don't have to wait weeks for a national carport company to ship a kit. Triple J Metal LLC is based in Temple — 20 minutes away — and our crew installs welded or bolted red iron structures with concrete pads in the same contract. One call, one company, done.",
@@ -471,9 +471,9 @@ export const LOCATIONS: Record<string, LocationData> = {
     zip: '76701',
     lat: 31.5493,
     lng: -97.1467,
-    metaTitle: 'Metal Carports Waco TX | Welded + Turnkey Concrete | Triple J Metal LLC',
+    metaTitle: 'Metal Carports Waco TX | Welded + Turnkey Concrete',
     metaDescription:
-      'Triple J Metal LLC builds custom welded metal carports in Waco, TX — turnkey concrete included, same-week scheduling. Central Texas crew serving all of McLennan County. Call 254-346-7764.',
+      'Custom welded metal carports in Waco, TX — turnkey concrete included, same-week scheduling. Central Texas crew serving all of McLennan County.',
     heroHeadline: 'Metal Carport Builder Serving Waco, TX — Turnkey Concrete Included',
     heroCopy:
       "Waco homeowners and property owners searching for a real metal building contractor — not a kit shipper — have found the right company. Triple J Metal LLC is based in Temple, 45 minutes away, and we bring a full crew to weld or bolt your structure and pour the concrete pad, all in one contract.",
@@ -500,9 +500,9 @@ export const LOCATIONS: Record<string, LocationData> = {
     zip: '78626',
     lat: 30.6333,
     lng: -97.6779,
-    metaTitle: 'Metal Carports Georgetown TX | Welded Steel | Triple J Metal LLC',
+    metaTitle: 'Metal Carports Georgetown TX | Welded Steel',
     metaDescription:
-      'Triple J Metal LLC installs welded and bolted metal carports in Georgetown, TX — concrete pad included, same-week builds. Central Texas family crew. Call 254-346-7764.',
+      'Welded and bolted metal carports in Georgetown, TX — concrete pad included, same-week builds. Central Texas family crew.',
     heroHeadline: 'Metal Carport Installation in Georgetown, TX — Welded Steel + Concrete',
     heroCopy:
       "Georgetown is one of the fastest-growing cities in Texas — and property owners here are looking for carports, garages, and RV covers that match the quality of their homes. Triple J Metal LLC builds welded red iron structures in Georgetown, includes concrete pad pouring in the same contract, and gets it done without a 3-month wait.",
@@ -529,9 +529,9 @@ export const LOCATIONS: Record<string, LocationData> = {
     zip: '78664',
     lat: 30.5083,
     lng: -97.6789,
-    metaTitle: 'Metal Carports Round Rock TX | Turnkey Install | Triple J Metal LLC',
+    metaTitle: 'Metal Carports Round Rock TX | Turnkey Install',
     metaDescription:
-      'Triple J Metal LLC builds custom metal carports and garages in Round Rock, TX — welded or bolted, concrete pad included. Central Texas family crew, same-week installs. Call 254-346-7764.',
+      'Custom metal carports and garages in Round Rock, TX — welded or bolted, concrete pad included. Central Texas family crew, same-week installs.',
     heroHeadline: 'Metal Carports & Garages in Round Rock, TX — Full Crew, Concrete Included',
     heroCopy:
       "Round Rock homeowners have plenty of national carport dealers to choose from — and none of them show up with a crew. Triple J Metal LLC is different. We drive from Temple, weld or bolt your structure on-site, and pour the concrete pad in the same contract. No kits, no subcontractors, no waiting.",
@@ -558,9 +558,9 @@ export const LOCATIONS: Record<string, LocationData> = {
     zip: '76550',
     lat: 31.0632,
     lng: -98.1793,
-    metaTitle: 'Metal Carports Lampasas TX | Ranch Structures | Triple J Metal LLC',
+    metaTitle: 'Metal Carports Lampasas TX | Ranch Structures',
     metaDescription:
-      'Triple J Metal LLC builds metal carports, barns, and ranch structures in Lampasas, TX — welded or bolted red iron, concrete included, same-week installs. Call 254-346-7764.',
+      'Metal carports, barns, and ranch structures in Lampasas, TX — welded or bolted red iron, concrete included, same-week installs.',
     heroHeadline: 'Metal Carports & Ranch Structures in Lampasas, TX',
     heroCopy:
       "Lampasas and Lampasas County are ranch and farm country — and the structures here need to hold up to Hill Country weather without a kit falling apart. Triple J Metal LLC builds welded red iron carports, barns, and ranch structures in Lampasas with concrete pads poured in the same contract.",
@@ -588,7 +588,7 @@ export const LOCATIONS: Record<string, LocationData> = {
     zip: '76534',
     lat: 30.8796,
     lng: -97.4091,
-    metaTitle: 'Metal Carports Holland TX | Bell County | Triple J Metal LLC',
+    metaTitle: 'Metal Carports Holland TX | Bell County',
     metaDescription:
       'Triple J Metal LLC builds metal carports and barns in Holland, TX — welded or bolted red iron, concrete available. Local Bell County crew. Call 254-346-7764.',
     heroHeadline: 'Metal Carports & Barns in Holland, TX — Local Bell County Crew',
@@ -617,9 +617,9 @@ export const LOCATIONS: Record<string, LocationData> = {
     zip: '76574',
     lat: 30.5711,
     lng: -97.4097,
-    metaTitle: 'Metal Carports Taylor TX | Williamson County | Triple J Metal LLC',
+    metaTitle: 'Metal Carports Taylor TX | Williamson County',
     metaDescription:
-      'Triple J Metal LLC builds custom metal carports and garages in Taylor, TX — welded or bolted red iron steel, concrete pad included, same-week scheduling. Call 254-346-7764.',
+      'Custom metal carports and garages in Taylor, TX — welded or bolted red iron steel, concrete pad included, same-week scheduling.',
     heroHeadline: 'Metal Carports & Garages in Taylor, TX — Welded Steel + Concrete',
     heroCopy:
       "Taylor is growing fast thanks to new development in Williamson County. Homeowners and property managers here need carports and garages that hold up to Central Texas weather. Triple J Metal LLC builds welded and bolted structures in Taylor with turnkey concrete included.",
@@ -646,9 +646,9 @@ export const LOCATIONS: Record<string, LocationData> = {
     zip: '76579',
     lat: 31.2057,
     lng: -97.2983,
-    metaTitle: 'Metal Carports Troy TX | Bell County | Triple J Metal LLC',
+    metaTitle: 'Metal Carports Troy TX | Bell County',
     metaDescription:
-      'Triple J Metal LLC builds metal carports and barns in Troy, TX — welded or bolted red iron, concrete available, same-week installs. Local Temple-based Bell County crew. Call 254-346-7764.',
+      'Metal carports and barns in Troy, TX — welded or bolted red iron, concrete available, same-week installs. Local Temple-based Bell County crew.',
     heroHeadline: 'Metal Carports & Ranch Structures in Troy, TX',
     heroCopy:
       "Troy is a small rural Bell County community — and property owners here often get overlooked by the big carport dealers who only target the larger cities. Triple J Metal LLC serves Troy and surrounding rural Bell County with the same full-service install as anywhere else: welded or bolted steel, concrete if needed, one contract.",
@@ -675,7 +675,7 @@ export const LOCATIONS: Record<string, LocationData> = {
     zip: '76559',
     lat: 31.0799,
     lng: -97.6024,
-    metaTitle: 'Metal Carports Nolanville TX | Bell County | Triple J Metal LLC',
+    metaTitle: 'Metal Carports Nolanville TX | Bell County',
     metaDescription:
       'Triple J Metal LLC installs metal carports and garages in Nolanville, TX — 15 min from Temple, welded or bolted red iron, concrete included. Call 254-346-7764.',
     heroHeadline: 'Metal Carports & Garages in Nolanville, TX — 15 Minutes from Temple',
@@ -708,9 +708,9 @@ export const LOCATIONS: Record<string, LocationData> = {
     zip: '76513',
     lat: 31.0568,
     lng: -97.4647,
-    metaTitle: 'Metal Buildings Bell County TX | Carports, Garages, Barns | Triple J Metal LLC',
+    metaTitle: 'Metal Buildings Bell County TX | Carports, Garages, Barns',
     metaDescription:
-      'Triple J Metal builds welded or bolted metal carports, garages, and barns across all of Bell County, TX — Temple, Belton, Killeen, Harker Heights, Salado, Holland, Troy. Local crew, same-week installs. Call 254-346-7764.',
+      'Welded or bolted metal carports, garages, and barns across Bell County — Temple, Belton, Killeen, Harker Heights, Salado, Holland, Troy. Local crew, same-week installs.',
     heroHeadline: 'Bell County Metal Building Contractor — Temple, Belton, Killeen, Harker Heights',
     heroCopy:
       "Bell County is our home turf. Triple J Metal LLC is based in Temple and serves every Bell County community — Belton, Killeen, Harker Heights, Salado, Holland, Troy, Nolanville, Rogers — with welded or bolted metal carports, garages, barns, RV covers, and turnkey concrete. We've completed 150+ Bell County projects, we know the soil conditions, the permit thresholds, and the wind ratings the county requires.",
@@ -742,9 +742,9 @@ export const LOCATIONS: Record<string, LocationData> = {
     zip: '76701',
     lat: 31.5494,
     lng: -97.1467,
-    metaTitle: 'Metal Buildings McLennan County TX | Waco Metal Carports & Garages | Triple J Metal',
+    metaTitle: 'Metal Buildings McLennan County TX | Waco Metal Carports & Garages',
     metaDescription:
-      "Triple J Metal builds welded metal carports, garages, and barns across McLennan County, TX — Waco, Hewitt, Woodway, China Spring, and rural properties along the Brazos. 45 min from our Temple yard. Call 254-346-7764.",
+      'Welded metal carports, garages, and barns across McLennan County — Waco, Hewitt, Woodway, China Spring, and rural properties along the Brazos. 45 min from Temple.',
     heroHeadline: 'McLennan County Metal Building Contractor — Waco, Hewitt, Woodway, China Spring',
     heroCopy:
       "McLennan County property owners — homeowners, ranchers, and small commercial operators — work with Triple J Metal LLC for welded red iron carports, garages, barns, and RV covers across the entire county. We're 45 minutes from Waco, we bring our own crew, and we pour concrete in the same contract.",
@@ -770,9 +770,9 @@ export const LOCATIONS: Record<string, LocationData> = {
     zip: '76528',
     lat: 31.4357,
     lng: -97.7558,
-    metaTitle: 'Metal Buildings Coryell County TX | Copperas Cove, Gatesville | Triple J Metal LLC',
+    metaTitle: 'Metal Buildings Coryell County TX | Copperas Cove, Gatesville',
     metaDescription:
-      'Triple J Metal builds welded carports, garages, barns, and ranch structures across Coryell County, TX — Copperas Cove, Gatesville, and rural ag properties. Welded or bolted, concrete included. Call 254-346-7764.',
+      'Welded carports, garages, barns, and ranch structures across Coryell County — Copperas Cove, Gatesville, and rural ag properties. Welded or bolted, concrete included.',
     heroHeadline: 'Coryell County Metal Building Contractor — Copperas Cove, Gatesville, Rural Ranch',
     heroCopy:
       "Coryell County is ranch country with a military edge — bordering Fort Cavazos in the east and stretching into the Hill Country in the west. Triple J Metal LLC builds welded barns, equipment covers, garages, and carports for Coryell County ranchers, military families in Copperas Cove, and homeowners in Gatesville — all with our own crew and turnkey concrete.",
@@ -803,9 +803,9 @@ export const LOCATIONS: Record<string, LocationData> = {
     zip: '78626',
     lat: 30.6327,
     lng: -97.6772,
-    metaTitle: 'Metal Buildings Williamson County TX | Georgetown, Round Rock, Taylor | Triple J Metal',
+    metaTitle: 'Metal Buildings Williamson County TX | Georgetown, Round Rock, Taylor',
     metaDescription:
-      "Triple J Metal builds welded metal carports, garages, RV covers, and HOA-compliant structures across Williamson County, TX — Georgetown, Round Rock, Taylor, Hutto, Liberty Hill. Same-week installs. Call 254-346-7764.",
+      'Welded carports, garages, RV covers, and HOA-compliant structures across Williamson County — Georgetown, Round Rock, Taylor, Hutto, Liberty Hill. Same-week installs.',
     heroHeadline: 'Williamson County Metal Building Contractor — Georgetown, Round Rock, Taylor',
     heroCopy:
       "Williamson County is the fastest-growing county in Texas — and that growth means new homeowners constantly need carports, garages, RV covers, and HOA-compliant secondary structures. Triple J Metal LLC drives 60-90 minutes from our Temple yard to build with our own crew, our own steel, and turnkey concrete. National dealers can't say the same.",
@@ -831,9 +831,9 @@ export const LOCATIONS: Record<string, LocationData> = {
     zip: '76550',
     lat: 31.0635,
     lng: -98.182,
-    metaTitle: 'Metal Buildings Lampasas County TX | Carports, Barns, Ranch | Triple J Metal LLC',
+    metaTitle: 'Metal Buildings Lampasas County TX | Carports, Barns, Ranch',
     metaDescription:
-      'Triple J Metal builds welded metal carports, garages, ranch barns, and equipment covers across Lampasas County, TX — Lampasas, Lometa, Kempner. 45 min from Temple. Call 254-346-7764.',
+      'Welded metal carports, garages, ranch barns, and equipment covers across Lampasas County — Lampasas, Lometa, Kempner. 45 min from Temple.',
     heroHeadline: 'Lampasas County Metal Building Contractor — Lampasas, Lometa, Kempner',
     heroCopy:
       "Lampasas County is Hill Country ranch territory — a mix of ag operators, weekend ranch owners, and small-town families. Triple J Metal LLC drives 45 minutes from Temple to build welded barns, equipment covers, carports, and RV covers for Lampasas County properties. We pour concrete in the same contract and haul our own steel.",
@@ -859,9 +859,9 @@ export const LOCATIONS: Record<string, LocationData> = {
     zip: '76661',
     lat: 31.3091,
     lng: -96.8966,
-    metaTitle: 'Metal Buildings Falls County TX | Marlin, Rosebud, Lott | Triple J Metal LLC',
+    metaTitle: 'Metal Buildings Falls County TX | Marlin, Rosebud, Lott',
     metaDescription:
-      'Triple J Metal builds welded carports, barns, garages, and equipment covers across Falls County, TX — Marlin, Rosebud, Lott, and rural ag properties. 40 min from Temple. Call 254-346-7764.',
+      'Welded carports, barns, garages, and equipment covers across Falls County — Marlin, Rosebud, Lott, and rural ag properties. 40 min from Temple.',
     heroHeadline: 'Falls County Metal Building Contractor — Marlin, Rosebud, Lott',
     heroCopy:
       "Falls County is rural East Bell — small towns, working farms, and ag properties along the Brazos and Little River. Triple J Metal LLC builds welded carports, barns, equipment covers, and ranch structures for Falls County operators with our own crew and our own steel. 40 minutes from our Temple yard.",
@@ -886,9 +886,9 @@ export const LOCATIONS: Record<string, LocationData> = {
     zip: '76520',
     lat: 30.8552,
     lng: -96.9772,
-    metaTitle: 'Metal Buildings Milam County TX | Cameron, Rockdale, Thorndale | Triple J Metal LLC',
+    metaTitle: 'Metal Buildings Milam County TX | Cameron, Rockdale, Thorndale',
     metaDescription:
-      'Triple J Metal builds welded carports, garages, barns, and equipment covers across Milam County, TX — Cameron, Rockdale, Thorndale, and rural ag properties. 50 min from Temple. Call 254-346-7764.',
+      'Welded carports, garages, barns, and equipment covers across Milam County — Cameron, Rockdale, Thorndale, and rural ag properties. 50 min from Temple.',
     heroHeadline: 'Milam County Metal Building Contractor — Cameron, Rockdale, Thorndale',
     heroCopy:
       "Milam County mixes small-town residential and a strong ag/ranch base — and most national metal-building contractors skip past it on their way to Austin. Triple J Metal LLC drives 50 minutes from Temple to build welded carports, garages, barns, and equipment covers for Milam County properties with one contract and one local crew.",
@@ -914,9 +914,9 @@ export const LOCATIONS: Record<string, LocationData> = {
     zip: '78611',
     lat: 30.7588,
     lng: -98.2289,
-    metaTitle: 'Metal Buildings Burnet County TX | Burnet, Marble Falls, Bertram | Triple J Metal LLC',
+    metaTitle: 'Metal Buildings Burnet County TX | Burnet, Marble Falls, Bertram',
     metaDescription:
-      'Triple J Metal builds welded metal carports, garages, RV covers, and Hill Country ranch structures across Burnet County, TX — Burnet, Marble Falls, Bertram, Granite Shoals. 75 min from Temple. Call 254-346-7764.',
+      'Welded carports, garages, RV covers, and Hill Country ranch structures across Burnet County — Burnet, Marble Falls, Bertram, Granite Shoals. 75 min from Temple.',
     heroHeadline: 'Burnet County Metal Building Contractor — Burnet, Marble Falls, Bertram',
     heroCopy:
       "Burnet County is Hill Country and Highland Lakes — ranch land, weekend properties, and lakefront homes that all need quality steel structures. Triple J Metal LLC drives 75 minutes from Temple to build welded carports, garages, RV covers, and ranch barns for Burnet County properties. Hill Country drainage and rocky soil don't slow us down.",

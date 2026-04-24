@@ -27,9 +27,9 @@ function pickCover(
 }
 
 export const metadata: Metadata = {
-  title: 'Project Gallery | Triple J Metal LLC — 150+ Central Texas Builds',
+  title: 'Project Gallery — 150+ Central Texas Builds',
   description:
-    'Browse completed metal carports, garages, barns, and RV covers built by Triple J Metal LLC across Temple, Belton, Killeen, and Central Texas. 150+ projects, welded and bolted.',
+    'Browse 150+ metal carports, garages, barns, and RV covers built across Temple, Belton, Killeen, and Central Texas. Welded and bolted.',
   alternates: { canonical: '/gallery' },
   openGraph: {
     title: 'Project Gallery | Triple J Metal LLC',

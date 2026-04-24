@@ -20,8 +20,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const post = BLOG_POSTS.find((p) => p.slug === slug)
   if (!post) return {}
   return {
-    title: `${post.title} | Triple J Metal LLC`,
-    description: post.excerpt,
+    title: post.metaTitle,
+    description: post.metaDescription,
     alternates: { canonical: `/blog/${post.slug}` },
     openGraph: {
       title: post.title,

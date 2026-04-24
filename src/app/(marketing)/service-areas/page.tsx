@@ -6,9 +6,9 @@ import { QuoteForm } from '@/components/sections/QuoteForm'
 import { SITE } from '@/lib/site'
 
 export const metadata: Metadata = {
-  title: 'Service Areas | Cities & Counties Across Central Texas | Triple J Metal LLC',
+  title: 'Service Areas | Central Texas Cities & Counties',
   description:
-    'Triple J Metal LLC serves all of Bell, McLennan, Coryell, Williamson, Lampasas, Falls, Milam, and Burnet counties — 14 cities including Temple, Belton, Killeen, Harker Heights, Waco, Georgetown. Local crew, same-week installs.',
+    'Triple J Metal serves Bell, McLennan, Coryell, Williamson, Lampasas, Falls, Milam, and Burnet counties. 14 cities, local crew, same-week installs.',
   alternates: { canonical: '/service-areas' },
   openGraph: {
     title: 'Service Areas | Triple J Metal LLC',

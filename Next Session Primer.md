@@ -1,24 +1,55 @@
 # Next Session Primer — Read This First
 
-_Created: 2026-04-21 evening · Last updated 2026-04-22 · For any Claude session picking up after 2026-04-22_
+_Created: 2026-04-21 evening · Last updated 2026-04-23 · For any Claude session picking up after 2026-04-23_
 
 ---
 
-## What shipped 2026-04-22 (functional pass)
+## What shipped 2026-04-23 (Phase B — full session)
 
-**4 functional wins:**
-1. Email sender unified to `@triplejmetaltx.com` across all Resend send paths. `reply_to: julianleon@triplejmetaltx.com` added for quote + lead confirmation sends. **Julian must verify domain in Resend dashboard (DKIM/SPF/DMARC green), otherwise sends bounce silently.**
-2. Manual `+ New Customer` button on `/hq/customers` — walk-ins, referrals, phone calls now have a path. `POST /api/customers` endpoint exists.
-3. Manual `Run Scrape Now` button on `/hq/permit-leads` — kicks off permit scrape without curling with CRON_SECRET. Dual auth on `/api/cron/scrape-permits`: Bearer for cron, Supabase cookie for UI.
-4. `/hq` home = 9-card KPI grid (Pipeline · Conversion · Revenue · Operations) pulling from `leads`, `customers`, `quotes`, `jobs`, `permit_leads` in parallel. Lead-pipeline pill row preserved as second tier.
+Latest prod: commit `005bfba`, Vercel deployment `dpl_98A4EooFWQ3jcVxR7vwPtWKwZveU` (READY).
 
-**2 bug fixes earlier in the same session:**
-- QuoteForm implicit-submit bug NUKED by removing `<form>` element entirely (now `<div>` + `onClick`).
-- Lead delete with two-click confirm + `→ Customer` conversion button on `/hq` leads table.
+**HQ → iOS PWA (Phase B0-B5):** two-tab IA (Now/Funnel) · unified `PipelineList` across 5 entity types · swipe actions · pull-to-refresh · offline-first reads · install prompt · push notifications · settings hub · streaming shell + Suspense (kills 2-5s blank) · SW StaleWhileRevalidate · dark mode via iOS `prefers-color-scheme` (reverses the 2026-04-14 "no dark mode" lock — HQ-only, marketing stays light).
 
-**Phase B = next logical session.** Dedicated design pass for both HQ dashboard and public site. Scope: steel-blue nav redesign, Recharts/Tremor graphs + sparklines, funnel chart, public hero refresh, Spanish `/es/` landing, pricing page, quote templates UI. Component libs: Tremor (base) + 21st.dev (accents) + shadcn/ui charts (wrapper).
+**Public-site magazine redesign:** Hero v2 "BUILT RIGHT. BUILT FAST." (finally kills the stale "48-hour" homepage centerpiece) · Services / WhyTripleJ / Testimonials / ServiceAreas all redesigned to the magazine language · route-aware Header + upgraded wordmark · new `<PreFooterCta />` bookends every marketing page · restrained motion language (hero choreography + scroll reveals via `useReveal`, no framer-motion in public bundle) · QuoteForm redesigned as cinematic 2-step glass card (revises 3-step lock) redirecting to new `/thank-you` page · `/services` list redesigned.
 
-Reminder: `FB Marketplace Intel.md`, `Financing Research.md`, `Decisions.md` remain authoritative for strategy.
+**Per-city location pages:** `/locations/[slug]` template redesigned with new `LocationData` shape (`customHeadline`, `heroSubhead`, `distanceFromTemple`, `habla`, `localIntro`, `landmarks[]`, `neighborhoods[]`, `topServices[]`, `whyLocalBullets[]`, `callouts[]`). 3 cities personalized: **Killeen** (military-first), **Temple** (HQ-pride + lakeside), **Belton** (county-seat authority + 2 stacked callouts). Other 11 cities still render via legacy fallbacks.
+
+**SEO foundation:** 8 new `/locations/[county-slug]` county pages (Bell / McLennan / Coryell / Williamson / Lampasas / Falls / Milam / Burnet) — now 14 cities + 8 counties = 22 location surfaces. Root Organization schema + BreadcrumbList + canonical fix + og:image + image sitemap + ImageGallery JSON-LD + llms.txt rewrite for GEO.
+
+**Positioning shifts:**
+- **Supplier-agnostic** — removed all customer-facing MetalMax / WeatherXL / Turnium / Sheffield / MaxSeam mentions. Reads as "leading regional Texas suppliers — multi-source". `gallery_items.panel_color_line` keeps internal `'turnium' | 'sheffield'` IDs; user-facing labels are "Standard Line" / "Premium Line".
+- **Lone-Star color names canonical** — 39 colors use Texas-evocative names everywhere. Exception: Galvalume + Acrylic-Coated Galvalume stay functional (cheapest-panel price signal, "Best Value" emerald badge added).
+- **"Welded" = welded + bolted** (engineering reality, new Decisions.md row) — red-iron is bolted into position first, then welded; bolts stay (rubber gaskets). Copy line: "welded structures are reinforced with permanent bolts" — credibility upgrade, not contradiction.
+
+**New pages:**
+- `/services/hybrid-projects` — catch-all for non-standard builds, auto-pulls `gallery_items WHERE type = 'Hybrid'`.
+- `/partners` — B2B install-partnership funnel in main nav. `partner_inquiries` table (`011_partner_inquiries.sql` applied to prod), HQ inbox at `/hq/partners`.
+- `/thank-you` — noindex, QuoteForm redirect target.
+
+**Security:** hCaptcha (over Turnstile) on both lead forms + server-side verify + per-IP rate limiting (5/hr leads, 3/hr partners). Harker Heights `48-hour` → `same-week` copy fix. CSP enforced-mode flip deferred (separate commit after 24h report monitoring).
+
+**Nav/chrome polish:** Service Areas demoted main nav → footer-only (Partners took the 7th slot). "English · Español" tag under phone. Logo circular mask + trim. "Clients" stat → "Mon–Sat".
+
+## Pending Julian actions (carried from 2026-04-22 + new)
+
+- **Resend domain verification** — still critical; silent bounce otherwise
+- **Fire `Run Scrape Now`** to validate Lead Engine end-to-end
+- **Rotate hCaptcha secret** — sent through chat during integration; re-add via `vercel env add HCAPTCHA_SECRET_KEY production --sensitive`
+- **Source real photos** into `/public/images/locations/{killeen,temple,belton}/` (hero + landmark). Current placeholders use `red-iron-frame-hero.jpg` / `carport-gable-residential.jpg`; landmarks render as typography-only cards intentionally until real photos arrive.
+- Sanity-check `/hq` KPI numbers against Supabase
+- Review welded-vs-bolted blog post against the "welded always includes bolts" reality (currently frames them as mutually exclusive)
+
+## What's actually queued next
+
+1. **Personalize remaining 11 cities** (Harker Heights → Copperas Cove → Waco → Salado → Georgetown → Round Rock → Lampasas → Holland → Taylor → Troy → Nolanville) using the Killeen/Temple/Belton template
+2. **Spanish `/es/`** landing + carports/garages/barns
+3. **`/pricing`** page with transparent ranges + calculator from `jobs` table
+4. **Quote templates UI** at `/hq/quotes/templates`
+5. **Twilio SMS speed-to-response** + post-job review velocity (Phase 2 core — still unbuilt)
+6. CivicPlus jurisdiction expansion for Lead Engine (Killeen, Copperas Cove, Waco, McLennan Co.) — needs Firecrawl + headless
+7. Real-photo sourcing across all 14 cities
+
+Reminder: `FB Marketplace Intel.md`, `Financing Research.md`, `Decisions.md` remain authoritative for strategy. Decisions.md is up to date through 2026-04-23 (rows 56-79 document all Phase B calls).
 
 ---
 
