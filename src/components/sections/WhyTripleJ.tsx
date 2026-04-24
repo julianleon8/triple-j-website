@@ -19,7 +19,7 @@ const COMPARISON = [
   },
   {
     attr: "Build Time",
-    tripleJ: "Days, not months",
+    tripleJ: "Same-week scheduling",
     others: "4–16 weeks from order",
   },
   {

@@ -39,12 +39,12 @@ export const BLOG_POSTS: BlogPost[] = [
   },
   {
     slug: 'fort-cavazos-pcs-metal-carport',
-    title: 'Fort Cavazos PCS Season: How Military Families Get a Metal Carport in 48 Hours',
+    title: 'Fort Cavazos PCS Season: How Military Families Get a Metal Carport on Military Timelines',
     excerpt:
-      'PCS orders don\'t wait. Neither do we. Here\'s how Triple J Metal handles carport installations on military timelines — from site approval to keys in hand in under a week.',
+      'PCS orders don\'t wait. Neither do we. Here\'s how Triple J Metal handles carport installations on military timelines — from site approval to keys in hand the same week.',
     date: '2026-04-15',
     readTime: '5 min read',
-    tags: ['Military', 'Fort Cavazos', 'PCS', 'Fast Build', 'Killeen'],
+    tags: ['Military', 'Fort Cavazos', 'PCS', 'Same-Week', 'Killeen'],
     category: 'Military',
   },
   {

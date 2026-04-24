@@ -314,7 +314,7 @@ const CONCRETE_OPTIONS: { value: NeedsConcrete; icon: string; label: string; sub
 ];
 
 const TIMELINE_OPTIONS: { value: Timeline; icon: string; label: string }[] = [
-  { value: "asap",       icon: "⚡", label: "ASAP / 48 hrs" },
+  { value: "asap",       icon: "⚡", label: "ASAP — this week if possible" },
   { value: "this_week",  icon: "📅", label: "This Week" },
   { value: "this_month", icon: "📆", label: "This Month" },
   { value: "planning",   icon: "🗓️", label: "Just Planning" },
@@ -556,7 +556,7 @@ export function QuoteForm() {
               {[
                 "No obligation, no high-pressure sales call",
                 "Quote includes concrete, site prep, and permit advisory",
-                "Materials arrive within 48 hrs — most builds start same week",
+                "Materials arrive fast — most builds start the same week",
               ].map((line) => (
                 <div key={line} className="flex gap-3">
                   <span className="mt-0.5 text-[color:var(--color-brand-400)]">✓</span>

@@ -50,7 +50,7 @@ export function HowItWorks() {
             How It Works
           </span>
           <h2 id="how-heading" className="mt-3 text-white">
-            Three steps. One weekend. Done.
+            Three steps. One company. Done.
           </h2>
           <p className="mt-4 text-lg text-white/70">
             We built Triple J to eliminate the worst part of hiring a

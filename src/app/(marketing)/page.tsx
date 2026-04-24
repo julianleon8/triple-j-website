@@ -46,40 +46,57 @@ export default function HomePage() {
   return (
     <>
       {/* ------------------------------------------------------------------
-          1. HERO
+          1. HERO  (v2 — magazine-quality dark, blue/black/white + red pill)
+          --------------------------------------------------------------
+          Visual language locked: gradient-over-photo background (photo lib
+          is limited; gradient does the magazine work). Strict palette:
+          white text + brand-blue button + ONE red eyebrow pill. No
+          additional accent colors. When better hero photos land in
+          public/images/hero/, swap the `src` below — treatment stays.
           -------------------------------------------------------------- */}
-      <section className="relative bg-[color:var(--color-ink-900)] text-white overflow-hidden">
-        <div className="absolute inset-0">
+      <section className="relative bg-black text-white overflow-hidden">
+        {/* Background image with slow ken-burns motion */}
+        <div className="absolute inset-0 bg-kenburns">
           <Image
             src="/images/red-iron-frame-hero.jpg"
             alt=""
             fill
             priority
             sizes="100vw"
-            className="object-cover opacity-40"
+            className="object-cover opacity-55"
           />
-          <div className="absolute inset-0 bg-gradient-to-b from-[color:var(--color-ink-950)]/85 via-[color:var(--color-ink-900)]/60 to-[color:var(--color-ink-900)]" />
         </div>
+        {/* Diagonal gradient overlay — black-dominant left (where text
+            sits), subtle brand-blue tint right. Pinned via .hero-gradient
+            in globals.css. */}
+        <div className="absolute inset-0 hero-gradient" />
 
-        <Container size="wide" className="relative py-20 sm:py-28 lg:py-36">
+        <Container size="wide" className="relative py-28 sm:py-36 lg:py-48">
           <div className="max-w-3xl">
-            <span className="inline-flex items-center gap-2 rounded-full border border-[color:var(--color-brand-400)]/40 bg-[color:var(--color-brand-600)]/10 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-[color:var(--color-brand-300)]">
-              <span className="h-1.5 w-1.5 rounded-full bg-[color:var(--color-brand-400)]" />
-              Built in Under 48 Hours
+            {/* Red eyebrow pill — single concentrated pop of red on the page */}
+            <span className="inline-flex items-center rounded-full bg-red-600 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.18em] text-white shadow-sm">
+              Built in Texas
             </span>
-            <h1 className="mt-6 text-white">
-              Custom Metal Buildings in{" "}
-              <span className="text-[color:var(--color-brand-300)]">
-                Central Texas
-              </span>{" "}
-              — Built in Under 48 Hours
+
+            {/* Massive Barlow Condensed headline. Three "BUILT _____."
+                lines, each on its own line for rhythm. No specific time
+                promise. Echoes the locked tagline. */}
+            <h1 className="mt-6 font-display font-extrabold uppercase tracking-tight leading-[0.95] text-white text-6xl sm:text-7xl md:text-8xl lg:text-9xl">
+              Built right.
+              <br />
+              Built fast.
+              <br />
+              Built across
+              <br />
+              Central Texas.
             </h1>
-            <p className="mt-6 text-lg leading-relaxed text-white/75 max-w-2xl">
-              Welded red-iron carports, garages, and barns — site prep and
-              concrete included. One company, one contract, one weekend. Serving
-              all of Central Texas from Temple.
+
+            <p className="mt-8 text-lg sm:text-xl leading-relaxed text-white/75 max-w-2xl">
+              Custom welded carports, garages, and barns — engineered, fabricated, and
+              installed on your property by an in-house crew. No kits. No subs.
             </p>
-            <div className="mt-8 flex flex-col sm:flex-row gap-3">
+
+            <div className="mt-10 flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-6">
               <ButtonLink
                 href="#quote"
                 variant="primary"
@@ -89,28 +106,21 @@ export default function HomePage() {
               >
                 Get a Free Quote
               </ButtonLink>
-              <ButtonLink
+              {/* Ghost phone link — lower visual weight than the primary
+                  button so the CTA hierarchy is clean. */}
+              <a
                 href={SITE.phoneHref}
-                variant="outline-dark"
-                size="lg"
-                icon={<PhoneIcon className="h-5 w-5" />}
+                className="inline-flex items-center gap-2 text-base font-semibold text-white/85 hover:text-white transition-colors"
               >
+                <PhoneIcon className="h-5 w-5" />
                 Call {SITE.phone}
-              </ButtonLink>
+                <span aria-hidden="true">→</span>
+              </a>
             </div>
-            <div className="mt-4 flex flex-wrap gap-4 text-sm">
-              <ButtonLink href="/locations" variant="outline-dark" size="sm">
-                Service locations
-              </ButtonLink>
-              <ButtonLink href="/services/colors" variant="outline-dark" size="sm">
-                Color chart
-              </ButtonLink>
-              <ButtonLink href="/services/pbr-vs-pbu-panels" variant="outline-dark" size="sm">
-                PBR vs PBU guide
-              </ButtonLink>
-            </div>
-            <p className="mt-6 text-sm text-white/50">
-              Family-owned · Temple, TX · {SITE.stats.projects} projects completed
+
+            <p className="mt-10 text-sm text-white/55">
+              Family-owned · Temple, TX · {SITE.stats.projects} projects · Founded{" "}
+              {SITE.established}
             </p>
           </div>
         </Container>

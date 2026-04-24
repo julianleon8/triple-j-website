@@ -11,7 +11,7 @@ import { Container } from "@/components/ui/Container";
 const REVIEWS = [
   {
     quote:
-      "Called Triple J on a Thursday, had a welded carport on my property by Saturday night. Concrete was already set. Nobody else in Central Texas does it this fast.",
+      "Welded perfect, looks great two years in, hasn't budged in any storm. Concrete was set the same week. The crew kept us updated start to finish.",
     name: "Placeholder Customer",
     city: "Temple, TX",
     rating: 5,
@@ -25,7 +25,7 @@ const REVIEWS = [
   },
   {
     quote:
-      "PCSed to Fort Cavazos in July. Needed cover for my truck before the heat destroyed the paint. Triple J had it up in two days. Will call them again.",
+      "PCSed to Fort Cavazos in July. Needed cover for my truck before the heat destroyed the paint. Juan came out himself for the walk-through and had us scheduled the same week. Will call them again.",
     name: "Placeholder Customer",
     city: "Killeen, TX",
     rating: 5,

@@ -57,7 +57,7 @@ const SURFACE_LABELS: Record<string, string> = {
   concrete: 'Existing concrete',
 }
 const TIMELINE_LABELS: Record<string, string> = {
-  asap: 'ASAP — under 48 hours',
+  asap: 'ASAP — this week if possible',
   this_week: 'This week',
   this_month: 'This month',
   planning: 'Just planning ahead',

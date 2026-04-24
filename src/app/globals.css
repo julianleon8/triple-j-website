@@ -215,6 +215,37 @@ p { line-height: 1.6; }
   mask-image: linear-gradient(to right, transparent, black 8%, black 92%, transparent);
 }
 
+/* Hero ken-burns — slow background image zoom for atmospheric motion.
+   60s cycle, infinite alternate, ease-in-out. Subtle enough to read as
+   "alive" without being distracting. Pairs with the hero gradient overlay. */
+@keyframes kenburns {
+  0%   { transform: scale(1.08) translate(0, 0); }
+  100% { transform: scale(1.18) translate(-1.5%, 1%); }
+}
+
+.bg-kenburns {
+  animation: kenburns 60s ease-in-out infinite alternate;
+  will-change: transform;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bg-kenburns {
+    animation: none;
+  }
+}
+
+/* Hero gradient — dark left → subtle brand-blue right. Black-dominant
+   where text sits so the headline always has clean contrast regardless
+   of the background image. */
+.hero-gradient {
+  background: linear-gradient(
+    135deg,
+    rgba(0, 0, 0, 0.92) 0%,
+    rgba(15, 23, 42, 0.85) 40%,
+    rgba(30, 107, 214, 0.25) 100%
+  );
+}
+
 /* Reserve space at page bottom on mobile for the sticky Call bar */
 @media (max-width: 768px) {
   body {
