@@ -177,21 +177,31 @@ async function handleLeadgen(leadgenId: string) {
 async function handleMessenger(senderId: string, text: string) {
   const token = process.env.META_PAGE_ACCESS_TOKEN
 
-  // Try to resolve the sender's name. Requires pages_messaging permission
-  // (granted after Business Verification). Falls back gracefully.
-  let name = `Messenger user (${senderId.slice(-6)})`
-  if (token) {
+  // Try to resolve the sender's name via Graph API. Requires pages_messaging
+  // with Advanced Access (granted after App Review) to work for any user.
+  // Before review: works for page admins/developers/testers; 403/400 for
+  // everyone else. Falls back gracefully.
+  let name = 'Facebook Messenger'
+  if (!token) {
+    console.error('[FB webhook] name lookup skipped — META_PAGE_ACCESS_TOKEN not set')
+  } else {
     try {
-      const res = await fetch(
-        `${GRAPH_API}/${senderId}?fields=first_name,last_name&access_token=${encodeURIComponent(token)}`,
-      )
-      if (res.ok) {
+      const url = `${GRAPH_API}/${senderId}?fields=first_name,last_name&access_token=${encodeURIComponent(token)}`
+      const res = await fetch(url)
+      if (!res.ok) {
+        const body = await res.text()
+        console.error(`[FB webhook] name lookup HTTP ${res.status} for PSID ${senderId.slice(-6)}: ${body.slice(0, 300)}`)
+      } else {
         const profile = (await res.json()) as { first_name?: string; last_name?: string }
         const full = [profile.first_name, profile.last_name].filter(Boolean).join(' ').trim()
-        if (full) name = full
+        if (full) {
+          name = full
+        } else {
+          console.error(`[FB webhook] name lookup returned empty profile for PSID ${senderId.slice(-6)}: ${JSON.stringify(profile)}`)
+        }
       }
-    } catch {
-      // Profile lookup is best-effort.
+    } catch (err) {
+      console.error(`[FB webhook] name lookup threw for PSID ${senderId.slice(-6)}:`, err)
     }
   }
 
