@@ -246,6 +246,16 @@ p { line-height: 1.6; }
   );
 }
 
+/* Decorative grid texture — used as low-opacity background on light
+   sections (Services, etc.) to add magazine-style structure without
+   competing with content. Apply opacity from the parent (e.g. opacity-[0.04]). */
+.bg-grid-decoration {
+  background-image:
+    linear-gradient(to right, var(--color-ink-900) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--color-ink-900) 1px, transparent 1px);
+  background-size: 64px 64px;
+}
+
 /* Reserve space at page bottom on mobile for the sticky Call bar */
 @media (max-width: 768px) {
   body {

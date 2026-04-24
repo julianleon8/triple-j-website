@@ -6,7 +6,14 @@ import { ArrowRightIcon } from "@/components/ui/icons";
 
 /**
  * Services grid — 4 primary offerings.
- * Uses real Triple J photos. Each card links to /services/[slug].
+ * Visual language matches the hero (red eyebrow pill, Barlow huge headline,
+ * brand-blue accents). Card treatment: photo-dominant with dark gradient
+ * overlay + title overlaid on photo, body blurb in white panel below.
+ *
+ * Photo notes: barns + rv-covers cards reuse adjacent imagery (no true barn
+ * or RV-cover photo in the library yet). Heavy gradient + the title text
+ * doing semantic work makes the mismatch read as intentional brand language
+ * rather than missing assets.
  */
 
 const SERVICE_CARDS = [
@@ -45,59 +52,97 @@ export function Services() {
     <section
       id="services"
       aria-labelledby="services-heading"
-      className="py-20 md:py-28"
+      className="relative py-24 md:py-32 bg-gradient-to-b from-white to-[color:var(--color-ink-50)] overflow-hidden"
     >
-      <Container size="wide">
-        {/* Section header */}
-        <div className="max-w-2xl">
-          <span className="text-xs font-semibold uppercase tracking-[0.15em] text-[color:var(--color-brand-700)]">
+      {/* Subtle decorative grid lines — magazine-style structure
+          without competing with the cards. .bg-grid-decoration in globals.css. */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 opacity-[0.04] bg-grid-decoration"
+      />
+
+      <Container size="wide" className="relative">
+        {/* Section header — mirrors the hero's red pill + Barlow huge */}
+        <div className="max-w-3xl">
+          <span className="inline-flex items-center rounded-full bg-red-600 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.18em] text-white shadow-sm">
             What We Build
           </span>
           <h2
             id="services-heading"
-            className="mt-3 text-[color:var(--color-ink-900)]"
+            className="mt-6 font-display font-extrabold uppercase tracking-tight leading-[0.95] text-[color:var(--color-ink-900)] text-5xl sm:text-6xl md:text-7xl"
           >
-            Welded or bolted — your call. Same-week installs, not month-long wait lists.
+            Welded or bolted.
+            <br />
+            <span className="text-[color:var(--color-brand-600)]">Built whole, by us.</span>
           </h2>
-          <p className="mt-4 text-lg text-[color:var(--color-ink-500)]">
+          <p className="mt-6 text-lg leading-relaxed text-[color:var(--color-ink-600)] max-w-2xl">
             Every structure is welded or bolted from red-iron steel and delivered
             turnkey — site prep, concrete pad, and installation all under one
             contract. No kits, no subcontractors.
           </p>
         </div>
 
-        {/* Grid */}
-        <div className="mt-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+        {/* Grid — 2x2 at lg for breathing room, 1-up on mobile */}
+        <div className="mt-14 grid grid-cols-1 sm:grid-cols-2 gap-6">
           {SERVICE_CARDS.map((service) => (
             <Link
               key={service.slug}
               href={`/services/${service.slug}`}
-              className="group relative flex flex-col overflow-hidden rounded-xl border border-[color:var(--color-ink-100)] bg-white hover:border-[color:var(--color-brand-400)]/60 hover:shadow-xl hover:-translate-y-1 transition-all duration-300"
+              className="group relative flex flex-col overflow-hidden rounded-2xl bg-[color:var(--color-ink-900)] shadow-md hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 ease-out"
             >
-              <div className="relative aspect-[4/3] overflow-hidden bg-[color:var(--color-ink-100)]">
+              {/* Photo with dark gradient overlay + title overlaid */}
+              <div className="relative aspect-[5/4] overflow-hidden">
                 <Image
                   src={service.image}
                   alt={service.title}
                   fill
-                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
-                  className="object-cover transition-transform duration-500 group-hover:scale-105"
+                  sizes="(max-width: 640px) 100vw, 50vw"
+                  className="object-cover transition-transform duration-700 ease-out group-hover:scale-110"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
+                {/* Layered gradient: dark bottom for title legibility +
+                    brand-blue tint top-right on hover for accent */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/40 to-black/20" />
+                <div className="absolute inset-0 bg-gradient-to-tl from-transparent via-transparent to-[color:var(--color-brand-600)]/0 group-hover:to-[color:var(--color-brand-600)]/30 transition-colors duration-500" />
+
+                {/* Title overlaid on bottom of photo */}
+                <div className="absolute inset-x-0 bottom-0 p-6 md:p-7">
+                  <h3 className="font-display font-extrabold uppercase tracking-tight leading-none text-white text-3xl md:text-4xl">
+                    {service.title}
+                  </h3>
+                </div>
+
+                {/* Hover-only Learn-more pill — slides up from bottom */}
+                <div className="absolute top-4 right-4 translate-y-[-4px] opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300">
+                  <span className="inline-flex items-center gap-1.5 rounded-full bg-[color:var(--color-brand-600)] px-3 py-1.5 text-xs font-bold uppercase tracking-wider text-white shadow-lg">
+                    View
+                    <ArrowRightIcon className="h-3.5 w-3.5" />
+                  </span>
+                </div>
               </div>
-              <div className="flex flex-col gap-2 p-5">
-                <h3 className="text-xl font-bold text-[color:var(--color-ink-900)] group-hover:text-[color:var(--color-brand-700)] transition-colors">
-                  {service.title}
-                </h3>
-                <p className="text-sm leading-relaxed text-[color:var(--color-ink-500)]">
+
+              {/* Body panel below photo */}
+              <div className="flex flex-col gap-3 p-6 md:p-7 bg-white">
+                <p className="text-[15px] leading-relaxed text-[color:var(--color-ink-600)]">
                   {service.blurb}
                 </p>
-                <span className="mt-2 inline-flex items-center gap-1.5 text-sm font-semibold text-[color:var(--color-brand-600)] group-hover:gap-2 transition-all">
+                <span className="inline-flex items-center gap-1.5 text-sm font-bold text-[color:var(--color-brand-600)] group-hover:gap-2.5 transition-all">
                   Learn more
                   <ArrowRightIcon className="h-4 w-4" />
                 </span>
               </div>
             </Link>
           ))}
+        </div>
+
+        {/* Footer link to all services — magazine "see more" */}
+        <div className="mt-12 flex justify-center">
+          <Link
+            href="/services"
+            className="inline-flex items-center gap-2 text-sm font-semibold text-[color:var(--color-ink-700)] hover:text-[color:var(--color-brand-600)] transition-colors"
+          >
+            See every service we offer
+            <ArrowRightIcon className="h-4 w-4" />
+          </Link>
         </div>
       </Container>
     </section>
