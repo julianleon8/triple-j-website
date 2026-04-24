@@ -24,7 +24,7 @@ export const SITE = {
   },
   social: {
     instagram: "https://www.instagram.com/triplejmetal/",
-    facebook: "https://www.facebook.com/profile.php?id=61579877376850",
+    facebook: "https://www.facebook.com/triplejmetaltx",
     google: "", // fill once GBP verifies; goes into sameAs + adds Knowledge Panel signal
   },
 } as const;
