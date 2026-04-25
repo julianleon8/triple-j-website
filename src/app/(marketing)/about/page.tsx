@@ -10,7 +10,7 @@ export const metadata: Metadata = {
     'Temple, TX family metal building contractor. 150+ completed projects, welded red iron steel, turnkey concrete. Not a national chain.',
   alternates: { canonical: '/about' },
   openGraph: {
-    title: 'About Triple J Metal LLC | Temple, TX',
+    title: 'About Triple J Metal | Temple, TX',
     description: 'Local Temple family business. 150+ completed metal building projects across Central Texas.',
     type: 'website',
   },
@@ -60,7 +60,7 @@ export default function AboutPage() {
               Temple&rsquo;s Local Metal Building Family — Not a National Chain
             </h1>
             <p className="mt-5 text-lg text-white/75 leading-relaxed max-w-2xl">
-              Triple J Metal LLC was founded by a Temple family and operates out of Temple, TX.
+              Triple J Metal was founded by a Temple family and operates out of Temple, TX.
               We build every structure ourselves — no subcontractors, no kit drops, no hand-offs.
               One crew. One contract. Done right.
             </p>
@@ -93,7 +93,7 @@ export default function AboutPage() {
           <h2 className="mb-6">A Temple Family Business</h2>
           <div className="space-y-5 text-ink-600 text-lg leading-relaxed">
             <p>
-              Triple J Metal LLC was started by Juan Luis Leon — a long-time member of the Temple,
+              Triple J Metal was started by Juan Luis Leon — a long-time member of the Temple,
               TX community — and his son Julian Leon Alvarez, who handles day-to-day operations and
               the technology side of the business. Together, they built Triple J Metal from the ground up
               starting in 2025, and have since completed over 150 projects across Central Texas.
@@ -141,7 +141,7 @@ export default function AboutPage() {
               },
               {
                 headline: 'Licensed & Insured',
-                body: 'Triple J Metal LLC is fully licensed and insured in Texas. We also handle permitting as an add-on service when your county or HOA requires it.',
+                body: 'Triple J Metal is fully licensed and insured in Texas. We also handle permitting as an add-on service when your county or HOA requires it.',
               },
             ].map(({ headline, body }) => (
               <div
@@ -218,7 +218,7 @@ export default function AboutPage() {
               Get a Free Quote
             </ButtonLink>
             <a
-              href={`tel:${SITE.phone}`}
+              href={SITE.phoneHref}
               className="inline-flex items-center gap-2 h-12 px-6 rounded-lg border-2 border-ink-300 text-ink-800 font-semibold hover:border-ink-500 transition-colors text-sm"
             >
               Call {SITE.phone}

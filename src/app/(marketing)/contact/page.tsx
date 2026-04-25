@@ -10,7 +10,7 @@ export const metadata: Metadata = {
     'Call 254-346-7764 for a same-day callback. Temple-based metal building crew — carports, garages, barns, and RV covers across Central Texas.',
   alternates: { canonical: '/contact' },
   openGraph: {
-    title: 'Contact Triple J Metal LLC | Temple, TX',
+    title: 'Contact Triple J Metal | Temple, TX',
     description: 'Call 254-346-7764 for a same-day callback. Temple-based metal building contractor.',
     type: 'website',
   },
@@ -176,7 +176,7 @@ export default function ContactPage() {
               <h2 className="mb-6">Find Us</h2>
               <div className="rounded-2xl overflow-hidden border border-ink-200 aspect-[4/3] bg-ink-100">
                 <iframe
-                  title="Triple J Metal LLC location — 3319 Tem-Bel Ln, Temple TX 76502"
+                  title="Triple J Metal location — 3319 Tem-Bel Ln, Temple TX 76502"
                   src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3432.0!2d-97.3428!3d31.0982!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMzHCsDA1JzUzLjUiTiA5N8KwMjAnMzQuMSJX!5e0!3m2!1sen!2sus!4v1700000000000!5m2!1sen!2sus"
                   width="100%"
                   height="100%"

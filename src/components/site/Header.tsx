@@ -26,7 +26,7 @@ import { NAV_LINKS, SITE } from "@/lib/site";
  *  - Top thin bar simplified to phone + "Same-Week Installs" badge
  *    (was phone + hours + address).
  *  - Wordmark is a Barlow Condensed lockup — "TRIPLE J" with a
- *    brand-blue "/ METAL" descender. Subline shows location.
+ *    brand-blue "METAL" accent. Subline shows service region.
  *  - Active link gets a brand-blue underline.
  *  - Mobile: hamburger opens a full-screen drawer.
  */
@@ -122,13 +122,13 @@ export function Header() {
               />
               <div className="hidden sm:flex flex-col leading-none">
                 <span className="font-display font-extrabold uppercase tracking-tight text-white text-2xl leading-none whitespace-nowrap">
-                  Triple J
+                  Triple J{" "}
                   <span className="text-[color:var(--color-brand-400)]">
-                    {" "}/ Metal
+                    Metal
                   </span>
                 </span>
                 <span className="text-white/45 text-[10px] font-semibold mt-1.5 tracking-[0.2em] uppercase">
-                  Temple · Central Texas
+                  Central Texas
                 </span>
               </div>
             </Link>

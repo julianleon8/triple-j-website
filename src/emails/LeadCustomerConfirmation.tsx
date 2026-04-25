@@ -46,7 +46,7 @@ export default function LeadCustomerConfirmation(props: LeadCustomerConfirmation
       )}
 
       <Text style={{ margin: '20px 0 0', color: '#374151' }}>
-        — Juan &amp; Julian, Triple J Metal LLC
+        — Juan &amp; Julian, Triple J Metal
       </Text>
     </BrandLayout>
   )
@@ -69,9 +69,9 @@ export function leadCustomerConfirmationText(props: LeadCustomerConfirmationProp
     lines.push(`⚡ ASAP request flagged. We'll prioritize your callback.`)
   }
   lines.push(``)
-  lines.push(`— Juan & Julian, Triple J Metal LLC`)
+  lines.push(`— Juan & Julian, Triple J Metal`)
   lines.push(``)
   lines.push(`—`)
-  lines.push(`Triple J Metal LLC · 3319 Tem-Bel Ln, Temple, TX 76502 · 254-346-7764`)
+  lines.push(`Triple J Metal · 3319 Tem-Bel Ln, Temple, TX 76502 · 254-346-7764`)
   return lines.join('\n')
 }

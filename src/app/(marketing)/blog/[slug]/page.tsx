@@ -28,7 +28,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       description: post.excerpt,
       type: 'article',
       publishedTime: post.date,
-      authors: ['Triple J Metal LLC'],
+      authors: ['Triple J Metal'],
       tags: post.tags,
     },
   }
@@ -133,7 +133,7 @@ export default async function BlogPostPage({ params }: Props) {
               <span className="text-white font-extrabold text-sm">JJJ</span>
             </div>
             <div>
-              <p className="font-bold text-ink-900 text-sm">Triple J Metal LLC — Temple, TX</p>
+              <p className="font-bold text-ink-900 text-sm">Triple J Metal — Temple, TX</p>
               <p className="text-xs text-ink-500 mt-0.5 leading-relaxed">
                 Local metal building contractor serving Central Texas since {SITE.established}. Welded red iron structures,
                 turnkey concrete, same-week scheduling. This guide was written by our crew from first-hand experience

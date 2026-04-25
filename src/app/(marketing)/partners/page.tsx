@@ -32,7 +32,7 @@ export const metadata: Metadata = {
     'Triple J is the Central Texas install crew for manufacturers, dealers, and GCs. Welded + bolted, named in-house crew, no subcontractors.',
   alternates: { canonical: '/partners' },
   openGraph: {
-    title: 'Become a Triple J Install Partner | Triple J Metal LLC',
+    title: 'Become a Triple J Install Partner | Triple J Metal',
     description:
       'B2B install partnership in Central Texas — welded + bolted, no subs, photo-documented. Suppliers, manufacturers, GCs welcome.',
     type: 'website',
@@ -79,7 +79,7 @@ export default async function PartnersPage() {
                 Send a Partner Inquiry
               </ButtonLink>
               <a
-                href={`tel:${SITE.phone}`}
+                href={SITE.phoneHref}
                 className="inline-flex items-center gap-2 h-12 px-6 rounded-lg border-2 border-white/30 text-white font-semibold hover:border-white/60 transition-colors text-sm"
               >
                 Call {SITE.phone}
@@ -208,7 +208,7 @@ export default async function PartnersPage() {
             <p className="mt-3 text-ink-700 text-base max-w-xl mx-auto">
               A few quick fields. Julian reads every one personally and reaches back within one
               business day. Direct line:{' '}
-              <a href={`tel:${SITE.phone}`} className="font-semibold text-brand-600 hover:underline">
+              <a href={SITE.phoneHref} className="font-semibold text-brand-600 hover:underline">
                 {SITE.phone}
               </a>.
             </p>
@@ -229,16 +229,16 @@ export default async function PartnersPage() {
             </div>
             <div className="flex flex-wrap gap-3">
               <a
-                href={`tel:${SITE.phone}`}
+                href={SITE.phoneHref}
                 className="inline-flex items-center gap-2 h-11 px-5 rounded-lg bg-brand-600 text-white text-sm font-semibold hover:bg-brand-700 transition-colors"
               >
                 {SITE.phone}
               </a>
               <a
-                href="mailto:julianleon@triplejmetaltx.com"
+                href={`mailto:${SITE.email}`}
                 className="inline-flex items-center gap-2 h-11 px-5 rounded-lg border-2 border-white/30 text-white text-sm font-semibold hover:border-white/60 transition-colors"
               >
-                julianleon@triplejmetaltx.com
+                {SITE.email}
               </a>
             </div>
           </div>

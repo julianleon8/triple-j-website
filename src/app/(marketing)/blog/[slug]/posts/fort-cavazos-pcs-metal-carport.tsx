@@ -9,7 +9,7 @@ export default function FortCavazosPost() {
         trailer are covered before the first Central Texas hail storm hits.
       </p>
       <p>
-        Triple J Metal LLC is located in <strong>Temple, TX &#8212; 10 minutes from Fort Cavazos.</strong> We&#8217;ve built
+        Triple J Metal is located in <strong>Temple, TX &#8212; 10 minutes from Fort Cavazos.</strong> We&#8217;ve built
         carports and covered structures for military families throughout the Killeen-Harker Heights
         corridor. This is what we&#8217;ve learned about how to make the process work around a PCS timeline.
       </p>

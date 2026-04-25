@@ -42,7 +42,7 @@ export default function BrandLayout({ preview, children }: BrandLayoutProps) {
                 />
               </Column>
               <Column>
-                <Text style={brandName}>Triple J Metal LLC</Text>
+                <Text style={brandName}>Triple J Metal</Text>
                 <Text style={brandTagline}>Temple, TX · 254-346-7764</Text>
               </Column>
             </Row>
@@ -53,7 +53,7 @@ export default function BrandLayout({ preview, children }: BrandLayoutProps) {
           <Hr style={divider} />
 
           <Section style={footer}>
-            <Text style={footerTitle}>Triple J Metal LLC</Text>
+            <Text style={footerTitle}>Triple J Metal</Text>
             <Text style={footerLine}>
               3319 Tem-Bel Ln, Temple, TX 76502 ·{' '}
               <Link href="tel:+12543467764" style={footerLink}>
@@ -76,7 +76,7 @@ export default function BrandLayout({ preview, children }: BrandLayoutProps) {
 
 export const TEXT_FOOTER = `
 —
-Triple J Metal LLC
+Triple J Metal
 3319 Tem-Bel Ln, Temple, TX 76502
 254-346-7764 · triplejmetaltx.com
 `.trim()

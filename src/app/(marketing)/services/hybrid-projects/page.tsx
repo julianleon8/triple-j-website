@@ -33,7 +33,7 @@ export const metadata: Metadata = {
     'Triple J builds projects that don\'t fit a catalog — horse stalls, warehouses, decks, custom commercial. Welded + bolted, Central Texas crew.',
   alternates: { canonical: '/services/hybrid-projects' },
   openGraph: {
-    title: 'Hybrid Projects | Triple J Metal LLC',
+    title: 'Hybrid Projects | Triple J Metal',
     description:
       'Custom horse stalls, warehouses, decks, and one-off metal builds across Central Texas. Welded + bolted, on-site, no kits.',
     type: 'website',
@@ -77,7 +77,7 @@ export default async function HybridProjectsPage() {
                 Get a Custom Quote
               </ButtonLink>
               <a
-                href={`tel:${SITE.phone}`}
+                href={SITE.phoneHref}
                 className="inline-flex items-center gap-2 h-12 px-6 rounded-lg border-2 border-white/30 text-white font-semibold hover:border-white/60 transition-colors text-sm"
               >
                 Call {SITE.phone}

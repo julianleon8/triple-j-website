@@ -41,7 +41,7 @@ export async function generateMetadata(
   const title = `${item.title} — ${item.city}`
   const description =
     item.alt_text ||
-    `${item.type} built by Triple J Metal LLC in ${item.city}. Welded or bolted, same-week scheduling, Temple TX crew.`
+    `${item.type} built by Triple J Metal in ${item.city}. Welded or bolted, same-week scheduling, Temple TX crew.`
   return {
     title,
     description,
@@ -95,7 +95,7 @@ export default async function GalleryDetailPage(
     name: `${item.title} — ${item.city}`,
     description:
       item.alt_text ||
-      `${item.type} built by Triple J Metal LLC in ${item.city}.`,
+      `${item.type} built by Triple J Metal in ${item.city}.`,
     url: `${getSiteUrl()}/gallery/${id}`,
     associatedMedia: photos.map((p) => ({
       '@type': 'ImageObject',
@@ -150,7 +150,7 @@ export default async function GalleryDetailPage(
                   Build one like this
                 </ButtonLink>
                 <a
-                  href={`tel:${SITE.phone}`}
+                  href={SITE.phoneHref}
                   className="inline-flex items-center gap-2 h-12 px-6 rounded-lg border-2 border-white/30 text-white font-semibold hover:border-white/60 transition-colors text-sm"
                 >
                   Call {SITE.phone}

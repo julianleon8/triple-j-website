@@ -4,7 +4,7 @@ export default function manifest(): MetadataRoute.Manifest {
   return {
     name: 'Triple J Metal HQ',
     short_name: 'Triple J',
-    description: 'Triple J Metal LLC field tool — leads, customers, quotes, jobs, gallery.',
+    description: 'Triple J Metal field tool — leads, customers, quotes, jobs, gallery.',
     start_url: '/hq',
     scope: '/',
     display: 'standalone',

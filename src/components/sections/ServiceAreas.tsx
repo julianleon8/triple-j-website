@@ -167,7 +167,7 @@ export function ServiceAreas() {
                   }`}
                 >
                   {area.distance === "HQ"
-                    ? "Triple J Metal Buildings · 3319 Tem-Bel Ln"
+                    ? "Triple J Metal · 3319 Tem-Bel Ln"
                     : area.distance + " of Temple"}
                 </div>
 

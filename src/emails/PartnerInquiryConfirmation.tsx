@@ -27,13 +27,13 @@ export default function PartnerInquiryConfirmation(props: PartnerInquiryConfirma
 
       <Text style={{ margin: '0 0 20px' }}>
         If you want to skip the wait, you can reach Julian directly at{' '}
-        <a href="tel:254-346-7764" style={{ color: '#1e6bd6', fontWeight: 700 }}>254-346-7764</a>{' '}
+        <a href="tel:+12543467764" style={{ color: '#1e6bd6', fontWeight: 700 }}>254-346-7764</a>{' '}
         or{' '}
         <a href="mailto:julianleon@triplejmetaltx.com" style={{ color: '#1e6bd6', fontWeight: 700 }}>julianleon@triplejmetaltx.com</a>.
       </Text>
 
       <Text style={{ margin: '20px 0 0', color: '#374151' }}>
-        — Julian, Triple J Metal LLC
+        — Julian, Triple J Metal
       </Text>
     </BrandLayout>
   )
@@ -49,9 +49,9 @@ export function partnerInquiryConfirmationText(props: PartnerInquiryConfirmation
     ``,
     `If you want to skip the wait, you can reach Julian directly at 254-346-7764 or julianleon@triplejmetaltx.com.`,
     ``,
-    `— Julian, Triple J Metal LLC`,
+    `— Julian, Triple J Metal`,
     ``,
     `—`,
-    `Triple J Metal LLC · 3319 Tem-Bel Ln, Temple, TX 76502 · 254-346-7764`,
+    `Triple J Metal · 3319 Tem-Bel Ln, Temple, TX 76502 · 254-346-7764`,
   ].join('\n')
 }

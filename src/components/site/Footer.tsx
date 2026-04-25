@@ -37,7 +37,7 @@ export function Footer() {
             >
               <Image
                 src="/images/logo-lion.png"
-                alt="Triple J Metal Buildings lion emblem"
+                alt="Triple J Metal lion emblem"
                 width={64}
                 height={64}
                 className="h-14 w-14 sm:h-16 sm:w-16 object-contain shrink-0"
@@ -193,7 +193,7 @@ export function Footer() {
         {/* Legal / bottom strip */}
         <div className="border-t border-white/10 py-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs text-white/45">
           <div>
-            © {year} {SITE.name}. All rights reserved.
+            © {year} {SITE.legalName}. All rights reserved.
           </div>
           <div className="flex items-center gap-5">
             <Link href="/privacy" className="hover:text-white/80 transition-colors">

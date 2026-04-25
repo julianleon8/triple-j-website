@@ -99,6 +99,6 @@ export function partnerInquiryOwnerAlertText(props: PartnerInquiryOwnerAlertProp
   lines.push(``, `Inquiry ID: ${props.inquiryId}`)
   lines.push(``, `Submitted: ${props.submittedAt}`)
   lines.push(``, `—`)
-  lines.push(`Triple J Metal LLC · 3319 Tem-Bel Ln, Temple, TX 76502 · 254-346-7764`)
+  lines.push(`Triple J Metal · 3319 Tem-Bel Ln, Temple, TX 76502 · 254-346-7764`)
   return lines.join('\n')
 }

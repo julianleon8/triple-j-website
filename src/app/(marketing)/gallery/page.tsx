@@ -32,7 +32,7 @@ export const metadata: Metadata = {
     'Browse 150+ metal carports, garages, barns, and RV covers built across Temple, Belton, Killeen, and Central Texas. Welded and bolted.',
   alternates: { canonical: '/gallery' },
   openGraph: {
-    title: 'Project Gallery | Triple J Metal LLC',
+    title: 'Project Gallery | Triple J Metal',
     description: '150+ completed metal building projects across Central Texas.',
     type: 'website',
   },
@@ -79,7 +79,7 @@ export default async function GalleryPage() {
   const indexJsonLd = {
     '@context': 'https://schema.org',
     '@type': 'ImageGallery',
-    name: 'Triple J Metal LLC — Project Gallery',
+    name: 'Triple J Metal — Project Gallery',
     description: '150+ completed metal carports, garages, barns, and RV covers across Central Texas.',
     url: `${getSiteUrl()}/gallery`,
     associatedMedia: indexCovers,
@@ -112,7 +112,7 @@ export default async function GalleryPage() {
                 Start Your Free Quote
               </ButtonLink>
               <a
-                href={`tel:${SITE.phone}`}
+                href={SITE.phoneHref}
                 className="inline-flex items-center gap-2 h-12 px-6 rounded-lg border-2 border-white/30 text-white font-semibold hover:border-white/60 transition-colors text-sm"
               >
                 Call {SITE.phone}
@@ -216,7 +216,7 @@ export default async function GalleryPage() {
         <Container size="narrow">
           <h2 className="mb-6">Every Build Backed by a Local Crew</h2>
           <p className="text-ink-600 text-lg leading-relaxed mb-8">
-            When you see a project photo on this page, it was built by Triple J Metal LLC — a
+            When you see a project photo on this page, it was built by Triple J Metal — a
             Temple, TX family company. Not a national brand. Not a franchise. Not a dealer shipping
             a kit. Our crew shows up, welds it, pours the concrete if needed, and hands you the keys
             on the same contract.

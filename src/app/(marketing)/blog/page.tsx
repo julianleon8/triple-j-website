@@ -11,7 +11,7 @@ export const metadata: Metadata = {
     'Local guides, permit walkthroughs, and metal building education for Central Texas. Written by the Triple J Metal crew in Temple, TX.',
   alternates: { canonical: '/blog' },
   openGraph: {
-    title: 'Blog | Triple J Metal LLC',
+    title: 'Blog | Triple J Metal',
     description: 'Central Texas metal building guides — permits, welding, HOA, military, and soil.',
     type: 'website',
   },
@@ -125,7 +125,7 @@ export default function BlogPage() {
               Get a Free Quote
             </ButtonLink>
             <a
-              href={`tel:${SITE.phone}`}
+              href={SITE.phoneHref}
               className="inline-flex items-center gap-2 h-12 px-6 rounded-lg border-2 border-ink-300 text-ink-700 font-semibold hover:border-ink-500 transition-colors text-sm"
             >
               Call {SITE.phone}

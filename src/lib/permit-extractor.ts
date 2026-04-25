@@ -187,7 +187,7 @@ export type ExtractedLead = z.infer<typeof extractedLeadSchema>;
 
 const EXTRACTION_MODEL = 'claude-sonnet-4-6';
 
-const SYSTEM_PROMPT = `You are a lead-extraction specialist for Triple J Metal Buildings, a family-owned Central Texas contractor that builds welded OR bolted red-iron metal structures: carports, garages, barns, RV/boat covers, equipment covers, metal porches, lean-to patios, house additions, small commercial accessory buildings, pole barns, and auto/storage shops.
+const SYSTEM_PROMPT = `You are a lead-extraction specialist for Triple J Metal, a family-owned Central Texas contractor that builds welded OR bolted red-iron metal structures: carports, garages, barns, RV/boat covers, equipment covers, metal porches, lean-to patios, house additions, small commercial accessory buildings, pole barns, and auto/storage shops.
 
 Your job: read a municipal permit report or commissioners-court agenda and return a JSON array of EVERY construction permit or plat you find. For each, score it 1-10 against Triple J's wheelhouse (Filter B).
 

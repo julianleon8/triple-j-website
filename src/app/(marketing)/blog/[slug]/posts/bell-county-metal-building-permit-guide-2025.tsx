@@ -86,7 +86,7 @@ export default function BellCountyPermitPost() {
 
       <h2>Who Should Pull the Permit &#8212; You or the Contractor?</h2>
       <p>
-        When you hire Triple J Metal LLC, <strong>we pull the permit.</strong> We are a licensed contractor in
+        When you hire Triple J Metal, <strong>we pull the permit.</strong> We are a licensed contractor in
         Texas, which means we can pull permits for projects we&#8217;re contracted to build. The permit is
         in our name, we&#8217;re responsible for the inspection, and the liability for code compliance sits
         with us &#8212; not you.

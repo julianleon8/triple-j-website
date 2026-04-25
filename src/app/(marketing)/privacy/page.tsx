@@ -20,7 +20,7 @@ export default function PrivacyPage() {
         </p>
         <h1 className="mt-3 text-[color:var(--color-ink-900)]">Privacy Policy</h1>
         <p className="mt-2 text-sm text-[color:var(--color-ink-500)]">
-          Last updated April 22, 2026 · {SITE.name}
+          Last updated April 22, 2026 · {SITE.legalName}
         </p>
 
         <div className="mt-10 space-y-8 text-[color:var(--color-ink-700)] leading-relaxed">

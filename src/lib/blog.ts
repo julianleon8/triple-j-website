@@ -9,7 +9,7 @@ export type BlogPost = {
   slug: string
   /** Display title — used for the H1 and hero copy */
   title: string
-  /** Short SEO title — template appends " | Triple J Metal LLC" (≈21 chars) */
+  /** Short SEO title — template appends " | Triple J Metal" (≈17 chars) */
   metaTitle: string
   /** Short SEO description — target ≤155 chars */
   metaDescription: string

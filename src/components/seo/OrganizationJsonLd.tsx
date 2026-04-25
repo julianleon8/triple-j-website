@@ -25,7 +25,7 @@ export function OrganizationJsonLd() {
     '@type': 'LocalBusiness',
     '@id': `${url}/#localbusiness`,
     name: SITE.name,
-    legalName: SITE.name,
+    legalName: SITE.legalName,
     alternateName: SITE.shortName,
     description:
       'Welded or bolted metal carports, garages, barns, and RV covers with turnkey concrete — built by our Temple, TX crew across Central Texas.',

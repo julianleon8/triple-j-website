@@ -104,7 +104,7 @@ export default async function ServicePage(
                 Get a Free Quote
               </ButtonLink>
               <a
-                href={`tel:${SITE.phone}`}
+                href={SITE.phoneHref}
                 className="inline-flex items-center gap-2 h-12 px-6 rounded-lg border-2 border-white/30 text-white font-semibold hover:border-white/60 transition-colors text-sm"
               >
                 Call {SITE.phone}

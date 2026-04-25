@@ -10,7 +10,7 @@ export const metadata: Metadata = {
     'PBR vs PBU metal roofing panels: when to use each. Triple J Metal builds with both across Central Texas — which panel type fits your project?',
   alternates: { canonical: '/services/pbr-vs-pbu-panels' },
   openGraph: {
-    title: 'PBR vs PBU Metal Panels | Triple J Metal LLC',
+    title: 'PBR vs PBU Metal Panels | Triple J Metal',
     description: 'PBR vs PBU — which metal roofing panel is right for your carport, garage, or barn in Central Texas?',
     type: 'article',
   },
@@ -112,7 +112,7 @@ export default function PbrVsPbuPage() {
                 Get a Free Panel Quote
               </ButtonLink>
               <a
-                href={`tel:${SITE.phone}`}
+                href={SITE.phoneHref}
                 className="inline-flex items-center gap-2 h-12 px-6 rounded-lg border-2 border-white/30 text-white font-semibold hover:border-white/60 transition-colors text-sm"
               >
                 Ask Us — {SITE.phone}
@@ -251,7 +251,7 @@ export default function PbrVsPbuPage() {
               Our steel
             </p>
             <p className="text-ink-700 text-sm leading-relaxed">
-              Triple J Metal LLC sources PBR and PBU panels from leading regional Texas suppliers — Galvalume®
+              Triple J Metal sources PBR and PBU panels from leading regional Texas suppliers — Galvalume®
               substrate with painted finishes backed by a 40-year paint warranty, in 26-gauge and 29-gauge
               depending on your application. Multi-source so we&rsquo;re never bottlenecked when a single supplier
               runs short.

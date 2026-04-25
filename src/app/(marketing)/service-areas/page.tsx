@@ -11,7 +11,7 @@ export const metadata: Metadata = {
     'Triple J Metal serves Bell, McLennan, Coryell, Williamson, Lampasas, Falls, Milam, and Burnet counties. 14 cities, local crew, same-week installs.',
   alternates: { canonical: '/service-areas' },
   openGraph: {
-    title: 'Service Areas | Triple J Metal LLC',
+    title: 'Service Areas | Triple J Metal',
     description: 'Metal building installation across 8 Central Texas counties. Temple-based crew.',
     type: 'website',
   },
@@ -143,7 +143,7 @@ export default function ServiceAreasPage() {
             </span>
             <h1 className="mt-3 text-white">Metal Building Installation Across Central Texas</h1>
             <p className="mt-5 text-lg text-white/75 leading-relaxed max-w-2xl">
-              Triple J Metal LLC is based in Temple, TX. We build carports, garages, barns, and RV covers
+              Triple J Metal is based in Temple, TX. We build carports, garages, barns, and RV covers
               across the entire Killeen–Temple–Belton corridor and surrounding counties. If you&rsquo;re
               within 90 minutes of Temple, we come to you.
             </p>
@@ -152,7 +152,7 @@ export default function ServiceAreasPage() {
                 Get a Free Quote
               </ButtonLink>
               <a
-                href={`tel:${SITE.phone}`}
+                href={SITE.phoneHref}
                 className="inline-flex items-center gap-2 h-12 px-6 rounded-lg border-2 border-white/30 text-white font-semibold hover:border-white/60 transition-colors text-sm"
               >
                 Call {SITE.phone}
@@ -270,7 +270,7 @@ export default function ServiceAreasPage() {
           </p>
           <div className="mt-8">
             <a
-              href={`tel:${SITE.phone}`}
+              href={SITE.phoneHref}
               className="inline-flex items-center gap-2 h-12 px-6 rounded-lg bg-ink-900 text-white font-semibold hover:bg-ink-800 transition-colors text-sm"
             >
               Call to confirm your area — {SITE.phone}
