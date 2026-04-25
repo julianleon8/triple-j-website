@@ -54,6 +54,10 @@ export type QboTokenRow = {
   access_token_expires_at: string
   refresh_token_expires_at: string
   updated_at: string
+  // Phase 4.2 receipt-OCR target account. NULL until configured via
+  // /hq/settings/quickbooks. expense_account_name is cached for display.
+  expense_account_id: string | null
+  expense_account_name: string | null
 }
 
 /** Fetch the stored QBO tokens (returns null if not connected). */
@@ -252,6 +256,214 @@ export async function createQboInvoice(input: InvoiceInput): Promise<{ id: strin
 
   const data = await res.json()
   return { id: data.Invoice.Id, docNumber: data.Invoice.DocNumber }
+}
+
+// ── Expense (Purchase) creation — Phase 4.2 receipt OCR flow ─────────────────
+
+export type QboAccount = {
+  id: string
+  name: string
+  accountType: string  // QBO AccountType — 'Expense', 'Cost of Goods Sold', etc.
+}
+
+/**
+ * List the connected company's expense-style chart-of-accounts entries.
+ * Used by /hq/settings/quickbooks to let Julian pick a single posting
+ * account for receipt-OCR pushes.
+ *
+ * Returns rows where AccountType in ('Expense', 'Cost of Goods Sold',
+ * 'Other Expense') — the only families that make sense for a receipt
+ * push from a metal-buildings contractor.
+ */
+export async function listExpenseAccounts(): Promise<QboAccount[]> {
+  const { access_token, realm_id } = await getValidAccessToken()
+  const query = encodeURIComponent(
+    "SELECT Id, Name, AccountType FROM Account WHERE AccountType IN ('Expense','Cost of Goods Sold','Other Expense') ORDER BY Name",
+  )
+  const res = await fetch(
+    `${QBO_BASE_URL}/v3/company/${realm_id}/query?query=${query}`,
+    { headers: { Authorization: `Bearer ${access_token}`, Accept: 'application/json' } },
+  )
+  if (!res.ok) {
+    const text = await res.text()
+    throw new Error(`QBO account list failed: ${res.status} ${text}`)
+  }
+  const data = await res.json() as {
+    QueryResponse?: { Account?: Array<{ Id: string; Name: string; AccountType: string }> }
+  }
+  const accounts = data?.QueryResponse?.Account ?? []
+  return accounts.map((a) => ({
+    id: a.Id,
+    name: a.Name,
+    accountType: a.AccountType,
+  }))
+}
+
+export type ExpenseInput = {
+  /** QBO Account.Id every line will book to. From qbo_tokens.expense_account_id. */
+  accountId: string
+  /** Vendor display name from the receipt; we'll find-or-create. Optional. */
+  vendor: string | null
+  /** ISO YYYY-MM-DD. Defaults to today if null. */
+  date: string | null
+  /** USD amount; ignored when `lines` is provided (we'll sum). */
+  total: number
+  /**
+   * Optional itemized lines. When omitted we post a single-line expense
+   * for `total` against `accountId`. Each line still books to `accountId`
+   * — receipt OCR doesn't have per-line account info, just descriptions.
+   */
+  lines?: Array<{ description: string; amount: number }>
+  /** Free-form note attached to the Purchase. */
+  memo?: string | null
+}
+
+/**
+ * Create a QuickBooks Online Purchase (cash expense). Returns the
+ * created Purchase Id.
+ */
+export async function createExpense(input: ExpenseInput): Promise<{ id: string }> {
+  const { access_token, realm_id } = await getValidAccessToken()
+
+  // Vendor is optional — gas-station / hardware-store receipts often
+  // don't need a tracked vendor in QBO. When provided, find-or-create
+  // by display name (mirrors findOrCreateCustomer pattern).
+  let entityRef: { value: string; type: 'Vendor' } | undefined
+  if (input.vendor && input.vendor.trim()) {
+    const vendorId = await findOrCreateVendor(access_token, realm_id, input.vendor.trim())
+    if (vendorId) entityRef = { value: vendorId, type: 'Vendor' }
+  }
+
+  // Build the line array. If lines were not supplied, post a single
+  // line for `total`; otherwise expand each line. Every line books to
+  // the same account.
+  const lines = input.lines && input.lines.length > 0
+    ? input.lines.map((l) => ({
+        Amount: Number(l.amount),
+        DetailType: 'AccountBasedExpenseLineDetail',
+        Description: l.description,
+        AccountBasedExpenseLineDetail: {
+          AccountRef: { value: input.accountId },
+        },
+      }))
+    : [{
+        Amount: Number(input.total),
+        DetailType: 'AccountBasedExpenseLineDetail',
+        AccountBasedExpenseLineDetail: {
+          AccountRef: { value: input.accountId },
+        },
+      }]
+
+  const body: Record<string, unknown> = {
+    PaymentType: 'Cash',
+    AccountRef: { value: input.accountId },
+    Line: lines,
+    ...(input.date ? { TxnDate: input.date.slice(0, 10) } : {}),
+    ...(entityRef ? { EntityRef: entityRef } : {}),
+    ...(input.memo ? { PrivateNote: input.memo } : {}),
+  }
+
+  const res = await fetch(`${QBO_BASE_URL}/v3/company/${realm_id}/purchase`, {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${access_token}`,
+      'Content-Type': 'application/json',
+      Accept: 'application/json',
+    },
+    body: JSON.stringify(body),
+  })
+  if (!res.ok) {
+    const text = await res.text()
+    throw new Error(`QBO Purchase creation failed: ${res.status} ${text}`)
+  }
+  const data = await res.json() as { Purchase?: { Id: string } }
+  if (!data?.Purchase?.Id) {
+    throw new Error('QBO Purchase response missing Id')
+  }
+  return { id: data.Purchase.Id }
+}
+
+async function findOrCreateVendor(
+  access_token: string,
+  realm_id: string,
+  name: string,
+): Promise<string | null> {
+  // Search by display name
+  const query = encodeURIComponent(
+    `SELECT * FROM Vendor WHERE DisplayName = '${name.replace(/'/g, "\\'")}'`,
+  )
+  const searchRes = await fetch(
+    `${QBO_BASE_URL}/v3/company/${realm_id}/query?query=${query}`,
+    { headers: { Authorization: `Bearer ${access_token}`, Accept: 'application/json' } },
+  )
+  if (!searchRes.ok) return null
+  const searchData = await searchRes.json()
+  const existing = searchData?.QueryResponse?.Vendor?.[0]
+  if (existing) return existing.Id
+
+  // Create
+  const createRes = await fetch(`${QBO_BASE_URL}/v3/company/${realm_id}/vendor`, {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${access_token}`,
+      'Content-Type': 'application/json',
+      Accept: 'application/json',
+    },
+    body: JSON.stringify({ DisplayName: name }),
+  })
+  if (!createRes.ok) return null
+  const createData = await createRes.json()
+  return createData?.Vendor?.Id ?? null
+}
+
+/**
+ * Upload an Attachable (image) and link it to an existing QBO entity
+ * (e.g. a Purchase created via `createExpense`). Returns the
+ * Attachable.Id.
+ */
+export async function uploadAttachable(params: {
+  entityType: 'Purchase' | 'Invoice' | 'Estimate' | 'Bill'
+  entityId: string
+  blob: Blob
+  filename: string
+  contentType: string  // image/jpeg | image/png | application/pdf | ...
+}): Promise<{ id: string }> {
+  const { access_token, realm_id } = await getValidAccessToken()
+
+  // QBO's upload endpoint takes multipart/form-data with two parts per
+  // attachment: file_metadata_0 (JSON) and file_content_0 (binary).
+  const metadata = {
+    AttachableRef: [{
+      EntityRef: { type: params.entityType, value: params.entityId },
+      IncludeOnSend: false,
+    }],
+    FileName: params.filename,
+    ContentType: params.contentType,
+  }
+
+  const form = new FormData()
+  form.append('file_metadata_0', new Blob([JSON.stringify(metadata)], { type: 'application/json' }))
+  form.append('file_content_0', params.blob, params.filename)
+
+  const res = await fetch(`${QBO_BASE_URL}/v3/company/${realm_id}/upload`, {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${access_token}`,
+      Accept: 'application/json',
+      // No Content-Type — let fetch set the multipart boundary.
+    },
+    body: form,
+  })
+  if (!res.ok) {
+    const text = await res.text()
+    throw new Error(`QBO attachable upload failed: ${res.status} ${text}`)
+  }
+  const data = await res.json() as {
+    AttachableResponse?: Array<{ Attachable?: { Id?: string } }>
+  }
+  const id = data?.AttachableResponse?.[0]?.Attachable?.Id
+  if (!id) throw new Error('QBO attachable response missing Id')
+  return { id }
 }
 
 /**
