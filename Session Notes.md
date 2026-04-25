@@ -733,4 +733,44 @@ End-of-session summaries written by Claude Code. Most recent at top.
 - Fill in Project Context with goals and stack
 - Start building the site
 
+---
+
+## 2026-04-25 — Perf push (4 phases) + SEO criticals + calculator polish + vault sync
+
+**What shipped (15 commits in this session):**
+
+Late 2026-04-24 carryover:
+- HQ Phase 3 + 4 + 4.1 + 4.2 + marketing polish — bundled into 19 commits (`75a2acf` through `eaa292a`). Voice memo → lead, camera-first job photos, receipt OCR + QBO push, /hq/quotes wizard, More tab + Stats screen, Gallery semantic-token sweep, marketing site brand-name cleanup, location pages lifted to Temple-grade for Round Rock + Georgetown + Waco. **Three migrations pending application: `012_gallery_items_job_id.sql`, `013_job_receipts.sql`.**
+
+2026-04-25 work:
+- **Schema audit** (`73c0ba6`) — full `@graph` refactor: Organization + LocalBusiness (HomeAndConstructionBusiness) + WebSite as one canonical graph emitted from the marketing layout. Per-page schema (`/locations/[slug]`, `/services/[slug]`, `/blog/[slug]`, `/about`, `/contact`) refactored to reference the canonical via `@id` instead of duplicating LocalBusiness inline. Full audit in [docs/SCHEMA-AUDIT.md](docs/SCHEMA-AUDIT.md).
+- **`/military` landing page** (`6b73172`) — Fort Cavazos PCS landing page, 9 sections, 7% military discount honored. New SITE.legalName field; Footer + locations/[slug] callouts wired. Sitemap entry at priority 0.9.
+- **Two audit reports** (`67abec3`) — `docs/SEO-AUDIT-2026-04-24.md` (8 pass / 6 warning / 3 fail across 17 checks) + `docs/DATA-MODEL-AUDIT-2026-04-24.md` (~45% readiness for ad-ROI / flywheel reporting; 7 proposed migrations 014-020 awaiting sign-off).
+- **Call-tracking infrastructure** (`3b9acd4`) — DNI infra for CallRail-style per-source phone-number swap. `src/lib/call-tracking.ts` (12-source detection) + `src/components/site/TrackedPhone.tsx` (`useSyncExternalStore` hook + 3 components). Migrated 22 user-facing CTAs across Header / Footer / MobileCallBar / PreFooterCta + 16 marketing pages. Schema.org telephone stays canonical. Logs to Vercel Analytics. `TRACKING_NUMBERS` map empty until CallRail signs up. Runbook in [docs/CALL-TRACKING.md](docs/CALL-TRACKING.md).
+- **Quote calculator** (`b7dc3f8`) — `src/lib/quote-pricing.ts` (engine, all $ values placeholder marked `TODO_PRICING`) + `CalculatorStep.tsx` UI replaces wizard's manual ItemsStep. Calculator state stuffs into `quotes.internal_notes` as JSON `{kind:'calculator', version:1}`. Twilio SMS-send stub at `src/lib/twilio.ts` + `/api/quotes/[id]/send-sms` (returns 503 until env vars land). Runbook in [docs/QUOTE-CALCULATOR.md](docs/QUOTE-CALCULATOR.md).
+- **Perf push baseline + Phase 0** (`0901bde`) — `docs/PERF-BASELINE-2026-04-25.md`. Key correction: 1.3 MB chunk turned out to be `heic2any`, already lazy. Real first-load JS is ~1.0 MB on HQ pages.
+- **Phase 1** (`9782f8f`) — lazy-loaded Sheet + Lightbox via `next/dynamic` (split into Impl + lazy wrapper). Deferred hCaptcha mount in QuoteForm + PartnerInquiryForm. ~150 KB shaved off first-load on the affected routes.
+- **Phase 2** (`a77c442`) — Suspense streaming on `/hq/leads/[id]` (DeferredConvertButton), `/hq/customers/[id]` (DeferredActivityTimeline), `/hq/jobs/[id]` (DeferredJobPhotos + DeferredJobReceipts). Shared `<Skeleton>` primitives extracted. `<Link prefetch>` on every inbox row. Tap-to-paint target: ≤100 ms.
+- **Phase 3** (`d6acea6`) — `/hq/leads` paginated 500→50 with split status-only count query. Voice-memo `notifyNewLead()` moved to Next's `after()` API. Migration `021_hq_perf_indexes.sql` (7 indexes, additive, awaiting application).
+- **Phase 4** (`eb953b6`) — 7 hero JPEGs recompressed via `sips --resampleWidth 1600 -s formatOptions 65` (~30% reduction). Unused `logo-lion-detailed.png` (1036 KB) deleted. ~2.6 MB total saved.
+- **SEO criticals** (`5923ca4`) — `/military` title double-brand fixed (`title: { absolute }`). Same fix on Waco/Georgetown/Round Rock metaTitles. New `src/app/not-found.tsx` (slim brand bar + apologetic H1 + 3 recovery links). 5 over-60-char titles trimmed. `heroImageAlt` filled on all 22 location entries (was 6/22). Internal links added to `/privacy` + `/terms`.
+- **A1 SEO tail** (`c875f55`) — Per-page Twitter cards on `/military` + `/services/[slug]` + `/locations/[slug]` + `/blog/[slug]`. Real alt text on services hub + thank-you hero. Two callouts added to `/locations/copperas-cove`. `/blog` index gets above-the-fold CTA. `BreadcrumbList` JSON-LD on `/blog/[slug]`. Per-page OG image for `/military` via Next file-based ImageResponse at `opengraph-image.tsx`.
+- **A2 perf tail** (`b5de08f`) — `Load older` button on `/hq/leads` + cursor support on `GET /api/leads`. Hover-prefetch on lazy chunks: `prefetchSheet()` + `prefetchLightbox()` helpers + wired on JobPhotoStrip thumbnails + JobReceiptStrip buttons. CSS-only SwipeActions deferred (production risk, needs iPhone QA session).
+- **A3 calculator polish** (`c4f2809`) — `Send SMS` button on `/hq/quotes/[id]` (calls existing 503-stub endpoint until Twilio provisioned). Standalone `/hq/calculator` route — estimator without DB write. **Real PDF generation** via `@react-pdf/renderer` — `src/lib/quote-pdf.tsx` + `GET /api/quotes/[id]/pdf` route + `PDF` button on `/hq/quotes/[id]` opens it.
+- **A4 vault sync** — this entry + 11 new Decisions.md rows + 2 new memory files (`project_pending_manual_tasks.md`, `project_strategic_backlog.md`).
+
+**Where things stand:**
+- 26 `Decisions.md` rows added across 2026-04-23, 04-24, 04-25 (most recent 14 from this session).
+- All 4 perf phases complete; **Phase 5 (re-measure) waits 24 hours** for Vercel Speed Insights to accumulate post-deploy field data.
+- Three audit docs: SEO + data-model + schema. SEO criticals all closed.
+- **Manual tasks blocking features:** apply migrations 012/013/021, set OPENAI_API_KEY in Vercel, pick QBO expense account at `/hq/settings/quickbooks`, optional CallRail/Twilio accounts. Full list in `project_pending_manual_tasks.md` memory.
+
+**Next session candidates** (from `project_strategic_backlog.md`):
+- Apply migrations 014-020 (data-model audit) once approved.
+- CSS-only SwipeActions rewrite with iPhone QA.
+- Customer portal / persistent login / project-tracking dashboard.
+- Public Google reviews ingestion + AggregateRating schema.
+- Job scheduling calendar.
+- Real 2025/2026 pricing values into `src/lib/quote-pricing.ts` (drops `TODO_PRICING` markers).
+
 _Maintained by Claude Code_
