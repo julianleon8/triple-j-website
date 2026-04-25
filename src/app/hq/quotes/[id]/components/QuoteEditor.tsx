@@ -89,18 +89,7 @@ export default function QuoteEditor({ quote, customers }: Props) {
   }
 
   return (
-    <div className="max-w-3xl space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <p className="text-sm text-gray-500 font-mono">{quote.quote_number}</p>
-          <p className="text-sm text-gray-600">{quote.customers?.name ?? '—'}</p>
-        </div>
-        <span className={`px-3 py-1 rounded-full text-xs font-semibold capitalize ${STATUS_STYLES[quote.status] ?? 'bg-gray-100 text-gray-600'}`}>
-          {quote.status}
-        </span>
-      </div>
-
+    <div className="space-y-6">
       {/* Quote Details */}
       <div className="bg-white rounded-xl border border-gray-200 p-6 space-y-4">
         <h2 className="font-semibold text-gray-800">Details</h2>

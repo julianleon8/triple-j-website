@@ -15,6 +15,7 @@ const lineItemSchema = z.object({
 const patchSchema = z.object({
   valid_until: z.string().optional(),
   notes: z.string().max(2000).optional(),
+  status: z.enum(['draft', 'sent', 'accepted', 'declined', 'expired']).optional(),
   line_items: z.array(lineItemSchema).min(1).optional(),
 })
 
@@ -67,12 +68,18 @@ export async function PATCH(
       total = subtotal // tax_rate = 0
     }
 
+    const statusTimestamps: Record<string, string> = {}
+    const nowIso = new Date().toISOString()
+    if (quoteFields.status === 'accepted') statusTimestamps.accepted_at = nowIso
+    if (quoteFields.status === 'declined') statusTimestamps.declined_at = nowIso
+
     const { error } = await db
       .from('quotes')
       .update({
         ...quoteFields,
+        ...statusTimestamps,
         ...(subtotal !== undefined ? { subtotal, total, tax_amount: 0 } : {}),
-        updated_at: new Date().toISOString(),
+        updated_at: nowIso,
       })
       .eq('id', id)
 

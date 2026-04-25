@@ -1,27 +1,30 @@
 export const dynamic = 'force-dynamic'
 
-import Link from 'next/link'
 import { getAdminClient } from '@/lib/supabase/admin'
-import QuotesTable from './components/QuotesTable'
+import { quoteToRow, type QuoteForRow } from '@/lib/pipeline'
+import { QuotesList } from './components/QuotesList'
 
 export default async function QuotesPage() {
-  const { data: quotes } = await getAdminClient()
+  const { data } = await getAdminClient()
     .from('quotes')
-    .select('*, customers(name)')
+    .select('id, created_at, quote_number, status, total, valid_until, customers(name)')
     .order('created_at', { ascending: false })
+    .limit(500)
+
+  const quotes = (data ?? []) as unknown as QuoteForRow[]
+  const rows = quotes.map(quoteToRow)
+
+  const counts = {
+    all:      quotes.length,
+    draft:    quotes.filter((q) => q.status === 'draft').length,
+    sent:     quotes.filter((q) => q.status === 'sent').length,
+    accepted: quotes.filter((q) => q.status === 'accepted').length,
+  }
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-4 sm:mb-6">
-        <h1 className="hidden sm:block text-2xl font-bold">Quotes</h1>
-        <Link
-          href="/hq/quotes/new"
-          className="ml-auto bg-brand-600 hover:bg-brand-700 text-white font-bold text-sm min-h-11 px-4 flex items-center rounded-lg transition"
-        >
-          + New Quote
-        </Link>
-      </div>
-      <QuotesTable quotes={quotes ?? []} />
+      <h1 className="hidden sm:block text-2xl font-bold mb-6">Quotes</h1>
+      <QuotesList rows={rows} counts={counts} />
     </div>
   )
 }

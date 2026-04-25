@@ -1,7 +1,7 @@
 export const dynamic = 'force-dynamic'
 
 import { getAdminClient } from '@/lib/supabase/admin'
-import QuoteBuilderForm from './components/QuoteBuilderForm'
+import { QuoteWizard } from './_components/QuoteWizard'
 
 export default async function NewQuotePage() {
   const { data: customers } = await getAdminClient()
@@ -12,7 +12,7 @@ export default async function NewQuotePage() {
   return (
     <div>
       <h1 className="hidden sm:block text-2xl font-bold mb-6">New Quote</h1>
-      <QuoteBuilderForm customers={customers ?? []} />
+      <QuoteWizard customers={customers ?? []} />
     </div>
   )
 }
