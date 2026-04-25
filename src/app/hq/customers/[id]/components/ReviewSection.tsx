@@ -6,7 +6,7 @@ import { ReviewActions } from './ReviewActions'
 // /hq/more/stats nowMs(). Server components re-render per request so
 // "now" resolves freshly each time.
 function nowMs() {
-  return nowMs()
+  return Date.now()
 }
 
 type Props = {

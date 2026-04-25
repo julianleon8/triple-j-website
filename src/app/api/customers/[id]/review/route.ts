@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod'
 import { createClient } from '@/lib/supabase/server'
 import { getAdminClient } from '@/lib/supabase/admin'
+import { sendSms, isTwilioConfigured, toE164 } from '@/lib/twilio'
 
 export const dynamic = 'force-dynamic'
 
@@ -18,11 +19,16 @@ const bodySchema = z.discriminatedUnion('action', [
  * POST /api/customers/[id]/review
  *
  * Drives the customer-flywheel review-ask flow (migration 019).
- *   - asked   → stamp review_asked_at = now, review_followup_due_at = +7d
+ *   - asked   → stamp review_asked_at = now, review_followup_due_at = +7d,
+ *               and (Phase 2.B) ship the review-ask SMS via Twilio.
  *   - snoozed → bump review_followup_due_at by another 7d
  *   - left    → stamp review_left_at = now, persist optional review_url,
  *               clear review_followup_due_at
  *   - reset   → clear all four fields (in case Julian asked the wrong customer)
+ *
+ * SMS is fire-and-forget — DB stamp lands even if Twilio fails, so the
+ * follow-up calendar is never blocked. The SMS outcome is returned in
+ * the response so HQ UI can surface the failure with a toast.
  */
 export async function POST(
   request: NextRequest,
@@ -67,5 +73,51 @@ export async function POST(
   if (error) {
     return NextResponse.json({ error: 'Failed to update review' }, { status: 500 })
   }
-  return NextResponse.json({ success: true })
+
+  // Phase 2.B — review-ask SMS. Only on the 'asked' transition; snooze/left/reset
+  // are HQ-side state changes that don't message the customer.
+  let sms: { sent: boolean; reason?: string } | undefined
+  if (parsed.data.action === 'asked') {
+    sms = await sendReviewAskSms(id)
+  }
+
+  return NextResponse.json({ success: true, ...(sms ? { sms } : {}) })
+}
+
+/**
+ * Sends the review-ask SMS to the customer. Returns a small status object
+ * for the response payload — never throws. Swallowing failures is intentional:
+ * the DB ask-stamp is the source of truth for the follow-up cron, and a
+ * Twilio outage shouldn't block Julian from advancing the customer state.
+ */
+async function sendReviewAskSms(customerId: string): Promise<{ sent: boolean; reason?: string }> {
+  if (!isTwilioConfigured()) {
+    return { sent: false, reason: 'twilio_not_configured' }
+  }
+
+  const { data: customer } = await getAdminClient()
+    .from('customers')
+    .select('name, phone')
+    .eq('id', customerId)
+    .single<{ name: string; phone: string | null }>()
+
+  if (!customer?.phone) return { sent: false, reason: 'no_phone' }
+  const e164 = toE164(customer.phone)
+  if (!e164) return { sent: false, reason: 'invalid_phone' }
+
+  const firstName = customer.name.split(/\s+/)[0] || customer.name
+  const reviewUrl = process.env.GOOGLE_REVIEW_URL?.trim()
+  const linkLine = reviewUrl
+    ? `Quick favor — would you leave a Google review? ${reviewUrl}`
+    : `Quick favor — would you leave a Google review? Search "Triple J Metal Temple TX" on Google.`
+  const body =
+    `Triple J Metal: thanks for choosing us, ${firstName}! ` +
+    `${linkLine} Means the world. Reply STOP to opt out.`
+
+  const result = await sendSms({ to: e164, body })
+  if (!result.ok) {
+    console.error(`[reviewAsk] customer ${customerId} SMS failed:`, result.message)
+    return { sent: false, reason: result.reason }
+  }
+  return { sent: true }
 }

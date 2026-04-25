@@ -31,6 +31,21 @@ export function ReviewActions({ customerId, state }: Props) {
         body: JSON.stringify(body),
       })
       if (!res.ok) throw new Error('Failed to update')
+      const json = (await res.json().catch(() => ({}))) as {
+        sms?: { sent: boolean; reason?: string }
+      }
+      // DB write succeeded; surface SMS outcome non-blockingly so Julian
+      // can fall back to a manual text if Twilio is unconfigured or choked.
+      if (action === 'asked' && json.sms && !json.sms.sent) {
+        const reasonLabel: Record<string, string> = {
+          twilio_not_configured: 'Saved — SMS skipped (Twilio not configured)',
+          no_phone: 'Saved — SMS skipped (no phone on file)',
+          invalid_phone: 'Saved — SMS skipped (phone not a US number)',
+          not_configured: 'Saved — SMS skipped (Twilio not configured)',
+          send_failed: 'Saved — SMS send failed (check Twilio console)',
+        }
+        setError(reasonLabel[json.sms.reason ?? ''] ?? 'Saved — SMS not sent')
+      }
       haptics.success()
       setPasteOpen(false)
       setUrl('')

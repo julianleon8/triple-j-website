@@ -2,6 +2,7 @@ import { Resend } from 'resend'
 import LeadOwnerAlert, { leadOwnerAlertText } from '@/emails/LeadOwnerAlert'
 import LeadCustomerConfirmation, { leadCustomerConfirmationText } from '@/emails/LeadCustomerConfirmation'
 import { sendPushBackground } from '@/lib/push'
+import { sendSms, isTwilioConfigured, toE164 } from '@/lib/twilio'
 
 let _resend: Resend | null = null
 function resend(): Resend {
@@ -150,4 +151,55 @@ export async function notifyNewLead({ lead, sizeLine = null }: NotifyNewLeadInpu
     url: '/hq',
     tag: `lead-${lead.id}`,
   })
+
+  // Speed-to-response (Phase 2): 60-sec SMS auto-reply to the lead. Studies
+  // peg sub-5-min replies at ~2× close rate. No-ops silently when Twilio
+  // env vars are unset, so this ships safely before provisioning.
+  void sendLeadAutoReplyBackground(lead, city, serviceType)
+}
+
+function firstName(full: string): string {
+  return full.split(/\s+/)[0] || full
+}
+
+const SERVICE_PHRASE: Record<string, string> = {
+  carport: 'carport',
+  garage: 'metal garage',
+  barn: 'barn',
+  rv_cover: 'RV cover',
+  other: 'project',
+}
+
+/**
+ * Fire-and-forget Twilio SMS to the lead's phone confirming receipt.
+ * Never throws — logs failures so notifyNewLead's caller is not impacted.
+ *
+ * Skips when:
+ *   - Twilio env vars are unset (CallRail-style stub stays inert)
+ *   - Phone is missing or doesn't normalize to a US E.164 number
+ *
+ * Body keeps under 160 GSM-7 chars to stay 1-segment ($0.0079 per send).
+ */
+async function sendLeadAutoReplyBackground(
+  lead: LeadRecord,
+  city: string,
+  serviceType: string,
+): Promise<void> {
+  if (!isTwilioConfigured()) return
+  if (!lead.phone) return
+  const e164 = toE164(lead.phone)
+  if (!e164) {
+    console.warn(`[autoReply] lead ${lead.id} phone "${lead.phone}" not E.164-able`)
+    return
+  }
+  const phrase = SERVICE_PHRASE[serviceType] ?? 'project'
+  const inCity = city && city !== 'Unknown' ? ` in ${city}` : ''
+  const body =
+    `Triple J Metal: thanks ${firstName(lead.name)} — got your ${phrase} request${inCity}. ` +
+    `Julian will call within 1 business hour. — 254-346-7764. Reply STOP to opt out.`
+
+  const result = await sendSms({ to: e164, body })
+  if (!result.ok) {
+    console.error(`[autoReply] lead ${lead.id} SMS failed:`, result.message)
+  }
 }
