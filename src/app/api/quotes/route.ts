@@ -16,6 +16,10 @@ const schema = z.object({
   customer_id: z.string().uuid(),
   valid_until: z.string(),
   notes: z.string().max(2000).optional(),
+  /** Internal-use only — never shown on the customer accept-token page.
+   *  The quote calculator stuffs its inputs + result + flags here as a
+   *  JSON blob; future migration normalizes. See docs/QUOTE-CALCULATOR.md. */
+  internal_notes: z.string().max(20000).optional(),
   line_items: z.array(lineItemSchema).min(1, 'At least one line item required'),
 })
 
@@ -30,7 +34,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: parsed.error.issues }, { status: 400 })
   }
 
-  const { customer_id, valid_until, notes, line_items } = parsed.data
+  const { customer_id, valid_until, notes, internal_notes, line_items } = parsed.data
   const db = getAdminClient()
 
   // Generate quote number: JJM-YYYY-NNN
@@ -62,6 +66,7 @@ export async function POST(request: NextRequest) {
       customer_id,
       valid_until,
       notes,
+      internal_notes,
       quote_number,
       subtotal,
       tax_rate,

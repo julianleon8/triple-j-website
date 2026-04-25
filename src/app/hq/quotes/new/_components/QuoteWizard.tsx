@@ -5,9 +5,10 @@ import { useRouter } from 'next/navigation'
 import { ArrowLeft, ArrowRight, Send } from 'lucide-react'
 import { useHaptics } from '@/lib/hq/haptics'
 import { CustomerStep } from './CustomerStep'
-import { ItemsStep } from './ItemsStep'
+import { CalculatorStep, defaultInputs } from './CalculatorStep'
 import { TotalsStep } from './TotalsStep'
 import { ReviewStep } from './ReviewStep'
+import { calculate, type CalculatorInputs } from '@/lib/quote-pricing'
 
 export type WizardCustomer = { id: string; name: string; email: string | null }
 export type WizardLineItem = {
@@ -24,7 +25,7 @@ export function QuoteWizard({ customers: initialCustomers }: { customers: Wizard
   const [customers, setCustomers] = useState<WizardCustomer[]>(initialCustomers)
   const [step, setStep] = useState<Step>(1)
   const [customerId, setCustomerId] = useState<string | null>(null)
-  const [lineItems, setLineItems] = useState<WizardLineItem[]>([])
+  const [calcInputs, setCalcInputs] = useState<CalculatorInputs>(defaultInputs)
   const [taxRate, setTaxRate] = useState(0.0825)
   const [validUntil, setValidUntil] = useState(() => {
     const d = new Date()
@@ -35,10 +36,21 @@ export function QuoteWizard({ customers: initialCustomers }: { customers: Wizard
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  const subtotal = useMemo(
-    () => lineItems.reduce((s, i) => s + i.quantity * i.unit_price, 0),
-    [lineItems],
+  // Calculator runs on every input change. Cheap (pure function over <50 line items).
+  const calcResult = useMemo(() => calculate(calcInputs), [calcInputs])
+
+  // Wizard line-item shape for downstream steps + the /api/quotes payload.
+  const lineItems: WizardLineItem[] = useMemo(
+    () =>
+      [...calcResult.derivedLineItems, ...calcResult.customLineItems].map((line) => ({
+        description: line.description,
+        quantity: line.quantity,
+        unit_price: line.unit_price,
+      })),
+    [calcResult],
   )
+
+  const subtotal = calcResult.finalPrice
   const taxAmount = subtotal * taxRate
   const total = subtotal + taxAmount
 
@@ -46,7 +58,7 @@ export function QuoteWizard({ customers: initialCustomers }: { customers: Wizard
 
   function canAdvance(from: Step): boolean {
     if (from === 1) return customerId !== null
-    if (from === 2) return lineItems.some((i) => i.description.trim() && i.quantity > 0)
+    if (from === 2) return lineItems.length > 0 && calcInputs.width > 0 && calcInputs.length > 0
     if (from === 3) return Boolean(validUntil)
     return false
   }
@@ -61,6 +73,27 @@ export function QuoteWizard({ customers: initialCustomers }: { customers: Wizard
     if (!customerId) return null
     setSubmitting(true)
     setError(null)
+
+    // Pack calculator state + internal-cost / margin / flags into
+    // internal_notes as a JSON blob. Stays out of customer view (notes is
+    // the customer-facing field). Future migration normalizes — see
+    // docs/QUOTE-CALCULATOR.md and DATA-MODEL-AUDIT-2026-04-24.md.
+    const calculatorPayload = {
+      kind: 'calculator',
+      version: 1,
+      inputs: calcInputs,
+      result: {
+        internalMaterialCost: calcResult.internalMaterialCost,
+        marginBufferPct: calcResult.marginBufferPct,
+        bufferAmount: calcResult.bufferAmount,
+        finalPrice: calcResult.finalPrice,
+        estimatedGrossMargin: calcResult.estimatedGrossMargin,
+        estimatedMarkupRatio: calcResult.estimatedMarkupRatio,
+        flags: calcResult.flags,
+        suggestedColumnTier: calcResult.suggestedColumnTier,
+      },
+    }
+
     const res = await fetch('/api/quotes', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -68,6 +101,7 @@ export function QuoteWizard({ customers: initialCustomers }: { customers: Wizard
         customer_id: customerId,
         valid_until: validUntil,
         notes: notes || undefined,
+        internal_notes: JSON.stringify(calculatorPayload),
         line_items: lineItems
           .filter((i) => i.description.trim())
           .map((i, idx) => ({
@@ -157,10 +191,10 @@ export function QuoteWizard({ customers: initialCustomers }: { customers: Wizard
           />
         )}
         {step === 2 && (
-          <ItemsStep
-            lineItems={lineItems}
-            onChange={setLineItems}
-            subtotal={subtotal}
+          <CalculatorStep
+            inputs={calcInputs}
+            onChange={setCalcInputs}
+            result={calcResult}
           />
         )}
         {step === 3 && (
