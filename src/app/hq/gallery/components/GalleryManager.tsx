@@ -2,6 +2,7 @@
 
 import { useState, useRef } from 'react'
 import Image from 'next/image'
+import { Lightbox, type LightboxPhoto } from '@/components/hq/Lightbox'
 import { PANEL_COLORS } from '@/lib/colors'
 import {
   colorOptionLabel,
@@ -98,9 +99,9 @@ const PANEL_PROFILE_OPTIONS = ['PBR', 'PBU']
 const GAUGE_OPTIONS = ['26', '29']
 
 const TAG_COLORS: Record<string, string> = {
-  Welded:  'bg-blue-100 text-blue-700',
-  Bolted:  'bg-gray-100 text-gray-600',
-  Turnkey: 'bg-amber-100 text-amber-700',
+  Welded:  'bg-(--brand-fg)/15 text-(--brand-fg)',
+  Bolted:  'bg-(--surface-3) text-(--text-secondary)',
+  Turnkey: 'bg-amber-500/15 text-amber-600 dark:text-amber-400',
 }
 
 function sortPhotos(photos: Photo[] | null | undefined): Photo[] {
@@ -126,11 +127,11 @@ function ColorSelect({
 }) {
   return (
     <div>
-      <label className="block text-xs font-semibold text-gray-600 mb-1">{label}</label>
+      <label className="block text-xs font-semibold text-(--text-secondary) mb-1">{label}</label>
       <select
         name={name}
         defaultValue={defaultValue ?? ''}
-        className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
+        className="w-full rounded-lg border border-(--border-strong) px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-(--brand-fg)"
       >
         <option value="">— None —</option>
         {PANEL_COLORS.map((c) => (
@@ -188,6 +189,7 @@ export default function GalleryManager({ initialItems }: { initialItems: Gallery
   const [busyId, setBusyId] = useState<string | null>(null)
   const [uploadError, setUploadError] = useState<string | null>(null)
   const [expandedId, setExpandedId] = useState<string | null>(null)
+  const [lightbox, setLightbox] = useState<{ photos: LightboxPhoto[]; index: number } | null>(null)
   const [folderName, setFolderName] = useState<string | null>(null)
   const [uploadStatuses, setUploadStatuses] = useState<UploadFileStatus[]>([])
   const fileRef = useRef<HTMLInputElement>(null)
@@ -700,8 +702,8 @@ export default function GalleryManager({ initialItems }: { initialItems: Gallery
   return (
     <div className="space-y-8">
       {/* ── Upload form ── */}
-      <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
-        <h2 className="text-base font-bold text-gray-900 mb-4">Upload New Project</h2>
+      <div className="bg-(--surface-1) rounded-xl border border-(--border-subtle) shadow-sm p-6">
+        <h2 className="text-base font-bold text-(--text-primary) mb-4">Upload New Project</h2>
 
         {/* Folder drop zone — drag a job folder from Finder, or pick one. All
             photos in the folder become a single project, with the folder name
@@ -719,37 +721,37 @@ export default function GalleryManager({ initialItems }: { initialItems: Gallery
           // and Clear button.
           className={`mb-5 rounded-xl border-2 border-dashed px-4 py-5 text-center transition-colors ${
             folderName
-              ? 'border-emerald-300 bg-emerald-50'
-              : 'hidden sm:block border-blue-300 bg-blue-50 hover:border-blue-400'
+              ? 'border-emerald-300 bg-emerald-500/10'
+              : 'hidden sm:block border-(--brand-fg)/30 bg-(--brand-fg)/10 hover:border-(--brand-fg)/40'
           }`}
         >
           {folderName ? (
             <div>
-              <p className="text-sm font-semibold text-emerald-900">
+              <p className="text-sm font-semibold text-emerald-600 dark:text-emerald-300">
                 📁 {folderName}
               </p>
-              <p className="mt-0.5 text-xs text-emerald-800">
+              <p className="mt-0.5 text-xs text-emerald-600 dark:text-emerald-400">
                 {selectedCount} photo{selectedCount === 1 ? '' : 's'} queued —
                 will become one project. First file is the cover.
               </p>
               <button
                 type="button"
                 onClick={clearQueue}
-                className="mt-2 text-xs font-semibold text-emerald-800 underline hover:text-emerald-900"
+                className="mt-2 text-xs font-semibold text-emerald-600 dark:text-emerald-400 underline hover:text-emerald-600 dark:text-emerald-300"
               >
                 Clear and start over
               </button>
             </div>
           ) : (
             <div>
-              <p className="text-sm font-semibold text-blue-900">
+              <p className="text-sm font-semibold text-(--brand-fg)">
                 Drop a job folder here
               </p>
-              <p className="mt-1 text-xs text-blue-700">
+              <p className="mt-1 text-xs text-(--brand-fg)">
                 All photos inside become one project. Folder name auto-fills
                 the Title. HEIC photos auto-convert.
               </p>
-              <label className="mt-3 inline-block cursor-pointer rounded-lg border border-blue-300 bg-white px-3 py-1.5 text-xs font-semibold text-blue-700 hover:bg-blue-100">
+              <label className="mt-3 inline-block cursor-pointer rounded-lg border border-(--brand-fg)/30 bg-(--surface-1) px-3 py-1.5 text-xs font-semibold text-(--brand-fg) hover:bg-(--brand-fg)/15">
                 Choose folder
                 <input
                   type="file"
@@ -768,8 +770,8 @@ export default function GalleryManager({ initialItems }: { initialItems: Gallery
         <form onSubmit={handleUpload} className="space-y-4">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="sm:col-span-2">
-              <label className="block text-xs font-semibold text-gray-600 mb-1">
-                Cover Photo <span className="text-red-500">*</span>
+              <label className="block text-xs font-semibold text-(--text-secondary) mb-1">
+                Cover Photo <span className="text-red-500 dark:text-red-400">*</span>
               </label>
               <input
                 ref={fileRef}
@@ -779,15 +781,15 @@ export default function GalleryManager({ initialItems }: { initialItems: Gallery
                 multiple
                 required
                 onChange={handleCoverPick}
-                className="block w-full text-sm text-gray-600 file:mr-3 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 cursor-pointer"
+                className="block w-full text-sm text-(--text-secondary) file:mr-3 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-(--brand-fg)/10 file:text-(--brand-fg) hover:file:bg-(--brand-fg)/15 cursor-pointer"
               />
-              <p className="mt-1 text-[11px] text-gray-400">
+              <p className="mt-1 text-[11px] text-(--text-tertiary)">
                 iPhone HEIC photos are auto-converted to JPEG. Pick multiple photos to bundle them as one project — first one becomes the cover.
               </p>
             </div>
             <div>
-              <label className="block text-xs font-semibold text-gray-600 mb-1">
-                Title <span className="text-red-500">*</span>
+              <label className="block text-xs font-semibold text-(--text-secondary) mb-1">
+                Title <span className="text-red-500 dark:text-red-400">*</span>
               </label>
               <input
                 ref={titleRef}
@@ -795,24 +797,24 @@ export default function GalleryManager({ initialItems }: { initialItems: Gallery
                 type="text"
                 required
                 placeholder="e.g. 30x40 Welded Carport"
-                className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
+                className="w-full rounded-lg border border-(--border-strong) px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-(--brand-fg)"
               />
             </div>
             <div>
-              <label className="block text-xs font-semibold text-gray-600 mb-1">City</label>
+              <label className="block text-xs font-semibold text-(--text-secondary) mb-1">City</label>
               <input
                 name="city"
                 type="text"
                 placeholder="e.g. Killeen, TX"
                 defaultValue="Central Texas"
-                className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
+                className="w-full rounded-lg border border-(--border-strong) px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-(--brand-fg)"
               />
             </div>
             <div>
-              <label className="block text-xs font-semibold text-gray-600 mb-1">Type</label>
+              <label className="block text-xs font-semibold text-(--text-secondary) mb-1">Type</label>
               <select
                 name="type"
-                className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
+                className="w-full rounded-lg border border-(--border-strong) px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-(--brand-fg)"
               >
                 {TYPE_OPTIONS.map((t) => (
                   <option key={t}>{t}</option>
@@ -820,10 +822,10 @@ export default function GalleryManager({ initialItems }: { initialItems: Gallery
               </select>
             </div>
             <div>
-              <label className="block text-xs font-semibold text-gray-600 mb-1">Tag</label>
+              <label className="block text-xs font-semibold text-(--text-secondary) mb-1">Tag</label>
               <select
                 name="tag"
-                className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
+                className="w-full rounded-lg border border-(--border-strong) px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-(--brand-fg)"
               >
                 {TAG_OPTIONS.map((t) => (
                   <option key={t}>{t}</option>
@@ -833,11 +835,11 @@ export default function GalleryManager({ initialItems }: { initialItems: Gallery
             <ColorSelect name="panel_color" label="Panel Color" />
             <ColorSelect name="trim_color" label="Trim Color" />
             <div>
-              <label className="block text-xs font-semibold text-gray-600 mb-1">Panel Profile</label>
+              <label className="block text-xs font-semibold text-(--text-secondary) mb-1">Panel Profile</label>
               <select
                 name="panel_profile"
                 defaultValue=""
-                className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
+                className="w-full rounded-lg border border-(--border-strong) px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-(--brand-fg)"
               >
                 <option value="">— None —</option>
                 {PANEL_PROFILE_OPTIONS.map((p) => (
@@ -846,11 +848,11 @@ export default function GalleryManager({ initialItems }: { initialItems: Gallery
               </select>
             </div>
             <div>
-              <label className="block text-xs font-semibold text-gray-600 mb-1">Gauge</label>
+              <label className="block text-xs font-semibold text-(--text-secondary) mb-1">Gauge</label>
               <select
                 name="gauge"
                 defaultValue=""
-                className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
+                className="w-full rounded-lg border border-(--border-strong) px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-(--brand-fg)"
               >
                 <option value="">— None —</option>
                 {GAUGE_OPTIONS.map((g) => (
@@ -859,14 +861,14 @@ export default function GalleryManager({ initialItems }: { initialItems: Gallery
               </select>
             </div>
             <div className="sm:col-span-2">
-              <label className="block text-xs font-semibold text-gray-600 mb-1">
+              <label className="block text-xs font-semibold text-(--text-secondary) mb-1">
                 Alt text (for accessibility)
               </label>
               <input
                 name="alt_text"
                 type="text"
                 placeholder="Brief description of the photo"
-                className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
+                className="w-full rounded-lg border border-(--border-strong) px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-(--brand-fg)"
               />
             </div>
             <div className="sm:col-span-2 flex items-center gap-2">
@@ -875,30 +877,30 @@ export default function GalleryManager({ initialItems }: { initialItems: Gallery
                 name="is_featured"
                 type="checkbox"
                 value="true"
-                className="h-4 w-4 rounded border-gray-300"
+                className="h-4 w-4 rounded border-(--border-strong)"
               />
-              <label htmlFor="new-is-featured" className="text-xs font-semibold text-gray-600">
+              <label htmlFor="new-is-featured" className="text-xs font-semibold text-(--text-secondary)">
                 Feature this project (pins to first slot on /gallery + homepage hero)
               </label>
             </div>
           </div>
           {uploadError && (
-            <p className="text-sm text-red-600 bg-red-50 rounded-lg px-3 py-2">{uploadError}</p>
+            <p className="text-sm text-red-600 dark:text-red-400 bg-red-500/10 rounded-lg px-3 py-2">{uploadError}</p>
           )}
 
           {/* Per-file upload status list — visible during upload + persists
               after so the user can see which files failed and why. */}
           {uploadStatuses.length > 0 && (
-            <div className="rounded-lg border border-gray-200 bg-gray-50 p-3 space-y-1.5 max-h-72 overflow-y-auto">
+            <div className="rounded-lg border border-(--border-subtle) bg-(--surface-2) p-3 space-y-1.5 max-h-72 overflow-y-auto">
               <div className="flex items-center justify-between mb-1">
-                <p className="text-[11px] font-semibold uppercase tracking-wider text-gray-500">
+                <p className="text-[11px] font-semibold uppercase tracking-wider text-(--text-tertiary)">
                   {uploading ? 'Uploading…' : uploadProgress ?? 'Upload complete'}
                 </p>
                 {!uploading && (
                   <button
                     type="button"
                     onClick={() => setUploadStatuses([])}
-                    className="text-[11px] font-semibold text-gray-500 hover:text-gray-700 underline"
+                    className="text-[11px] font-semibold text-(--text-tertiary) hover:text-(--text-secondary) underline"
                   >
                     Dismiss
                   </button>
@@ -909,15 +911,15 @@ export default function GalleryManager({ initialItems }: { initialItems: Gallery
                   <li key={`${s.name}-${i}`} className="flex items-start gap-2 text-[12px]">
                     <span className="shrink-0 w-4 mt-0.5" aria-hidden="true">
                       {s.state === 'done'       && <span className="text-emerald-600">✓</span>}
-                      {s.state === 'failed'     && <span className="text-red-600">✗</span>}
+                      {s.state === 'failed'     && <span className="text-red-600 dark:text-red-400">✗</span>}
                       {s.state === 'preparing'  && <span className="text-amber-600 animate-pulse">…</span>}
-                      {s.state === 'uploading'  && <span className="text-blue-600 animate-pulse">↑</span>}
-                      {s.state === 'pending'    && <span className="text-gray-400">○</span>}
+                      {s.state === 'uploading'  && <span className="text-(--brand-fg) animate-pulse">↑</span>}
+                      {s.state === 'pending'    && <span className="text-(--text-tertiary)">○</span>}
                     </span>
                     <span className="flex-1 min-w-0">
-                      <span className="font-medium text-gray-700 truncate block">{s.name}</span>
+                      <span className="font-medium text-(--text-secondary) truncate block">{s.name}</span>
                       {s.error && (
-                        <span className="text-red-600 text-[11px] block leading-snug">{s.error}</span>
+                        <span className="text-red-600 dark:text-red-400 text-[11px] block leading-snug">{s.error}</span>
                       )}
                     </span>
                   </li>
@@ -929,7 +931,7 @@ export default function GalleryManager({ initialItems }: { initialItems: Gallery
           <button
             type="submit"
             disabled={uploading}
-            className="px-5 py-2.5 rounded-lg bg-blue-600 text-white text-sm font-semibold hover:bg-blue-700 disabled:opacity-50 transition-colors"
+            className="px-5 py-2.5 rounded-lg bg-(--brand-fg) text-white text-sm font-semibold hover:bg-(--brand-fg-hover) disabled:opacity-50 transition-colors"
           >
             {uploading
               ? uploadProgress ?? 'Uploading…'
@@ -943,12 +945,12 @@ export default function GalleryManager({ initialItems }: { initialItems: Gallery
       </div>
 
       {/* ── Current items ── */}
-      <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
-        <h2 className="text-base font-bold text-gray-900 mb-4">
+      <div className="bg-(--surface-1) rounded-xl border border-(--border-subtle) shadow-sm p-6">
+        <h2 className="text-base font-bold text-(--text-primary) mb-4">
           All Projects ({items.length})
         </h2>
         {items.length === 0 && (
-          <p className="text-sm text-gray-400 text-center py-8">
+          <p className="text-sm text-(--text-tertiary) text-center py-8">
             No projects yet. Upload one above.
           </p>
         )}
@@ -968,22 +970,35 @@ export default function GalleryManager({ initialItems }: { initialItems: Gallery
               <div
                 key={item.id}
                 className={`rounded-xl border overflow-hidden transition-opacity ${
-                  item.is_active ? 'border-gray-200' : 'border-gray-100 opacity-60'
+                  item.is_active ? 'border-(--border-subtle)' : 'border-(--border-subtle) opacity-60'
                 } ${expanded ? 'sm:col-span-2 lg:col-span-3' : ''}`}
               >
                 {/* Thumbnail */}
-                <div className="relative aspect-[4/3] bg-gray-100">
+                <div className="relative aspect-[4/3] bg-(--surface-3)">
                   {coverUrl ? (
-                    <Image
-                      src={coverUrl}
-                      alt={item.alt_text || item.title}
-                      fill
-                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                      className="object-cover"
-                      unoptimized={coverUrl.startsWith('/')}
-                    />
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const sorted = sortPhotos(item.gallery_photos)
+                        setLightbox({
+                          photos: sorted.map((p) => ({ src: p.image_url, alt: p.alt_text ?? item.title })),
+                          index: 0,
+                        })
+                      }}
+                      className="absolute inset-0 h-full w-full cursor-zoom-in"
+                      aria-label={`View photos of ${item.title}`}
+                    >
+                      <Image
+                        src={coverUrl}
+                        alt={item.alt_text || item.title}
+                        fill
+                        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                        className="object-cover"
+                        unoptimized={coverUrl.startsWith('/')}
+                      />
+                    </button>
                   ) : (
-                    <div className="absolute inset-0 flex items-center justify-center text-xs text-gray-400">
+                    <div className="absolute inset-0 flex items-center justify-center text-xs text-(--text-tertiary)">
                       No photos yet
                     </div>
                   )}
@@ -996,8 +1011,8 @@ export default function GalleryManager({ initialItems }: { initialItems: Gallery
                     {photoCount} photo{photoCount === 1 ? '' : 's'}
                   </span>
                   {!item.is_active && (
-                    <div className="absolute inset-0 bg-white/50 flex items-center justify-center">
-                      <span className="bg-gray-700 text-white text-xs font-bold px-2 py-1 rounded">
+                    <div className="absolute inset-0 bg-(--surface-1)/50 flex items-center justify-center">
+                      <span className="bg-(--surface-3) text-white text-xs font-bold px-2 py-1 rounded">
                         Hidden
                       </span>
                     </div>
@@ -1007,22 +1022,22 @@ export default function GalleryManager({ initialItems }: { initialItems: Gallery
                 {/* Meta */}
                 <div className="p-3">
                   <div className="flex items-start justify-between gap-2 mb-1">
-                    <p className="text-sm font-semibold text-gray-900 leading-snug">
+                    <p className="text-sm font-semibold text-(--text-primary) leading-snug">
                       {item.title}
                     </p>
                     <span
                       className={`shrink-0 text-[10px] font-bold uppercase tracking-wide px-2 py-0.5 rounded-full ${
-                        TAG_COLORS[item.tag] ?? 'bg-gray-100 text-gray-600'
+                        TAG_COLORS[item.tag] ?? 'bg-(--surface-3) text-(--text-secondary)'
                       }`}
                     >
                       {item.tag}
                     </span>
                   </div>
-                  <p className="text-xs text-gray-400">
+                  <p className="text-xs text-(--text-tertiary)">
                     {item.type} · {item.city}
                   </p>
                   {colorLine && (
-                    <p className="mt-1 text-xs text-gray-500">{colorLine}</p>
+                    <p className="mt-1 text-xs text-(--text-tertiary)">{colorLine}</p>
                   )}
                 </div>
 
@@ -1032,7 +1047,7 @@ export default function GalleryManager({ initialItems }: { initialItems: Gallery
                     onClick={() => moveItem(item, 'up')}
                     disabled={idx === 0 || busyId === item.id}
                     title="Move up"
-                    className="p-1.5 rounded text-gray-400 hover:text-gray-700 hover:bg-gray-100 disabled:opacity-30 transition-colors"
+                    className="p-1.5 rounded text-(--text-tertiary) hover:text-(--text-secondary) hover:bg-(--surface-3) disabled:opacity-30 transition-colors"
                   >
                     ↑
                   </button>
@@ -1040,7 +1055,7 @@ export default function GalleryManager({ initialItems }: { initialItems: Gallery
                     onClick={() => moveItem(item, 'down')}
                     disabled={idx === items.length - 1 || busyId === item.id}
                     title="Move down"
-                    className="p-1.5 rounded text-gray-400 hover:text-gray-700 hover:bg-gray-100 disabled:opacity-30 transition-colors"
+                    className="p-1.5 rounded text-(--text-tertiary) hover:text-(--text-secondary) hover:bg-(--surface-3) disabled:opacity-30 transition-colors"
                   >
                     ↓
                   </button>
@@ -1050,8 +1065,8 @@ export default function GalleryManager({ initialItems }: { initialItems: Gallery
                     disabled={busyId === item.id}
                     className={`text-xs font-semibold px-2.5 py-1 rounded-full transition-colors disabled:opacity-50 ${
                       item.is_featured
-                        ? 'bg-amber-100 text-amber-700 hover:bg-amber-200'
-                        : 'bg-gray-100 text-gray-500 hover:bg-gray-200'
+                        ? 'bg-amber-500/15 text-amber-600 dark:text-amber-400 hover:bg-amber-500/25'
+                        : 'bg-(--surface-3) text-(--text-tertiary) hover:bg-(--surface-3)'
                     }`}
                   >
                     {item.is_featured ? '★ Featured' : '☆ Feature'}
@@ -1059,7 +1074,7 @@ export default function GalleryManager({ initialItems }: { initialItems: Gallery
 
                   <button
                     onClick={() => setExpandedId(expanded ? null : item.id)}
-                    className="text-xs font-semibold px-2.5 py-1 rounded-full bg-blue-100 text-blue-700 hover:bg-blue-200 transition-colors"
+                    className="text-xs font-semibold px-2.5 py-1 rounded-full bg-(--brand-fg)/15 text-(--brand-fg) hover:bg-(--brand-fg)/25 transition-colors"
                   >
                     {expanded ? 'Close' : 'Edit'}
                   </button>
@@ -1069,8 +1084,8 @@ export default function GalleryManager({ initialItems }: { initialItems: Gallery
                     disabled={busyId === item.id}
                     className={`ml-auto text-xs font-semibold px-2.5 py-1 rounded-full transition-colors disabled:opacity-50 ${
                       item.is_active
-                        ? 'bg-green-100 text-green-700 hover:bg-green-200'
-                        : 'bg-gray-100 text-gray-500 hover:bg-gray-200'
+                        ? 'bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500/25'
+                        : 'bg-(--surface-3) text-(--text-tertiary) hover:bg-(--surface-3)'
                     }`}
                   >
                     {item.is_active ? 'Visible' : 'Hidden'}
@@ -1080,7 +1095,7 @@ export default function GalleryManager({ initialItems }: { initialItems: Gallery
                     onClick={() => handleDelete(item)}
                     disabled={busyId === item.id}
                     title="Delete project"
-                    className="p-1.5 rounded text-red-400 hover:text-red-600 hover:bg-red-50 disabled:opacity-50 transition-colors text-sm"
+                    className="p-1.5 rounded text-red-400 hover:text-red-600 dark:text-red-400 hover:bg-red-500/10 disabled:opacity-50 transition-colors text-sm"
                   >
                     ✕
                   </button>
@@ -1104,6 +1119,13 @@ export default function GalleryManager({ initialItems }: { initialItems: Gallery
           })}
         </div>
       </div>
+
+      <Lightbox
+        open={lightbox !== null}
+        onClose={() => setLightbox(null)}
+        photos={lightbox?.photos ?? []}
+        startIndex={lightbox?.index ?? 0}
+      />
     </div>
   )
 }
@@ -1160,7 +1182,7 @@ function EditPanel({
   }
 
   return (
-    <div className="border-t border-gray-200 bg-gray-50 p-4 grid grid-cols-1 md:grid-cols-2 gap-6">
+    <div className="border-t border-(--border-subtle) bg-(--surface-2) p-4 grid grid-cols-1 md:grid-cols-2 gap-6">
       {/* Metadata form */}
       <form
         onSubmit={(e) => {
@@ -1169,33 +1191,33 @@ function EditPanel({
         }}
         className="space-y-3"
       >
-        <h3 className="text-xs font-bold uppercase tracking-wide text-gray-500">
+        <h3 className="text-xs font-bold uppercase tracking-wide text-(--text-tertiary)">
           Project Details
         </h3>
         <div>
-          <label className="block text-xs font-semibold text-gray-600 mb-1">Title</label>
+          <label className="block text-xs font-semibold text-(--text-secondary) mb-1">Title</label>
           <input
             name="title"
             defaultValue={item.title}
             required
-            className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
+            className="w-full rounded-lg border border-(--border-strong) px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-(--brand-fg)"
           />
         </div>
         <div className="grid grid-cols-2 gap-3">
           <div>
-            <label className="block text-xs font-semibold text-gray-600 mb-1">City</label>
+            <label className="block text-xs font-semibold text-(--text-secondary) mb-1">City</label>
             <input
               name="city"
               defaultValue={item.city}
-              className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
+              className="w-full rounded-lg border border-(--border-strong) px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-(--brand-fg)"
             />
           </div>
           <div>
-            <label className="block text-xs font-semibold text-gray-600 mb-1">Type</label>
+            <label className="block text-xs font-semibold text-(--text-secondary) mb-1">Type</label>
             <select
               name="type"
               defaultValue={item.type}
-              className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
+              className="w-full rounded-lg border border-(--border-strong) px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-(--brand-fg)"
             >
               {TYPE_OPTIONS.map((t) => (
                 <option key={t}>{t}</option>
@@ -1205,11 +1227,11 @@ function EditPanel({
         </div>
         <div className="grid grid-cols-2 gap-3">
           <div>
-            <label className="block text-xs font-semibold text-gray-600 mb-1">Tag</label>
+            <label className="block text-xs font-semibold text-(--text-secondary) mb-1">Tag</label>
             <select
               name="tag"
               defaultValue={item.tag}
-              className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
+              className="w-full rounded-lg border border-(--border-strong) px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-(--brand-fg)"
             >
               {TAG_OPTIONS.map((t) => (
                 <option key={t}>{t}</option>
@@ -1220,11 +1242,11 @@ function EditPanel({
         </div>
         <div className="grid grid-cols-2 gap-3">
           <div>
-            <label className="block text-xs font-semibold text-gray-600 mb-1">Panel Profile</label>
+            <label className="block text-xs font-semibold text-(--text-secondary) mb-1">Panel Profile</label>
             <select
               name="panel_profile"
               defaultValue={item.panel_profile ?? ''}
-              className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
+              className="w-full rounded-lg border border-(--border-strong) px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-(--brand-fg)"
             >
               <option value="">— None —</option>
               {PANEL_PROFILE_OPTIONS.map((p) => (
@@ -1233,11 +1255,11 @@ function EditPanel({
             </select>
           </div>
           <div>
-            <label className="block text-xs font-semibold text-gray-600 mb-1">Gauge</label>
+            <label className="block text-xs font-semibold text-(--text-secondary) mb-1">Gauge</label>
             <select
               name="gauge"
               defaultValue={item.gauge ?? ''}
-              className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
+              className="w-full rounded-lg border border-(--border-strong) px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-(--brand-fg)"
             >
               <option value="">— None —</option>
               {GAUGE_OPTIONS.map((g) => (
@@ -1259,25 +1281,25 @@ function EditPanel({
           />
         </div>
         <div>
-          <label className="block text-xs font-semibold text-gray-600 mb-1">Alt text</label>
+          <label className="block text-xs font-semibold text-(--text-secondary) mb-1">Alt text</label>
           <input
             name="alt_text"
             defaultValue={item.alt_text}
-            className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
+            className="w-full rounded-lg border border-(--border-strong) px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-(--brand-fg)"
           />
         </div>
         <div className="flex gap-2 pt-2">
           <button
             type="submit"
             disabled={busy}
-            className="px-4 py-2 rounded-lg bg-blue-600 text-white text-sm font-semibold hover:bg-blue-700 disabled:opacity-50 transition-colors"
+            className="px-4 py-2 rounded-lg bg-(--brand-fg) text-white text-sm font-semibold hover:bg-(--brand-fg-hover) disabled:opacity-50 transition-colors"
           >
             {busy ? 'Saving…' : 'Save'}
           </button>
           <button
             type="button"
             onClick={onCancel}
-            className="px-4 py-2 rounded-lg bg-gray-100 text-gray-700 text-sm font-semibold hover:bg-gray-200 transition-colors"
+            className="px-4 py-2 rounded-lg bg-(--surface-3) text-(--text-secondary) text-sm font-semibold hover:bg-(--surface-3) transition-colors"
           >
             Cancel
           </button>
@@ -1286,16 +1308,16 @@ function EditPanel({
 
       {/* Photo strip */}
       <div>
-        <h3 className="text-xs font-bold uppercase tracking-wide text-gray-500 mb-3">
+        <h3 className="text-xs font-bold uppercase tracking-wide text-(--text-tertiary) mb-3">
           Photos ({sorted.length})
         </h3>
         <div className="space-y-2 max-h-[400px] overflow-y-auto pr-1">
           {sorted.map((photo, i) => (
             <div
               key={photo.id}
-              className="flex items-center gap-3 rounded-lg border border-gray-200 bg-white p-2"
+              className="flex items-center gap-3 rounded-lg border border-(--border-subtle) bg-(--surface-1) p-2"
             >
-              <div className="relative h-14 w-20 shrink-0 rounded overflow-hidden bg-gray-100">
+              <div className="relative h-14 w-20 shrink-0 rounded overflow-hidden bg-(--surface-3)">
                 <Image
                   src={photo.image_url}
                   alt={photo.alt_text ?? ''}
@@ -1311,7 +1333,7 @@ function EditPanel({
                 )}
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-xs text-gray-500 truncate">
+                <p className="text-xs text-(--text-tertiary) truncate">
                   {photo.alt_text || '(no alt text)'}
                 </p>
               </div>
@@ -1321,7 +1343,7 @@ function EditPanel({
                   onClick={() => onMovePhoto(photo, 'up')}
                   disabled={i === 0}
                   title="Move up"
-                  className="p-1 rounded text-gray-400 hover:text-gray-700 hover:bg-gray-100 disabled:opacity-30"
+                  className="p-1 rounded text-(--text-tertiary) hover:text-(--text-secondary) hover:bg-(--surface-3) disabled:opacity-30"
                 >
                   ↑
                 </button>
@@ -1330,7 +1352,7 @@ function EditPanel({
                   onClick={() => onMovePhoto(photo, 'down')}
                   disabled={i === sorted.length - 1}
                   title="Move down"
-                  className="p-1 rounded text-gray-400 hover:text-gray-700 hover:bg-gray-100 disabled:opacity-30"
+                  className="p-1 rounded text-(--text-tertiary) hover:text-(--text-secondary) hover:bg-(--surface-3) disabled:opacity-30"
                 >
                   ↓
                 </button>
@@ -1339,7 +1361,7 @@ function EditPanel({
                   onClick={() => onSetCover(photo)}
                   disabled={photo.is_cover}
                   title="Set as cover"
-                  className="p-1 rounded text-amber-400 hover:text-amber-600 hover:bg-amber-50 disabled:opacity-30"
+                  className="p-1 rounded text-amber-400 hover:text-amber-600 hover:bg-amber-500/10 disabled:opacity-30"
                 >
                   ★
                 </button>
@@ -1347,7 +1369,7 @@ function EditPanel({
                   type="button"
                   onClick={() => onDeletePhoto(photo)}
                   title="Delete photo"
-                  className="p-1 rounded text-red-400 hover:text-red-600 hover:bg-red-50"
+                  className="p-1 rounded text-red-400 hover:text-red-600 dark:text-red-400 hover:bg-red-500/10"
                 >
                   ✕
                 </button>
@@ -1355,13 +1377,13 @@ function EditPanel({
             </div>
           ))}
           {sorted.length === 0 && (
-            <p className="text-xs text-gray-400 py-4 text-center">No photos yet.</p>
+            <p className="text-xs text-(--text-tertiary) py-4 text-center">No photos yet.</p>
           )}
         </div>
 
         {/* Upload more photos */}
         <div className="mt-3">
-          <label className="block text-xs font-semibold text-gray-600 mb-1">
+          <label className="block text-xs font-semibold text-(--text-secondary) mb-1">
             Upload more photos
           </label>
           <input
@@ -1371,16 +1393,16 @@ function EditPanel({
             multiple
             disabled={photoUploading}
             onChange={handlePhotoUpload}
-            className="block w-full text-xs text-gray-600 file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 cursor-pointer disabled:opacity-50"
+            className="block w-full text-xs text-(--text-secondary) file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-(--brand-fg)/10 file:text-(--brand-fg) hover:file:bg-(--brand-fg)/15 cursor-pointer disabled:opacity-50"
           />
-          <p className="mt-1 text-[11px] text-gray-400">
+          <p className="mt-1 text-[11px] text-(--text-tertiary)">
             iPhone HEIC photos are auto-converted to JPEG.
           </p>
           {photoStatuses.length > 0 && (
             <ul className="mt-2 space-y-1">
               {photoStatuses.map((s, i) => (
                 <li key={i} className="flex items-center gap-2 text-[11px]">
-                  <span className="flex-1 truncate text-gray-600">{s.name}</span>
+                  <span className="flex-1 truncate text-(--text-secondary)">{s.name}</span>
                   <StatusPill status={s} />
                 </li>
               ))}
@@ -1394,10 +1416,10 @@ function EditPanel({
 
 function StatusPill({ status }: { status: PhotoStatus }) {
   const map: Record<PhotoStatus['state'], { label: string; className: string }> = {
-    converting: { label: 'Converting…', className: 'bg-blue-50 text-blue-700' },
-    uploading:  { label: 'Uploading…',  className: 'bg-blue-50 text-blue-700' },
-    done:       { label: 'Done',        className: 'bg-green-50 text-green-700' },
-    failed:     { label: 'Failed',      className: 'bg-red-50 text-red-700' },
+    converting: { label: 'Converting…', className: 'bg-(--brand-fg)/10 text-(--brand-fg)' },
+    uploading:  { label: 'Uploading…',  className: 'bg-(--brand-fg)/10 text-(--brand-fg)' },
+    done:       { label: 'Done',        className: 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400' },
+    failed:     { label: 'Failed',      className: 'bg-red-500/10 text-red-600 dark:text-red-400' },
   }
   const { label, className } = map[status.state]
   return (
