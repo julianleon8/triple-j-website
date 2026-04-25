@@ -1,13 +1,28 @@
 "use client";
 
 import Image from "next/image";
+import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
 import { useRef, useState } from "react";
-import HCaptcha from "@hcaptcha/react-hcaptcha";
+import type HCaptcha from "@hcaptcha/react-hcaptcha";
 
 import { Button } from "@/components/ui/Button";
 import { Container } from "@/components/ui/Container";
 import { ArrowRightIcon } from "@/components/ui/icons";
+
+// Lazy-load hCaptcha — its 20 KB chunk only fetches when step 2 first
+// renders. Most homepage visitors never advance past step 1, so this
+// keeps hCaptcha entirely off their first-load JS.
+//
+// next/dynamic erases the ref-forwarding from the wrapped component's
+// type (props are inferred without the ref slot). Cast back to the
+// original class type so consumers can still pass `ref={captchaRef}` and
+// call captchaRef.current?.resetCaptcha() — runtime ref forwarding is
+// preserved by next/dynamic; only the TS type needs reconnecting.
+const HCaptchaWidget = dynamic(
+  () => import("@hcaptcha/react-hcaptcha").then((m) => m.default),
+  { ssr: false, loading: () => null },
+) as unknown as typeof import("@hcaptcha/react-hcaptcha").default;
 
 const HCAPTCHA_SITE_KEY = process.env.NEXT_PUBLIC_HCAPTCHA_SITE_KEY;
 
@@ -590,10 +605,10 @@ export function QuoteForm({ initialMilitary = false }: QuoteFormProps = {}) {
                 )}
               </div>
 
-              {/* Captcha — only on final step */}
+              {/* Captcha — lazy-loaded on step 2 first render */}
               {step === 2 && HCAPTCHA_SITE_KEY ? (
                 <div className="mt-6 flex justify-center">
-                  <HCaptcha
+                  <HCaptchaWidget
                     ref={captchaRef}
                     sitekey={HCAPTCHA_SITE_KEY}
                     theme="dark"

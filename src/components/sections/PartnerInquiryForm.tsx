@@ -1,8 +1,18 @@
 'use client'
 
 import { useRef, useState } from 'react'
-import HCaptcha from '@hcaptcha/react-hcaptcha'
+import dynamic from 'next/dynamic'
+import type HCaptcha from '@hcaptcha/react-hcaptcha'
 import { TrackedPhoneLink } from '@/components/site/TrackedPhone'
+
+// Lazy-load hCaptcha — splits the 20 KB widget into its own chunk that
+// only fetches when this form mounts (i.e. the user is on /partners).
+// Mirrors the pattern in QuoteForm.tsx — ref-forwarding type is restored
+// via the cast since next/dynamic erases the ref slot from props.
+const HCaptchaWidget = dynamic(
+  () => import('@hcaptcha/react-hcaptcha').then((m) => m.default),
+  { ssr: false, loading: () => null },
+) as unknown as typeof import('@hcaptcha/react-hcaptcha').default
 
 const HCAPTCHA_SITE_KEY = process.env.NEXT_PUBLIC_HCAPTCHA_SITE_KEY
 
@@ -223,7 +233,7 @@ export function PartnerInquiryForm() {
 
       {HCAPTCHA_SITE_KEY && (
         <div className="mt-5 flex justify-center">
-          <HCaptcha
+          <HCaptchaWidget
             ref={captchaRef}
             sitekey={HCAPTCHA_SITE_KEY}
             onVerify={(token) => setCaptchaToken(token)}
