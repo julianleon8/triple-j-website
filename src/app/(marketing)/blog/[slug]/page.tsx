@@ -6,6 +6,7 @@ import { ButtonLink } from '@/components/ui/Button'
 import { QuoteForm } from '@/components/sections/QuoteForm'
 import { BLOG_POSTS } from '@/lib/blog'
 import { SITE } from '@/lib/site'
+import { getSiteUrl } from '@/lib/site-url'
 
 type Props = {
   params: Promise<{ slug: string }>
@@ -52,25 +53,25 @@ export default async function BlogPostPage({ params }: Props) {
   if (!PostModule) notFound()
   const PostContent = PostModule.default
 
+  const baseUrl = getSiteUrl()
+  const postUrl = `${baseUrl}/blog/${post.slug}`
+
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'BlogPosting',
+    '@id': `${postUrl}#article`,
     headline: post.title,
     description: post.excerpt,
     datePublished: post.date,
     dateModified: post.date,
-    author: {
-      '@type': 'Organization',
-      name: SITE.name,
-      url: 'https://triplejmetaltx.com',
-    },
-    publisher: {
-      '@type': 'Organization',
-      name: SITE.name,
-      url: 'https://triplejmetaltx.com',
-    },
-    url: `https://triplejmetaltx.com/blog/${post.slug}`,
+    author: { '@id': `${baseUrl}/#organization` },
+    publisher: { '@id': `${baseUrl}/#organization` },
+    url: postUrl,
+    image: `${baseUrl}/og-default.jpg`,
+    mainEntityOfPage: { '@type': 'WebPage', '@id': postUrl },
+    articleSection: post.category,
     keywords: post.tags.join(', '),
+    inLanguage: 'en-US',
   }
 
   const relatedPosts = BLOG_POSTS.filter((p) => p.slug !== post.slug).slice(0, 3)

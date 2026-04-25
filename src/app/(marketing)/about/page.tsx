@@ -3,6 +3,7 @@ import { Container } from '@/components/ui/Container'
 import { ButtonLink } from '@/components/ui/Button'
 import { QuoteForm } from '@/components/sections/QuoteForm'
 import { SITE } from '@/lib/site'
+import { getSiteUrl } from '@/lib/site-url'
 
 export const metadata: Metadata = {
   title: 'About — Temple, TX Metal Building Family',
@@ -16,36 +17,32 @@ export const metadata: Metadata = {
   },
 }
 
-const jsonLd = {
-  '@context': 'https://schema.org',
-  '@type': 'LocalBusiness',
-  name: SITE.name,
-  description: 'Temple, TX metal building contractor — welded or bolted carports, garages, barns, and RV covers with turnkey concrete.',
-  telephone: SITE.phone,
-  url: 'https://www.triplejmetaltx.com/about',
-  address: {
-    '@type': 'PostalAddress',
-    streetAddress: SITE.address.street,
-    addressLocality: SITE.address.city,
-    addressRegion: SITE.address.state,
-    postalCode: SITE.address.zip,
-    addressCountry: 'US',
-  },
-  openingHours: 'Mo-Sa 08:00-18:00',
-  priceRange: '$$',
-  foundingDate: '2025',
-  areaServed: {
-    '@type': 'State',
-    name: 'Texas',
-  },
+// Layout-mounted <OrganizationJsonLd /> already emits the comprehensive
+// LocalBusiness + Organization graph on every marketing page. Per-page
+// schema here is a focused AboutPage WebPage node referencing the
+// canonical Organization via @id — no duplicate LocalBusiness.
+function jsonLd(baseUrl: string) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'AboutPage',
+    '@id': `${baseUrl}/about`,
+    url: `${baseUrl}/about`,
+    name: `About ${SITE.name}`,
+    description:
+      'Family-owned Temple, TX metal building contractor. 150+ completed projects, welded red iron steel, turnkey concrete.',
+    isPartOf: { '@id': `${baseUrl}/#website` },
+    about: { '@id': `${baseUrl}/#organization` },
+    inLanguage: 'en-US',
+  }
 }
 
 export default function AboutPage() {
+  const baseUrl = getSiteUrl()
   return (
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, '\\u003c') }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd(baseUrl)).replace(/</g, '\\u003c') }}
       />
 
       {/* ── Hero ── */}

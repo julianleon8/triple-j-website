@@ -3,6 +3,7 @@ import { Container } from '@/components/ui/Container'
 import { ButtonLink } from '@/components/ui/Button'
 import { QuoteForm } from '@/components/sections/QuoteForm'
 import { SITE } from '@/lib/site'
+import { getSiteUrl } from '@/lib/site-url'
 
 export const metadata: Metadata = {
   title: 'Contact | Temple, TX | Free Quote',
@@ -16,44 +17,32 @@ export const metadata: Metadata = {
   },
 }
 
-const jsonLd = {
-  '@context': 'https://schema.org',
-  '@type': 'LocalBusiness',
-  name: SITE.name,
-  telephone: SITE.phone,
-  email: SITE.email,
-  url: 'https://www.triplejmetaltx.com/contact',
-  address: {
-    '@type': 'PostalAddress',
-    streetAddress: SITE.address.street,
-    addressLocality: SITE.address.city,
-    addressRegion: SITE.address.state,
-    postalCode: SITE.address.zip,
-    addressCountry: 'US',
-  },
-  geo: {
-    '@type': 'GeoCoordinates',
-    latitude: 31.0982,
-    longitude: -97.3428,
-  },
-  openingHours: 'Mo-Sa 08:00-18:00',
-  priceRange: '$$',
-  areaServed: [
-    'Temple, TX',
-    'Belton, TX',
-    'Killeen, TX',
-    'Harker Heights, TX',
-    'Copperas Cove, TX',
-    'Central Texas',
-  ],
+// Layout-mounted <OrganizationJsonLd /> already emits the comprehensive
+// LocalBusiness graph on every marketing page. Per-page schema here is
+// a ContactPage node referencing the canonical LocalBusiness via @id —
+// no duplicate business entity. See docs/SCHEMA-AUDIT.md.
+function jsonLd(baseUrl: string) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'ContactPage',
+    '@id': `${baseUrl}/contact`,
+    url: `${baseUrl}/contact`,
+    name: `Contact ${SITE.name}`,
+    description:
+      'Reach Triple J Metal — Temple, TX metal building contractor. Phone, email, and free quote form for Central Texas customers.',
+    isPartOf: { '@id': `${baseUrl}/#website` },
+    about: { '@id': `${baseUrl}/#localbusiness` },
+    inLanguage: 'en-US',
+  }
 }
 
 export default function ContactPage() {
+  const baseUrl = getSiteUrl()
   return (
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, '\\u003c') }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd(baseUrl)).replace(/</g, '\\u003c') }}
       />
 
       {/* ── Hero ── */}

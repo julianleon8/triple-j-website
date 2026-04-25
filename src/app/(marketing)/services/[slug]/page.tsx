@@ -6,6 +6,7 @@ import { QuoteForm } from '@/components/sections/QuoteForm'
 import { BreadcrumbJsonLd } from '@/components/seo/BreadcrumbJsonLd'
 import { SERVICES, SERVICE_SLUGS } from '@/lib/services'
 import { SITE } from '@/lib/site'
+import { getSiteUrl } from '@/lib/site-url'
 
 export async function generateStaticParams() {
   return SERVICE_SLUGS.map((slug) => ({ slug }))
@@ -41,35 +42,51 @@ export default async function ServicePage(
 
   const gap = svc.keywordGap ? GAP_BADGES[svc.keywordGap] : null
 
+  const baseUrl = getSiteUrl()
+  const pageUrl = `${baseUrl}/services/${slug}`
+
+  // Per-service @graph: a Service node referencing the canonical
+  // LocalBusiness via @id, and (when present) a FAQPage as a sibling
+  // node — not nested inside the Service. Google parses both forms but
+  // the sibling form scores cleaner in the Rich Results test and lets
+  // each node carry its own @id. See docs/SCHEMA-AUDIT.md.
   const jsonLd = {
     '@context': 'https://schema.org',
-    '@type': 'Service',
-    name: svc.title,
-    description: svc.metaDescription,
-    provider: {
-      '@type': 'LocalBusiness',
-      name: SITE.name,
-      telephone: SITE.phone,
-      address: {
-        '@type': 'PostalAddress',
-        streetAddress: SITE.address.street,
-        addressLocality: SITE.address.city,
-        addressRegion: SITE.address.state,
-        postalCode: SITE.address.zip,
-        addressCountry: 'US',
+    '@graph': [
+      {
+        '@type': 'Service',
+        '@id': `${pageUrl}#service`,
+        name: svc.title,
+        description: svc.metaDescription,
+        serviceType: svc.title,
+        provider: { '@id': `${baseUrl}/#localbusiness` },
+        areaServed: { '@type': 'State', name: 'Texas' },
+        url: pageUrl,
       },
-    },
-    areaServed: { '@type': 'State', name: 'Texas' },
-    ...(svc.faqs.length > 0 && {
-      mainEntity: {
-        '@type': 'FAQPage',
-        mainEntity: svc.faqs.map((f) => ({
-          '@type': 'Question',
-          name: f.q,
-          acceptedAnswer: { '@type': 'Answer', text: f.a },
-        })),
+      {
+        '@type': 'WebPage',
+        '@id': pageUrl,
+        url: pageUrl,
+        name: svc.metaTitle ?? `${svc.title} | ${SITE.name}`,
+        description: svc.metaDescription,
+        isPartOf: { '@id': `${baseUrl}/#website` },
+        about: { '@id': `${pageUrl}#service` },
+        inLanguage: 'en-US',
       },
-    }),
+      ...(svc.faqs.length > 0
+        ? [
+            {
+              '@type': 'FAQPage',
+              '@id': `${pageUrl}#faq`,
+              mainEntity: svc.faqs.map((f) => ({
+                '@type': 'Question',
+                name: f.q,
+                acceptedAnswer: { '@type': 'Answer', text: f.a },
+              })),
+            },
+          ]
+        : []),
+    ],
   }
 
   return (

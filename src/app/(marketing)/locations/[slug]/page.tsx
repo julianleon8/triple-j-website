@@ -11,6 +11,7 @@ import { BreadcrumbJsonLd } from "@/components/seo/BreadcrumbJsonLd";
 import { LOCATIONS, LOCATION_SLUGS } from "@/lib/locations";
 import { SERVICES } from "@/lib/services";
 import { SITE } from "@/lib/site";
+import { getSiteUrl } from "@/lib/site-url";
 import { getAdminClient } from "@/lib/supabase/admin";
 
 /* ─── Per-service photo map (kept in sync with /services list page) ──────
@@ -90,29 +91,68 @@ export default async function LocationPage(
     })
     .filter(Boolean) as { id: string; title: string; city: string | null; src: string; alt: string | null }[];
 
+  const baseUrl = getSiteUrl();
+  const pageUrl = `${baseUrl}/locations/${slug}`;
+  const offerCatalog = (loc.topServices ?? []).map((sv, i) => ({
+    "@type": "Offer",
+    position: i + 1,
+    itemOffered: {
+      "@type": "Service",
+      name: SERVICES[sv]?.title ?? sv,
+      url: `${baseUrl}/services/${sv}`,
+    },
+  }));
+
+  // Per-location @graph: a Service node scoped to this city, plus the
+  // canonical WebPage. Both reference the sitewide LocalBusiness via @id
+  // (emitted from the marketing layout's <OrganizationJsonLd />) so we
+  // don't duplicate the business entity. See docs/SCHEMA-AUDIT.md.
   const jsonLd = {
     "@context": "https://schema.org",
-    "@type": "LocalBusiness",
-    name: `${SITE.name} — ${loc.name} TX`,
-    description: loc.metaDescription,
-    telephone: SITE.phone,
-    url: `https://www.triplejmetaltx.com/locations/${slug}`,
-    address: {
-      "@type": "PostalAddress",
-      streetAddress: SITE.address.street,
-      addressLocality: SITE.address.city,
-      addressRegion: SITE.address.state,
-      postalCode: SITE.address.zip,
-      addressCountry: "US",
-    },
-    geo: { "@type": "GeoCoordinates", latitude: loc.lat, longitude: loc.lng },
-    areaServed: {
-      "@type": "City",
-      name: loc.name,
-      containedIn: { "@type": "State", name: "Texas" },
-    },
-    openingHours: "Mo-Sa 08:00-18:00",
-    priceRange: "$$",
+    "@graph": [
+      {
+        "@type": "Service",
+        "@id": `${pageUrl}#service`,
+        name: `Metal Building Installation in ${loc.name}, TX`,
+        description: loc.metaDescription,
+        serviceType: "Metal building installation",
+        provider: { "@id": `${baseUrl}/#localbusiness` },
+        areaServed: {
+          "@type": "City",
+          name: loc.name,
+          address: {
+            "@type": "PostalAddress",
+            addressLocality: loc.name,
+            addressRegion: "TX",
+            postalCode: loc.zip,
+            addressCountry: "US",
+          },
+          geo: { "@type": "GeoCoordinates", latitude: loc.lat, longitude: loc.lng },
+          containedInPlace: {
+            "@type": "AdministrativeArea",
+            name: `${loc.county}, Texas`,
+          },
+        },
+        ...(offerCatalog.length > 0 && {
+          hasOfferCatalog: {
+            "@type": "OfferCatalog",
+            name: `${SITE.name} services in ${loc.name}, TX`,
+            itemListElement: offerCatalog,
+          },
+        }),
+      },
+      {
+        "@type": "WebPage",
+        "@id": pageUrl,
+        url: pageUrl,
+        name: loc.metaTitle,
+        description: loc.metaDescription,
+        isPartOf: { "@id": `${baseUrl}/#website` },
+        about: { "@id": `${baseUrl}/#localbusiness` },
+        mainEntity: { "@id": `${pageUrl}#service` },
+        inLanguage: "en-US",
+      },
+    ],
   };
 
   // Resolve fields with new-field-wins-over-legacy fallbacks
