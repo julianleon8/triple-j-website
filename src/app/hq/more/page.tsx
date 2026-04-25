@@ -3,6 +3,7 @@ export const dynamic = 'force-dynamic'
 import {
   Activity,
   BarChart3,
+  CalendarDays,
   ClipboardList,
   FileText,
   Handshake,
@@ -35,6 +36,13 @@ export default async function MoreHubPage() {
           {
             title: 'Pipeline',
             rows: [
+              {
+                icon: CalendarDays,
+                iconTone: 'bg-(--brand-fg)',
+                label: 'Calendar',
+                sublabel: 'Week view · jobs · callbacks · appointments',
+                href: '/hq/calendar',
+              },
               {
                 icon: ClipboardList,
                 iconTone: 'bg-indigo-500',
