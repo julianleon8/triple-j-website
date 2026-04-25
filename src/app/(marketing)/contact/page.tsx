@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { Container } from '@/components/ui/Container'
 import { ButtonLink } from '@/components/ui/Button'
 import { QuoteForm } from '@/components/sections/QuoteForm'
+import { TrackedPhoneLink } from '@/components/site/TrackedPhone'
 import { SITE } from '@/lib/site'
 import { getSiteUrl } from '@/lib/site-url'
 
@@ -81,12 +82,10 @@ export default function ContactPage() {
                   </div>
                   <div>
                     <div className="text-xs font-semibold uppercase tracking-wider text-ink-400 mb-1">Phone</div>
-                    <a
-                      href={SITE.phoneHref}
+                    <TrackedPhoneLink
+                      surface="contact_phone_card"
                       className="text-2xl font-extrabold text-ink-900 hover:text-(--color-brand-600) transition-colors"
-                    >
-                      {SITE.phone}
-                    </a>
+                    />
                     <p className="text-sm text-ink-500 mt-1">Same-day callback guaranteed</p>
                   </div>
                 </div>

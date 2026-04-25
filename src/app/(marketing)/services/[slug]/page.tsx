@@ -4,6 +4,7 @@ import { ButtonLink } from '@/components/ui/Button'
 import { Container } from '@/components/ui/Container'
 import { QuoteForm } from '@/components/sections/QuoteForm'
 import { BreadcrumbJsonLd } from '@/components/seo/BreadcrumbJsonLd'
+import { TrackedPhoneLink } from '@/components/site/TrackedPhone'
 import { SERVICES, SERVICE_SLUGS } from '@/lib/services'
 import { SITE } from '@/lib/site'
 import { getSiteUrl } from '@/lib/site-url'
@@ -120,12 +121,12 @@ export default async function ServicePage(
               <ButtonLink href="#quote" variant="primary" size="lg">
                 Get a Free Quote
               </ButtonLink>
-              <a
-                href={SITE.phoneHref}
+              <TrackedPhoneLink
+                surface="services_slug_hero"
                 className="inline-flex items-center gap-2 h-12 px-6 rounded-lg border-2 border-white/30 text-white font-semibold hover:border-white/60 transition-colors text-sm"
               >
-                Call {SITE.phone}
-              </a>
+                Call&nbsp;
+              </TrackedPhoneLink>
             </div>
           </div>
         </Container>

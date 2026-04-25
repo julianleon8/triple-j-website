@@ -13,6 +13,11 @@ import {
   PhoneIcon,
 } from "@/components/ui/icons";
 import { NAV_LINKS, SITE } from "@/lib/site";
+import {
+  TrackedPhoneButtonLink,
+  TrackedPhoneLink,
+  TrackedPhoneNumber,
+} from "@/components/site/TrackedPhone";
 
 /**
  * Site header — magazine treatment.
@@ -71,15 +76,16 @@ export function Header() {
       >
         <Container size="wide">
           <div className="flex h-10 items-center justify-between gap-6">
-            <a
-              href={SITE.phoneHref}
+            <TrackedPhoneLink
+              surface="header_topbar"
+              mode="children-only"
               className="flex items-center gap-1.5 text-white/85 hover:text-white"
             >
               <PhoneIcon className="h-3.5 w-3.5" />
               <span className="font-semibold tracking-tight tabular-nums">
-                {SITE.phone}
+                <TrackedPhoneNumber />
               </span>
-            </a>
+            </TrackedPhoneLink>
             <span className="inline-flex items-center gap-1.5 rounded-full bg-[color:var(--color-brand-600)]/20 border border-[color:var(--color-brand-400)]/30 px-2.5 py-0.5 text-[11px] font-bold uppercase tracking-[0.15em] text-[color:var(--color-brand-300)]">
               <span aria-hidden="true">⚡</span>
               Same-Week Installs · Central Texas
@@ -162,13 +168,16 @@ export function Header() {
 
             {/* Right side: phone + CTA */}
             <div className="flex items-center gap-3">
-              <a
-                href={SITE.phoneHref}
+              <TrackedPhoneLink
+                surface="header_dropdown"
+                mode="children-only"
                 className="hidden md:flex items-center gap-2 text-white font-semibold text-[15px] px-3 py-2 hover:text-[color:var(--color-brand-300)] transition-colors"
               >
                 <PhoneIcon className="h-4 w-4" />
-                <span className="tabular-nums">{SITE.phone}</span>
-              </a>
+                <span className="tabular-nums">
+                  <TrackedPhoneNumber />
+                </span>
+              </TrackedPhoneLink>
               <ButtonLink
                 href="/#quote"
                 variant="primary"
@@ -229,14 +238,12 @@ export function Header() {
             >
               Get a Free Quote
             </ButtonLink>
-            <ButtonLink
-              href={SITE.phoneHref}
+            <TrackedPhoneButtonLink
+              surface="header_drawer"
               variant="outline-dark"
               size="lg"
               icon={<PhoneIcon className="h-5 w-5" />}
-            >
-              Call {SITE.phone}
-            </ButtonLink>
+            />
           </div>
         </Container>
       </div>

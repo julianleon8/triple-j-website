@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { Container } from '@/components/ui/Container'
 import { ButtonLink } from '@/components/ui/Button'
 import { QuoteForm } from '@/components/sections/QuoteForm'
+import { TrackedPhoneLink, TrackedPhoneNumber } from '@/components/site/TrackedPhone'
 import { SITE } from '@/lib/site'
 
 export const metadata: Metadata = {
@@ -151,12 +152,12 @@ export default function ServiceAreasPage() {
               <ButtonLink href="#quote" variant="primary" size="lg">
                 Get a Free Quote
               </ButtonLink>
-              <a
-                href={SITE.phoneHref}
+              <TrackedPhoneLink
+                surface="service_areas_hero"
                 className="inline-flex items-center gap-2 h-12 px-6 rounded-lg border-2 border-white/30 text-white font-semibold hover:border-white/60 transition-colors text-sm"
               >
-                Call {SITE.phone}
-              </a>
+                Call&nbsp;
+              </TrackedPhoneLink>
             </div>
           </div>
         </Container>
@@ -264,17 +265,17 @@ export default function ServiceAreasPage() {
             commercial jobs or unique projects, we&rsquo;ll travel further — just call and ask.
           </p>
           <p className="text-ink-600 text-lg leading-relaxed">
-            Not sure if you&rsquo;re in our range? Call {SITE.phone} — we&rsquo;ll tell you
+            Not sure if you&rsquo;re in our range? Call <TrackedPhoneNumber /> — we&rsquo;ll tell you
             immediately. We don&rsquo;t charge a travel fee for most residential projects within
             the service area.
           </p>
           <div className="mt-8">
-            <a
-              href={SITE.phoneHref}
+            <TrackedPhoneLink
+              surface="service_areas_inline"
               className="inline-flex items-center gap-2 h-12 px-6 rounded-lg bg-ink-900 text-white font-semibold hover:bg-ink-800 transition-colors text-sm"
             >
-              Call to confirm your area — {SITE.phone}
-            </a>
+              Call to confirm your area —&nbsp;
+            </TrackedPhoneLink>
           </div>
         </Container>
       </section>

@@ -8,6 +8,7 @@ import { ButtonLink } from '@/components/ui/Button'
 import { QuoteForm } from '@/components/sections/QuoteForm'
 import { TrustBar } from '@/components/sections/TrustBar'
 import { BreadcrumbJsonLd } from '@/components/seo/BreadcrumbJsonLd'
+import { TrackedPhoneButtonLink } from '@/components/site/TrackedPhone'
 import { SITE } from '@/lib/site'
 import { getSiteUrl } from '@/lib/site-url'
 
@@ -215,9 +216,11 @@ export default function MilitaryPage() {
               >
                 Get my PCS quote
               </ButtonLink>
-              <ButtonLink href={SITE.phoneHref} variant="outline-dark" size="lg">
-                Call {SITE.phone}
-              </ButtonLink>
+              <TrackedPhoneButtonLink
+                surface="military_hero"
+                variant="outline-dark"
+                size="lg"
+              />
             </div>
             <p className="mt-5 text-sm text-white/55">
               Active-duty · Retired · Reserve/Guard · First responders — all eligible. Mention your

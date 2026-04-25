@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { Container } from '@/components/ui/Container'
 import { ButtonLink } from '@/components/ui/Button'
 import { QuoteForm } from '@/components/sections/QuoteForm'
+import { TrackedPhoneLink } from '@/components/site/TrackedPhone'
 import { SITE } from '@/lib/site'
 import { getSiteUrl } from '@/lib/site-url'
 
@@ -214,12 +215,12 @@ export default function AboutPage() {
             <ButtonLink href="#quote" variant="primary" size="lg">
               Get a Free Quote
             </ButtonLink>
-            <a
-              href={SITE.phoneHref}
+            <TrackedPhoneLink
+              surface="about_hero"
               className="inline-flex items-center gap-2 h-12 px-6 rounded-lg border-2 border-ink-300 text-ink-800 font-semibold hover:border-ink-500 transition-colors text-sm"
             >
-              Call {SITE.phone}
-            </a>
+              Call&nbsp;
+            </TrackedPhoneLink>
           </div>
         </Container>
       </section>

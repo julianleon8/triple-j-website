@@ -4,6 +4,7 @@ import Link from "next/link";
 import { Container } from "@/components/ui/Container";
 import { FacebookIcon, InstagramIcon, PhoneIcon, PinIcon } from "@/components/ui/icons";
 import { NAV_LINKS, SERVICES, SERVICE_CITIES, SITE } from "@/lib/site";
+import { TrackedPhoneLink } from "@/components/site/TrackedPhone";
 
 /**
  * Footer — magazine-bold brand column + 3 link columns.
@@ -75,12 +76,10 @@ export function Footer() {
               </div>
               <div className="flex items-center gap-2.5">
                 <PhoneIcon className="h-4 w-4 shrink-0 text-[color:var(--color-brand-400)]" />
-                <a
-                  href={SITE.phoneHref}
+                <TrackedPhoneLink
+                  surface="footer"
                   className="font-bold text-white text-base tabular-nums hover:text-[color:var(--color-brand-300)]"
-                >
-                  {SITE.phone}
-                </a>
+                />
               </div>
             </address>
 

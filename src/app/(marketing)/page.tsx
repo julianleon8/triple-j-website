@@ -13,6 +13,7 @@ import { ButtonLink } from "@/components/ui/Button";
 import { Container } from "@/components/ui/Container";
 import { ArrowRightIcon, PhoneIcon } from "@/components/ui/icons";
 import { SITE } from "@/lib/site";
+import { TrackedPhoneLink, TrackedPhoneNumber } from "@/components/site/TrackedPhone";
 
 export const metadata: Metadata = {
   title: "Metal Carports, Garages & Barns in Temple, Central Texas",
@@ -124,14 +125,15 @@ export default function HomePage() {
               </ButtonLink>
               {/* Ghost phone link — lower visual weight than the primary
                   button so the CTA hierarchy is clean. */}
-              <a
-                href={SITE.phoneHref}
+              <TrackedPhoneLink
+                surface="homepage_hero"
+                mode="children-only"
                 className="inline-flex items-center gap-2 text-base font-semibold text-white/85 hover:text-white transition-colors"
               >
                 <PhoneIcon className="h-5 w-5" />
-                Call {SITE.phone}
+                <span>Call <TrackedPhoneNumber className="tabular-nums" /></span>
                 <span aria-hidden="true">→</span>
-              </a>
+              </TrackedPhoneLink>
             </div>
 
             <p data-hero-step="8" className="hero-anim mt-10 text-sm text-white/55">

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 import { Container } from "@/components/ui/Container";
+import { TrackedPhoneNumber } from "@/components/site/TrackedPhone";
 import { SITE } from "@/lib/site";
 
 export const metadata: Metadata = {
@@ -80,7 +81,7 @@ export default function PrivacyPage() {
               >
                 {SITE.email}
               </a>{" "}
-              or calling {SITE.phone}. We will respond within a reasonable time.
+              or calling <TrackedPhoneNumber />. We will respond within a reasonable time.
             </p>
           </section>
 

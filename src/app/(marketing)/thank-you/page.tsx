@@ -5,6 +5,7 @@ import type { Metadata } from "next";
 import { ButtonLink } from "@/components/ui/Button";
 import { Container } from "@/components/ui/Container";
 import { ArrowRightIcon, PhoneIcon } from "@/components/ui/icons";
+import { TrackedPhoneLink, TrackedPhoneNumber } from "@/components/site/TrackedPhone";
 import { SITE } from "@/lib/site";
 
 export const metadata: Metadata = {
@@ -87,14 +88,15 @@ export default function ThankYouPage() {
               >
                 Browse our work
               </ButtonLink>
-              <a
-                href={SITE.phoneHref}
+              <TrackedPhoneLink
+                surface="thank_you_hero"
+                mode="children-only"
                 className="inline-flex items-center gap-2 text-base font-semibold text-white/85 hover:text-white transition-colors"
               >
                 <PhoneIcon className="h-5 w-5" />
-                Need it sooner? {SITE.phone}
+                <span>Need it sooner? <TrackedPhoneNumber className="tabular-nums" /></span>
                 <span aria-hidden="true">→</span>
-              </a>
+              </TrackedPhoneLink>
             </div>
           </div>
         </Container>

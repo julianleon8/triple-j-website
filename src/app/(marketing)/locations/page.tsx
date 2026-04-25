@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { LOCATIONS, LOCATION_SLUGS } from '@/lib/locations'
+import { TrackedPhoneLink } from '@/components/site/TrackedPhone'
 
 export const metadata: Metadata = {
   title: 'Metal Carport Service Areas in Central Texas',
@@ -45,7 +46,7 @@ export default function LocationsPage() {
             <Link href="/locations/waco"><strong>Waco</strong></Link>,{' '}
             <Link href="/locations/georgetown"><strong>Georgetown</strong></Link>, and{' '}
             <Link href="/locations/round-rock"><strong>Round Rock</strong></Link>.
-            Call <a href="tel:+12543467764">254-346-7764</a> for same-week availability.
+            Call <TrackedPhoneLink surface="locations_index_intro" /> for same-week availability.
           </p>
         </section>
 
@@ -73,7 +74,7 @@ export default function LocationsPage() {
           <h2>Don&apos;t See Your City?</h2>
           <p>
             We serve all of Central Texas. If your city isn&apos;t listed, call us at{' '}
-            <a href="tel:+12543467764">254-346-7764</a> — chances are we work
+            <TrackedPhoneLink surface="locations_index_outro" /> — chances are we work
             in your area.
           </p>
           <a href="/get-a-quote">Request a Free Quote</a>

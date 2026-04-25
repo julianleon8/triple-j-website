@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { Container } from '@/components/ui/Container'
 import { ButtonLink } from '@/components/ui/Button'
 import { QuoteForm } from '@/components/sections/QuoteForm'
+import { TrackedPhoneLink } from '@/components/site/TrackedPhone'
 import { SITE } from '@/lib/site'
 
 export const metadata: Metadata = {
@@ -111,12 +112,12 @@ export default function PbrVsPbuPage() {
               <ButtonLink href="#quote" variant="primary" size="lg">
                 Get a Free Panel Quote
               </ButtonLink>
-              <a
-                href={SITE.phoneHref}
+              <TrackedPhoneLink
+                surface="pbr_pbu_hero"
                 className="inline-flex items-center gap-2 h-12 px-6 rounded-lg border-2 border-white/30 text-white font-semibold hover:border-white/60 transition-colors text-sm"
               >
-                Ask Us — {SITE.phone}
-              </a>
+                Ask Us —&nbsp;
+              </TrackedPhoneLink>
             </div>
           </div>
         </Container>

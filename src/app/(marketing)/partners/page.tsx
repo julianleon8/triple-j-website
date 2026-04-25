@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { Container } from '@/components/ui/Container'
 import { ButtonLink } from '@/components/ui/Button'
 import { PartnerInquiryForm } from '@/components/sections/PartnerInquiryForm'
+import { TrackedPhoneLink } from '@/components/site/TrackedPhone'
 import { SITE } from '@/lib/site'
 import { getAdminClient } from '@/lib/supabase/admin'
 
@@ -78,12 +79,12 @@ export default async function PartnersPage() {
               <ButtonLink href="#inquire" variant="primary" size="lg">
                 Send a Partner Inquiry
               </ButtonLink>
-              <a
-                href={SITE.phoneHref}
+              <TrackedPhoneLink
+                surface="partners_hero"
                 className="inline-flex items-center gap-2 h-12 px-6 rounded-lg border-2 border-white/30 text-white font-semibold hover:border-white/60 transition-colors text-sm"
               >
-                Call {SITE.phone}
-              </a>
+                Call&nbsp;
+              </TrackedPhoneLink>
             </div>
           </div>
         </Container>
@@ -208,9 +209,10 @@ export default async function PartnersPage() {
             <p className="mt-3 text-ink-700 text-base max-w-xl mx-auto">
               A few quick fields. Julian reads every one personally and reaches back within one
               business day. Direct line:{' '}
-              <a href={SITE.phoneHref} className="font-semibold text-brand-600 hover:underline">
-                {SITE.phone}
-              </a>.
+              <TrackedPhoneLink
+                surface="partners_inquiry_inline"
+                className="font-semibold text-brand-600 hover:underline"
+              />.
             </p>
           </div>
           <PartnerInquiryForm />
@@ -228,12 +230,10 @@ export default async function PartnersPage() {
               </p>
             </div>
             <div className="flex flex-wrap gap-3">
-              <a
-                href={SITE.phoneHref}
+              <TrackedPhoneLink
+                surface="partners_footer_cta"
                 className="inline-flex items-center gap-2 h-11 px-5 rounded-lg bg-brand-600 text-white text-sm font-semibold hover:bg-brand-700 transition-colors"
-              >
-                {SITE.phone}
-              </a>
+              />
               <a
                 href={`mailto:${SITE.email}`}
                 className="inline-flex items-center gap-2 h-11 px-5 rounded-lg border-2 border-white/30 text-white text-sm font-semibold hover:border-white/60 transition-colors"

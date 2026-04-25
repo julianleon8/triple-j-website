@@ -3,7 +3,7 @@ import Image from "next/image";
 import { ButtonLink } from "@/components/ui/Button";
 import { Container } from "@/components/ui/Container";
 import { ArrowRightIcon, PhoneIcon } from "@/components/ui/icons";
-import { SITE } from "@/lib/site";
+import { TrackedPhoneLink, TrackedPhoneNumber } from "@/components/site/TrackedPhone";
 
 /**
  * Pre-footer CTA band — full-bleed photo backdrop with dark gradient.
@@ -69,14 +69,17 @@ export function PreFooterCta() {
             >
               Get a Free Quote
             </ButtonLink>
-            <a
-              href={SITE.phoneHref}
+            <TrackedPhoneLink
+              surface="prefooter"
+              mode="children-only"
               className="inline-flex items-center gap-2 text-base font-semibold text-white/85 hover:text-white transition-colors"
             >
               <PhoneIcon className="h-5 w-5" />
-              Call {SITE.phone}
+              <span>
+                Call <TrackedPhoneNumber className="tabular-nums" />
+              </span>
               <span aria-hidden="true">→</span>
-            </a>
+            </TrackedPhoneLink>
           </div>
         </div>
       </Container>

@@ -2,6 +2,7 @@
 
 import { useRef, useState } from 'react'
 import HCaptcha from '@hcaptcha/react-hcaptcha'
+import { TrackedPhoneLink } from '@/components/site/TrackedPhone'
 
 const HCAPTCHA_SITE_KEY = process.env.NEXT_PUBLIC_HCAPTCHA_SITE_KEY
 
@@ -106,7 +107,7 @@ export function PartnerInquiryForm() {
         <h3 className="mt-3 text-xl font-bold text-emerald-900">We got it.</h3>
         <p className="mt-2 text-sm text-emerald-800 max-w-md mx-auto">
           Julian will be in touch within one business day. If it's urgent, call{' '}
-          <a href="tel:+12543467764" className="font-bold underline">254-346-7764</a> directly.
+          <TrackedPhoneLink surface="partners_inquiry_success" className="font-bold underline" /> directly.
         </p>
         <button
           type="button"
@@ -249,7 +250,7 @@ export function PartnerInquiryForm() {
         </button>
         <p className="text-xs text-ink-500">
           One business-day response. Direct line:{' '}
-          <a href="tel:+12543467764" className="font-semibold text-brand-600 hover:underline">254-346-7764</a>.
+          <TrackedPhoneLink surface="partners_inquiry_form" className="font-semibold text-brand-600 hover:underline" />.
         </p>
       </div>
     </div>

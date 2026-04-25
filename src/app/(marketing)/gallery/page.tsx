@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { Container } from '@/components/ui/Container'
 import { ButtonLink } from '@/components/ui/Button'
 import { QuoteForm } from '@/components/sections/QuoteForm'
+import { TrackedPhoneLink } from '@/components/site/TrackedPhone'
 import { SITE } from '@/lib/site'
 import { getSiteUrl } from '@/lib/site-url'
 import { getAdminClient } from '@/lib/supabase/admin'
@@ -111,12 +112,12 @@ export default async function GalleryPage() {
               <ButtonLink href="#quote" variant="primary" size="lg">
                 Start Your Free Quote
               </ButtonLink>
-              <a
-                href={SITE.phoneHref}
+              <TrackedPhoneLink
+                surface="gallery_hero"
                 className="inline-flex items-center gap-2 h-12 px-6 rounded-lg border-2 border-white/30 text-white font-semibold hover:border-white/60 transition-colors text-sm"
               >
-                Call {SITE.phone}
-              </a>
+                Call&nbsp;
+              </TrackedPhoneLink>
             </div>
           </div>
         </Container>
