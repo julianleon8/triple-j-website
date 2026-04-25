@@ -18,3 +18,16 @@ export const Lightbox = dynamic<LightboxProps>(
   () => import('./LightboxImpl').then((m) => m.LightboxImpl),
   { ssr: false, loading: () => null },
 )
+
+/**
+ * Hover-prefetch helper. Call from any element that triggers a Lightbox
+ * open (e.g. onPointerEnter / onFocus on a photo thumbnail). Kicks off
+ * the lazy chunk fetch in the background so the first photo-tap in the
+ * session feels instant.
+ *
+ * No-op on the server. Idempotent.
+ */
+export function prefetchLightbox(): void {
+  if (typeof window === 'undefined') return
+  void import('./LightboxImpl')
+}

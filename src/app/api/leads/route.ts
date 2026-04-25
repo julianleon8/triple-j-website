@@ -53,16 +53,30 @@ const leadSchema = z.object({
   captcha_token:    z.string().optional(),
 })
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
-  const { data: leads, error } = await getAdminClient()
+  // Cursor pagination via ?before=<iso-created-at>&limit=<n>. The /hq/leads
+  // page server-renders the first 50 directly; this endpoint serves the
+  // "Load older" button on the client. limit clamped to 1..100.
+  const url = new URL(request.url)
+  const before = url.searchParams.get('before')
+  const limitRaw = parseInt(url.searchParams.get('limit') ?? '50', 10)
+  const limit = Number.isFinite(limitRaw) ? Math.min(100, Math.max(1, limitRaw)) : 50
+
+  let query = getAdminClient()
     .from('leads')
     .select('*')
     .order('created_at', { ascending: false })
-    .limit(100)
+    .limit(limit)
+
+  if (before) {
+    query = query.lt('created_at', before)
+  }
+
+  const { data: leads, error } = await query
 
   if (error) return NextResponse.json({ error: 'Failed to fetch leads' }, { status: 500 })
   return NextResponse.json({ leads })

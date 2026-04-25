@@ -11,7 +11,7 @@ import {
   Trash2,
   X,
 } from 'lucide-react'
-import { Sheet } from '@/components/hq/Sheet'
+import { Sheet, prefetchSheet } from '@/components/hq/Sheet'
 import { Input } from '@/components/hq/ui/Input'
 import { prepareImage } from '@/lib/hq/image-prep'
 import { useHaptics } from '@/lib/hq/haptics'
@@ -369,6 +369,8 @@ export function JobReceiptStrip({ jobId, receipts: initialReceipts }: Props) {
         <button
           type="button"
           onClick={onPick}
+          onPointerEnter={prefetchSheet}
+          onFocus={prefetchSheet}
           disabled={busy}
           className="shrink-0 inline-flex items-center gap-1.5 rounded-full bg-(--brand-fg) px-3.5 py-2 text-[13px] font-semibold text-white tap-solid disabled:opacity-60"
         >
@@ -403,6 +405,8 @@ export function JobReceiptStrip({ jobId, receipts: initialReceipts }: Props) {
               <button
                 type="button"
                 onClick={() => openSheet(r)}
+                onPointerEnter={prefetchSheet}
+                onFocus={prefetchSheet}
                 className="flex w-full items-center gap-3 rounded-xl border border-(--border-subtle) bg-(--surface-1) px-3 py-2.5 text-left tap-list"
               >
                 <div className="flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-lg bg-(--surface-3)">

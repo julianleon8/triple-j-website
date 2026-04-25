@@ -2,9 +2,9 @@
 
 import { useState, useMemo, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
-import { CheckCircle2, FileText, Trash2 } from 'lucide-react'
+import { CheckCircle2, ChevronDown, FileText, Trash2 } from 'lucide-react'
 import type { PipelineRow } from '@/lib/pipeline'
-import { LEAD_STATUS_CLASS } from '@/lib/pipeline'
+import { LEAD_STATUS_CLASS, leadToRow, type LeadForRow } from '@/lib/pipeline'
 import { SegmentedControl } from '@/components/hq/ui/SegmentedControl'
 import { MessagesRow } from '@/components/hq/MessagesRow'
 import { SwipeActions, type SwipeAction } from '@/components/hq/SwipeActions'
@@ -43,6 +43,12 @@ export function LeadsInbox({ rows: initialRows, counts, pageSize, totalAll }: Pr
   const [seg, setSeg] = useState<Segment>('new')
   const [, startTransition] = useTransition()
   const [drawerId, setDrawerId] = useState<string | null>(null)
+  const [loadingMore, setLoadingMore] = useState(false)
+  const [loadMoreError, setLoadMoreError] = useState<string | null>(null)
+  /** Track exhaustion: once we've fetched and got fewer rows than asked
+   *  for, OR we've loaded as many as totalAll claims exists, hide the
+   *  Load-older button. */
+  const [exhausted, setExhausted] = useState(false)
 
   const filtered = useMemo(() => rows.filter((r) => matchesSegment(r, seg)), [rows, seg])
 
@@ -82,6 +88,42 @@ export function LeadsInbox({ rows: initialRows, counts, pageSize, totalAll }: Pr
 
   function sendQuote(id: string) {
     router.push(`/hq/quotes/new?leadId=${id}`)
+  }
+
+  async function loadOlder() {
+    if (loadingMore || exhausted) return
+    setLoadingMore(true)
+    setLoadMoreError(null)
+    // Use the oldest currently-loaded created_at as the cursor.
+    const oldest = rows[rows.length - 1]?.created_at
+    if (!oldest) {
+      setLoadingMore(false)
+      setExhausted(true)
+      return
+    }
+    const requested = pageSize ?? 50
+    try {
+      const res = await fetch(
+        `/api/leads?before=${encodeURIComponent(oldest)}&limit=${requested}`,
+      )
+      if (!res.ok) throw new Error(`HTTP ${res.status}`)
+      const body = (await res.json()) as { leads: LeadForRow[] }
+      const fetched = body.leads ?? []
+      const newRows = fetched.map(leadToRow)
+      setRows((prev) => [...prev, ...newRows])
+      // If we got fewer than asked OR the cumulative count hits totalAll,
+      // there's nothing older to load.
+      if (
+        fetched.length < requested ||
+        (totalAll !== undefined && rows.length + fetched.length >= totalAll)
+      ) {
+        setExhausted(true)
+      }
+    } catch (err) {
+      setLoadMoreError(err instanceof Error ? err.message : 'Failed to load older leads')
+    } finally {
+      setLoadingMore(false)
+    }
   }
 
   function callAction(phone: string | null | undefined): SwipeAction {
@@ -144,13 +186,32 @@ export function LeadsInbox({ rows: initialRows, counts, pageSize, totalAll }: Pr
             </ul>
           )}
 
-          {/* Pagination footer: surface that older leads exist beyond
-              the loaded page. Phase 3 shrunk the server fetch from 500
-              to 50 — this footer makes the truncation visible.
-              Load-more action is a follow-up (Phase 3.1). */}
-          {pageSize !== undefined && totalAll !== undefined && totalAll > rows.length && (
-            <p className="text-center text-[12px] text-(--text-tertiary) pt-1">
-              Showing {rows.length} most recent of {totalAll} total leads.
+          {/* Pagination footer: live "Load older" cursor button.
+              Phase 3 paginates the server fetch to 50 rows; this hooks
+              up the cursor request so the operator can incrementally
+              grow the list. */}
+          {pageSize !== undefined && totalAll !== undefined && rows.length < totalAll && !exhausted && (
+            <div className="pt-2">
+              <button
+                type="button"
+                onClick={loadOlder}
+                disabled={loadingMore}
+                className="flex w-full items-center justify-center gap-2 rounded-xl border border-(--border-subtle) bg-(--surface-2) px-4 py-3 text-[14px] font-semibold text-(--text-primary) tap-list disabled:opacity-50"
+              >
+                <ChevronDown size={16} strokeWidth={2} />
+                {loadingMore ? 'Loading…' : `Load ${pageSize} older leads`}
+              </button>
+              <p className="text-center text-[12px] text-(--text-tertiary) pt-2">
+                Showing {rows.length} of {totalAll} total leads.
+              </p>
+              {loadMoreError && (
+                <p className="text-center text-[12px] text-red-500 pt-1">{loadMoreError}</p>
+              )}
+            </div>
+          )}
+          {exhausted && (
+            <p className="text-center text-[12px] text-(--text-tertiary) pt-2">
+              That&rsquo;s every lead in the database.
             </p>
           )}
         </div>

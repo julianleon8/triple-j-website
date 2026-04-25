@@ -22,3 +22,20 @@ export const Sheet = dynamic<SheetProps>(
   () => import('./SheetImpl').then((m) => m.SheetImpl),
   { ssr: false, loading: () => null },
 )
+
+/**
+ * Hover-prefetch helper. Call from any element that triggers a Sheet open
+ * (e.g. onPointerEnter / onFocus on a button). Kicks off the lazy chunk
+ * fetch in the background so the first sheet-open in the session feels
+ * instant instead of having a ~50ms chunk-fetch delay.
+ *
+ * Usage:
+ *   <button onPointerEnter={prefetchSheet} onFocus={prefetchSheet} ...>
+ *
+ * No-op on the server. Idempotent — webpack's dynamic-import cache means
+ * repeat calls don't re-fetch.
+ */
+export function prefetchSheet(): void {
+  if (typeof window === 'undefined') return
+  void import('./SheetImpl')
+}

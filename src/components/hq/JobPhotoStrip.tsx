@@ -3,7 +3,7 @@
 import Image from 'next/image'
 import { useCallback, useMemo, useRef, useState } from 'react'
 import { Camera, Loader2, AlertCircle } from 'lucide-react'
-import { Lightbox, type LightboxPhoto } from '@/components/hq/Lightbox'
+import { Lightbox, prefetchLightbox, type LightboxPhoto } from '@/components/hq/Lightbox'
 import { prepareImage } from '@/lib/hq/image-prep'
 import { useHaptics } from '@/lib/hq/haptics'
 
@@ -229,6 +229,8 @@ export function JobPhotoStrip({ jobId, photos: initialPhotos, photoCount }: Prop
                 <button
                   type="button"
                   onClick={() => setLightboxIndex(i)}
+                  onPointerEnter={prefetchLightbox}
+                  onFocus={prefetchLightbox}
                   className="relative block h-24 w-24 overflow-hidden rounded-xl border border-(--border-subtle) bg-(--surface-3) tap-solid"
                   aria-label={`Photo ${i + 1}`}
                 >
