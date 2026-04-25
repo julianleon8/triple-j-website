@@ -5,7 +5,7 @@ import { LOCATIONS, LOCATION_SLUGS } from '@/lib/locations'
 export const metadata: Metadata = {
   title: 'Metal Carport Service Areas in Central Texas',
   description:
-    'Triple J Metal installs carports, garages, and barns across Central Texas — Temple, Harker Heights, Killeen, Copperas Cove, Belton, Bell County.',
+    'Triple J Metal installs welded or bolted carports, garages, RV covers, and barns across Central Texas — Temple, Belton, Killeen, Harker Heights, Copperas Cove, Waco, Georgetown, and Round Rock. Same-week installs.',
   alternates: {
     canonical: '/locations',
   },
@@ -15,8 +15,8 @@ export default function LocationsPage() {
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'ItemList',
-    name: 'Triple J Metal LLC Service Areas',
-    description: 'Cities served by Triple J Metal LLC for metal carport installation in Central Texas',
+    name: 'Triple J Metal Service Areas',
+    description: 'Cities served by Triple J Metal for metal carport installation in Central Texas',
     itemListElement: LOCATION_SLUGS.map((slug, index) => ({
       '@type': 'ListItem',
       position: index + 1,
@@ -38,10 +38,14 @@ export default function LocationsPage() {
         <section>
           <h1>Metal Carport Service Areas — Central Texas</h1>
           <p>
-            Triple J Metal LLC is based in Temple, TX and installs metal carports,
-            garages, barns, and RV covers across Central Texas. We serve Bell County
-            and surrounding areas — call{' '}
-            <a href="tel:+12543467764">254-346-7764</a> for same-week availability.
+            Triple J Metal is based in Temple, TX and installs metal carports,
+            garages, barns, and RV covers across Central Texas. Our coverage
+            now spans Bell, McLennan, and Williamson counties — including
+            recently expanded same-week service into{' '}
+            <Link href="/locations/waco"><strong>Waco</strong></Link>,{' '}
+            <Link href="/locations/georgetown"><strong>Georgetown</strong></Link>, and{' '}
+            <Link href="/locations/round-rock"><strong>Round Rock</strong></Link>.
+            Call <a href="tel:+12543467764">254-346-7764</a> for same-week availability.
           </p>
         </section>
 

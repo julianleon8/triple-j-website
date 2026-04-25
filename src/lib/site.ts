@@ -5,8 +5,18 @@
  */
 
 export const SITE = {
-  name: "Triple J Metal LLC",
+  name: "Triple J Metal",
   shortName: "Triple J Metal",
+  /**
+   * Legal/registered name — use ONLY for:
+   *   - footer copyright lines (©)
+   *   - schema.org `legalName`
+   *   - terms of service / privacy policy body copy
+   *   - any other contractual/legal copy
+   * Everywhere else (page titles, og:site_name, marketing body copy,
+   * alt text, email subject lines, brand displays) should use `name`.
+   */
+  legalName: "Triple J Metal LLC",
   tagline: "Built right, built fast, built by Triple J.",
   phone: "254-346-7764",
   phoneHref: "tel:+12543467764",
@@ -60,4 +70,7 @@ export const SERVICE_CITIES = [
   { slug: "killeen", name: "Killeen, TX" },
   { slug: "harker-heights", name: "Harker Heights, TX" },
   { slug: "copperas-cove", name: "Copperas Cove, TX" },
+  { slug: "waco", name: "Waco, TX" },
+  { slug: "georgetown", name: "Georgetown, TX" },
+  { slug: "round-rock", name: "Round Rock, TX" },
 ] as const;

@@ -107,11 +107,11 @@ export const LOCATIONS: Record<string, LocationData> = {
       'Welded or bolted metal carports in Harker Heights, TX — same-week installs, concrete pad included, Fort Cavazos military discount.',
     heroHeadline: 'Metal Carports in Harker Heights, TX — Same-Week Installs',
     heroCopy:
-      "Harker Heights homeowners trust Triple J Metal LLC for durable metal carports installed fast. We're a local Central Texas company — not a national kit seller — which means we show up, weld it, and stand behind our work. PCS'ing to Fort Cavazos? We'll protect your vehicles before your household goods arrive.",
+      "Harker Heights homeowners trust Triple J Metal for durable metal carports installed fast. We're a local Central Texas company — not a national kit seller — which means we show up, weld it, and stand behind our work. PCS'ing to Fort Cavazos? We'll protect your vehicles before your household goods arrive.",
     areaContext:
       "We serve all of Harker Heights and the surrounding Bell County area, including neighborhoods near Fort Cavazos, Clear Creek Road, and the Killeen-Fort Hood Regional Airport corridor. Whether you're in an established neighborhood or a rural property on the outskirts, we come to you.",
     whyLocal:
-      "Every national company targeting Harker Heights ships a kit and leaves you to figure out installation. Triple J Metal LLC is based in Temple — 15 minutes away — and we handle everything: site prep, concrete pad pouring, welding or bolting, and cleanup. One call, one company, done.",
+      "Every national company targeting Harker Heights ships a kit and leaves you to figure out installation. Triple J Metal is based in Temple — 15 minutes away — and we handle everything: site prep, concrete pad pouring, welding or bolting, and cleanup. One call, one company, done.",
     services: [
       'Welded or bolted red iron carports',
       'Bolted metal carports',
@@ -142,11 +142,11 @@ export const LOCATIONS: Record<string, LocationData> = {
     // Legacy fallbacks (used if new fields below aren't populated)
     heroHeadline: "Built in Killeen. Built for Fort Cavazos.",
     heroCopy:
-      "Killeen has no shortage of national companies selling carport kits — but Triple J Metal LLC is the only local Central Texas builder who shows up and installs it, pours the concrete pad, and hands you the keys. PCS orders don't wait, and neither do we.",
+      "Killeen has no shortage of national companies selling carport kits — but Triple J Metal is the only local Central Texas builder who shows up and installs it, pours the concrete pad, and hands you the keys. PCS orders don't wait, and neither do we.",
     areaContext:
       "We serve all of Killeen, including areas near Fort Cavazos, Killeen-Fort Hood Regional Airport, Rosewood Heights, Westcliff, and the US-190 corridor into Copperas Cove. Rural properties welcome.",
     whyLocal:
-      "The Carport Co., Viking Steel, and Infinity Carports all have Killeen pages — but none of them have a local crew or pour concrete. Triple J Metal LLC does. We offer same-week scheduling, a local phone number, welded steel, and the only turnkey concrete option you'll find from a local installer.",
+      "The Carport Co., Viking Steel, and Infinity Carports all have Killeen pages — but none of them have a local crew or pour concrete. Triple J Metal does. We offer same-week scheduling, a local phone number, welded steel, and the only turnkey concrete option you'll find from a local installer.",
     services: [
       'Welded or bolted red iron carports',
       'Bolted metal carports',
@@ -207,6 +207,16 @@ export const LOCATIONS: Record<string, LocationData> = {
       "4,000 PSI concrete poured for Bell County's expansive clay soils — in the same contract",
       'Same-week scheduling — built around PCS arrivals and hail-season urgency, not a 12-week wait list',
     ],
+    callouts: [
+      {
+        eyebrow: 'PCS to Tech',
+        headline: 'Cavazos retirees relocating to Round Rock.',
+        blurb:
+          "Half the Killeen retirees we work with end up taking second-career jobs at Dell, Apple, or Tesla in Round Rock — and need a carport at the new house before move-in. We build at both ends of the I-14/I-35 run with the same crew. Same applies for Georgetown's Sun City retirees coming off a Cavazos pension.",
+        ctaLabel: 'See Round Rock builds',
+        ctaHref: '/locations/round-rock',
+      },
+    ],
   },
 
   'copperas-cove': {
@@ -221,11 +231,11 @@ export const LOCATIONS: Record<string, LocationData> = {
       'Affordable metal carports in Copperas Cove, TX — welded or bolted red iron steel, concrete pad available, same-week installs. Call for a free quote.',
     heroHeadline: 'Affordable Metal Carports in Copperas Cove, TX',
     heroCopy:
-      "Copperas Cove homeowners searching for a carport builder get hit with national kit companies that ship a package and walk away. Triple J Metal LLC is different — we're a local Central Texas crew that installs everything ourselves. Welded or bolted, residential or ranch, concrete pad included if needed.",
+      "Copperas Cove homeowners searching for a carport builder get hit with national kit companies that ship a package and walk away. Triple J Metal is different — we're a local Central Texas crew that installs everything ourselves. Welded or bolted, residential or ranch, concrete pad included if needed.",
     areaContext:
       "We serve all of Copperas Cove and Coryell County, including neighborhoods near FM 116, the US-190 corridor, and rural properties heading toward Lampasas. We also regularly work in the neighboring communities of Kempner and Lampasas.",
     whyLocal:
-      "Viking Steel, The Carport Co., and Get Carports all target Copperas Cove with location pages — but they're all national dealers. Triple J Metal LLC is based in Temple, 30 minutes away, and sends a real crew to build and install your structure from start to finish.",
+      "Viking Steel, The Carport Co., and Get Carports all target Copperas Cove with location pages — but they're all national dealers. Triple J Metal is based in Temple, 30 minutes away, and sends a real crew to build and install your structure from start to finish.",
     services: [
       'Welded or bolted red iron carports',
       'Bolted metal carports',
@@ -251,11 +261,11 @@ export const LOCATIONS: Record<string, LocationData> = {
     // Legacy fallbacks (used if new fields below aren't populated)
     heroHeadline: "Built in Temple. Built where we live.",
     heroCopy:
-      "Triple J's shop sits on Tem-Bel Lane in Temple. This isn't a service area for us — it's home. Welded or bolted carports, garages, and lakeside RV covers built same-week across the city we live in.",
+      "Triple J's shop sits on Tem-Bel Ln in Temple. This isn't a service area for us — it's home. Welded or bolted carports, garages, and lakeside RV covers built same-week across the city we live in.",
     areaContext:
       "We're based right here in Temple and serve all surrounding areas including North Temple, South Temple along I-35, East Temple near FM 93, and rural Bell County properties. We also service nearby Nolanville, Rogers, Belton, and Troy.",
     whyLocal:
-      "We're not a chain. Triple J Metal LLC was founded by a Temple family and operates out of Temple. We source from regional Texas steel suppliers — real Texas steel, real Texas builders, multi-source so a single supplier shortage never delays your build. When other companies send a kit, we send a crew.",
+      "We're not a chain. Triple J Metal was founded by a Temple family and operates out of Temple. We source from regional Texas steel suppliers — real Texas steel, real Texas builders, multi-source so a single supplier shortage never delays your build. When other companies send a kit, we send a crew.",
     services: [
       'Welded or bolted red iron carports',
       'Bolted metal carports',
@@ -285,7 +295,7 @@ export const LOCATIONS: Record<string, LocationData> = {
     distanceFromTemple: '0 mi · Where we live',
     habla: true,
     localIntro:
-      "This is where we live and where we work. Triple J's shop sits on Tem-Bel Lane, our crew lives across town, and Temple's a railroad town — we weld like one. From Lake Belton's lakeside properties to the Western Hills residential corridor, we build same-week across the city we call home. Hablamos español con Juan y Freddy.",
+      "This is where we live and where we work. Triple J's shop sits on Tem-Bel Ln, our crew lives across town, and Temple's a railroad town — we weld like one. From Lake Belton's lakeside properties to the Western Hills residential corridor, we build same-week across the city we call home. Hablamos español con Juan y Freddy.",
     landmarks: [
       {
         name: 'Lake Belton',
@@ -315,7 +325,7 @@ export const LOCATIONS: Record<string, LocationData> = {
     ],
     topServices: ['carports', 'metal-garages', 'turnkey-carports-with-concrete'],
     whyLocalBullets: [
-      'Our shop, our yard, our crew — all on Tem-Bel Lane in Temple. No driving in from out of state, no kit in a box.',
+      'Our shop, our yard, our crew — all on Tem-Bel Ln in Temple. No driving in from out of state, no kit in a box.',
       "Welded OR bolted red-iron — your choice for Texas wind, hail, and Lake Belton shoreline gusts.",
       "4,000 PSI concrete poured for Bell County's expansive clay soils — in the same contract.",
       'Same-week scheduling — most calls become a build before the weekend.',
@@ -328,6 +338,14 @@ export const LOCATIONS: Record<string, LocationData> = {
           "Concealed-fastener standing-seam, Board & Batten siding, color-matched to your home — for Western Hills, Heritage Acres, and Lake Belton subdivisions where the architectural guidelines are strict and the builds need to read residential, not utility.",
         ctaLabel: 'See HOA-compliant builds',
         ctaHref: '/services/hoa-compliant-structures',
+      },
+      {
+        eyebrow: 'Building North',
+        headline: '35 miles up I-35 to McLennan County.',
+        blurb:
+          "Waco, Hewitt, Woodway, Robinson, and China Spring are our closest cross-county runs — and where our regional Texas steel suppliers actually live. Same crew, same week, same turnkey concrete. Williamson County south (Georgetown, Round Rock) is also a routine drive.",
+        ctaLabel: 'See Waco builds',
+        ctaHref: '/locations/waco',
       },
     ],
   },
@@ -349,7 +367,7 @@ export const LOCATIONS: Record<string, LocationData> = {
     areaContext:
       "We serve all of Belton and the Lake Belton area, including communities along US-190, FM 2271, and rural Bell County ranches. We're also close to Salado and Jarrell for customers on the southern end of Bell County.",
     whyLocal:
-      "The Carport Co. and Dayton Barns both have Belton pages, but they're national outfits with no local crew. Triple J Metal LLC is 10 minutes from downtown Belton. We schedule faster, include concrete, and our crew actually knows your neighborhood.",
+      "The Carport Co. and Dayton Barns both have Belton pages, but they're national outfits with no local crew. Triple J Metal is 10 minutes from downtown Belton. We schedule faster, include concrete, and our crew actually knows your neighborhood.",
     services: [
       'Welded or bolted red iron carports',
       'Bolted metal carports',
@@ -431,6 +449,14 @@ export const LOCATIONS: Record<string, LocationData> = {
         ctaLabel: 'See ranch barn builds',
         ctaHref: '/services/barns',
       },
+      {
+        eyebrow: 'South to Williamson County',
+        headline: 'Georgetown, Round Rock, and the lake corridor.',
+        blurb:
+          "Belton's lake country runs into the same growth corridor pulling buyers down to Georgetown's Sun City and Round Rock's HOA-grade subdivisions. We make the run from our Temple shop with the same crew, same welded red-iron, same turnkey concrete.",
+        ctaLabel: 'See Georgetown builds',
+        ctaHref: '/locations/georgetown',
+      },
     ],
   },
 
@@ -446,11 +472,11 @@ export const LOCATIONS: Record<string, LocationData> = {
       'Custom metal carports in Salado, TX — welded or bolted red iron, concrete pad included, same-week installs. Local Temple crew 20 min away.',
     heroHeadline: 'Metal Carports in Salado, TX — Local Builder, Concrete Included',
     heroCopy:
-      "Salado homeowners and ranchers don't have to wait weeks for a national carport company to ship a kit. Triple J Metal LLC is based in Temple — 20 minutes away — and our crew installs welded or bolted red iron structures with concrete pads in the same contract. One call, one company, done.",
+      "Salado homeowners and ranchers don't have to wait weeks for a national carport company to ship a kit. Triple J Metal is based in Temple — 20 minutes away — and our crew installs welded or bolted red iron structures with concrete pads in the same contract. One call, one company, done.",
     areaContext:
       "We serve all of Salado and the surrounding Bell County area, including rural properties along I-35, FM 2268, and the Robertson Creek corridor. We also regularly work in Jarrell and the southern end of Bell County.",
     whyLocal:
-      "Most carport companies targeting Salado are national dealers with no local footprint. Triple J Metal LLC is a Temple family business — we drive 20 minutes to your property, build it ourselves, and include the concrete pad at no extra contract hassle.",
+      "Most carport companies targeting Salado are national dealers with no local footprint. Triple J Metal is a Temple family business — we drive 20 minutes to your property, build it ourselves, and include the concrete pad at no extra contract hassle.",
     services: [
       'Welded or bolted red iron carports',
       'Bolted metal carports',
@@ -471,16 +497,17 @@ export const LOCATIONS: Record<string, LocationData> = {
     zip: '76701',
     lat: 31.5493,
     lng: -97.1467,
-    metaTitle: 'Metal Carports Waco TX | Welded + Turnkey Concrete',
+    metaTitle: 'Metal Carports & Buildings in Waco, TX | Same-Week Welded Installs | Triple J Metal',
     metaDescription:
-      'Custom welded metal carports in Waco, TX — turnkey concrete included, same-week scheduling. Central Texas crew serving all of McLennan County.',
-    heroHeadline: 'Metal Carport Builder Serving Waco, TX — Turnkey Concrete Included',
+      "Metal carport Waco TX — welded or bolted red iron, turnkey concrete, same-week installs across McLennan County. Magnolia-inspired residential, ranch barns for Hewitt, Woodway, Robinson, China Spring. Hablamos español.",
+    // Legacy fallbacks (used if new fields below aren't populated)
+    heroHeadline: "Built for Waco. McLennan County's welded crew.",
     heroCopy:
-      "Waco homeowners and property owners searching for a real metal building contractor — not a kit shipper — have found the right company. Triple J Metal LLC is based in Temple, 45 minutes away, and we bring a full crew to weld or bolt your structure and pour the concrete pad, all in one contract.",
+      "Waco is our closest county neighbor — 35 miles up I-35 — and the home of the regional Texas steel suppliers our shop draws from. Triple J brings a full welding crew and pours the concrete pad in the same contract for Waco, Hewitt, Woodway, Robinson, and China Spring residential and ag work alike.",
     areaContext:
-      "We serve Waco and all of McLennan County, including Woodway, Hewitt, China Spring, and rural properties along the Brazos River corridor. We also serve neighboring communities like Hillsboro and Corsicana on larger projects.",
+      "We serve all of Waco and the surrounding McLennan County corridor — Hewitt, Woodway, Robinson, China Spring, the rural ag operators between Riesel and Crawford, and the Lake Waco shoreline. Magnolia-influenced residential and ranch-grade ag structures are both our day-in-day-out work in this market.",
     whyLocal:
-      "National dealers like Viking Steel and The Carport Co. have Waco landing pages, but no local crew. Triple J Metal LLC makes the 45-minute drive from Temple with our own team, steel from regional Texas suppliers (some right here in Waco), and a turnkey concrete option that nobody else provides.",
+      "McLennan County is the closest county to our Temple shop, and our supplier relationships are rooted right here in Waco. National kit-shippers have Waco landing pages but no local crew. Triple J makes the 35-minute run with our own team, our own steel, and turnkey concrete in one contract.",
     services: [
       'Welded or bolted red iron carports',
       'Bolted metal carports',
@@ -488,8 +515,80 @@ export const LOCATIONS: Record<string, LocationData> = {
       'Metal garages',
       'RV and boat covers',
       'Metal barns',
+      'Ranch structures',
+      'Equipment covers',
+      'HOA-compliant structures',
       'Lean-to patios',
       'House additions',
+    ],
+
+    // ── NEW personalization (closest neighbor + supplier proximity + ag/Magnolia split + bilingual) ──
+    // Photo TODO: hero + 3 landmark images currently use existing Triple J photos.
+    // Replace with Waco landmark shots (Magnolia silos, Lake Waco, Baylor) when sourced
+    // from Unsplash/Pexels into /public/images/locations/waco/. Alt text already accurate.
+    // Note (per Decisions.md 2026-04-23): supplier-agnostic positioning — never name
+    // a specific Waco supplier (e.g. MetalMax) in customer copy. Phrase as "regional
+    // Texas steel suppliers" or "supplier relationships rooted in McLennan County."
+    heroImage: '/images/carport-concrete-rural.jpg',
+    heroImageAlt: 'McLennan County ranch property with metal building near Waco, Texas',
+    customHeadline: {
+      line1: 'Built for Waco.',
+      line2: "McLennan County's welded crew.",
+    },
+    heroSubhead:
+      "35 minutes north of HQ — our closest county neighbor and where our supplier relationships actually live. Welded or bolted red-iron, turnkey concrete, same-week across Waco, Hewitt, Woodway, Robinson, and China Spring. Hablamos español.",
+    distanceFromTemple: '35 mi north · 40 min from HQ',
+    habla: true,
+    localIntro:
+      "Waco is our closest county neighbor — 35 miles up I-35 and the home of the regional Texas steel suppliers our shop draws from. McLennan County splits between rural ag operators who need hay barns and equipment covers, and Magnolia-influenced residential where the build has to look the part. We bring a real welding crew and concrete in the same contract for both. Hablamos español con Juan y Freddy.",
+    landmarks: [
+      {
+        name: 'Magnolia Market & Silos',
+        blurb:
+          "Chip and Joanna's silos reset what residential design looks like in Central Texas. Board & Batten siding, black-trim color contrast, farmhouse pitch — the Waco aesthetic our HOA-compliant carports are dialed in for.",
+      },
+      {
+        name: 'Lake Waco',
+        blurb:
+          "60+ miles of shoreline and the weekend center for west McLennan. Lakeside RV covers, boat covers, and shoreline barns are routine work — we engineer for the wind exposure that comes with open lake frontage.",
+      },
+      {
+        name: 'Baylor University',
+        blurb:
+          "Baylor pulls professional families into Woodway and Hewitt and a steady student-rental market closer in. The neighborhoods around campus are mixed — HOA-compliant secondary structures and rental-property carports both come up regularly.",
+      },
+    ],
+    neighborhoods: [
+      'Waco proper',
+      'Hewitt',
+      'Woodway',
+      'Robinson',
+      'China Spring',
+    ],
+    topServices: ['barns', 'carports', 'metal-garages'],
+    whyLocalBullets: [
+      '35 miles up I-35 — McLennan County is the closest county to our Temple shop, and our supplier relationships are rooted right here in Waco.',
+      'Ranch and ag work for rural McLennan — hay barns, equipment covers, and run-in sheds for the operators between Hewitt, China Spring, Robinson, and Crawford.',
+      'Magnolia-influenced residential — Board & Batten, color-matched panels, and the farmhouse pitch the Waco market actually wants.',
+      "Bilingual install crew — Juan and Freddy run the build in Spanish or English for Waco's strong Hispanic homeowner base.",
+    ],
+    callouts: [
+      {
+        eyebrow: 'Ranch & Agricultural',
+        headline: "Built for McLennan County's working ground.",
+        blurb:
+          "Welded red-iron hay barns, equipment covers, and lean-tos for the rural operators between Hewitt, China Spring, Robinson, and Crawford. Sized for tractors and implements, not residential carports — and built to outlast the herd.",
+        ctaLabel: 'See ranch barn builds',
+        ctaHref: '/services/barns',
+      },
+      {
+        eyebrow: 'Magnolia-Aesthetic Residential',
+        headline: 'Board & Batten, color-matched, built like Waco wants it.',
+        blurb:
+          "Concealed-fastener standing-seam, Board & Batten siding, black-trim contrast, farmhouse pitch. The Magnolia look has reset what residential metal looks like in Waco — and we build to that standard for HOA submissions and direct homeowner asks alike.",
+        ctaLabel: 'See HOA-compliant builds',
+        ctaHref: '/services/hoa-compliant-structures',
+      },
     ],
   },
 
@@ -500,16 +599,17 @@ export const LOCATIONS: Record<string, LocationData> = {
     zip: '78626',
     lat: 30.6333,
     lng: -97.6779,
-    metaTitle: 'Metal Carports Georgetown TX | Welded Steel',
+    metaTitle: 'Metal Carports & Buildings in Georgetown, TX | Same-Week Welded Installs | Triple J Metal',
     metaDescription:
-      'Welded and bolted metal carports in Georgetown, TX — concrete pad included, same-week builds. Central Texas family crew.',
-    heroHeadline: 'Metal Carport Installation in Georgetown, TX — Welded Steel + Concrete',
+      "Metal carport Georgetown TX — welded or bolted red iron, turnkey concrete, same-week installs while local contractors are 4–6 weeks out. Sun City RV covers, Liberty Hill ranch barns, San Gabriel River foundations.",
+    // Legacy fallbacks (used if new fields below aren't populated)
+    heroHeadline: 'Built for Georgetown. Same-week, while everyone else waits.',
     heroCopy:
-      "Georgetown is one of the fastest-growing cities in Texas — and property owners here are looking for carports, garages, and RV covers that match the quality of their homes. Triple J Metal LLC builds welded red iron structures in Georgetown, includes concrete pad pouring in the same contract, and gets it done without a 3-month wait.",
+      "Most Georgetown contractors are quoting 4–6 weeks out. Triple J isn't. We're a Temple-based family crew that drives 70 miles south, welds or bolts your structure on-site, and pours the concrete pad in the same contract. Sun City RVs, Liberty Hill ranch property, San Gabriel-adjacent homes — all built same-week.",
     areaContext:
-      "We serve Georgetown and all of Williamson County, including Sun City, Berry Creek, and Teravista neighborhoods, as well as rural properties along Ronald Reagan Blvd and the Georgetown Lake area.",
+      "We serve all of Georgetown and the surrounding Williamson County corridor — Sun City, Berry Creek, Georgetown Lake, the Liberty Hill ranch country to the west, and old-town Georgetown around Southwestern University. RV covers, ranch barns, and HOA-compliant residential are our day-in-day-out work in this market.",
     whyLocal:
-      "Georgetown is about 60 minutes from our Temple base — worth the drive when no local installer offers turnkey concrete. We bring our own crew, our own Texas-sourced steel, and handle the full job start to finish.",
+      "Georgetown's contractor pool is booked 4–6 weeks out. Triple J is same-week, with our own welders, our own concrete crew, and engineering for whatever the soil and water table actually do under your slab. National kit-shippers won't show up here at all. We will.",
     services: [
       'Welded or bolted red iron carports',
       'Bolted metal carports',
@@ -517,8 +617,77 @@ export const LOCATIONS: Record<string, LocationData> = {
       'Metal garages',
       'RV and boat covers',
       'HOA-compliant structures',
+      'Metal barns',
+      'Ranch structures',
       'Lean-to patios',
       'House additions',
+    ],
+
+    // ── NEW personalization (Sun City + Liberty Hill ranch + San Gabriel + speed-against-locals) ──
+    // Photo TODO: hero + 3 landmark images currently use existing Triple J photos.
+    // Replace with Georgetown landmark shots (San Gabriel River, Sun City, Southwestern
+    // University) when sourced from Unsplash/Pexels into /public/images/locations/georgetown/.
+    // Alt text already accurate.
+    heroImage: '/images/porch-cover-lean-to.jpg',
+    heroImageAlt: 'San Gabriel River near Georgetown, Texas',
+    customHeadline: {
+      line1: 'Built for Georgetown.',
+      line2: 'Same-week, while everyone else waits.',
+    },
+    heroSubhead:
+      "Most Georgetown contractors are 4–6 weeks out. We're not. Triple J drives 70 miles south from Temple — Sun City RV covers, Liberty Hill ranch barns, San Gabriel River-adjacent foundations engineered for what the soil actually does.",
+    distanceFromTemple: '70 mi south · 1 hr 10 min from HQ',
+    habla: true,
+    localIntro:
+      "Georgetown is split between Sun City retirees protecting RVs and golf carts, San Gabriel-adjacent properties that flood-pulse with the river, and Liberty Hill ranch land that's growing into Williamson County's last open country. The local contractor pool is booked 4–6 weeks out — Triple J is same-week, with our own welders, our own concrete, and engineering for whatever the soil and water table actually do under your slab. Hablamos español con Juan y Freddy.",
+    landmarks: [
+      {
+        name: 'San Gabriel River',
+        blurb:
+          "The river runs through downtown and along the north edge of town — and the riparian properties near it need erosion-conscious foundations. We pour 4,000 PSI concrete with anchor depth set for the actual flood-pulse zone, not a generic spec.",
+      },
+      {
+        name: 'Sun City',
+        blurb:
+          "Texas's largest 55+ active-adult community — 9,500+ homes, every one with an RV, golf cart, or workshop tool that should not be sitting in the sun. RV covers and HOA-compliant carports are our day-in-day-out work in Sun City.",
+      },
+      {
+        name: 'Southwestern University',
+        blurb:
+          "Texas's oldest university anchors downtown Georgetown and pulls steady professional families into Berry Creek and old-town Georgetown. The historic neighborhoods around campus are HOA-tight — we color-match panels and trim to fit.",
+      },
+    ],
+    neighborhoods: [
+      'Sun City',
+      'Berry Creek',
+      'Georgetown Lake',
+      'Liberty Hill',
+      'Old Town Georgetown',
+    ],
+    topServices: ['rv-covers', 'hoa-compliant-structures', 'barns'],
+    whyLocalBullets: [
+      'Same-week scheduling — most Georgetown contractors are quoting 4–6 weeks. Triple J builds before they call you back.',
+      'Sun City RV covers and golf-cart enclosures — extra-tall clearance, HOA-grade aesthetic, sized for the rigs retirees actually drive.',
+      'San Gabriel River-adjacent foundations — 4,000 PSI concrete and anchor depth engineered for flood-pulse properties and seasonal water tables.',
+      "Liberty Hill ranch country — welded red-iron barns, equipment sheds, and lean-tos for Williamson County's growing rural property base.",
+    ],
+    callouts: [
+      {
+        eyebrow: 'Sun City Specialists',
+        headline: 'RV covers + golf-cart enclosures, HOA-approved.',
+        blurb:
+          "Sun City's architectural standards specify panel color, eave treatment, and roof pitch. We've matched them on enough builds to know which panel and trim combos clear ARC the first submission — no rework, no second try.",
+        ctaLabel: 'See RV covers',
+        ctaHref: '/services/rv-covers',
+      },
+      {
+        eyebrow: 'Liberty Hill Ranch',
+        headline: 'Welded barns for Williamson ranch country.',
+        blurb:
+          "Liberty Hill's the last big open stretch in Williamson County — and the buyers moving in want hay barns, equipment covers, and run-in sheds that aren't kit construction. Welded red-iron, our own crew, one contract.",
+        ctaLabel: 'See ranch barns',
+        ctaHref: '/services/barns',
+      },
     ],
   },
 
@@ -529,16 +698,17 @@ export const LOCATIONS: Record<string, LocationData> = {
     zip: '78664',
     lat: 30.5083,
     lng: -97.6789,
-    metaTitle: 'Metal Carports Round Rock TX | Turnkey Install',
+    metaTitle: 'Metal Carports & Buildings in Round Rock, TX | Same-Week Welded Installs | Triple J Metal',
     metaDescription:
-      'Custom metal carports and garages in Round Rock, TX — welded or bolted, concrete pad included. Central Texas family crew, same-week installs.',
-    heroHeadline: 'Metal Carports & Garages in Round Rock, TX — Full Crew, Concrete Included',
+      "Metal carport Round Rock TX — welded or bolted red iron, turnkey concrete, same-week installs. HOA-compliant builds for Brushy Creek, Forest Creek, Teravista, Cedar Park, and Pflugerville. Hablamos español.",
+    // Legacy fallbacks (used if new fields below aren't populated)
+    heroHeadline: "Built for Round Rock. Welded or bolted, same-week.",
     heroCopy:
-      "Round Rock homeowners have plenty of national carport dealers to choose from — and none of them show up with a crew. Triple J Metal LLC is different. We drive from Temple, weld or bolt your structure on-site, and pour the concrete pad in the same contract. No kits, no subcontractors, no waiting.",
+      "Round Rock homeowners have plenty of national carport dealers to choose from — and none of them show up with a crew. Triple J Metal drives 60 miles south from our Temple shop, welds or bolts your structure on-site, and pours the concrete pad in the same contract. No kits, no subcontractors, no 6-week wait list.",
     areaContext:
-      "We serve Round Rock and Williamson County, including Brushy Creek, Forest Creek, Teravista, and rural properties east of I-35 heading toward Taylor. We also build in the Pflugerville and Hutto corridor.",
+      "We serve all of Round Rock and Williamson County's growth corridor — Brushy Creek, Forest Creek, Teravista, the Cedar Park line, and the Pflugerville / SH-45 build-out. HOA-compliant residential and turnkey-concrete commercial carports are our day-in-day-out work in this market.",
     whyLocal:
-      "Round Rock is 70 minutes from our Temple base — but we make the drive for jobs that require a full-service contractor with welded steel and turnkey concrete. No national dealer in your area offers what we do.",
+      "Round Rock is 60 miles south of our Temple yard — a worthwhile drive for a full-service contractor with welded steel, HOA-grade panel finishes, and turnkey concrete in one contract. National kit-shippers can't meet Williamson architectural review boards. Triple J can.",
     services: [
       'Welded or bolted red iron carports',
       'Bolted metal carports',
@@ -548,6 +718,73 @@ export const LOCATIONS: Record<string, LocationData> = {
       'HOA-compliant structures',
       'Lean-to patios',
       'House additions',
+    ],
+
+    // ── NEW personalization (Williamson growth + HOA + bilingual + Cavazos→Dell migration) ──
+    // Photo TODO: hero + 3 landmark images currently use existing Triple J photos.
+    // Replace with Round Rock landmark shots (Old Settlers Park, Dell Diamond,
+    // Round Rock Premium Outlets) when sourced from Unsplash/Pexels into
+    // /public/images/locations/round-rock/. Alt text already accurate.
+    heroImage: '/images/carport-truck-concrete-hero.jpg',
+    heroImageAlt: 'Round Rock, Texas residential metal carport with concrete pad',
+    customHeadline: {
+      line1: 'Built for Round Rock.',
+      line2: 'Welded or bolted, same-week.',
+    },
+    heroSubhead:
+      "Williamson County's fastest-growing city. Triple J drives 60 miles south from Temple with our own welders and concrete crew — HOA-compliant red-iron for Brushy Creek, Forest Creek, Teravista, Cedar Park, and Pflugerville.",
+    distanceFromTemple: '60 mi south · 1 hr from HQ',
+    habla: true,
+    localIntro:
+      "Round Rock has doubled in a generation — Dell, Apple, and Tesla pulled tech families in from across the country, and Fort Cavazos retirees PCS here for second careers. The subdivisions are HOA-strict, the soil flips between Edwards Plateau caliche and Blackland Prairie clay, and most national kit-shippers can't meet the architectural review board's standards. We can. Welded or bolted red-iron, color-matched to your home, concrete poured for the soil under it. Hablamos español con Juan y Freddy.",
+    landmarks: [
+      {
+        name: 'Old Settlers Park',
+        blurb:
+          "645 acres of fields, courts, and event grounds — the Sports Capital of Texas hosts year-round tournaments. The surrounding HOA-grade neighborhoods (Forest Creek, Stone Canyon) are exactly where our standing-seam carports earn their keep.",
+      },
+      {
+        name: 'Dell Diamond',
+        blurb:
+          "Round Rock Express stadium — and a marker of the Dell-driven tech economy that brought half of these homeowners to Williamson County. Fort Cavazos retirees take Dell jobs here, then call us for the carport their PCS orders never made room for.",
+      },
+      {
+        name: 'Round Rock Premium Outlets',
+        blurb:
+          "Anchor of the SH-45 / I-35 commercial corridor. The growth radius around the outlets is where most Round Rock new-build neighborhoods are landing — Forest Creek, Teravista, the Cedar Park line — and where HOA-compliant secondary structures get specified.",
+      },
+    ],
+    neighborhoods: [
+      'Brushy Creek',
+      'Forest Creek',
+      'Teravista',
+      'Cedar Park',
+      'Pflugerville',
+    ],
+    topServices: ['hoa-compliant-structures', 'carports', 'turnkey-carports-with-concrete'],
+    whyLocalBullets: [
+      'HOA-compliant red-iron — concealed-fastener standing-seam, color-matched siding, builds that read residential for Brushy Creek, Forest Creek, and Teravista architectural review boards.',
+      "Edwards Plateau caliche or Blackland Prairie clay — we engineer 4,000 PSI concrete and anchor depth for the soil actually under your slab, not a national average.",
+      "Bilingual install crew — Juan and Freddy run the build in Spanish or English for Round Rock's growing Hispanic homeowner market.",
+      'Same-week scheduling for Fort Cavazos PCS retirees taking Dell, Apple, and Tesla jobs — vehicles under cover before the moving truck unloads.',
+    ],
+    callouts: [
+      {
+        eyebrow: 'HOA-Grade Residential',
+        headline: "Built for Round Rock's architectural review boards.",
+        blurb:
+          "Concealed-fastener standing-seam, Board & Batten siding, and roof colors matched to your home — for Brushy Creek, Forest Creek, Teravista, and Stone Canyon homeowners whose ARC requires the build to read residential, not utility.",
+        ctaLabel: 'See HOA-compliant builds',
+        ctaHref: '/services/hoa-compliant-structures',
+      },
+      {
+        eyebrow: 'Williamson County Reach',
+        headline: 'Cedar Park, Pflugerville, and the SH-45 corridor.',
+        blurb:
+          "Round Rock anchors the run — Cedar Park, Pflugerville, Hutto, and Leander are the same drive from our crew. Same welded red-iron, same concrete in one contract, same 60-mile run from Temple.",
+        ctaLabel: 'Williamson County overview',
+        ctaHref: '/locations/williamson-county',
+      },
     ],
   },
 
@@ -563,7 +800,7 @@ export const LOCATIONS: Record<string, LocationData> = {
       'Metal carports, barns, and ranch structures in Lampasas, TX — welded or bolted red iron, concrete included, same-week installs.',
     heroHeadline: 'Metal Carports & Ranch Structures in Lampasas, TX',
     heroCopy:
-      "Lampasas and Lampasas County are ranch and farm country — and the structures here need to hold up to Hill Country weather without a kit falling apart. Triple J Metal LLC builds welded red iron carports, barns, and ranch structures in Lampasas with concrete pads poured in the same contract.",
+      "Lampasas and Lampasas County are ranch and farm country — and the structures here need to hold up to Hill Country weather without a kit falling apart. Triple J Metal builds welded red iron carports, barns, and ranch structures in Lampasas with concrete pads poured in the same contract.",
     areaContext:
       "We serve all of Lampasas County, including rural ranch properties along US-281, FM 580, and the Colorado River corridor. We regularly work in Kempner and Copperas Cove as well.",
     whyLocal:
@@ -590,10 +827,10 @@ export const LOCATIONS: Record<string, LocationData> = {
     lng: -97.4091,
     metaTitle: 'Metal Carports Holland TX | Bell County',
     metaDescription:
-      'Triple J Metal LLC builds metal carports and barns in Holland, TX — welded or bolted red iron, concrete available. Local Bell County crew. Call 254-346-7764.',
+      'Triple J Metal builds metal carports and barns in Holland, TX — welded or bolted red iron, concrete available. Local Bell County crew. Call 254-346-7764.',
     heroHeadline: 'Metal Carports & Barns in Holland, TX — Local Bell County Crew',
     heroCopy:
-      "Holland is rural Bell County — and rural properties here need structures that are built right, not shipped in a box. Triple J Metal LLC builds welded and bolted carports, barns, and garages in Holland with same-week scheduling and concrete pad options included in one contract.",
+      "Holland is rural Bell County — and rural properties here need structures that are built right, not shipped in a box. Triple J Metal builds welded and bolted carports, barns, and garages in Holland with same-week scheduling and concrete pad options included in one contract.",
     areaContext:
       "We serve Holland and surrounding rural Bell County, including properties along FM 93, FM 2115, and the Elm Creek corridor heading toward Temple and Georgetown.",
     whyLocal:
@@ -622,7 +859,7 @@ export const LOCATIONS: Record<string, LocationData> = {
       'Custom metal carports and garages in Taylor, TX — welded or bolted red iron steel, concrete pad included, same-week scheduling.',
     heroHeadline: 'Metal Carports & Garages in Taylor, TX — Welded Steel + Concrete',
     heroCopy:
-      "Taylor is growing fast thanks to new development in Williamson County. Homeowners and property managers here need carports and garages that hold up to Central Texas weather. Triple J Metal LLC builds welded and bolted structures in Taylor with turnkey concrete included.",
+      "Taylor is growing fast thanks to new development in Williamson County. Homeowners and property managers here need carports and garages that hold up to Central Texas weather. Triple J Metal builds welded and bolted structures in Taylor with turnkey concrete included.",
     areaContext:
       "We serve all of Taylor and surrounding Williamson County, including Granger, Hutto, and rural properties along SH-95 and FM 1660.",
     whyLocal:
@@ -651,7 +888,7 @@ export const LOCATIONS: Record<string, LocationData> = {
       'Metal carports and barns in Troy, TX — welded or bolted red iron, concrete available, same-week installs. Local Temple-based Bell County crew.',
     heroHeadline: 'Metal Carports & Ranch Structures in Troy, TX',
     heroCopy:
-      "Troy is a small rural Bell County community — and property owners here often get overlooked by the big carport dealers who only target the larger cities. Triple J Metal LLC serves Troy and surrounding rural Bell County with the same full-service install as anywhere else: welded or bolted steel, concrete if needed, one contract.",
+      "Troy is a small rural Bell County community — and property owners here often get overlooked by the big carport dealers who only target the larger cities. Triple J Metal serves Troy and surrounding rural Bell County with the same full-service install as anywhere else: welded or bolted steel, concrete if needed, one contract.",
     areaContext:
       "We serve Troy and rural north Bell County, including properties along US-79, FM 935, and the Little River corridor. We're also close to Lott, Rosebud, and Marlin.",
     whyLocal:
@@ -677,7 +914,7 @@ export const LOCATIONS: Record<string, LocationData> = {
     lng: -97.6024,
     metaTitle: 'Metal Carports Nolanville TX | Bell County',
     metaDescription:
-      'Triple J Metal LLC installs metal carports and garages in Nolanville, TX — 15 min from Temple, welded or bolted red iron, concrete included. Call 254-346-7764.',
+      'Triple J Metal installs metal carports and garages in Nolanville, TX — 15 min from Temple, welded or bolted red iron, concrete included. Call 254-346-7764.',
     heroHeadline: 'Metal Carports & Garages in Nolanville, TX — 15 Minutes from Temple',
     heroCopy:
       "Nolanville sits between Temple and Killeen on the Bell County corridor — prime Triple J Metal territory. We're 15 minutes from Nolanville and build welded or bolted carports, garages, and RV covers with concrete pads included in the same contract. Same-week scheduling, local crew.",
@@ -713,7 +950,7 @@ export const LOCATIONS: Record<string, LocationData> = {
       'Welded or bolted metal carports, garages, and barns across Bell County — Temple, Belton, Killeen, Harker Heights, Salado, Holland, Troy. Local crew, same-week installs.',
     heroHeadline: 'Bell County Metal Building Contractor — Temple, Belton, Killeen, Harker Heights',
     heroCopy:
-      "Bell County is our home turf. Triple J Metal LLC is based in Temple and serves every Bell County community — Belton, Killeen, Harker Heights, Salado, Holland, Troy, Nolanville, Rogers — with welded or bolted metal carports, garages, barns, RV covers, and turnkey concrete. We've completed 150+ Bell County projects, we know the soil conditions, the permit thresholds, and the wind ratings the county requires.",
+      "Bell County is our home turf. Triple J Metal is based in Temple and serves every Bell County community — Belton, Killeen, Harker Heights, Salado, Holland, Troy, Nolanville, Rogers — with welded or bolted metal carports, garages, barns, RV covers, and turnkey concrete. We've completed 150+ Bell County projects, we know the soil conditions, the permit thresholds, and the wind ratings the county requires.",
     areaContext:
       "Bell County stretches from rural farmland in the east to the Fort Cavazos military region in the west. We serve the entire county — Temple's I-35 corridor, Belton's lake communities, Killeen's PCS-driven housing market, Harker Heights' subdivisions, Salado's historic downtown, and rural ag properties on FM roads. Every drive is under 45 minutes from our Temple yard.",
     whyLocal:
@@ -747,7 +984,7 @@ export const LOCATIONS: Record<string, LocationData> = {
       'Welded metal carports, garages, and barns across McLennan County — Waco, Hewitt, Woodway, China Spring, and rural properties along the Brazos. 45 min from Temple.',
     heroHeadline: 'McLennan County Metal Building Contractor — Waco, Hewitt, Woodway, China Spring',
     heroCopy:
-      "McLennan County property owners — homeowners, ranchers, and small commercial operators — work with Triple J Metal LLC for welded red iron carports, garages, barns, and RV covers across the entire county. We're 45 minutes from Waco, we bring our own crew, and we pour concrete in the same contract.",
+      "McLennan County property owners — homeowners, ranchers, and small commercial operators — work with Triple J Metal for welded red iron carports, garages, barns, and RV covers across the entire county. We're 45 minutes from Waco, we bring our own crew, and we pour concrete in the same contract.",
     areaContext:
       "We serve all of McLennan County, including Waco proper, the Hewitt and Woodway suburbs, China Spring rural properties, the Brazos River corridor, and ag properties from Riesel to Crawford. Larger commercial projects on the McLennan side of I-35 are routine for us.",
     whyLocal:
@@ -775,7 +1012,7 @@ export const LOCATIONS: Record<string, LocationData> = {
       'Welded carports, garages, barns, and ranch structures across Coryell County — Copperas Cove, Gatesville, and rural ag properties. Welded or bolted, concrete included.',
     heroHeadline: 'Coryell County Metal Building Contractor — Copperas Cove, Gatesville, Rural Ranch',
     heroCopy:
-      "Coryell County is ranch country with a military edge — bordering Fort Cavazos in the east and stretching into the Hill Country in the west. Triple J Metal LLC builds welded barns, equipment covers, garages, and carports for Coryell County ranchers, military families in Copperas Cove, and homeowners in Gatesville — all with our own crew and turnkey concrete.",
+      "Coryell County is ranch country with a military edge — bordering Fort Cavazos in the east and stretching into the Hill Country in the west. Triple J Metal builds welded barns, equipment covers, garages, and carports for Coryell County ranchers, military families in Copperas Cove, and homeowners in Gatesville — all with our own crew and turnkey concrete.",
     areaContext:
       "We serve all of Coryell County, including Copperas Cove (military-heavy, adjacent to Fort Cavazos), Gatesville (the county seat with a strong ranching base), and rural ag properties along TX-36 and FM-116. Large barns and equipment covers are routine work for us in this county.",
     whyLocal:
@@ -808,7 +1045,7 @@ export const LOCATIONS: Record<string, LocationData> = {
       'Welded carports, garages, RV covers, and HOA-compliant structures across Williamson County — Georgetown, Round Rock, Taylor, Hutto, Liberty Hill. Same-week installs.',
     heroHeadline: 'Williamson County Metal Building Contractor — Georgetown, Round Rock, Taylor',
     heroCopy:
-      "Williamson County is the fastest-growing county in Texas — and that growth means new homeowners constantly need carports, garages, RV covers, and HOA-compliant secondary structures. Triple J Metal LLC drives 60-90 minutes from our Temple yard to build with our own crew, our own steel, and turnkey concrete. National dealers can't say the same.",
+      "Williamson County is the fastest-growing county in Texas — and that growth means new homeowners constantly need carports, garages, RV covers, and HOA-compliant secondary structures. Triple J Metal drives 60-90 minutes from our Temple yard to build with our own crew, our own steel, and turnkey concrete. National dealers can't say the same.",
     areaContext:
       "We serve all of Williamson County, including Georgetown's Sun City and Berry Creek subdivisions, Round Rock's commercial and residential corridors, Taylor's growing market, Hutto, Liberty Hill, Cedar Park, and Leander. HOA-compliant standing-seam systems are a frequent ask in the higher-end developments here.",
     whyLocal:
@@ -836,7 +1073,7 @@ export const LOCATIONS: Record<string, LocationData> = {
       'Welded metal carports, garages, ranch barns, and equipment covers across Lampasas County — Lampasas, Lometa, Kempner. 45 min from Temple.',
     heroHeadline: 'Lampasas County Metal Building Contractor — Lampasas, Lometa, Kempner',
     heroCopy:
-      "Lampasas County is Hill Country ranch territory — a mix of ag operators, weekend ranch owners, and small-town families. Triple J Metal LLC drives 45 minutes from Temple to build welded barns, equipment covers, carports, and RV covers for Lampasas County properties. We pour concrete in the same contract and haul our own steel.",
+      "Lampasas County is Hill Country ranch territory — a mix of ag operators, weekend ranch owners, and small-town families. Triple J Metal drives 45 minutes from Temple to build welded barns, equipment covers, carports, and RV covers for Lampasas County properties. We pour concrete in the same contract and haul our own steel.",
     areaContext:
       "We serve all of Lampasas County, including Lampasas (county seat), Lometa, Kempner, and rural ranch properties along US-281 and TX-183. Large ag barns and equipment covers are typical work here. Many properties are ag-exempt and have flexible permit thresholds.",
     whyLocal:
@@ -864,7 +1101,7 @@ export const LOCATIONS: Record<string, LocationData> = {
       'Welded carports, barns, garages, and equipment covers across Falls County — Marlin, Rosebud, Lott, and rural ag properties. 40 min from Temple.',
     heroHeadline: 'Falls County Metal Building Contractor — Marlin, Rosebud, Lott',
     heroCopy:
-      "Falls County is rural East Bell — small towns, working farms, and ag properties along the Brazos and Little River. Triple J Metal LLC builds welded carports, barns, equipment covers, and ranch structures for Falls County operators with our own crew and our own steel. 40 minutes from our Temple yard.",
+      "Falls County is rural East Bell — small towns, working farms, and ag properties along the Brazos and Little River. Triple J Metal builds welded carports, barns, equipment covers, and ranch structures for Falls County operators with our own crew and our own steel. 40 minutes from our Temple yard.",
     areaContext:
       "We serve all of Falls County, including Marlin (county seat), Rosebud, Lott, Reagan, and rural FM-road properties throughout the Brazos River bottomland. Practical, working ag structures are our specialty here — barns sized for hay storage, equipment covers for tractors and implements, livestock shelters.",
     whyLocal:
@@ -891,7 +1128,7 @@ export const LOCATIONS: Record<string, LocationData> = {
       'Welded carports, garages, barns, and equipment covers across Milam County — Cameron, Rockdale, Thorndale, and rural ag properties. 50 min from Temple.',
     heroHeadline: 'Milam County Metal Building Contractor — Cameron, Rockdale, Thorndale',
     heroCopy:
-      "Milam County mixes small-town residential and a strong ag/ranch base — and most national metal-building contractors skip past it on their way to Austin. Triple J Metal LLC drives 50 minutes from Temple to build welded carports, garages, barns, and equipment covers for Milam County properties with one contract and one local crew.",
+      "Milam County mixes small-town residential and a strong ag/ranch base — and most national metal-building contractors skip past it on their way to Austin. Triple J Metal drives 50 minutes from Temple to build welded carports, garages, barns, and equipment covers for Milam County properties with one contract and one local crew.",
     areaContext:
       "We serve all of Milam County, including Cameron (county seat), Rockdale, Thorndale, Buckholts, and rural FM-road properties throughout the county. We're equally comfortable on a Cameron residential carport and a Rockdale ranch hay barn.",
     whyLocal:
@@ -919,7 +1156,7 @@ export const LOCATIONS: Record<string, LocationData> = {
       'Welded carports, garages, RV covers, and Hill Country ranch structures across Burnet County — Burnet, Marble Falls, Bertram, Granite Shoals. 75 min from Temple.',
     heroHeadline: 'Burnet County Metal Building Contractor — Burnet, Marble Falls, Bertram',
     heroCopy:
-      "Burnet County is Hill Country and Highland Lakes — ranch land, weekend properties, and lakefront homes that all need quality steel structures. Triple J Metal LLC drives 75 minutes from Temple to build welded carports, garages, RV covers, and ranch barns for Burnet County properties. Hill Country drainage and rocky soil don't slow us down.",
+      "Burnet County is Hill Country and Highland Lakes — ranch land, weekend properties, and lakefront homes that all need quality steel structures. Triple J Metal drives 75 minutes from Temple to build welded carports, garages, RV covers, and ranch barns for Burnet County properties. Hill Country drainage and rocky soil don't slow us down.",
     areaContext:
       "We serve all of Burnet County, including Burnet (county seat), Marble Falls (Highland Lakes resort area), Bertram, Granite Shoals, and rural ranch properties throughout the Hill Country. Lakefront RV covers, hilltop carports, and ranch equipment barns are routine work for us here.",
     whyLocal:
