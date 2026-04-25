@@ -29,7 +29,7 @@ function pickCover(
 }
 
 export const metadata: Metadata = {
-  title: 'Hybrid Projects | Horse Stalls, Warehouses, Decks',
+  title: 'Hybrid Projects — Stalls, Warehouses, Decks',
   description:
     'Triple J builds projects that don\'t fit a catalog — horse stalls, warehouses, decks, custom commercial. Welded + bolted, Central Texas crew.',
   alternates: { canonical: '/services/hybrid-projects' },

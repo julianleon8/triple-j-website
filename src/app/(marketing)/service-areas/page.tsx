@@ -7,7 +7,7 @@ import { TrackedPhoneLink, TrackedPhoneNumber } from '@/components/site/TrackedP
 import { SITE } from '@/lib/site'
 
 export const metadata: Metadata = {
-  title: 'Service Areas | Central Texas Cities & Counties',
+  title: 'Service Areas — Central Texas',
   description:
     'Triple J Metal serves Bell, McLennan, Coryell, Williamson, Lampasas, Falls, Milam, and Burnet counties. 14 cities, local crew, same-week installs.',
   alternates: { canonical: '/service-areas' },

@@ -97,6 +97,7 @@ export type LocationData = {
 export const LOCATIONS: Record<string, LocationData> = {
   'harker-heights': {
     slug: 'harker-heights',
+    heroImageAlt: 'Welded metal carport on a Harker Heights, Texas residential property near Fort Cavazos',
     name: 'Harker Heights',
     county: 'Bell County',
     zip: '76548',
@@ -239,6 +240,7 @@ export const LOCATIONS: Record<string, LocationData> = {
 
   'copperas-cove': {
     slug: 'copperas-cove',
+    heroImageAlt: 'Welded metal carport on a Copperas Cove, Texas property in Coryell County',
     name: 'Copperas Cove',
     county: 'Coryell County',
     zip: '76522',
@@ -480,6 +482,7 @@ export const LOCATIONS: Record<string, LocationData> = {
 
   salado: {
     slug: 'salado',
+    heroImageAlt: 'Welded metal building on a Salado, Texas ranch property in Bell County',
     name: 'Salado',
     county: 'Bell County',
     zip: '76571',
@@ -515,7 +518,7 @@ export const LOCATIONS: Record<string, LocationData> = {
     zip: '76701',
     lat: 31.5493,
     lng: -97.1467,
-    metaTitle: 'Metal Carports & Buildings in Waco, TX | Same-Week Welded Installs | Triple J Metal',
+    metaTitle: 'Metal Carports & Buildings in Waco, TX | Same-Week Welded Installs',
     metaDescription:
       "Metal carport Waco TX — welded or bolted red iron, turnkey concrete, same-week installs across McLennan County. Magnolia-inspired residential, ranch barns for Hewitt, Woodway, Robinson, China Spring. Hablamos español.",
     // Legacy fallbacks (used if new fields below aren't populated)
@@ -617,7 +620,7 @@ export const LOCATIONS: Record<string, LocationData> = {
     zip: '78626',
     lat: 30.6333,
     lng: -97.6779,
-    metaTitle: 'Metal Carports & Buildings in Georgetown, TX | Same-Week Welded Installs | Triple J Metal',
+    metaTitle: 'Metal Carports & Buildings in Georgetown, TX | Same-Week Welded Installs',
     metaDescription:
       "Metal carport Georgetown TX — welded or bolted red iron, turnkey concrete, same-week installs while local contractors are 4–6 weeks out. Sun City RV covers, Liberty Hill ranch barns, San Gabriel River foundations.",
     // Legacy fallbacks (used if new fields below aren't populated)
@@ -716,7 +719,7 @@ export const LOCATIONS: Record<string, LocationData> = {
     zip: '78664',
     lat: 30.5083,
     lng: -97.6789,
-    metaTitle: 'Metal Carports & Buildings in Round Rock, TX | Same-Week Welded Installs | Triple J Metal',
+    metaTitle: 'Metal Carports & Buildings in Round Rock, TX | Same-Week Welded Installs',
     metaDescription:
       "Metal carport Round Rock TX — welded or bolted red iron, turnkey concrete, same-week installs. HOA-compliant builds for Brushy Creek, Forest Creek, Teravista, Cedar Park, and Pflugerville. Hablamos español.",
     // Legacy fallbacks (used if new fields below aren't populated)
@@ -808,6 +811,7 @@ export const LOCATIONS: Record<string, LocationData> = {
 
   lampasas: {
     slug: 'lampasas',
+    heroImageAlt: 'Welded metal building on a Lampasas, Texas property in Lampasas County',
     name: 'Lampasas',
     county: 'Lampasas County',
     zip: '76550',
@@ -838,6 +842,7 @@ export const LOCATIONS: Record<string, LocationData> = {
 
   holland: {
     slug: 'holland',
+    heroImageAlt: 'Welded metal building on a Holland, Texas rural property in Bell County',
     name: 'Holland',
     county: 'Bell County',
     zip: '76534',
@@ -867,6 +872,7 @@ export const LOCATIONS: Record<string, LocationData> = {
 
   taylor: {
     slug: 'taylor',
+    heroImageAlt: 'Welded metal building on a Taylor, Texas property in Williamson County',
     name: 'Taylor',
     county: 'Williamson County',
     zip: '76574',
@@ -896,6 +902,7 @@ export const LOCATIONS: Record<string, LocationData> = {
 
   troy: {
     slug: 'troy',
+    heroImageAlt: 'Welded metal building on a Troy, Texas property in Bell County',
     name: 'Troy',
     county: 'Bell County',
     zip: '76579',
@@ -925,6 +932,7 @@ export const LOCATIONS: Record<string, LocationData> = {
 
   nolanville: {
     slug: 'nolanville',
+    heroImageAlt: 'Welded metal carport on a Nolanville, Texas property near Fort Cavazos',
     name: 'Nolanville',
     county: 'Bell County',
     zip: '76559',
@@ -958,6 +966,7 @@ export const LOCATIONS: Record<string, LocationData> = {
 
   'bell-county': {
     slug: 'bell-county',
+    heroImageAlt: 'Welded metal building on a Bell County, Texas property',
     name: 'Bell County',
     county: 'Bell County',
     zip: '76513',
@@ -992,6 +1001,7 @@ export const LOCATIONS: Record<string, LocationData> = {
 
   'mclennan-county': {
     slug: 'mclennan-county',
+    heroImageAlt: 'Welded metal building on a McLennan County, Texas ranch property',
     name: 'McLennan County',
     county: 'McLennan County',
     zip: '76701',
@@ -1020,6 +1030,7 @@ export const LOCATIONS: Record<string, LocationData> = {
 
   'coryell-county': {
     slug: 'coryell-county',
+    heroImageAlt: 'Welded metal building on a Coryell County, Texas property',
     name: 'Coryell County',
     county: 'Coryell County',
     zip: '76528',
@@ -1053,6 +1064,7 @@ export const LOCATIONS: Record<string, LocationData> = {
 
   'williamson-county': {
     slug: 'williamson-county',
+    heroImageAlt: 'Welded metal building on a Williamson County, Texas property',
     name: 'Williamson County',
     county: 'Williamson County',
     zip: '78626',
@@ -1081,6 +1093,7 @@ export const LOCATIONS: Record<string, LocationData> = {
 
   'lampasas-county': {
     slug: 'lampasas-county',
+    heroImageAlt: 'Welded metal building on a Lampasas County, Texas property',
     name: 'Lampasas County',
     county: 'Lampasas County',
     zip: '76550',
@@ -1109,6 +1122,7 @@ export const LOCATIONS: Record<string, LocationData> = {
 
   'falls-county': {
     slug: 'falls-county',
+    heroImageAlt: 'Welded metal building on a Falls County, Texas property',
     name: 'Falls County',
     county: 'Falls County',
     zip: '76661',
@@ -1136,6 +1150,7 @@ export const LOCATIONS: Record<string, LocationData> = {
 
   'milam-county': {
     slug: 'milam-county',
+    heroImageAlt: 'Welded metal building on a Milam County, Texas property',
     name: 'Milam County',
     county: 'Milam County',
     zip: '76520',
@@ -1164,6 +1179,7 @@ export const LOCATIONS: Record<string, LocationData> = {
 
   'burnet-county': {
     slug: 'burnet-county',
+    heroImageAlt: 'Welded metal building on a Burnet County, Texas property',
     name: 'Burnet County',
     county: 'Burnet County',
     zip: '78611',

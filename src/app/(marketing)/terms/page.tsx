@@ -15,12 +15,21 @@ export default function TermsPage() {
   return (
     <section className="py-16 md:py-24 bg-white">
       <Container size="narrow">
-        <p className="text-xs font-semibold uppercase tracking-[0.15em] text-[color:var(--color-brand-700)]">
+        <Link
+          href="/"
+          className="inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-[0.15em] text-[color:var(--color-brand-700)] hover:text-[color:var(--color-brand-600)]"
+        >
+          ← Back to Triple J Metal
+        </Link>
+        <p className="mt-3 text-xs font-semibold uppercase tracking-[0.15em] text-[color:var(--color-brand-700)]">
           Legal
         </p>
         <h1 className="mt-3 text-[color:var(--color-ink-900)]">Terms of Use</h1>
         <p className="mt-2 text-sm text-[color:var(--color-ink-500)]">
-          Last updated April 22, 2026 · {SITE.legalName}
+          Last updated April 22, 2026 · {SITE.legalName} · See also our{' '}
+          <Link href="/privacy" className="text-[color:var(--color-brand-600)] underline-offset-4 hover:underline">
+            Privacy Policy
+          </Link>
         </p>
 
         <div className="mt-10 space-y-8 text-[color:var(--color-ink-700)] leading-relaxed">

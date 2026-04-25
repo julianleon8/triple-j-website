@@ -76,7 +76,14 @@ const TIMELINE_STEPS = [
 ] as const
 
 export const metadata: Metadata = {
-  title: 'Fort Cavazos Carports & Metal Buildings | PCS Same-Week Installs | Triple J Metal',
+  // Use `absolute` to bypass the root layout's `%s | Triple J Metal`
+  // title template — this string already includes the brand suffix in the
+  // intended position. Without `absolute` the template would append a
+  // second " | Triple J Metal" and ship a double-branded title.
+  title: {
+    absolute:
+      'Fort Cavazos Carports & Metal Buildings | PCS Same-Week Installs | Triple J Metal',
+  },
   description:
     'Welded or bolted carports, RV covers, and garages for Fort Cavazos active-duty, retired, and Reserve/Guard families. Same-week installs across Killeen, Harker Heights, Copperas Cove, Nolanville, Belton. 7% military discount honored. Hablamos español.',
   alternates: { canonical: '/military' },

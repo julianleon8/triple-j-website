@@ -28,7 +28,7 @@ function pickCover(
 }
 
 export const metadata: Metadata = {
-  title: 'For GCs, Manufacturers & Suppliers | Install Partner',
+  title: 'B2B Install Partner — GCs & Suppliers',
   description:
     'Triple J is the Central Texas install crew for manufacturers, dealers, and GCs. Welded + bolted, named in-house crew, no subcontractors.',
   alternates: { canonical: '/partners' },

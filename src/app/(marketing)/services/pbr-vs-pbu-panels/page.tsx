@@ -6,7 +6,7 @@ import { TrackedPhoneLink } from '@/components/site/TrackedPhone'
 import { SITE } from '@/lib/site'
 
 export const metadata: Metadata = {
-  title: 'PBR vs PBU Metal Roofing Panels | Which to Choose',
+  title: 'PBR vs PBU Roofing Panels — Which to Pick',
   description:
     'PBR vs PBU metal roofing panels: when to use each. Triple J Metal builds with both across Central Texas — which panel type fits your project?',
   alternates: { canonical: '/services/pbr-vs-pbu-panels' },
