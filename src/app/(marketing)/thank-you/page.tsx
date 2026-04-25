@@ -49,7 +49,7 @@ export default function ThankYouPage() {
         <div className="absolute inset-0">
           <Image
             src="/images/red-iron-frame-hero.jpg"
-            alt=""
+            alt="Welded red iron frame going up on a Central Texas metal building site"
             fill
             priority
             sizes="100vw"

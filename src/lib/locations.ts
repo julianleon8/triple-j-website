@@ -266,6 +266,24 @@ export const LOCATIONS: Record<string, LocationData> = {
       'Lean-to patios',
       'House additions',
     ],
+    callouts: [
+      {
+        eyebrow: 'Fort Cavazos PCS',
+        headline: 'Back-gate access — same-week installs.',
+        blurb:
+          "Cove sits at the back gate of Fort Cavazos. Triple J Metal serves Cove military families on the same same-week timeline and 7% Fort Cavazos military and first-responder discount we offer in Killeen and Harker Heights. PCS in, structure built before household goods land. Hablamos español.",
+        ctaLabel: 'See Fort Cavazos page',
+        ctaHref: '/military',
+      },
+      {
+        eyebrow: 'Coryell County reach',
+        headline: 'From Cove out through Kempner + Lampasas.',
+        blurb:
+          "We work the FM 116 corridor and the US-190 stretch heading west — Kempner ranches, Lampasas county lines, the rural properties along Lampasas River. Same crew, same week, same turnkey concrete option.",
+        ctaLabel: 'See Lampasas builds',
+        ctaHref: '/locations/lampasas',
+      },
+    ],
   },
 
   temple: {

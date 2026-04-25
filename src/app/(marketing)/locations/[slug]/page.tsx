@@ -56,6 +56,11 @@ export async function generateMetadata(
       description: loc.metaDescription,
       type: "website",
     },
+    twitter: {
+      card: "summary_large_image",
+      title: loc.metaTitle,
+      description: loc.metaDescription,
+    },
     alternates: { canonical: `/locations/${slug}` },
   };
 }

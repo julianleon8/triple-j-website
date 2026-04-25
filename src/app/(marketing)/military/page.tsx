@@ -93,6 +93,12 @@ export const metadata: Metadata = {
       'Local Temple-based crew. Welded or bolted carports + RV covers + garages built around PCS timelines, not 12-week wait lists. 7% military discount. Hablamos español.',
     type: 'website',
   },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Fort Cavazos Carports — Same-Week Installs for PCS Families',
+    description:
+      '7% military discount. Same-week welded or bolted carports, RV covers, and garages around PCS timelines. Hablamos español.',
+  },
 }
 
 function jsonLd(baseUrl: string) {

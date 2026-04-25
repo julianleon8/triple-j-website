@@ -53,6 +53,17 @@ export default function BlogPage() {
               welded and bolted steel — written by the Triple J Metal crew in Temple, TX, not an
               AI content farm.
             </p>
+            <div className="mt-8 flex flex-wrap gap-4">
+              <ButtonLink href="/#quote" variant="primary" size="lg">
+                Get a free quote
+              </ButtonLink>
+              <TrackedPhoneLink
+                surface="blog_index_hero"
+                className="inline-flex items-center gap-2 h-12 px-6 rounded-lg border-2 border-white/30 text-white font-semibold hover:border-white/60 transition-colors text-sm"
+              >
+                Or call&nbsp;
+              </TrackedPhoneLink>
+            </div>
           </div>
         </Container>
       </section>
