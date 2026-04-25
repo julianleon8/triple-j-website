@@ -2,16 +2,17 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { CheckCircle2, FileDown, Send, Undo2 } from 'lucide-react'
+import { CheckCircle2, FileDown, MessageSquare, Send, Undo2 } from 'lucide-react'
 import { useHaptics } from '@/lib/hq/haptics'
 
 type Props = {
   id: string
   status: string
   customerHasEmail: boolean
+  customerHasPhone: boolean
 }
 
-export function QuoteDetailActions({ id, status, customerHasEmail }: Props) {
+export function QuoteDetailActions({ id, status, customerHasEmail, customerHasPhone }: Props) {
   const router = useRouter()
   const haptics = useHaptics()
   const [pending, setPending] = useState<string | null>(null)
@@ -26,6 +27,22 @@ export function QuoteDetailActions({ id, status, customerHasEmail }: Props) {
     if (!res.ok) {
       const body = await res.json().catch(() => ({}))
       setError(typeof body.error === 'string' ? body.error : 'Send failed')
+      haptics.error()
+      return
+    }
+    haptics.success()
+    router.refresh()
+  }
+
+  async function sendSms() {
+    if (pending) return
+    setPending('sms')
+    setError(null)
+    const res = await fetch(`/api/quotes/${id}/send-sms`, { method: 'POST' })
+    setPending(null)
+    if (!res.ok) {
+      const body = await res.json().catch(() => ({}))
+      setError(typeof body.error === 'string' ? body.error : 'SMS failed')
       haptics.error()
       return
     }
@@ -56,14 +73,24 @@ export function QuoteDetailActions({ id, status, customerHasEmail }: Props) {
   return (
     <div className="mt-4 grid grid-cols-2 gap-2">
       {status === 'draft' && (
-        <ActionButton
-          label={pending === 'send' ? 'Sending…' : 'Send draft'}
-          icon={Send}
-          tone="primary"
-          onClick={send}
-          disabled={pending !== null || !customerHasEmail}
-          title={!customerHasEmail ? 'Customer has no email on file' : undefined}
-        />
+        <>
+          <ActionButton
+            label={pending === 'send' ? 'Sending…' : 'Send email'}
+            icon={Send}
+            tone="primary"
+            onClick={send}
+            disabled={pending !== null || !customerHasEmail}
+            title={!customerHasEmail ? 'Customer has no email on file' : undefined}
+          />
+          <ActionButton
+            label={pending === 'sms' ? 'Sending…' : 'Send SMS'}
+            icon={MessageSquare}
+            tone="secondary"
+            onClick={sendSms}
+            disabled={pending !== null || !customerHasPhone}
+            title={!customerHasPhone ? 'Customer has no phone on file' : 'Sends quote summary + accept link via Twilio'}
+          />
+        </>
       )}
       {status === 'sent' && (
         <>
@@ -73,6 +100,14 @@ export function QuoteDetailActions({ id, status, customerHasEmail }: Props) {
             tone="secondary"
             onClick={send}
             disabled={pending !== null || !customerHasEmail}
+          />
+          <ActionButton
+            label={pending === 'sms' ? 'Sending…' : 'Send SMS'}
+            icon={MessageSquare}
+            tone="secondary"
+            onClick={sendSms}
+            disabled={pending !== null || !customerHasPhone}
+            title={!customerHasPhone ? 'Customer has no phone on file' : undefined}
           />
           <ActionButton
             label={pending === 'accept' ? 'Updating…' : 'Mark accepted'}
@@ -99,18 +134,17 @@ export function QuoteDetailActions({ id, status, customerHasEmail }: Props) {
         />
       )}
 
-      {/* PDF — stubbed until a generator is wired up */}
-      <button
-        type="button"
-        disabled
-        className="inline-flex items-center justify-center gap-2 rounded-xl border border-(--border-subtle) bg-(--surface-3) px-3 py-3 text-[14px] font-semibold text-(--text-tertiary) opacity-60"
-        aria-disabled="true"
+      {/* PDF — opens the real PDF in a new tab; browser saves with the
+          server-suggested filename. Generated via @react-pdf/renderer in
+          the /api/quotes/[id]/pdf route. */}
+      <a
+        href={`/api/quotes/${id}/pdf`}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="inline-flex items-center justify-center gap-2 rounded-xl border border-(--border-subtle) bg-(--surface-2) px-3 py-3 text-[14px] font-semibold text-(--text-primary) tap-list hover:bg-(--surface-3)"
       >
         <FileDown size={16} strokeWidth={2} /> PDF
-        <span className="ml-1 rounded-full bg-(--surface-2) px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-(--text-tertiary)">
-          Soon
-        </span>
-      </button>
+      </a>
 
       {error && (
         <p className="col-span-2 text-[13px] text-red-500">{error}</p>

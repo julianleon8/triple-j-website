@@ -28,7 +28,7 @@ type QuoteRow = {
   total: number
   sent_at: string | null
   accepted_at: string | null
-  customers: { id: string; name: string; email: string | null } | null
+  customers: { id: string; name: string; email: string | null; phone: string | null } | null
   quote_line_items: LineItem[]
 }
 
@@ -42,7 +42,7 @@ export default async function QuoteDetailPage({
 
   const { data: quoteRaw, error } = await db
     .from('quotes')
-    .select('*, customers(id, name, email), quote_line_items(*)')
+    .select('*, customers(id, name, email, phone), quote_line_items(*)')
     .eq('id', id)
     .single()
 
@@ -87,6 +87,7 @@ export default async function QuoteDetailPage({
           id={quote.id}
           status={quote.status}
           customerHasEmail={!!quote.customers?.email}
+          customerHasPhone={!!quote.customers?.phone}
         />
       </header>
 
