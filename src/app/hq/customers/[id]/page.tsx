@@ -7,6 +7,8 @@ import { ArrowLeft, Phone, MessageSquare, Mail } from 'lucide-react'
 import { getAdminClient } from '@/lib/supabase/admin'
 import { CardSkeleton } from '@/components/hq/Skeleton'
 import { ActivityTimeline, type TimelineLead, type TimelineQuote, type TimelineJob } from '../_components/ActivityTimeline'
+import { ReviewSection } from './components/ReviewSection'
+import { PermissionToggles } from './components/PermissionToggles'
 
 type CustomerRecord = {
   id: string
@@ -21,6 +23,15 @@ type CustomerRecord = {
   state: string | null
   zip: string | null
   notes: string | null
+  // Migration 019 — flywheel
+  review_asked_at: string | null
+  review_followup_due_at: string | null
+  review_left_at: string | null
+  review_url: string | null
+  feature_permission: boolean | null
+  feature_permission_asked_at: string | null
+  repeat_contact_permission: boolean | null
+  repeat_contact_asked_at: string | null
 }
 
 export default async function CustomerDetailPage({ params }: { params: Promise<{ id: string }> }) {
@@ -85,6 +96,20 @@ export default async function CustomerDetailPage({ params }: { params: Promise<{
           <p className="mt-2 whitespace-pre-wrap text-[15px] text-(--text-primary)">{customer.notes}</p>
         </section>
       )}
+
+      <ReviewSection
+        customerId={customer.id}
+        reviewAskedAt={customer.review_asked_at}
+        reviewFollowupDueAt={customer.review_followup_due_at}
+        reviewLeftAt={customer.review_left_at}
+        reviewUrl={customer.review_url}
+      />
+
+      <PermissionToggles
+        customerId={customer.id}
+        featurePermission={customer.feature_permission}
+        repeatContactPermission={customer.repeat_contact_permission}
+      />
 
       <Suspense fallback={<CardSkeleton height="h-48" radius="rounded-2xl" />}>
         <DeferredActivityTimeline customerId={id} leadId={customer.lead_id} />

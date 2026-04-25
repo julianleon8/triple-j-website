@@ -19,7 +19,16 @@ type Lead = {
   won_at: string | null
   lost_reason: string | null
 }
-type Customer = { created_at: string; lead_id: string | null }
+type Customer = {
+  created_at: string
+  lead_id: string | null
+  review_asked_at: string | null
+  review_left_at: string | null
+  feature_permission: boolean | null
+  feature_permission_asked_at: string | null
+  repeat_contact_permission: boolean | null
+  repeat_contact_asked_at: string | null
+}
 type Quote = { status: string; total: number | null; sent_at: string | null }
 type Job = {
   status: string
@@ -147,7 +156,7 @@ export default async function StatsPage() {
     { data: jobCosts },
   ] = await Promise.all([
     db.from('leads').select('status, timeline, created_at, source, utm_source, utm_campaign, first_response_at, won_at, lost_reason'),
-    db.from('customers').select('created_at, lead_id'),
+    db.from('customers').select('created_at, lead_id, review_asked_at, review_left_at, feature_permission, feature_permission_asked_at, repeat_contact_permission, repeat_contact_asked_at'),
     db.from('quotes').select('status, total, sent_at'),
     db.from('jobs').select('status, total_contract, completed_date, scheduled_date, gross_profit_cached, gross_margin_cached'),
     db.from('permit_leads').select('status'),
@@ -261,6 +270,18 @@ export default async function StatsPage() {
     : 0
   // Cost-by-type totals
   const costByType = countAmounts(JC)
+
+  // Flywheel (migration 019)
+  const customersAsked = C.filter(c => c.review_asked_at).length
+  const customersLeft = C.filter(c => c.review_left_at).length
+  const askRate = C.length > 0 ? Math.round((customersAsked / C.length) * 100) : 0
+  const leftRate = customersAsked > 0 ? Math.round((customersLeft / customersAsked) * 100) : 0
+  const featureAsked = C.filter(c => c.feature_permission_asked_at).length
+  const featureYes = C.filter(c => c.feature_permission === true).length
+  const featureRate = featureAsked > 0 ? Math.round((featureYes / featureAsked) * 100) : 0
+  const repeatAsked = C.filter(c => c.repeat_contact_asked_at).length
+  const repeatYes = C.filter(c => c.repeat_contact_permission === true).length
+  const repeatRate = repeatAsked > 0 ? Math.round((repeatYes / repeatAsked) * 100) : 0
 
   // Funnel: Leads → Customers (with lead_id) → Quotes (sent/acc/dec) → Jobs (active or done)
   const funnelData = [
@@ -379,6 +400,33 @@ export default async function StatsPage() {
           label="Labor share"
           value={`${laborShareOfRevenue}%`}
           sub={`${fmtUSD(laborSpend)} of ${fmtUSD(totalRevenueCompleted)}`}
+          accent="purple"
+        />
+      </StatsGroup>
+
+      <StatsGroup title="Flywheel">
+        <KPICard
+          label="Review-ask rate"
+          value={`${askRate}%`}
+          sub={`${customersAsked} of ${C.length} customers asked`}
+          accent="amber"
+        />
+        <KPICard
+          label="Review-left rate"
+          value={`${leftRate}%`}
+          sub={`${customersLeft} of ${customersAsked} who were asked`}
+          accent="green"
+        />
+        <KPICard
+          label="Photo permission"
+          value={featureAsked > 0 ? `${featureRate}%` : '—'}
+          sub={`${featureYes}/${featureAsked} said yes`}
+          accent="sky"
+        />
+        <KPICard
+          label="Repeat-contact opt-in"
+          value={repeatAsked > 0 ? `${repeatRate}%` : '—'}
+          sub={`${repeatYes}/${repeatAsked} said yes`}
           accent="purple"
         />
       </StatsGroup>
