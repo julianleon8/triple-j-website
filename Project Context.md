@@ -1,7 +1,7 @@
 # Triple J Website — Project Context
 
 ## What This Is
-A lead-generation website + owner dashboard for Triple J Metal LLC. Maintained by Claude as working memory.
+A lead-generation website + owner dashboard for Triple J Metal (legal: Triple J Metal LLC). Maintained by Claude as working memory.
 
 ## NotebookLM
 - Notebook URL: https://notebooklm.google.com/notebook/f4aaf762-3ede-45b9-a1ad-b9d8a6319207
@@ -12,7 +12,7 @@ _Last updated: 2026-04-21 (evening)_
 ---
 
 ## Business Details
-**Company:** Triple J Metal LLC (Triple JJJ Metal Buildings)
+**Company:** Triple J Metal (canonical public brand) — legal/registered: **Triple J Metal LLC**. Retired aliases: "Triple JJJ Metal Buildings", "Triple J Metal Buildings LLC".
 **Ownership:** Juan 40% / Freddy 40% / Julian 20% (per LegalZoom formation — paperwork verification pending)
 **Team:** Juan (investor/co-owner) + Julian Leon Alvarez (son, **18**, sales lead + tech + welder) + Jose Alfredo "Freddy" (foreman/co-owner — welder + all jobsite skills)
 **Address:** 3319 Tem-Bel Ln, Temple, TX 76502

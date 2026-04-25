@@ -9,7 +9,7 @@ This version has breaking changes — APIs, conventions, and file structure may 
 This repo doubles as an Obsidian vault. The `.md` files at the root are the working source of truth. Read the relevant one before changes that touch its domain.
 
 ### Business
-- **Triple J Metal Buildings LLC** (Triple JJJ Metal Buildings)
+- **Triple J Metal** (canonical public brand) · **Triple J Metal LLC** (legal/registered name, used only in footer ©, schema.org `legalName`, terms, privacy, and contractual copy). Historical/internal aliases — "Triple JJJ Metal Buildings", "Triple J Metal Buildings LLC" — are retired; do not use them in new copy.
 - **Name:** "Triple J" = **Juan** (father, investor) + **Julian** (son, 19, tech/ops) + **Jose Alfredo "Freddy"** (foreman, the hands and the skills — cuts, welds, math, runs the crew)
 - **Address:** 3319 Tem-Bel Ln, Temple, TX 76502 · **Phone:** 254-346-7764
 - Founded 2025 · 150+ projects · 50+ clients

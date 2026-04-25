@@ -37,6 +37,38 @@ yarn-error.log*
 # vercel
 .vercel
 
+# agent / scrape-tool dotfolders (local IDE + tool workspaces, never committed)
+.adal/
+.agents/
+.augment/
+.bob/
+.codebuddy/
+.commandcode/
+.continue/
+.cortex/
+.crush/
+.factory/
+.firecrawl/
+.goose/
+.iflow/
+.junie/
+.kilocode/
+.kiro/
+.kode/
+.mcpjam/
+.mux/
+.neovate/
+.openhands/
+.pi/
+.pochi/
+.qoder/
+.qwen/
+.roo/
+.trae/
+.vibe/
+.windsurf/
+.zencoder/
+
 # local-only archive of browser-saved HTML and retired canvas files
 /_archive/
 # local audit scratch (regenerable)

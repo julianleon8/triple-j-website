@@ -1,7 +1,9 @@
-# Triple J Metal LLC — Complete Business Profile
+# Triple J Metal — Complete Business Profile
 
 ## Identity
-- **Legal name:** Triple J Metal Buildings (Triple JJJ Metal Buildings)
+- **Canonical brand:** Triple J Metal (used everywhere public-facing)
+- **Legal / registered name:** Triple J Metal LLC (used only in footer ©, schema.org `legalName`, terms of service, privacy policy, and contractual/legal copy)
+- **Retired aliases:** "Triple JJJ Metal Buildings", "Triple J Metal Buildings LLC" — do not use in new copy
 - **Address:** 3319 Tem-Bel Ln, Temple, TX 76502
 - **Phone:** 254-346-7764
 - **Founded:** 2025
