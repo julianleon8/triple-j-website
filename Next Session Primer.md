@@ -1,6 +1,75 @@
 # Next Session Primer — Read This First
 
-_Created: 2026-04-21 evening · Last updated 2026-04-23 · For any Claude session picking up after 2026-04-23_
+_Created: 2026-04-21 evening · Last updated 2026-04-24 · For any Claude session picking up after 2026-04-24_
+
+---
+
+## What shipped 2026-04-24 (latest) — HQ Phase 4.2: receipt OCR → QBO
+
+Final Phase 4 piece. Tap **Receipt** on `/hq/jobs/[id]` → iOS native camera sheet → Claude Sonnet 4.6 vision extracts vendor/date/totals/line items + confidence → editable confirmation sheet (auto-opens) → Post to QuickBooks → Purchase posted to the configured expense account + image attached as an Attachable.
+
+**Strategy locked:** single-account category (`qbo_tokens.expense_account_id` configured once on `/hq/settings/quickbooks`). Save-local + retry-button failure mode — confirmed receipts never lose data even if QBO is down/disconnected. Settings page shows pending count + "Push pending" batch retry. Confidence < 0.7 surfaces an amber "Verify" pill but never blocks posting.
+
+**Files:** `src/lib/receipt-extractor.ts` (Claude vision wrapper) · `src/lib/qbo.ts` (extended with `listExpenseAccounts` + `createExpense` + `uploadAttachable`) · `src/app/api/hq/receipt/route.ts` · `src/app/api/hq/receipt/[id]/confirm/route.ts` · `src/app/api/hq/receipts/push-all/route.ts` · `src/app/api/qbo/accounts/route.ts` · `src/app/api/qbo/expense-account/route.ts` · `src/components/hq/JobReceiptStrip.tsx` · `src/app/hq/settings/quickbooks/components/ExpenseAccountPicker.tsx` · `src/app/hq/settings/quickbooks/components/PendingReceiptsCard.tsx` · rewrote `src/app/hq/settings/quickbooks/page.tsx` (also fixes Phase 3 token cleanup that this page missed) · `supabase/migrations/013_job_receipts.sql`. Modified `src/app/hq/jobs/[id]/page.tsx` to render the receipt strip below the photo strip.
+
+**⚠️ Pending Julian actions (Phase 4.2 specific):**
+- Apply `supabase/migrations/013_job_receipts.sql` in Supabase SQL editor BEFORE deploy hits prod, otherwise `/api/hq/receipt` 500s on the missing table.
+- After deploy, pick the QBO posting account on `/hq/settings/quickbooks` — receipts won't push without one.
+- Test round-trip on iPhone 16 Pro: snap a Lowe's / MetalMax receipt, verify auto-populated fields, edit if wrong, Post to QuickBooks, confirm Purchase + Attachable in QBO. Test low-confidence (blurry photo) → amber banner. Test offline (Wi-Fi off mid-confirm) → row saves locally, Settings shows pending count.
+
+**Phase 4 complete:** voice memo (4) + camera (4.1) + receipt OCR (4.2). Phase 5 (Twilio SMS + offline queue + push categories) is the next mobile-app surface and merges with strategic Phase 2 work (review velocity + speed-to-response).
+
+---
+
+## What shipped 2026-04-24 (later) — HQ Phase 4.1: camera-first job photos
+
+Stacked on top of Phase 4 voice-memo. Tap **Camera** on `/hq/jobs/[id]` → iOS native camera sheet → shoot 1-N photos → Done → each gets EXIF-rotated + resized to 2048px + JPEG 85% compressed client-side → uploaded to Supabase Storage → bound to the job via a new `gallery_items.job_id` FK. Photos default `is_active = false` so they stay private to HQ.
+
+**Files:** `src/lib/hq/image-prep.ts` (OffscreenCanvas pipeline) · `src/components/hq/JobPhotoStrip.tsx` (camera button + thumbnail strip + per-file upload chips + Lightbox) · `src/app/api/hq/job-photo/route.ts` (POST: validate, upload to `jobs/{job_id}/{timestamp}.jpg`, find-or-create `gallery_items`, append `gallery_photos`, rollback on failure) · `supabase/migrations/012_gallery_items_job_id.sql` (additive, idempotent FK + filtered index). Modified `src/app/hq/jobs/[id]/page.tsx` to fetch job photos server-side and render `<JobPhotoStrip>` above the header card.
+
+Design call: skipped the originally-planned `job_photos_log` audit table (phase-tagging, lat/lng). Not requested yet — easy to add if ever needed. One `gallery_items` per job with many `gallery_photos` under it.
+
+**⚠️ Pending Julian actions (Phase 4.1 specific):**
+- Apply migration `supabase/migrations/012_gallery_items_job_id.sql` in Supabase SQL editor BEFORE deploy goes live, otherwise the endpoint will 500 on the `job_id` column.
+- Test multi-upload: open a job, tap Camera, shoot 3-5 photos in a burst, release. Verify chips cycle prepping → uploading → done ✓, thumbnails appear, Lightbox works, photos DON'T appear on the public `/gallery`.
+
+---
+
+## What shipped 2026-04-24 (late) — HQ Phase 4 voice-only slice: hold-to-record voice memo → lead
+
+Voice-only scope for Phase 4: the other two Phase 4 features (camera-first job photos, receipt OCR → QBO) defer to Phase 4.1 / 4.2. Plan revision in-session: Claude Messages API doesn't accept direct audio input, so we wired a two-step pipeline — OpenAI Whisper transcribes, Claude Sonnet 4.6 extracts structured lead fields.
+
+**Press the `+` button in HqHeader for ≥500ms → voice memo overlay → speak → release → lead.** Short press still opens `CreatePopover`. Full flow: `onPointerDown` arms long-press timer · long-press fires · `getUserMedia` · MediaRecorder + WebAudio level meter · release → stop + upload to `/api/hq/voice-lead` · Whisper transcribes · Claude extracts `{name, phone, email, zip, city, service_type, structure_type, width/length/height, timeline, is_military, notes}` · Zod validates · insert into `leads` with `source='voice_memo'` · navigate to `/hq/leads/[id]`.
+
+**New files:** `src/lib/hq/audio-recorder.ts` · `src/lib/openai.ts` (fetch-based Whisper client, no SDK) · `src/lib/voice-lead-extractor.ts` (Claude prompt + Zod schema + prompt-caching via `cache_control: ephemeral`) · `src/app/api/hq/voice-lead/route.ts` · `src/components/hq/VoiceRecordingOverlay.tsx`. **Modified:** `src/app/hq/components/HqHeader.tsx` (Plus button rewired to support hold-to-record) · `.env.example` (new `OPENAI_API_KEY` section).
+
+**Fallback-on-failure policy locked:** if Claude extraction fails, we still insert a lead with the raw transcript so no voice memo is ever lost — client navigates, Julian edits inline.
+
+**Cost sanity:** ~$1.30/mo at 100 memos/mo (Whisper $0.30 + Claude $1). Both Whisper and Anthropic have prompt-cache savings baked in.
+
+**⚠️ Pending Julian actions (new):**
+- Add `OPENAI_API_KEY` to Vercel Production env. Otherwise the endpoint returns 503 with a clear setup message.
+- Confirm `ANTHROPIC_API_KEY` is in Vercel env (already used silently by `permit-extractor.ts`).
+- Test on iPhone 16 Pro standalone PWA: hold `+` → speak "Hey this is John Smith, 254-555-1234, 30 by 50 carport in Killeen, ASAP" → release → verify lead appears in `/hq/leads` with populated fields within ~5s.
+- First-time mic permission prompt: tap Allow. If denied accidentally, re-enable via iOS Settings → Safari → Microphone.
+
+---
+
+## What shipped 2026-04-24 (HQ Phase 3 — design-language tightening + Gallery restyle)
+
+The original Phase 3 scaffolding (More tab + Stats screen + GroupedList primitive + 4-step Quote wizard + Quote list/detail restyle + Settings grouped-list restyle + Lightbox) had already been built uncommitted but drifted on the design language. This session tightened + shipped.
+
+**Four locked design calls (see `Decisions.md` 2026-04-24 for full rows):**
+- **Barlow Condensed scoped to `.marketing`** — stopped leaking into HQ headings via globals.css `:root`-level rule. Marketing layout wraps its tree in `className="marketing"`. HQ inherits iOS stack cleanly.
+- **`.tap-solid` + `.tap-list`** utilities in globals.css — two locked tap-feedback rules for all HQ interactive elements. 39 call sites migrated; no more ad-hoc `active:scale-95|[0.99]|[0.98]` drift.
+- **HQ interactive brand token = `--brand-fg`** (theme-aware, lifts from #1e6bd6 → #4d8dff in dark for OLED contrast). Raw `brand-600` reserved for marketing + decorative accents. 25+ sites swept.
+- **Lucide `strokeWidth={2}` HQ default** — only `BottomTabBar` active-state (2.3) and `HqHeader` Plus CTA (2.3) are intentional exceptions.
+
+**Gallery restyle (commit 4) — the biggest single chunk:** `GalleryManager.tsx` (1433 lines) had been untouched by the earlier scaffold — still full of dashboard-era `bg-white` / `border-gray-300` / `text-gray-600` / `text-blue-400` / `bg-blue-50`. 158+ raw-color references swept to semantic tokens + dark-mode-aware forks. `Lightbox.tsx` transitions now include the locked easing curve `[0.22, 1, 0.36, 1]`. Upload / CRUD / HEIC / folder-drop / multi-select-bundle logic preserved intact.
+
+**Explicitly deferred to Phase 3.1** (small cleanup session): Lucide-ify the ↑/↓/✕ ascii controls in project cards, convert upload form to `<GroupedList>` sections, iOS-style multi-col project grid layout (the current single-col on iPhone is actually the right density for the power-user view).
+
+**Verification:** `npx tsc --noEmit` clean. 0 `active:scale-*`, 0 `bg-brand-600`, 0 `text-gray-*` / `bg-gray-*` residue in `src/app/hq` + `src/components/hq` + GalleryManager.
 
 ---
 
