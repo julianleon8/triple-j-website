@@ -387,10 +387,16 @@ function StepContact({
 
 /* ─── Main form ────────────────────────────────────────────────────────── */
 
-export function QuoteForm() {
+type QuoteFormProps = {
+  /** Pre-check the "Active military or first responder" box on step 2.
+   *  Used by /military so PCS visitors don't have to remember the discount toggle. */
+  initialMilitary?: boolean;
+};
+
+export function QuoteForm({ initialMilitary = false }: QuoteFormProps = {}) {
   const router = useRouter();
   const [step, setStep] = useState<1 | 2>(1);
-  const [form, setForm] = useState<FormState>(INITIAL);
+  const [form, setForm] = useState<FormState>({ ...INITIAL, is_military: initialMilitary });
   const [status, setStatus] = useState<"idle" | "submitting" | "err">("idle");
   const [captchaToken, setCaptchaToken] = useState<string | null>(null);
   const captchaRef = useRef<HCaptcha | null>(null);

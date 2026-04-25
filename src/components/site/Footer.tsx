@@ -178,6 +178,14 @@ export function Footer() {
                   </Link>
                 </li>
               ))}
+              <li>
+                <Link
+                  href="/military"
+                  className="text-white/70 hover:text-white transition-colors"
+                >
+                  Fort Cavazos Military
+                </Link>
+              </li>
               <li className="pt-1">
                 <Link
                   href="/#quote"

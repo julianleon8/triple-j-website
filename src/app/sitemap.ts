@@ -13,6 +13,7 @@ const STATIC_PATHS = [
   "/services",
   "/service-areas",
   "/locations",
+  "/military",
   "/blog",
   "/gallery",
   "/partners",
@@ -48,7 +49,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority:
         path === "/"
           ? 1
-          : path === "/contact" || path === "/services"
+          : path === "/contact" || path === "/services" || path === "/military"
             ? 0.9
             : 0.8,
     });

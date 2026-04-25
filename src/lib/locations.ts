@@ -124,9 +124,19 @@ export const LOCATIONS: Record<string, LocationData> = {
     ],
     military: {
       headline: 'Fort Cavazos Military Discount — Harker Heights',
-      copy: "Fort Cavazos is minutes from Harker Heights, and we know what PCS season looks like. Military families need vehicle and equipment protection fast — not in 12 weeks. Triple J Metal builds RV covers, carports, and garages same-week, and we offer a Fort Cavazos military and first responder discount on every install. Mention your service when you call or check the military box on the quote form.",
+      copy: "Fort Cavazos is minutes from Harker Heights, and we know what PCS season looks like. Military families need vehicle and equipment protection fast — not in 12 weeks. Triple J Metal builds RV covers, carports, and garages same-week, and we offer a 7% Fort Cavazos military and first responder discount on every install. Mention your service when you call or check the military box on the quote form.",
       keywords: ['Fort Cavazos carport', 'military carport Harker Heights', 'PCS vehicle protection Bell County'],
     },
+    callouts: [
+      {
+        eyebrow: 'Fort Cavazos PCS',
+        headline: '7% military discount + same-week installs.',
+        blurb:
+          "Active-duty, retired, Reserve/Guard, and first responders get 7% off every install — welded, bolted, or turnkey. Built around PCS calendars, deployment dates, and TDY blocks instead of 12-week franchise wait lists. Hablamos español.",
+        ctaLabel: 'See Fort Cavazos page',
+        ctaHref: '/military',
+      },
+    ],
   },
 
   killeen: {
@@ -159,7 +169,7 @@ export const LOCATIONS: Record<string, LocationData> = {
     ],
     military: {
       headline: 'Fort Cavazos Timelines — Built In',
-      copy: "Fort Cavazos drives a constant flow of PCS moves through Killeen. Military families arrive on short notice and need vehicle protection immediately — not after a 12-week wait list. Triple J Metal builds RV covers and carports same-week and honors a Fort Cavazos military and first-responder discount. We speak the language: BAH, VA loans, PCS timelines, base-area HOA rules.",
+      copy: "Fort Cavazos drives a constant flow of PCS moves through Killeen. Military families arrive on short notice and need vehicle protection immediately — not after a 12-week wait list. Triple J Metal builds RV covers and carports same-week and honors a 7% Fort Cavazos military and first-responder discount. We speak the language: BAH, VA loans, PCS timelines, base-area HOA rules.",
       keywords: ['turnkey carports Killeen', 'carports Fort Cavazos', 'military carport Killeen TX'],
     },
 
@@ -178,7 +188,7 @@ export const LOCATIONS: Record<string, LocationData> = {
     distanceFromTemple: '25 mi southwest · 30 min from HQ',
     habla: true,
     localIntro:
-      "Killeen runs on Fort Cavazos. PCS season hits, hail season hits, and military families need vehicles and equipment under cover before household goods arrive. Triple J Metal is 25 minutes up the road in Temple — a real local crew with welded red-iron carports, RV covers, and garages built same-week. We honor a Fort Cavazos military and first-responder discount on every install. Hablamos español con Juan y Freddy.",
+      "Killeen runs on Fort Cavazos. PCS season hits, hail season hits, and military families need vehicles and equipment under cover before household goods arrive. Triple J Metal is 25 minutes up the road in Temple — a real local crew with welded red-iron carports, RV covers, and garages built same-week. We honor a 7% Fort Cavazos military and first-responder discount on every install. Hablamos español con Juan y Freddy.",
     landmarks: [
       {
         name: 'Fort Cavazos',
@@ -208,6 +218,14 @@ export const LOCATIONS: Record<string, LocationData> = {
       'Same-week scheduling — built around PCS arrivals and hail-season urgency, not a 12-week wait list',
     ],
     callouts: [
+      {
+        eyebrow: 'Fort Cavazos PCS',
+        headline: 'Same-week installs on PCS timelines.',
+        blurb:
+          "Active-duty, retired, Reserve/Guard, and first responders get a 7% discount on every install — welded, bolted, or turnkey. PCS calendars, deployment dates, and TDY blocks all factored into the build week. Hablamos español con Juan y Freddy.",
+        ctaLabel: 'See Fort Cavazos page',
+        ctaHref: '/military',
+      },
       {
         eyebrow: 'PCS to Tech',
         headline: 'Cavazos retirees relocating to Round Rock.',
