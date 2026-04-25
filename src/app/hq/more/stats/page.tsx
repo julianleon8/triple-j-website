@@ -1,3 +1,7 @@
+export const dynamic = 'force-dynamic'
+
+import Link from 'next/link'
+import { ArrowLeft } from 'lucide-react'
 import { getAdminClient } from '@/lib/supabase/admin'
 import { fmtUSD } from '@/lib/format'
 import { KPICard } from '@/components/hq/KPICard'
@@ -31,11 +35,12 @@ function endOfWeek(d = new Date()) {
 function daysAgoIso(n: number) {
   return new Date(Date.now() - n * 86400_000).toISOString()
 }
-
+function nowMs() {
+  return Date.now()
+}
 function isoDayKey(iso: string): string {
   return iso.slice(0, 10)
 }
-
 function bucketByDay(isoTimestamps: string[], days: number): { value: number }[] {
   const today = new Date()
   today.setHours(0, 0, 0, 0)
@@ -49,7 +54,6 @@ function bucketByDay(isoTimestamps: string[], days: number): { value: number }[]
   }
   return buckets
 }
-
 function cumulativeByDayOfMonth(
   entries: { date: string; amount: number }[],
 ): { value: number }[] {
@@ -72,7 +76,7 @@ function cumulativeByDayOfMonth(
   return out
 }
 
-export async function StatsSection() {
+export default async function StatsPage() {
   const db = getAdminClient()
 
   const [
@@ -124,11 +128,13 @@ export async function StatsSection() {
   const revenueThisMonth = J
     .filter(j => j.completed_date && j.completed_date >= monthStart.slice(0, 10))
     .reduce((sum, j) => sum + Number(j.total_contract ?? 0), 0)
-
   const completedJobs = J.filter(j => j.status === 'completed' && (j.total_contract ?? 0) > 0)
   const avgDealSize = completedJobs.length > 0
     ? completedJobs.reduce((sum, j) => sum + Number(j.total_contract ?? 0), 0) / completedJobs.length
     : 0
+  const balanceDue = J
+    .filter(j => ['scheduled', 'in_progress', 'completed'].includes(j.status))
+    .reduce((sum, j) => sum + Math.max(0, Number(j.total_contract ?? 0) - 0), 0)
 
   // Operations
   const jobsThisWeek = J.filter(j =>
@@ -136,15 +142,14 @@ export async function StatsSection() {
     j.scheduled_date >= weekStart.slice(0, 10) &&
     j.scheduled_date <= weekEnd.slice(0, 10)
   ).length
+  const jobsInProgress = J.filter(j => j.status === 'in_progress').length
   const hotLeads = L.filter(l => l.timeline === 'asap' && l.status === 'new').length
-
-  // Lead pipeline pill row
-  const counts = {
-    new: L.filter(l => l.status === 'new').length,
-    contacted: L.filter(l => l.status === 'contacted').length,
-    quoted: L.filter(l => l.status === 'quoted').length,
-    won: L.filter(l => l.status === 'won').length,
-  }
+  const _now = nowMs()
+  const staleLeads = L.filter(l => {
+    if (l.status !== 'new') return false
+    const ageH = (_now - new Date(l.created_at).getTime()) / 3_600_000
+    return ageH > 12
+  }).length
 
   // Sparklines
   const leads30dSpark = bucketByDay(leads30d.map(l => l.created_at), 30)
@@ -153,88 +158,79 @@ export async function StatsSection() {
       .map(j => ({ date: j.completed_date!, amount: Number(j.total_contract ?? 0) })),
   )
 
-  // Funnel: Leads → Customers (with lead_id) → Quotes (sent) → Jobs (won/completed)
+  // Funnel: Leads → Customers (with lead_id) → Quotes (sent/acc/dec) → Jobs (active or done)
   const funnelData = [
     { label: 'Leads',     value: L.length },
     { label: 'Customers', value: C.filter(c => c.lead_id !== null).length },
     { label: 'Quotes',    value: Q.filter(q => ['sent', 'accepted', 'declined'].includes(q.status)).length },
-    { label: 'Jobs won',  value: J.filter(j => ['scheduled', 'in_progress', 'completed'].includes(j.status)).length },
+    { label: 'Jobs',      value: J.filter(j => ['scheduled', 'in_progress', 'completed'].includes(j.status)).length },
   ]
 
   return (
-    <details className="group rounded-xl border border-(--border-subtle) bg-(--surface-2)">
-      <summary className="flex cursor-pointer items-center justify-between px-4 py-3 text-sm font-semibold text-(--text-primary) select-none">
-        <span>Pipeline & stats</span>
-        <svg className="h-4 w-4 text-(--text-tertiary) transition-transform group-open:rotate-90" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M9 6l6 6-6 6" />
-        </svg>
-      </summary>
-      <div className="border-t border-(--border-subtle) p-4 space-y-6">
-        <div>
-          <h3 className="text-xs font-semibold text-(--text-tertiary) uppercase tracking-wider mb-2">Pipeline</h3>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            <KPICard label="Open leads" value={String(openLeads)} sub="Not won/lost" accent="blue">
-              <Sparkline data={leads30dSpark} color="#1e6bd6" />
-            </KPICard>
-            <KPICard label="Active permits" value={String(activePermitLeads)} sub="new · called · qualified" accent="indigo" />
-            <KPICard label="Pipeline value" value={fmtUSD(pipelineValue)} sub="Draft + sent quotes" accent="sky" />
-          </div>
-        </div>
+    <div className="max-w-3xl mx-auto space-y-5">
+      <Link href="/hq/more" className="inline-flex items-center gap-1 text-[15px] font-medium text-(--brand-fg)">
+        <ArrowLeft size={18} strokeWidth={2} /> More
+      </Link>
 
-        <div>
-          <h3 className="text-xs font-semibold text-(--text-tertiary) uppercase tracking-wider mb-2">Conversion</h3>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            <KPICard label="Lead → Customer" value={`${leadConvRate}%`} sub={`Last 30 days (${customers30d.length}/${leads30d.length})`} accent="purple" />
-            <KPICard label="Quote acceptance" value={`${quoteAcceptRate}%`} sub={`${accepted.length}/${sentOrAccepted.length} sent quotes`} accent="fuchsia" />
-          </div>
-        </div>
+      <StatsGroup title="Pipeline">
+        <KPICard label="Open leads" value={String(openLeads)} sub="Not won/lost" accent="blue">
+          <Sparkline data={leads30dSpark} color="#1e6bd6" />
+        </KPICard>
+        <KPICard label="Active permits" value={String(activePermitLeads)} sub="new · called · qualified" accent="indigo" />
+        <KPICard label="Pipeline value" value={fmtUSD(pipelineValue)} sub="Draft + sent quotes" accent="sky" />
+      </StatsGroup>
 
-        <div>
-          <h3 className="text-xs font-semibold text-(--text-tertiary) uppercase tracking-wider mb-2">Revenue</h3>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            <KPICard label="Revenue this month" value={fmtUSD(revenueThisMonth)} sub="Completed jobs" accent="green">
-              <Sparkline data={revenueMtdSpark} color="#059669" />
-            </KPICard>
-            <KPICard label="Avg deal size" value={fmtUSD(Math.round(avgDealSize))} sub={`Across ${completedJobs.length} jobs`} accent="emerald" />
-          </div>
-        </div>
+      <StatsGroup title="Conversion">
+        <KPICard
+          label="Lead → Customer"
+          value={`${leadConvRate}%`}
+          sub={`Last 30 days (${customers30d.length}/${leads30d.length})`}
+          accent="purple"
+        />
+        <KPICard
+          label="Quote acceptance"
+          value={`${quoteAcceptRate}%`}
+          sub={`${accepted.length}/${sentOrAccepted.length} sent quotes`}
+          accent="fuchsia"
+        />
+      </StatsGroup>
 
-        <div>
-          <h3 className="text-xs font-semibold text-(--text-tertiary) uppercase tracking-wider mb-2">Operations</h3>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            <KPICard label="Jobs this week" value={String(jobsThisWeek)} sub="Scheduled" accent="amber" />
-            <KPICard label="Hot leads" value={String(hotLeads)} sub="ASAP + new" accent="red" />
-          </div>
-        </div>
+      <StatsGroup title="Revenue">
+        <KPICard label="Revenue this month" value={fmtUSD(revenueThisMonth)} sub="Completed jobs" accent="green">
+          <Sparkline data={revenueMtdSpark} color="#059669" />
+        </KPICard>
+        <KPICard label="Avg deal size" value={fmtUSD(Math.round(avgDealSize))} sub={`${completedJobs.length} completed jobs`} accent="emerald" />
+        <KPICard label="Balance due" value={fmtUSD(balanceDue)} sub="Open + in-progress jobs" accent="amber" />
+      </StatsGroup>
 
-        <div>
-          <h3 className="text-xs font-semibold text-(--text-tertiary) uppercase tracking-wider mb-2">Lead Pipeline</h3>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {[
-              { label: 'New',       count: counts.new,       style: 'bg-blue-50 border-blue-200 text-blue-800' },
-              { label: 'Contacted', count: counts.contacted, style: 'bg-yellow-50 border-yellow-200 text-yellow-800' },
-              { label: 'Quoted',    count: counts.quoted,    style: 'bg-purple-50 border-purple-200 text-purple-800' },
-              { label: 'Won',       count: counts.won,       style: 'bg-green-50 border-green-200 text-green-800' },
-            ].map(({ label, count, style }) => (
-              <div key={label} className={`rounded-xl border p-4 ${style}`}>
-                <div className="text-3xl font-bold">{count}</div>
-                <div className="text-sm font-medium mt-1">{label}</div>
-              </div>
-            ))}
-          </div>
-        </div>
+      <StatsGroup title="Operations">
+        <KPICard label="Jobs this week" value={String(jobsThisWeek)} sub="Scheduled" accent="amber" />
+        <KPICard label="In progress" value={String(jobsInProgress)} sub="Active now" accent="brand" />
+        <KPICard label="Hot leads" value={String(hotLeads)} sub="ASAP + new" accent="red" />
+        <KPICard label="Stale leads" value={String(staleLeads)} sub=">12h untouched" accent="red" />
+      </StatsGroup>
 
-        <div>
-          <ChartContainer
-            title="Sales funnel"
-            subtitle="All-time lead → customer → quote → job conversion"
-            empty={L.length === 0}
-            emptyMessage="No leads yet. First lead will populate the funnel."
-          >
-            <Funnel data={funnelData} />
-          </ChartContainer>
-        </div>
+      <ChartContainer
+        title="Sales funnel"
+        subtitle="All-time lead → customer → quote → job"
+        empty={L.length === 0}
+        emptyMessage="No leads yet. First lead will populate the funnel."
+      >
+        <Funnel data={funnelData} />
+      </ChartContainer>
+    </div>
+  )
+}
+
+function StatsGroup({ title, children }: { title: string; children: React.ReactNode }) {
+  return (
+    <section>
+      <h2 className="mb-2 px-1 text-[12px] font-semibold uppercase tracking-wider text-(--text-tertiary)">
+        {title}
+      </h2>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+        {children}
       </div>
-    </details>
+    </section>
   )
 }

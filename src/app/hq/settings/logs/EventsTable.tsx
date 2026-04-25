@@ -77,7 +77,7 @@ export function EventsTable({ rows }: { rows: EmailEventRow[] }) {
               onClick={() => setFilter(key)}
               className={`whitespace-nowrap rounded-full px-3 py-1.5 text-[12px] font-semibold transition-colors ${
                 active
-                  ? 'bg-brand-600 text-white'
+                  ? 'bg-(--brand-fg) text-white'
                   : 'bg-(--surface-2) text-(--text-secondary) hover:text-(--text-primary)'
               }`}
               aria-pressed={active}

@@ -1,7 +1,9 @@
-import Link from 'next/link'
-import { getAdminClient } from '@/lib/supabase/admin'
-
 export const dynamic = 'force-dynamic'
+
+import { Bell, Database, FlaskConical, Handshake, Link2, ScrollText } from 'lucide-react'
+import { getAdminClient } from '@/lib/supabase/admin'
+import { GroupedList } from '@/components/hq/ui/GroupedList'
+import { SignOutButton } from '@/components/hq/SignOutButton'
 
 async function qboStatus(): Promise<'Connected' | 'Not connected'> {
   const { data } = await getAdminClient()
@@ -15,131 +17,80 @@ async function qboStatus(): Promise<'Connected' | 'Not connected'> {
 export default async function SettingsHubPage() {
   const qbo = await qboStatus()
   const sha = process.env.VERCEL_GIT_COMMIT_SHA?.slice(0, 7) ?? 'dev'
-  const builtAt = process.env.VERCEL_GIT_COMMIT_AUTHOR_NAME
-    ? (process.env.VERCEL_DEPLOYMENT_CREATED_AT ?? '')
-    : ''
+  const builtAt = process.env.VERCEL_DEPLOYMENT_CREATED_AT ?? ''
 
   return (
-    <div className="max-w-2xl mx-auto space-y-5">
-      <SettingsGroup label="Device">
-        <SettingsRow
-          href="/hq/settings/notifications"
-          title="Notifications"
-          subtitle="Push alerts for new leads, hot permits, accepted quotes"
-        />
-      </SettingsGroup>
-
-      <SettingsGroup label="System">
-        <SettingsRow
-          href="/hq/settings/testing"
-          title="Testing"
-          subtitle="Fire test push · test lead · run scrape"
-        />
-        <SettingsRow
-          href="/hq/settings/logs"
-          title="Logs"
-          subtitle="Email events · delivery + engagement"
-        />
-      </SettingsGroup>
-
-      <SettingsGroup label="Inboxes">
-        <SettingsRow
-          href="/hq/partners"
-          title="Partner Inquiries"
-          subtitle="B2B referrals from suppliers, manufacturers, GCs"
-        />
-      </SettingsGroup>
-
-      <SettingsGroup label="Integrations">
-        <SettingsRow
-          href="/hq/settings/quickbooks"
-          title="QuickBooks"
-          subtitle={qbo}
-          subtitleTone={qbo === 'Connected' ? 'positive' : 'neutral'}
-        />
-      </SettingsGroup>
-
-      <SettingsGroup label="About">
-        <StaticRow label="Version"  value={sha} mono />
-        <StaticRow label="Theme"    value="Follows iOS system" />
-        <StaticRow label="Language" value="English" />
-        {builtAt && <StaticRow label="Deployed" value={builtAt} />}
-      </SettingsGroup>
-    </div>
-  )
-}
-
-function SettingsGroup({
-  label,
-  children,
-}: {
-  label: string
-  children: React.ReactNode
-}) {
-  return (
-    <section>
-      <h2 className="mb-2 px-1 text-[12px] font-semibold uppercase tracking-wider text-(--text-tertiary)">
-        {label}
-      </h2>
-      <div className="overflow-hidden rounded-xl border border-(--border-subtle) bg-(--surface-2) divide-y divide-(--border-subtle)">
-        {children}
-      </div>
-    </section>
-  )
-}
-
-function SettingsRow({
-  href,
-  title,
-  subtitle,
-  subtitleTone,
-}: {
-  href: string
-  title: string
-  subtitle?: string
-  subtitleTone?: 'positive' | 'neutral'
-}) {
-  return (
-    <Link
-      href={href}
-      className="flex min-h-14 items-center gap-3 px-4 py-3 active:bg-(--surface-3) transition-colors"
-    >
-      <div className="min-w-0 flex-1">
-        <div className="text-[16px] font-medium text-(--text-primary)">{title}</div>
-        {subtitle && (
-          <div
-            className={`mt-0.5 text-[13px] ${
-              subtitleTone === 'positive'
-                ? 'text-emerald-600 dark:text-emerald-400'
-                : 'text-(--text-tertiary)'
-            }`}
-          >
-            {subtitle}
-          </div>
-        )}
-      </div>
-      <svg
-        width="18"
-        height="18"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        className="shrink-0 text-(--text-tertiary)"
-      >
-        <path d="M9 6l6 6-6 6" />
-      </svg>
-    </Link>
-  )
-}
-
-function StaticRow({ label, value, mono }: { label: string; value: string; mono?: boolean }) {
-  return (
-    <div className="flex min-h-12 items-center justify-between px-4 py-2.5">
-      <span className="text-[14px] text-(--text-secondary)">{label}</span>
-      <span className={`text-[14px] text-(--text-primary) ${mono ? 'font-mono' : ''}`}>{value}</span>
+    <div className="max-w-2xl mx-auto pt-2">
+      <GroupedList
+        groups={[
+          {
+            title: 'Device',
+            rows: [
+              {
+                icon: Bell,
+                iconTone: 'bg-rose-500',
+                label: 'Notifications',
+                sublabel: 'Push alerts for new leads, hot permits, accepted quotes',
+                href: '/hq/settings/notifications',
+              },
+            ],
+          },
+          {
+            title: 'System',
+            rows: [
+              {
+                icon: FlaskConical,
+                iconTone: 'bg-violet-500',
+                label: 'Testing',
+                sublabel: 'Fire test push · test lead · run scrape',
+                href: '/hq/settings/testing',
+              },
+              {
+                icon: ScrollText,
+                iconTone: 'bg-slate-500',
+                label: 'Logs',
+                sublabel: 'Email events · delivery + engagement',
+                href: '/hq/settings/logs',
+              },
+            ],
+          },
+          {
+            title: 'Inboxes',
+            rows: [
+              {
+                icon: Handshake,
+                iconTone: 'bg-sky-500',
+                label: 'Partner Inquiries',
+                sublabel: 'B2B referrals from suppliers, manufacturers, GCs',
+                href: '/hq/partners',
+              },
+            ],
+          },
+          {
+            title: 'Integrations',
+            rows: [
+              {
+                icon: Link2,
+                iconTone: 'bg-blue-500',
+                label: 'QuickBooks',
+                href: '/hq/settings/quickbooks',
+                trailingValue: qbo,
+                trailingValueTone: qbo === 'Connected' ? 'positive' : 'neutral',
+              },
+            ],
+          },
+          {
+            title: 'About',
+            rows: [
+              { icon: Database, iconTone: 'bg-(--text-tertiary)', label: 'Version', trailingValue: sha },
+              { label: 'Theme', trailingValue: 'Follows iOS system' },
+              { label: 'Language', trailingValue: 'English' },
+              ...(builtAt ? [{ label: 'Deployed', trailingValue: builtAt }] : []),
+            ],
+          },
+        ]}
+        footer={<SignOutButton />}
+      />
     </div>
   )
 }
