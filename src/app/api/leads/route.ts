@@ -49,6 +49,9 @@ const leadSchema = z.object({
   timeline:         z.enum(['asap', 'this_week', 'this_month', 'planning']).optional(),
   is_military:      z.boolean().default(false),
   message:          z.string().max(1000).optional(),
+  // Estimated budget (migration 014). Range from a public-form pill.
+  estimated_budget_min: z.number().nonnegative().optional(),
+  estimated_budget_max: z.number().nonnegative().optional(),
   // Attribution (migration 014). All optional — public form populates
   // them from URL params + window.location + document.referrer when
   // the visitor has them. landing_url + referrer_url fall back to
@@ -130,7 +133,10 @@ export async function POST(request: NextRequest) {
     // Header fallback: if the client didn't send referrer_url, the
     // browser's Referer header is the next-best signal.
     const referrerUrl = data.referrer_url || request.headers.get('referer') || null
-    const intentStage = inferIntentStage({ timeline: data.timeline })
+    const intentStage = inferIntentStage({
+      timeline: data.timeline,
+      estimated_budget_min: data.estimated_budget_min ?? null,
+    })
 
     // Persist to Supabase
     const { data: lead, error } = await getAdminClient()
@@ -159,6 +165,8 @@ export async function POST(request: NextRequest) {
         landing_url:     data.landing_url || null,
         referrer_url:    referrerUrl,
         intent_stage:    intentStage,
+        estimated_budget_min: data.estimated_budget_min ?? null,
+        estimated_budget_max: data.estimated_budget_max ?? null,
       })
       .select()
       .single()

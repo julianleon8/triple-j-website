@@ -84,6 +84,35 @@ export async function PATCH(
       .eq('id', id)
 
     if (error) return NextResponse.json({ error: 'Failed to update quote' }, { status: 500 })
+
+    // Auto-create a job on /hq-driven acceptance, mirroring the
+    // customer-facing /accept endpoint. Idempotent — skips if a job
+    // already exists for this quote (e.g. the customer hit accept first).
+    if (quoteFields.status === 'accepted') {
+      const { data: existing } = await db
+        .from('jobs')
+        .select('id')
+        .eq('quote_id', id)
+        .maybeSingle()
+      if (!existing) {
+        const { data: q } = await db
+          .from('quotes')
+          .select('customer_id, total')
+          .eq('id', id)
+          .single()
+        if (q) {
+          const jobNumber = `JJM-${new Date().getFullYear()}-${Date.now().toString().slice(-6)}`
+          await db.from('jobs').insert({
+            customer_id: q.customer_id,
+            quote_id: id,
+            job_number: jobNumber,
+            status: 'scheduled',
+            contract_signed_date: nowIso.slice(0, 10),
+            total_contract: Number(q.total ?? 0) || null,
+          })
+        }
+      }
+    }
   }
 
   if (line_items) {

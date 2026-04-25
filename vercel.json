@@ -3,6 +3,10 @@
     {
       "path": "/api/cron/scrape-permits",
       "schedule": "0 14 * * *"
+    },
+    {
+      "path": "/api/cron/review-followups",
+      "schedule": "30 14 * * *"
     }
   ]
 }

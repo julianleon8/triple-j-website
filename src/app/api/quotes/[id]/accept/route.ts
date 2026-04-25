@@ -54,6 +54,10 @@ export async function POST(
       quote_id: quote.id,
       job_number: jobNumber,
       status: 'scheduled',
+      // Migration 016: stamp the day the customer signed off. Used as
+      // the start of the deposit-to-install lag metric.
+      contract_signed_date: now.slice(0, 10),
+      total_contract: Number(quote.total ?? 0) || null,
     })
 
     // Push to QuickBooks — fire and forget; don't block the acceptance response

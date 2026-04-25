@@ -11,6 +11,7 @@ import { CardSkeleton } from '@/components/hq/Skeleton'
 import { LeadStatusButtons } from './components/LeadStatusButtons'
 import { AttributionCard } from './components/AttributionCard'
 import { ReferrerPicker } from './components/ReferrerPicker'
+import { IntentStagePicker } from './components/IntentStagePicker'
 
 type LeadRecord = {
   id: string
@@ -102,14 +103,14 @@ export default async function LeadDetailPage({ params }: { params: Promise<{ id:
           <a
             href={lead.phone ? `tel:${lead.phone}` : undefined}
             className="flex items-center justify-center gap-2 rounded-xl bg-(--brand-fg) px-3 py-3 text-[16px] font-semibold text-white tap-solid disabled:opacity-50"
-            aria-disabled={!lead.phone}
+            aria-disabled={!lead.phone ? "true" : undefined}
           >
             <Phone size={18} strokeWidth={2} /> Call
           </a>
           <a
             href={lead.phone ? `sms:${lead.phone}` : undefined}
             className="flex items-center justify-center gap-2 rounded-xl border border-(--border-subtle) bg-(--surface-1) px-3 py-3 text-[16px] font-semibold text-(--text-primary) tap-list disabled:opacity-50"
-            aria-disabled={!lead.phone}
+            aria-disabled={!lead.phone ? "true" : undefined}
           >
             <MessageSquare size={18} strokeWidth={2} /> SMS
           </a>
@@ -142,6 +143,11 @@ export default async function LeadDetailPage({ params }: { params: Promise<{ id:
       )}
 
       <AttributionCard lead={lead} />
+
+      <IntentStagePicker
+        leadId={lead.id}
+        current={lead.intent_stage as 'info_gathering' | 'timeline_known' | 'budget_set' | 'ready_to_buy' | null}
+      />
 
       <Suspense fallback={<CardSkeleton height="h-16" radius="rounded-2xl" />}>
         <DeferredReferrerPicker leadId={lead.id} referringCustomerId={lead.referring_customer_id} />
@@ -224,10 +230,10 @@ async function DeferredReferrerPicker({
 
 function Field({ label, value }: { label: string; value: string | null | undefined }) {
   return (
-    <div>
+    <>
       <dt className="text-[12px] text-(--text-tertiary)">{label}</dt>
       <dd className="mt-0.5 text-(--text-primary)">{value || '—'}</dd>
-    </div>
+    </>
   )
 }
 

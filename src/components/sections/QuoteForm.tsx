@@ -36,6 +36,15 @@ type StructureType = "welded" | "bolted" | "unsure";
 type NeedsConcrete = "yes" | "already_have" | "unsure";
 type Surface = "dirt" | "gravel" | "asphalt" | "concrete";
 type Timeline = "asap" | "this_week" | "this_month" | "planning";
+type BudgetBand = "under_5k" | "5_10k" | "10_20k" | "20_40k" | "over_40k";
+
+const BUDGET_BANDS: Array<{ v: BudgetBand; label: string; min: number; max: number | null }> = [
+  { v: "under_5k", label: "Under $5K",   min: 0,     max: 5000 },
+  { v: "5_10k",    label: "$5K – $10K",  min: 5000,  max: 10000 },
+  { v: "10_20k",   label: "$10K – $20K", min: 10000, max: 20000 },
+  { v: "20_40k",   label: "$20K – $40K", min: 20000, max: 40000 },
+  { v: "over_40k", label: "$40K+",       min: 40000, max: null },
+];
 
 type FormState = {
   // Step 1 — project
@@ -52,6 +61,7 @@ type FormState = {
   needs_concrete: NeedsConcrete | "";
   current_surface: Surface | "";
   timeline: Timeline | "";
+  budget: BudgetBand | "";
   is_military: boolean;
   message: string;
 };
@@ -61,6 +71,7 @@ const INITIAL: FormState = {
   width: "", length: "", height: "", zip: "",
   name: "", phone: "", email: "",
   needs_concrete: "", current_surface: "", timeline: "",
+  budget: "",
   is_military: false, message: "",
 };
 
@@ -113,7 +124,7 @@ function ServiceChipCard({
     <button
       type="button"
       onClick={onClick}
-      aria-pressed={selected ? "true" : "false"}
+      aria-pressed={selected}
       className={`group relative flex flex-col overflow-hidden rounded-xl border-2 transition-all cursor-pointer ${
         selected
           ? "border-[color:var(--color-brand-400)] bg-[color:var(--color-brand-600)]/15 shadow-lg"
@@ -167,7 +178,7 @@ function OptionPill({
     <button
       type="button"
       onClick={onClick}
-      aria-pressed={selected ? "true" : "false"}
+      aria-pressed={selected}
       className={`h-11 px-4 rounded-lg border text-sm font-semibold transition-all cursor-pointer ${
         selected
           ? "border-[color:var(--color-brand-400)] bg-[color:var(--color-brand-600)]/20 text-white"
@@ -384,6 +395,22 @@ function StepContact({
         </div>
       </div>
 
+      {/* Budget */}
+      <div>
+        <FieldLabel optional>Budget Range</FieldLabel>
+        <div className="flex flex-wrap gap-2">
+          {BUDGET_BANDS.map((opt) => (
+            <OptionPill
+              key={opt.v}
+              selected={form.budget === opt.v}
+              onClick={() => update("budget", opt.v)}
+            >
+              {opt.label}
+            </OptionPill>
+          ))}
+        </div>
+      </div>
+
       {/* Notes */}
       <div>
         <FieldLabel optional>Anything Else</FieldLabel>
@@ -484,6 +511,7 @@ export function QuoteForm({ initialMilitary = false }: QuoteFormProps = {}) {
     setStatus("submitting");
     setErrMsg("");
 
+    const budgetBand = BUDGET_BANDS.find((b) => b.v === form.budget);
     const payload = {
       name:            form.name.trim(),
       phone:           form.phone.trim(),
@@ -497,6 +525,8 @@ export function QuoteForm({ initialMilitary = false }: QuoteFormProps = {}) {
       needs_concrete:  form.needs_concrete || undefined,
       current_surface: form.current_surface || undefined,
       timeline:        form.timeline || undefined,
+      estimated_budget_min: budgetBand?.min,
+      estimated_budget_max: budgetBand?.max ?? undefined,
       is_military:     form.is_military,
       message:         form.message.trim() || undefined,
       captcha_token:   captchaToken ?? undefined,
@@ -608,9 +638,9 @@ export function QuoteForm({ initialMilitary = false }: QuoteFormProps = {}) {
                 className="relative h-1 rounded-full bg-white/8 overflow-hidden"
                 role="progressbar"
                 aria-label="Quote form progress"
-                aria-valuenow={progressPct}
-                aria-valuemin={0}
-                aria-valuemax={100}
+                aria-valuenow={progressPct as number}
+                aria-valuemin={0 as number}
+                aria-valuemax={100 as number}
               >
                 <div
                   className="absolute inset-y-0 left-0 bg-[color:var(--color-brand-400)] transition-[width] duration-500 ease-out"
