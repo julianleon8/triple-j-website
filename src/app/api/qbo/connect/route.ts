@@ -15,7 +15,7 @@ export async function GET(request: NextRequest) {
   if (missing.length > 0) {
     return NextResponse.redirect(
       new URL(
-        `/dashboard/settings/quickbooks?error=missing_config&missing=${encodeURIComponent(
+        `/hq/settings/quickbooks?error=missing_config&missing=${encodeURIComponent(
           missing.join(',')
         )}`,
         request.url

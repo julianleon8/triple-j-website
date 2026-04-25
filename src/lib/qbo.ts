@@ -98,7 +98,7 @@ export async function saveTokens(params: {
 /** Return a valid access token, refreshing if expired. Throws if not connected. */
 export async function getValidAccessToken(): Promise<{ access_token: string; realm_id: string }> {
   const stored = await getStoredTokens()
-  if (!stored) throw new Error('QuickBooks not connected. Visit /dashboard/settings/quickbooks to connect.')
+  if (!stored) throw new Error('QuickBooks not connected. Visit /hq/settings/quickbooks to connect.')
 
   const expiresAt = new Date(stored.access_token_expires_at).getTime()
   // Refresh if within 5 minutes of expiry
