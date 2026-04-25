@@ -2,9 +2,9 @@
 
 import Link from 'next/link'
 import { Suspense } from 'react'
-import { usePathname, useRouter } from 'next/navigation'
-import { createClient } from '@/lib/supabase/client'
+import { usePathname } from 'next/navigation'
 import { InstallPrompt } from '@/components/hq/InstallPrompt'
+import { SignOutButton } from '@/components/hq/SignOutButton'
 import { BottomTabBar } from './BottomTabBar'
 import { HqHeader } from './HqHeader'
 
@@ -18,14 +18,6 @@ const NAV = [
 
 export default function HqChrome({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
-  const router = useRouter()
-
-  async function signOut() {
-    const supabase = createClient()
-    await supabase.auth.signOut()
-    router.push('/login')
-    router.refresh()
-  }
 
   return (
     <div className="min-h-screen bg-(--surface-1) text-(--text-primary)">
@@ -35,7 +27,7 @@ export default function HqChrome({ children }: { children: React.ReactNode }) {
       </Suspense>
 
       {/* Desktop top nav — hidden on mobile */}
-      <header className="sticky top-0 z-30 hidden border-b border-white/10 bg-brand-600 text-white shadow-sm sm:block">
+      <header className="sticky top-0 z-30 hidden border-b border-white/10 bg-(--brand-fg) text-white shadow-sm sm:block">
         <div className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-6 py-4">
           <Link
             href="/hq"
@@ -62,13 +54,7 @@ export default function HqChrome({ children }: { children: React.ReactNode }) {
                 </Link>
               )
             })}
-            <button
-              type="button"
-              onClick={() => void signOut()}
-              className="ml-2 rounded-md border border-white/30 px-3 py-2 text-xs font-bold uppercase tracking-wide hover:bg-white/10"
-            >
-              Sign out
-            </button>
+            <SignOutButton variant="compact" />
           </nav>
         </div>
       </header>

@@ -21,9 +21,9 @@ export function ConvertToCustomerButton({ leadId, existingCustomerId }: Props) {
     return (
       <Link
         href={`/hq/customers/${existingCustomerId}`}
-        className="flex w-full items-center justify-center gap-2 rounded-2xl border border-(--border-subtle) bg-(--surface-2) px-3 py-4 text-[16px] font-semibold text-(--text-primary) active:bg-(--surface-3) transition-colors"
+        className="flex w-full items-center justify-center gap-2 rounded-2xl border border-(--border-subtle) bg-(--surface-2) px-3 py-4 text-[16px] font-semibold text-(--text-primary) tap-list"
       >
-        <UserSquare2 size={18} strokeWidth={2.2} /> Open customer record
+        <UserSquare2 size={18} strokeWidth={2} /> Open customer record
       </Link>
     )
   }
@@ -54,9 +54,9 @@ export function ConvertToCustomerButton({ leadId, existingCustomerId }: Props) {
         type="button"
         onClick={convert}
         disabled={pending}
-        className="flex w-full items-center justify-center gap-2 rounded-2xl bg-brand-600 px-3 py-4 text-[16px] font-semibold text-white active:scale-[0.99] transition-transform disabled:opacity-60"
+        className="flex w-full items-center justify-center gap-2 rounded-2xl bg-(--brand-fg) px-3 py-4 text-[16px] font-semibold text-white tap-solid disabled:opacity-60"
       >
-        <UserCheck size={18} strokeWidth={2.2} /> {pending ? 'Converting…' : 'Convert to Customer'}
+        <UserCheck size={18} strokeWidth={2} /> {pending ? 'Converting…' : 'Convert to Customer'}
       </button>
       {error && <p className="mt-2 text-center text-[13px] text-red-500">{error}</p>}
     </div>

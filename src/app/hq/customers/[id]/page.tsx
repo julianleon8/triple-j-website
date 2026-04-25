@@ -62,7 +62,7 @@ export default async function CustomerDetailPage({ params }: { params: Promise<{
   return (
     <div className="space-y-4">
       <Link href="/hq/customers" className="inline-flex items-center gap-1 text-[15px] font-medium text-(--brand-fg)">
-        <ArrowLeft size={18} strokeWidth={2.2} /> Customers
+        <ArrowLeft size={18} strokeWidth={2} /> Customers
       </Link>
 
       <header className="rounded-2xl border border-(--border-subtle) bg-(--surface-2) p-5">
@@ -72,26 +72,26 @@ export default async function CustomerDetailPage({ params }: { params: Promise<{
         <div className="mt-4 grid grid-cols-2 gap-2">
           <a
             href={customer.phone ? `tel:${customer.phone}` : undefined}
-            className="flex items-center justify-center gap-2 rounded-xl bg-brand-600 px-3 py-3 text-[16px] font-semibold text-white active:scale-[0.99] transition-transform"
+            className="flex items-center justify-center gap-2 rounded-xl bg-(--brand-fg) px-3 py-3 text-[16px] font-semibold text-white tap-solid"
             aria-disabled={!customer.phone}
           >
-            <Phone size={18} strokeWidth={2.2} /> Call
+            <Phone size={18} strokeWidth={2} /> Call
           </a>
           <a
             href={customer.phone ? `sms:${customer.phone}` : undefined}
-            className="flex items-center justify-center gap-2 rounded-xl border border-(--border-subtle) bg-(--surface-1) px-3 py-3 text-[16px] font-semibold text-(--text-primary) active:bg-(--surface-3) transition-colors"
+            className="flex items-center justify-center gap-2 rounded-xl border border-(--border-subtle) bg-(--surface-1) px-3 py-3 text-[16px] font-semibold text-(--text-primary) tap-list"
             aria-disabled={!customer.phone}
           >
-            <MessageSquare size={18} strokeWidth={2.2} /> SMS
+            <MessageSquare size={18} strokeWidth={2} /> SMS
           </a>
         </div>
 
         {customer.email && (
           <a
             href={`mailto:${customer.email}`}
-            className="mt-2 flex items-center justify-center gap-2 rounded-xl border border-(--border-subtle) bg-(--surface-1) px-3 py-2.5 text-[14px] font-medium text-(--text-primary) active:bg-(--surface-3) transition-colors"
+            className="mt-2 flex items-center justify-center gap-2 rounded-xl border border-(--border-subtle) bg-(--surface-1) px-3 py-2.5 text-[14px] font-medium text-(--text-primary) tap-list"
           >
-            <Mail size={16} strokeWidth={2.2} /> {customer.email}
+            <Mail size={16} strokeWidth={2} /> {customer.email}
           </a>
         )}
       </header>

@@ -193,8 +193,8 @@ export function PushOptIn() {
   }
 
   return (
-    <div className="rounded-xl border border-brand-500/40 bg-brand-600/5 p-4 flex items-start gap-3">
-      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-brand-600 text-white">
+    <div className="rounded-xl border border-brand-500/40 bg-(--brand-fg)/5 p-4 flex items-start gap-3">
+      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-(--brand-fg) text-white">
         <BellIcon />
       </div>
       <div className="min-w-0 flex-1">
@@ -207,7 +207,7 @@ export function PushOptIn() {
         type="button"
         onClick={enable}
         disabled={state === 'working'}
-        className="shrink-0 min-h-10 px-4 rounded-lg text-[13px] font-semibold bg-brand-600 text-white hover:bg-brand-700 disabled:opacity-60 transition-colors"
+        className="shrink-0 min-h-10 px-4 rounded-lg text-[13px] font-semibold bg-(--brand-fg) text-white hover:bg-(--brand-fg-hover) disabled:opacity-60 transition-colors"
       >
         {state === 'working' ? '…' : 'Enable'}
       </button>

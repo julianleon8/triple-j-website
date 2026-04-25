@@ -70,7 +70,7 @@ export function InstallPrompt() {
       aria-label="Install Triple J HQ"
     >
       <div className="flex items-start gap-3">
-        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-brand-600 text-white text-[15px] font-bold">
+        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-(--brand-fg) text-white text-[15px] font-bold">
           T
         </div>
         <div className="min-w-0 flex-1">

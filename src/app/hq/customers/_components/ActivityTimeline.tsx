@@ -108,9 +108,9 @@ export function ActivityTimeline({
           const Icon = e.icon
           return (
             <li key={e.key}>
-              <Link href={e.href} className="flex items-start gap-3 px-4 py-3 active:bg-(--surface-3) transition-colors">
+              <Link href={e.href} className="flex items-start gap-3 px-4 py-3 tap-list">
                 <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-white ${e.iconBg}`}>
-                  <Icon size={18} strokeWidth={2.2} />
+                  <Icon size={18} strokeWidth={2} />
                 </div>
                 <div className="min-w-0 flex-1">
                   <p className="text-[15px] font-semibold text-(--text-primary) truncate">{e.title}</p>

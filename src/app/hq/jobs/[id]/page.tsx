@@ -6,6 +6,8 @@ import { ArrowLeft, Phone, FileText } from 'lucide-react'
 import { getAdminClient } from '@/lib/supabase/admin'
 import { JOB_STATUS_CLASS } from '@/lib/pipeline'
 import { JobMapHero } from './components/JobMapHero'
+import { JobPhotoStrip, type JobPhotoStripPhoto } from '@/components/hq/JobPhotoStrip'
+import { JobReceiptStrip, type JobReceipt, type ReceiptLineItem } from '@/components/hq/JobReceiptStrip'
 
 type JobRecord = {
   id: string
@@ -48,16 +50,56 @@ export default async function JobDetailPage({ params }: { params: Promise<{ id: 
   if (!raw) notFound()
   const job = raw as JobRecord
 
+  // Fetch job photos (Phase 4.1 — camera-first job logging). Fan out two
+  // queries: gallery_item bundle for this job + its photos. If no
+  // gallery_item exists yet (no photos taken), skip the photo query.
+  let jobPhotos: JobPhotoStripPhoto[] = []
+  const { data: galleryItem } = await admin
+    .from('gallery_items')
+    .select('id')
+    .eq('job_id', id)
+    .limit(1)
+    .maybeSingle()
+  if (galleryItem?.id) {
+    const { data: photosRaw } = await admin
+      .from('gallery_photos')
+      .select('id, image_url, alt_text, is_cover, sort_order, gallery_item_id, created_at')
+      .eq('gallery_item_id', galleryItem.id)
+      .order('is_cover', { ascending: false })
+      .order('sort_order', { ascending: true })
+    jobPhotos = (photosRaw ?? []) as JobPhotoStripPhoto[]
+  }
+
+  // Fetch job receipts (Phase 4.2 — receipt OCR + QBO push). Newest first
+  // so a freshly-snapped receipt sits on top.
+  const { data: receiptsRaw } = await admin
+    .from('job_receipts')
+    .select(
+      'id, vendor, receipt_date, subtotal, tax, total, line_items, memo, image_url, extraction_confidence, qbo_expense_id, qbo_pushed_at, qbo_push_error, created_at',
+    )
+    .eq('job_id', id)
+    .order('created_at', { ascending: false })
+  const jobReceipts: JobReceipt[] = (receiptsRaw ?? []).map((r) => ({
+    ...(r as Omit<JobReceipt, 'line_items'>),
+    line_items: (Array.isArray((r as { line_items?: unknown }).line_items)
+      ? (r as { line_items: unknown[] }).line_items
+      : []) as ReceiptLineItem[],
+  }))
+
   const statusClass = JOB_STATUS_CLASS[job.status] ?? 'bg-gray-100 text-gray-600'
   const activeIdx = PROGRESS.findIndex((p) => p.key === job.status)
 
   return (
     <div className="space-y-4">
       <Link href="/hq/jobs" className="inline-flex items-center gap-1 text-[15px] font-medium text-(--brand-fg)">
-        <ArrowLeft size={18} strokeWidth={2.2} /> Jobs
+        <ArrowLeft size={18} strokeWidth={2} /> Jobs
       </Link>
 
       <JobMapHero address={job.address} city={job.city} />
+
+      <JobPhotoStrip jobId={job.id} photos={jobPhotos} photoCount={jobPhotos.length} />
+
+      <JobReceiptStrip jobId={job.id} receipts={jobReceipts} />
 
       <header className="rounded-2xl border border-(--border-subtle) bg-(--surface-2) p-5">
         <div className="flex items-start justify-between gap-3">
@@ -82,7 +124,7 @@ export default async function JobDetailPage({ params }: { params: Promise<{ id: 
               <li key={p.key} className="flex flex-1 items-center gap-2">
                 <div
                   className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-[11px] font-bold ${
-                    done ? 'bg-brand-600 text-white' : 'bg-(--surface-3) text-(--text-tertiary)'
+                    done ? 'bg-(--brand-fg) text-white' : 'bg-(--surface-3) text-(--text-tertiary)'
                   }`}
                   aria-current={i === activeIdx ? 'step' : undefined}
                 >
@@ -92,7 +134,7 @@ export default async function JobDetailPage({ params }: { params: Promise<{ id: 
                   {p.label}
                 </span>
                 {i < PROGRESS.length - 1 && (
-                  <span className={`ml-auto h-px flex-1 ${done && i + 1 <= activeIdx ? 'bg-brand-600' : 'bg-(--border-subtle)'}`} />
+                  <span className={`ml-auto h-px flex-1 ${done && i + 1 <= activeIdx ? 'bg-(--brand-fg)' : 'bg-(--border-subtle)'}`} />
                 )}
               </li>
             )
@@ -116,7 +158,7 @@ export default async function JobDetailPage({ params }: { params: Promise<{ id: 
       {job.customers && (
         <Link
           href={`/hq/customers/${job.customers.id}`}
-          className="flex items-center justify-between rounded-2xl border border-(--border-subtle) bg-(--surface-2) px-5 py-4 active:bg-(--surface-3) transition-colors"
+          className="flex items-center justify-between rounded-2xl border border-(--border-subtle) bg-(--surface-2) px-5 py-4 tap-list"
         >
           <div className="min-w-0">
             <p className="text-[12px] text-(--text-tertiary)">Customer</p>
@@ -128,9 +170,9 @@ export default async function JobDetailPage({ params }: { params: Promise<{ id: 
             <a
               href={`tel:${job.customers.phone}`}
               onClick={(e) => e.stopPropagation()}
-              className="shrink-0 inline-flex items-center gap-1.5 rounded-full bg-brand-600 px-3 py-2 text-[13px] font-semibold text-white"
+              className="shrink-0 inline-flex items-center gap-1.5 rounded-full bg-(--brand-fg) px-3 py-2 text-[13px] font-semibold text-white"
             >
-              <Phone size={14} strokeWidth={2.2} /> Call
+              <Phone size={14} strokeWidth={2} /> Call
             </a>
           )}
         </Link>
@@ -139,10 +181,10 @@ export default async function JobDetailPage({ params }: { params: Promise<{ id: 
       {job.quotes && (
         <Link
           href={`/hq/quotes/${job.quotes.id}`}
-          className="flex items-center justify-between rounded-2xl border border-(--border-subtle) bg-(--surface-2) px-5 py-4 active:bg-(--surface-3) transition-colors"
+          className="flex items-center justify-between rounded-2xl border border-(--border-subtle) bg-(--surface-2) px-5 py-4 tap-list"
         >
           <div className="min-w-0 flex items-center gap-3">
-            <FileText size={18} strokeWidth={2.2} className="text-(--text-secondary)" />
+            <FileText size={18} strokeWidth={2} className="text-(--text-secondary)" />
             <div>
               <p className="text-[12px] text-(--text-tertiary)">Quote</p>
               <p className="mt-0.5 text-[17px] font-semibold text-(--text-primary)">

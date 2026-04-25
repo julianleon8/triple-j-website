@@ -20,9 +20,9 @@ export function CustomersList({ rows }: { rows: PipelineRow[] }) {
         <button
           type="button"
           onClick={() => setShowNew((v) => !v)}
-          className="inline-flex items-center gap-1.5 rounded-full bg-brand-600 px-3 py-1.5 text-[13px] font-semibold text-white active:scale-95 transition-transform"
+          className="inline-flex items-center gap-1.5 rounded-full bg-(--brand-fg) px-3 py-1.5 text-[13px] font-semibold text-white tap-solid"
         >
-          {showNew ? <X size={14} strokeWidth={2.4} /> : <UserPlus size={14} strokeWidth={2.4} />}
+          {showNew ? <X size={14} strokeWidth={2} /> : <UserPlus size={14} strokeWidth={2} />}
           {showNew ? 'Cancel' : 'New Customer'}
         </button>
       </div>

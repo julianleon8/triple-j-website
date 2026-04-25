@@ -86,17 +86,17 @@ export function NextActionCardClient({ payload }: { payload: NextActionPayload |
           <a
             href={callHref}
             onClick={tap}
-            className="inline-flex flex-1 items-center justify-center gap-2 rounded-full bg-white py-2.5 text-[15px] font-bold text-[#12407a] active:scale-[0.98] transition-transform"
+            className="inline-flex flex-1 items-center justify-center gap-2 rounded-full bg-white py-2.5 text-[15px] font-bold text-[#12407a] tap-solid"
           >
-            <Phone size={16} strokeWidth={2.4} /> Call
+            <Phone size={16} strokeWidth={2} /> Call
           </a>
         ) : null}
         <Link
           href={row.href}
           onClick={tap}
-          className="inline-flex flex-1 items-center justify-center gap-2 rounded-full bg-white/15 py-2.5 text-[15px] font-bold text-white active:scale-[0.98] transition-transform"
+          className="inline-flex flex-1 items-center justify-center gap-2 rounded-full bg-white/15 py-2.5 text-[15px] font-bold text-white tap-solid"
         >
-          Open <ArrowRight size={16} strokeWidth={2.4} />
+          Open <ArrowRight size={16} strokeWidth={2} />
         </Link>
       </div>
     </section>

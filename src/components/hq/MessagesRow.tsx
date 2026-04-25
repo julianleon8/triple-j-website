@@ -21,7 +21,7 @@ export function MessagesRow({ row }: { row: PipelineRow }) {
       {cold && <ColdBanner ageHours={hoursSince(row.created_at)} />}
       <Link
         href={row.href}
-        className="relative flex items-start gap-3 px-4 py-3 min-h-16 bg-(--surface-2) active:bg-(--surface-3) transition-colors"
+        className="relative flex items-start gap-3 px-4 py-3 min-h-16 bg-(--surface-2) tap-list"
       >
         {cold && (
           <span aria-hidden="true" className="absolute left-0 top-0 h-full w-1 bg-(--urgent-bg)" />

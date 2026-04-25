@@ -79,7 +79,7 @@ export async function CompactKPIStrip() {
     <Link
       href="/hq/more/stats"
       aria-label="Open full stats"
-      className="block active:scale-[0.99] transition-transform"
+      className="block tap-solid"
     >
       <div className="grid grid-cols-4 gap-2 rounded-2xl border border-(--border-subtle) bg-(--surface-2) p-3">
         {tiles.map((t) => (

@@ -102,7 +102,7 @@ export function PartnerInquiriesTable({ initialInquiries }: { initialInquiries: 
             <button
               type="button"
               onClick={() => setExpandedId(isOpen ? null : inq.id)}
-              className="w-full text-left px-4 py-3 active:bg-(--surface-3) transition-colors"
+              className="w-full text-left px-4 py-3 tap-list"
             >
               <div className="flex items-start gap-3">
                 <div className="min-w-0 flex-1">
@@ -133,7 +133,7 @@ export function PartnerInquiriesTable({ initialInquiries }: { initialInquiries: 
                 <div className="flex flex-wrap gap-2">
                   <a
                     href={`mailto:${inq.email}`}
-                    className="inline-flex items-center gap-2 h-9 px-3 rounded-lg bg-brand-600 text-white text-[13px] font-semibold hover:bg-brand-700"
+                    className="inline-flex items-center gap-2 h-9 px-3 rounded-lg bg-(--brand-fg) text-white text-[13px] font-semibold hover:bg-(--brand-fg-hover)"
                   >
                     Email {inq.email}
                   </a>

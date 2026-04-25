@@ -54,7 +54,7 @@ export default async function LeadDetailPage({ params }: { params: Promise<{ id:
   return (
     <div className="space-y-4">
       <Link href="/hq/leads" className="inline-flex items-center gap-1 text-[15px] font-medium text-(--brand-fg)">
-        <ArrowLeft size={18} strokeWidth={2.2} /> Leads
+        <ArrowLeft size={18} strokeWidth={2} /> Leads
       </Link>
 
       {cold && (
@@ -80,17 +80,17 @@ export default async function LeadDetailPage({ params }: { params: Promise<{ id:
         <div className="mt-4 grid grid-cols-2 gap-2">
           <a
             href={lead.phone ? `tel:${lead.phone}` : undefined}
-            className="flex items-center justify-center gap-2 rounded-xl bg-brand-600 px-3 py-3 text-[16px] font-semibold text-white active:scale-[0.99] transition-transform disabled:opacity-50"
+            className="flex items-center justify-center gap-2 rounded-xl bg-(--brand-fg) px-3 py-3 text-[16px] font-semibold text-white tap-solid disabled:opacity-50"
             aria-disabled={!lead.phone}
           >
-            <Phone size={18} strokeWidth={2.2} /> Call
+            <Phone size={18} strokeWidth={2} /> Call
           </a>
           <a
             href={lead.phone ? `sms:${lead.phone}` : undefined}
-            className="flex items-center justify-center gap-2 rounded-xl border border-(--border-subtle) bg-(--surface-1) px-3 py-3 text-[16px] font-semibold text-(--text-primary) active:bg-(--surface-3) transition-colors disabled:opacity-50"
+            className="flex items-center justify-center gap-2 rounded-xl border border-(--border-subtle) bg-(--surface-1) px-3 py-3 text-[16px] font-semibold text-(--text-primary) tap-list disabled:opacity-50"
             aria-disabled={!lead.phone}
           >
-            <MessageSquare size={18} strokeWidth={2.2} /> SMS
+            <MessageSquare size={18} strokeWidth={2} /> SMS
           </a>
         </div>
       </header>

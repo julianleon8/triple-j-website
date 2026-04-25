@@ -235,7 +235,7 @@ export default function LeadsTable({
                     href={FB_INBOX_URL}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex-1 min-h-11 inline-flex items-center justify-center gap-1.5 rounded-lg bg-[#0084ff] text-white text-[15px] font-semibold px-3 py-2 active:scale-95 transition-transform"
+                    className="flex-1 min-h-11 inline-flex items-center justify-center gap-1.5 rounded-lg bg-[#0084ff] text-white text-[15px] font-semibold px-3 py-2 tap-solid"
                   >
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
                       <path d="M12 2C6.5 2 2 6.14 2 11.25c0 2.88 1.43 5.45 3.67 7.14V22l3.35-1.84c.89.25 1.83.38 2.8.38 5.5 0 10-4.14 10-9.25S17.5 2 12 2zm.91 12.46l-2.4-2.56-4.81 2.56 5.3-5.63 2.5 2.56 4.71-2.56-5.3 5.63z" />
@@ -245,7 +245,7 @@ export default function LeadsTable({
                 ) : (
                   <a
                     href={`tel:${lead.phone}`}
-                    className="flex-1 min-h-11 inline-flex items-center justify-center gap-1.5 rounded-lg bg-brand-600 text-white text-[15px] font-semibold px-3 py-2 active:scale-95 transition-transform"
+                    className="flex-1 min-h-11 inline-flex items-center justify-center gap-1.5 rounded-lg bg-(--brand-fg) text-white text-[15px] font-semibold px-3 py-2 tap-solid"
                   >
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                       <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.12.96.33 1.9.63 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.91.3 1.85.51 2.81.63A2 2 0 0122 16.92z" />
@@ -276,7 +276,7 @@ export default function LeadsTable({
                   <button
                     onClick={() => handleConvert(lead)}
                     disabled={converting === lead.id}
-                    className="flex-1 min-h-11 rounded-lg bg-(--surface-3) text-(--brand-fg) text-[13px] font-semibold active:scale-95 transition-transform disabled:opacity-50"
+                    className="flex-1 min-h-11 rounded-lg bg-(--surface-3) text-(--brand-fg) text-[13px] font-semibold tap-solid disabled:opacity-50"
                   >
                     {converting === lead.id ? 'Converting…' : '→ Make Customer'}
                   </button>

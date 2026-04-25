@@ -55,7 +55,7 @@ export default function NewCustomerForm({ onCreate, onCancel }: Props) {
   return (
     <form
       onSubmit={handleSubmit}
-      className="rounded-xl border border-brand-500/40 bg-brand-600/5 p-4 space-y-3"
+      className="rounded-xl border border-brand-500/40 bg-(--brand-fg)/5 p-4 space-y-3"
     >
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <input name="name"  placeholder="Name *"  required className={INPUT} />
@@ -66,7 +66,7 @@ export default function NewCustomerForm({ onCreate, onCancel }: Props) {
       <textarea name="notes" placeholder="Notes" rows={2} className={`${INPUT} resize-none w-full`} />
       <div className="flex flex-wrap items-center gap-2">
         <button type="submit" disabled={saving}
-          className="bg-brand-600 hover:bg-brand-700 disabled:opacity-50 text-white text-sm font-bold min-h-11 px-4 rounded-lg transition">
+          className="bg-(--brand-fg) hover:bg-(--brand-fg-hover) disabled:opacity-50 text-white text-sm font-bold min-h-11 px-4 rounded-lg transition">
           {saving ? 'Saving…' : 'Create Customer'}
         </button>
         <button type="button" onClick={onCancel} disabled={saving}

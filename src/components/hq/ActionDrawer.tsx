@@ -43,11 +43,11 @@ export function ActionDrawer({ open, onClose, title, actions }: Props) {
                     onClose()
                   }
                 }}
-                className={`flex w-full items-center gap-3 rounded-xl px-3 py-3 text-left active:bg-(--surface-3) transition-colors ${
+                className={`flex w-full items-center gap-3 rounded-xl px-3 py-3 text-left tap-list ${
                   destructive ? 'text-red-500' : 'text-(--text-primary)'
                 }`}
               >
-                <Icon size={20} strokeWidth={2.2} />
+                <Icon size={20} strokeWidth={2} />
                 <span className="text-[16px] font-medium">{a.label}</span>
               </button>
             </li>
