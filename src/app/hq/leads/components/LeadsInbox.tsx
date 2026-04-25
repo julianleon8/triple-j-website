@@ -17,6 +17,10 @@ type Segment = 'new' | 'hot' | 'all' | 'done'
 type Props = {
   rows: PipelineRow[]
   counts: Counts
+  /** How many leads were fetched server-side. */
+  pageSize?: number
+  /** Total leads in the DB (for the "older leads exist" footer). */
+  totalAll?: number
 }
 
 function statusOf(row: PipelineRow): string | null {
@@ -33,7 +37,7 @@ function matchesSegment(row: PipelineRow, seg: Segment): boolean {
   return s === 'won' || s === 'lost'
 }
 
-export function LeadsInbox({ rows: initialRows, counts }: Props) {
+export function LeadsInbox({ rows: initialRows, counts, pageSize, totalAll }: Props) {
   const router = useRouter()
   const [rows, setRows] = useState(initialRows)
   const [seg, setSeg] = useState<Segment>('new')
@@ -138,6 +142,16 @@ export function LeadsInbox({ rows: initialRows, counts }: Props) {
                 </li>
               ))}
             </ul>
+          )}
+
+          {/* Pagination footer: surface that older leads exist beyond
+              the loaded page. Phase 3 shrunk the server fetch from 500
+              to 50 — this footer makes the truncation visible.
+              Load-more action is a follow-up (Phase 3.1). */}
+          {pageSize !== undefined && totalAll !== undefined && totalAll > rows.length && (
+            <p className="text-center text-[12px] text-(--text-tertiary) pt-1">
+              Showing {rows.length} most recent of {totalAll} total leads.
+            </p>
           )}
         </div>
       </PullToRefresh>

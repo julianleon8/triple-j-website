@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server'
+import { NextRequest, NextResponse, after } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { getAdminClient } from '@/lib/supabase/admin'
 import { transcribeAudio, OpenAIConfigError } from '@/lib/openai'
@@ -202,17 +202,22 @@ export async function POST(request: NextRequest) {
     )
   }
 
-  // 4. Fire owner push notification (non-blocking) -----------------------
-  //    `notifyNewLead` already handles Resend + web-push; it swallows errors
-  //    internally so a failure here can't tank the response.
-  try {
-    const sizeLine = extracted.width && extracted.length
-      ? `${extracted.width}W × ${extracted.length}L${extracted.height ? ` × ${extracted.height}H` : ''} ft`
-      : null
-    await notifyNewLead({ lead, sizeLine })
-  } catch (err) {
-    console.error('voice-lead: notify failed (non-fatal)', err)
-  }
+  // 4. Fire owner push notification AFTER the response ships -------------
+  //    Phase 3 perf: notifyNewLead (Resend email + web-push) used to be
+  //    awaited synchronously, adding ~500-2000ms before the client got the
+  //    new lead's id. Now we hand it to Next's `after()` so the response
+  //    returns the moment the DB insert resolves; notifications run in the
+  //    background. Errors are caught by Next and won't tank the response.
+  const sizeLine = extracted.width && extracted.length
+    ? `${extracted.width}W × ${extracted.length}L${extracted.height ? ` × ${extracted.height}H` : ''} ft`
+    : null
+  after(async () => {
+    try {
+      await notifyNewLead({ lead, sizeLine })
+    } catch (err) {
+      console.error('voice-lead: notify failed (non-fatal)', err)
+    }
+  })
 
   return NextResponse.json({
     id: lead.id,
