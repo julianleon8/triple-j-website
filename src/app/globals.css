@@ -171,17 +171,23 @@ body {
   overscroll-behavior-y: contain;
 }
 
-/* Display/headline type — Barlow Condensed: bold, industrial, confident */
-h1, h2, h3 {
+/* Display/headline type — Barlow Condensed is SCOPED to the marketing site.
+   HQ (iPhone PWA) wraps its tree in .hq-ui / font-(--font-ios), so headings
+   there inherit the iOS stack and read clean instead of magazine-heavy.
+   Anything outside (marketing) must not rely on these sizes — every HQ
+   heading sets an explicit text-[Npx] via Tailwind. */
+.marketing h1,
+.marketing h2,
+.marketing h3 {
   font-family: var(--font-display);
   letter-spacing: -0.01em;
   line-height: 1.05;
   font-weight: 800;
 }
 
-h1 { font-size: clamp(2.25rem, 5vw + 1rem, 4.5rem); }
-h2 { font-size: clamp(1.75rem, 2.5vw + 1rem, 2.75rem); }
-h3 { font-size: clamp(1.25rem, 1vw + 1rem, 1.75rem); letter-spacing: -0.015em; }
+.marketing h1 { font-size: clamp(2.25rem, 5vw + 1rem, 4.5rem); }
+.marketing h2 { font-size: clamp(1.75rem, 2.5vw + 1rem, 2.75rem); }
+.marketing h3 { font-size: clamp(1.25rem, 1vw + 1rem, 1.75rem); letter-spacing: -0.015em; }
 
 p { line-height: 1.6; }
 
@@ -329,6 +335,47 @@ p { line-height: 1.6; }
   .step-slide-in {
     animation: none;
   }
+}
+
+/* =========================================================
+   Tap feedback — locked rules for HQ interactive elements.
+   Phase 3 design lock (2026-04-24). Two rules, never more:
+
+   .tap-solid → scale compress, for SOLID buttons + CTA tiles
+                (Next, Send, + New pill, primary/destructive).
+   .tap-list  → surface-tone wash, for LIST rows + cards + grouped
+                rows (GroupedRow, MessagesRow, ListRow, ...).
+
+   Destructive buttons may combine tap-solid with their own red
+   active:bg-red-500/20 wash. Nothing else should introduce new
+   micro-interactions without updating this block.
+   ========================================================= */
+.tap-solid {
+  /* Covers transform + the common visual-state properties so callers don't
+     need to pair us with transition-colors / transition-opacity manually. */
+  transition:
+    transform 150ms cubic-bezier(0.22, 1, 0.36, 1),
+    background-color 150ms cubic-bezier(0.22, 1, 0.36, 1),
+    border-color 150ms cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 150ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+.tap-solid:active {
+  transform: scale(0.95);
+}
+
+.tap-list {
+  transition:
+    background-color 150ms cubic-bezier(0.22, 1, 0.36, 1),
+    color 150ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+.tap-list:active {
+  background-color: var(--surface-3);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tap-solid,
+  .tap-list { transition: none; }
+  .tap-solid:active { transform: none; }
 }
 
 /* Hero entrance timeline — single source of truth for the choreography.

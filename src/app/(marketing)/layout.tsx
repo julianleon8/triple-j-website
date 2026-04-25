@@ -15,6 +15,10 @@ import { OrganizationJsonLd } from "@/components/seo/OrganizationJsonLd";
  * iOS-PWA dark-mode-aware tokens used by /hq don't flip marketing
  * pages into white-on-white. Dark-mode-aware public site is a Phase C
  * rework gated on inspiration screenshots.
+ *
+ * The `marketing` class scopes the Barlow Condensed h1/h2/h3 rule in
+ * globals.css to this tree ONLY, so HQ (iPhone PWA) headings inherit
+ * the iOS stack instead of the magazine display face.
  */
 export default function MarketingLayout({
   children,
@@ -23,7 +27,7 @@ export default function MarketingLayout({
 }) {
   return (
     <div
-      className="bg-white text-[color:var(--color-ink-900)] flex-1 flex flex-col"
+      className="marketing bg-white text-[color:var(--color-ink-900)] flex-1 flex flex-col"
       style={{ colorScheme: "light" }}
     >
       <OrganizationJsonLd />
