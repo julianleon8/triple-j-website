@@ -1,11 +1,13 @@
 export const dynamic = 'force-dynamic'
 
+import { Suspense } from 'react'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { ArrowLeft, Phone, MessageSquare } from 'lucide-react'
 import { getAdminClient } from '@/lib/supabase/admin'
 import { LEAD_STATUS_CLASS, COLD_THRESHOLD_HOURS } from '@/lib/pipeline'
 import { ColdBanner } from '@/components/hq/ColdBanner'
+import { CardSkeleton } from '@/components/hq/Skeleton'
 import { ConvertToCustomerButton } from './components/ConvertToCustomerButton'
 
 type LeadRecord = {
@@ -33,6 +35,10 @@ export default async function LeadDetailPage({ params }: { params: Promise<{ id:
   const { id } = await params
   const admin = getAdminClient()
 
+  // Critical-path query: header + details + activity all need this row.
+  // Customer-lookup is deferred via <Suspense> below — runs in parallel
+  // and renders the convert button when ready, instead of blocking the
+  // header on a non-critical query.
   const { data: leadRaw } = await admin
     .from('leads')
     .select('*')
@@ -40,12 +46,6 @@ export default async function LeadDetailPage({ params }: { params: Promise<{ id:
     .single()
   if (!leadRaw) notFound()
   const lead = leadRaw as LeadRecord
-
-  const { data: existingCustomer } = await admin
-    .from('customers')
-    .select('id')
-    .eq('lead_id', id)
-    .maybeSingle()
 
   const ageH = Math.max(0, (Date.now() - new Date(lead.created_at).getTime()) / 3_600_000)
   const cold = lead.status === 'new' && ageH > COLD_THRESHOLD_HOURS
@@ -131,11 +131,29 @@ export default async function LeadDetailPage({ params }: { params: Promise<{ id:
         </ul>
       </section>
 
-      <ConvertToCustomerButton
-        leadId={lead.id}
-        existingCustomerId={existingCustomer?.id ?? null}
-      />
+      <Suspense fallback={<CardSkeleton height="h-16" radius="rounded-2xl" />}>
+        <DeferredConvertButton leadId={lead.id} />
+      </Suspense>
     </div>
+  )
+}
+
+/**
+ * Deferred customer-lookup → convert-to-customer button. Runs in parallel
+ * with the page's main render via Suspense; doesn't block the header /
+ * details paint waiting on the customer table query.
+ */
+async function DeferredConvertButton({ leadId }: { leadId: string }) {
+  const { data: existingCustomer } = await getAdminClient()
+    .from('customers')
+    .select('id')
+    .eq('lead_id', leadId)
+    .maybeSingle()
+  return (
+    <ConvertToCustomerButton
+      leadId={leadId}
+      existingCustomerId={existingCustomer?.id ?? null}
+    />
   )
 }
 

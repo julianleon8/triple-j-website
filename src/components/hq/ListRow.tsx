@@ -15,6 +15,7 @@ export function ListRow({ row }: { row: PipelineRow }) {
   return (
     <Link
       href={row.href}
+      prefetch
       className="flex items-center gap-3 px-4 py-3 min-h-16 bg-(--surface-2) tap-list"
     >
       <Avatar row={row} />

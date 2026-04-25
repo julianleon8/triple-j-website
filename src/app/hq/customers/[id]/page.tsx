@@ -1,9 +1,11 @@
 export const dynamic = 'force-dynamic'
 
+import { Suspense } from 'react'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { ArrowLeft, Phone, MessageSquare, Mail } from 'lucide-react'
 import { getAdminClient } from '@/lib/supabase/admin'
+import { CardSkeleton } from '@/components/hq/Skeleton'
 import { ActivityTimeline, type TimelineLead, type TimelineQuote, type TimelineJob } from '../_components/ActivityTimeline'
 
 type CustomerRecord = {
@@ -25,6 +27,9 @@ export default async function CustomerDetailPage({ params }: { params: Promise<{
   const { id } = await params
   const admin = getAdminClient()
 
+  // Critical-path: customer query — header card needs name + location before
+  // first paint. Activity timeline (lead + quotes + jobs) is deferred via
+  // <Suspense> below so the header doesn't wait on three more queries.
   const { data: raw } = await admin
     .from('customers')
     .select('*')
@@ -32,28 +37,6 @@ export default async function CustomerDetailPage({ params }: { params: Promise<{
     .single()
   if (!raw) notFound()
   const customer = raw as CustomerRecord
-
-  const leadPromise = customer.lead_id
-    ? admin
-        .from('leads')
-        .select('id, created_at, status, service_type, message')
-        .eq('id', customer.lead_id)
-        .maybeSingle()
-    : Promise.resolve({ data: null as TimelineLead })
-
-  const [{ data: lead }, { data: quotes }, { data: jobs }] = await Promise.all([
-    leadPromise,
-    admin
-      .from('quotes')
-      .select('id, created_at, quote_number, status, total')
-      .eq('customer_id', id)
-      .order('created_at', { ascending: false }),
-    admin
-      .from('jobs')
-      .select('id, created_at, job_number, status, job_type, scheduled_date')
-      .eq('customer_id', id)
-      .order('created_at', { ascending: false }),
-  ])
 
   const location = [customer.address, customer.city, [customer.state, customer.zip].filter(Boolean).join(' ')]
     .filter(Boolean)
@@ -103,11 +86,53 @@ export default async function CustomerDetailPage({ params }: { params: Promise<{
         </section>
       )}
 
-      <ActivityTimeline
-        lead={(lead ?? null) as TimelineLead}
-        quotes={(quotes ?? []) as TimelineQuote[]}
-        jobs={(jobs ?? []) as TimelineJob[]}
-      />
+      <Suspense fallback={<CardSkeleton height="h-48" radius="rounded-2xl" />}>
+        <DeferredActivityTimeline customerId={id} leadId={customer.lead_id} />
+      </Suspense>
     </div>
+  )
+}
+
+/**
+ * Defers the lead + quotes + jobs queries (3 parallel fetches) so the
+ * customer header + notes paint as soon as the customers row resolves.
+ * Once all three timeline-feeding queries land, the section streams in.
+ */
+async function DeferredActivityTimeline({
+  customerId,
+  leadId,
+}: {
+  customerId: string
+  leadId: string | null
+}) {
+  const admin = getAdminClient()
+  const leadPromise = leadId
+    ? admin
+        .from('leads')
+        .select('id, created_at, status, service_type, message')
+        .eq('id', leadId)
+        .maybeSingle()
+    : Promise.resolve({ data: null as TimelineLead })
+
+  const [{ data: lead }, { data: quotes }, { data: jobs }] = await Promise.all([
+    leadPromise,
+    admin
+      .from('quotes')
+      .select('id, created_at, quote_number, status, total')
+      .eq('customer_id', customerId)
+      .order('created_at', { ascending: false }),
+    admin
+      .from('jobs')
+      .select('id, created_at, job_number, status, job_type, scheduled_date')
+      .eq('customer_id', customerId)
+      .order('created_at', { ascending: false }),
+  ])
+
+  return (
+    <ActivityTimeline
+      lead={(lead ?? null) as TimelineLead}
+      quotes={(quotes ?? []) as TimelineQuote[]}
+      jobs={(jobs ?? []) as TimelineJob[]}
+    />
   )
 }

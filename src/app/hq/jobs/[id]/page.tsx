@@ -1,5 +1,6 @@
 export const dynamic = 'force-dynamic'
 
+import { Suspense } from 'react'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { ArrowLeft, Phone, FileText } from 'lucide-react'
@@ -8,6 +9,7 @@ import { JOB_STATUS_CLASS } from '@/lib/pipeline'
 import { JobMapHero } from './components/JobMapHero'
 import { JobPhotoStrip, type JobPhotoStripPhoto } from '@/components/hq/JobPhotoStrip'
 import { JobReceiptStrip, type JobReceipt, type ReceiptLineItem } from '@/components/hq/JobReceiptStrip'
+import { CardSkeleton } from '@/components/hq/Skeleton'
 
 type JobRecord = {
   id: string
@@ -42,6 +44,9 @@ export default async function JobDetailPage({ params }: { params: Promise<{ id: 
   const { id } = await params
   const admin = getAdminClient()
 
+  // Critical-path: job header needs the row (status, customer, contract).
+  // Photos + receipts are deferred via <Suspense> below — first paint shows
+  // the job header + map; photos and receipts stream in independently.
   const { data: raw } = await admin
     .from('jobs')
     .select('*, customers(id, name, phone), quotes(id, quote_number, total)')
@@ -49,42 +54,6 @@ export default async function JobDetailPage({ params }: { params: Promise<{ id: 
     .single()
   if (!raw) notFound()
   const job = raw as JobRecord
-
-  // Fetch job photos (Phase 4.1 — camera-first job logging). Fan out two
-  // queries: gallery_item bundle for this job + its photos. If no
-  // gallery_item exists yet (no photos taken), skip the photo query.
-  let jobPhotos: JobPhotoStripPhoto[] = []
-  const { data: galleryItem } = await admin
-    .from('gallery_items')
-    .select('id')
-    .eq('job_id', id)
-    .limit(1)
-    .maybeSingle()
-  if (galleryItem?.id) {
-    const { data: photosRaw } = await admin
-      .from('gallery_photos')
-      .select('id, image_url, alt_text, is_cover, sort_order, gallery_item_id, created_at')
-      .eq('gallery_item_id', galleryItem.id)
-      .order('is_cover', { ascending: false })
-      .order('sort_order', { ascending: true })
-    jobPhotos = (photosRaw ?? []) as JobPhotoStripPhoto[]
-  }
-
-  // Fetch job receipts (Phase 4.2 — receipt OCR + QBO push). Newest first
-  // so a freshly-snapped receipt sits on top.
-  const { data: receiptsRaw } = await admin
-    .from('job_receipts')
-    .select(
-      'id, vendor, receipt_date, subtotal, tax, total, line_items, memo, image_url, extraction_confidence, qbo_expense_id, qbo_pushed_at, qbo_push_error, created_at',
-    )
-    .eq('job_id', id)
-    .order('created_at', { ascending: false })
-  const jobReceipts: JobReceipt[] = (receiptsRaw ?? []).map((r) => ({
-    ...(r as Omit<JobReceipt, 'line_items'>),
-    line_items: (Array.isArray((r as { line_items?: unknown }).line_items)
-      ? (r as { line_items: unknown[] }).line_items
-      : []) as ReceiptLineItem[],
-  }))
 
   const statusClass = JOB_STATUS_CLASS[job.status] ?? 'bg-gray-100 text-gray-600'
   const activeIdx = PROGRESS.findIndex((p) => p.key === job.status)
@@ -97,9 +66,13 @@ export default async function JobDetailPage({ params }: { params: Promise<{ id: 
 
       <JobMapHero address={job.address} city={job.city} />
 
-      <JobPhotoStrip jobId={job.id} photos={jobPhotos} photoCount={jobPhotos.length} />
+      <Suspense fallback={<CardSkeleton height="h-32" radius="rounded-2xl" />}>
+        <DeferredJobPhotos jobId={job.id} />
+      </Suspense>
 
-      <JobReceiptStrip jobId={job.id} receipts={jobReceipts} />
+      <Suspense fallback={<CardSkeleton height="h-32" radius="rounded-2xl" />}>
+        <DeferredJobReceipts jobId={job.id} />
+      </Suspense>
 
       <header className="rounded-2xl border border-(--border-subtle) bg-(--surface-2) p-5">
         <div className="flex items-start justify-between gap-3">
@@ -238,4 +211,53 @@ function formatDate(iso: string | null): string | null {
 function money(n: number | null): string | null {
   if (n == null) return null
   return `$${Number(n).toLocaleString(undefined, { maximumFractionDigits: 0 })}`
+}
+
+/**
+ * Photos sub-render: gallery_item lookup → gallery_photos query.
+ * Two sequential queries (photos depend on the item ID), but they don't
+ * block the parent's first paint.
+ */
+async function DeferredJobPhotos({ jobId }: { jobId: string }) {
+  const admin = getAdminClient()
+  let jobPhotos: JobPhotoStripPhoto[] = []
+  const { data: galleryItem } = await admin
+    .from('gallery_items')
+    .select('id')
+    .eq('job_id', jobId)
+    .limit(1)
+    .maybeSingle()
+  if (galleryItem?.id) {
+    const { data: photosRaw } = await admin
+      .from('gallery_photos')
+      .select('id, image_url, alt_text, is_cover, sort_order, gallery_item_id, created_at')
+      .eq('gallery_item_id', galleryItem.id)
+      .order('is_cover', { ascending: false })
+      .order('sort_order', { ascending: true })
+    jobPhotos = (photosRaw ?? []) as JobPhotoStripPhoto[]
+  }
+  return <JobPhotoStrip jobId={jobId} photos={jobPhotos} photoCount={jobPhotos.length} />
+}
+
+/**
+ * Receipts sub-render: single query into job_receipts. Streams in
+ * separately from photos so a slow receipts table doesn't delay the
+ * photo strip and vice-versa.
+ */
+async function DeferredJobReceipts({ jobId }: { jobId: string }) {
+  const admin = getAdminClient()
+  const { data: receiptsRaw } = await admin
+    .from('job_receipts')
+    .select(
+      'id, vendor, receipt_date, subtotal, tax, total, line_items, memo, image_url, extraction_confidence, qbo_expense_id, qbo_pushed_at, qbo_push_error, created_at',
+    )
+    .eq('job_id', jobId)
+    .order('created_at', { ascending: false })
+  const jobReceipts: JobReceipt[] = (receiptsRaw ?? []).map((r) => ({
+    ...(r as Omit<JobReceipt, 'line_items'>),
+    line_items: (Array.isArray((r as { line_items?: unknown }).line_items)
+      ? (r as { line_items: unknown[] }).line_items
+      : []) as ReceiptLineItem[],
+  }))
+  return <JobReceiptStrip jobId={jobId} receipts={jobReceipts} />
 }
