@@ -3,7 +3,7 @@
 import Image from "next/image";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type HCaptcha from "@hcaptcha/react-hcaptcha";
 
 import { Button } from "@/components/ui/Button";
@@ -408,6 +408,18 @@ type QuoteFormProps = {
   initialMilitary?: boolean;
 };
 
+type Attribution = {
+  utm_source?: string;
+  utm_medium?: string;
+  utm_campaign?: string;
+  utm_term?: string;
+  utm_content?: string;
+  gclid?: string;
+  fbclid?: string;
+  landing_url?: string;
+  referrer_url?: string;
+};
+
 export function QuoteForm({ initialMilitary = false }: QuoteFormProps = {}) {
   const router = useRouter();
   const [step, setStep] = useState<1 | 2>(1);
@@ -416,6 +428,30 @@ export function QuoteForm({ initialMilitary = false }: QuoteFormProps = {}) {
   const [captchaToken, setCaptchaToken] = useState<string | null>(null);
   const captchaRef = useRef<HCaptcha | null>(null);
   const [errMsg, setErrMsg] = useState("");
+
+  // Capture attribution from URL params + landing/referrer once on mount.
+  // Stored in a ref so it doesn't trigger re-renders. Posted with the
+  // form on submit. Powers the leads.utm_* / gclid / fbclid columns
+  // (migration 014). Only fields with values are sent — server treats
+  // missing keys as null.
+  const attrRef = useRef<Attribution>({});
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const url = new URL(window.location.href);
+    const sp = url.searchParams;
+    const get = (k: string) => sp.get(k) || undefined;
+    attrRef.current = {
+      utm_source: get("utm_source"),
+      utm_medium: get("utm_medium"),
+      utm_campaign: get("utm_campaign"),
+      utm_term: get("utm_term"),
+      utm_content: get("utm_content"),
+      gclid: get("gclid"),
+      fbclid: get("fbclid"),
+      landing_url: window.location.href.slice(0, 2000),
+      referrer_url: document.referrer ? document.referrer.slice(0, 2000) : undefined,
+    };
+  }, []);
 
   function update<K extends keyof FormState>(key: K, value: FormState[K]) {
     setForm((f) => ({ ...f, [key]: value }));
@@ -464,6 +500,7 @@ export function QuoteForm({ initialMilitary = false }: QuoteFormProps = {}) {
       is_military:     form.is_military,
       message:         form.message.trim() || undefined,
       captcha_token:   captchaToken ?? undefined,
+      ...attrRef.current,
     };
 
     try {

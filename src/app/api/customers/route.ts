@@ -15,6 +15,42 @@ const schema = z.object({
   lead_id: z.string().uuid().optional(),
 })
 
+/**
+ * GET /api/customers?q=<query>
+ *
+ * Lightweight search for the lead-detail ReferrerPicker. Matches name
+ * (ilike) or phone (literal contains). Returns up to 10 rows. Without
+ * `q`, returns the 10 most-recent customers (useful as a fallback when
+ * the input is empty).
+ */
+export async function GET(request: NextRequest) {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+
+  const url = new URL(request.url)
+  const q = (url.searchParams.get('q') ?? '').trim()
+
+  let query = getAdminClient()
+    .from('customers')
+    .select('id, name, phone, city')
+    .order('created_at', { ascending: false })
+    .limit(10)
+
+  if (q.length > 0) {
+    // Escape PostgREST `or` reserved chars; commas + parens would split
+    // the filter list. We just strip them — the search is fuzzy anyway.
+    const safe = q.replace(/[,()]/g, ' ')
+    query = query.or(`name.ilike.%${safe}%,phone.ilike.%${safe}%`)
+  }
+
+  const { data, error } = await query
+  if (error) {
+    return NextResponse.json({ error: 'Search failed' }, { status: 500 })
+  }
+  return NextResponse.json({ customers: data ?? [] })
+}
+
 export async function POST(request: NextRequest) {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()

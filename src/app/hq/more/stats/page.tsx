@@ -8,7 +8,17 @@ import { KPICard } from '@/components/hq/KPICard'
 import { ChartContainer } from '@/components/hq/ChartContainer'
 import { Sparkline, Funnel } from '@/components/hq/LazyCharts'
 
-type Lead = { status: string; timeline: string | null; created_at: string }
+type Lead = {
+  status: string
+  timeline: string | null
+  created_at: string
+  source: string | null
+  utm_source: string | null
+  utm_campaign: string | null
+  first_response_at: string | null
+  won_at: string | null
+  lost_reason: string | null
+}
 type Customer = { created_at: string; lead_id: string | null }
 type Quote = { status: string; total: number | null; sent_at: string | null }
 type Job = {
@@ -54,6 +64,43 @@ function bucketByDay(isoTimestamps: string[], days: number): { value: number }[]
   }
   return buckets
 }
+function topBucket(values: (string | null)[]): { key: string; count: number } | null {
+  const counts = new Map<string, number>()
+  for (const v of values) {
+    if (!v) continue
+    counts.set(v, (counts.get(v) ?? 0) + 1)
+  }
+  let best: { key: string; count: number } | null = null
+  for (const [k, c] of counts) {
+    if (!best || c > best.count) best = { key: k, count: c }
+  }
+  return best
+}
+
+function countBuckets(values: (string | null)[]): { key: string; count: number }[] {
+  const counts = new Map<string, number>()
+  for (const v of values) {
+    if (!v) continue
+    counts.set(v, (counts.get(v) ?? 0) + 1)
+  }
+  return [...counts.entries()]
+    .map(([key, count]) => ({ key, count }))
+    .sort((a, b) => b.count - a.count)
+}
+
+function median(nums: number[]): number {
+  if (nums.length === 0) return 0
+  const sorted = [...nums].sort((a, b) => a - b)
+  const mid = Math.floor(sorted.length / 2)
+  return sorted.length % 2 === 0
+    ? (sorted[mid - 1] + sorted[mid]) / 2
+    : sorted[mid]
+}
+
+function readableLabel(s: string): string {
+  return s.replace(/_/g, ' ')
+}
+
 function cumulativeByDayOfMonth(
   entries: { date: string; amount: number }[],
 ): { value: number }[] {
@@ -86,7 +133,7 @@ export default async function StatsPage() {
     { data: jobs },
     { data: permitLeads },
   ] = await Promise.all([
-    db.from('leads').select('status, timeline, created_at'),
+    db.from('leads').select('status, timeline, created_at, source, utm_source, utm_campaign, first_response_at, won_at, lost_reason'),
     db.from('customers').select('created_at, lead_id'),
     db.from('quotes').select('status, total, sent_at'),
     db.from('jobs').select('status, total_contract, completed_date, scheduled_date'),
@@ -158,6 +205,28 @@ export default async function StatsPage() {
       .map(j => ({ date: j.completed_date!, amount: Number(j.total_contract ?? 0) })),
   )
 
+  // Attribution (migration 014) — top buckets by source / utm_*
+  const topSource = topBucket(L.map(l => l.source))
+  const topUtmSource = topBucket(L.map(l => l.utm_source))
+  const topUtmCampaign = topBucket(L.map(l => l.utm_campaign))
+  const paidShare = L.length > 0
+    ? Math.round((L.filter(l => l.utm_source).length / L.length) * 100)
+    : 0
+
+  // Pipeline Health (migration 015) — first response, time-to-won, top loss reason
+  const respondedLeads = L.filter(l => l.first_response_at)
+  const responseMins = respondedLeads.map(l => Math.max(0,
+    (new Date(l.first_response_at!).getTime() - new Date(l.created_at).getTime()) / 60_000,
+  ))
+  const medianRespondMin = median(responseMins)
+  const wonLeads = L.filter(l => l.won_at)
+  const timeToWonDays = wonLeads.map(l => Math.max(0,
+    (new Date(l.won_at!).getTime() - new Date(l.created_at).getTime()) / 86_400_000,
+  ))
+  const medianWonDays = median(timeToWonDays)
+  const topLossReason = topBucket(L.map(l => l.lost_reason))
+  const lostReasonCounts = countBuckets(L.map(l => l.lost_reason))
+
   // Funnel: Leads → Customers (with lead_id) → Quotes (sent/acc/dec) → Jobs (active or done)
   const funnelData = [
     { label: 'Leads',     value: L.length },
@@ -210,6 +279,78 @@ export default async function StatsPage() {
         <KPICard label="Stale leads" value={String(staleLeads)} sub=">12h untouched" accent="red" />
       </StatsGroup>
 
+      <StatsGroup title="Attribution">
+        <KPICard
+          label="Top source"
+          value={topSource ? readableLabel(topSource.key) : '—'}
+          sub={topSource ? `${topSource.count} leads` : 'No data'}
+          accent="brand"
+        />
+        <KPICard
+          label="Top UTM source"
+          value={topUtmSource ? topUtmSource.key : '—'}
+          sub={topUtmSource ? `${topUtmSource.count} leads` : 'No tagged leads yet'}
+          accent="sky"
+        />
+        <KPICard
+          label="Top campaign"
+          value={topUtmCampaign ? topUtmCampaign.key : '—'}
+          sub={topUtmCampaign ? `${topUtmCampaign.count} leads` : 'No tagged leads yet'}
+          accent="indigo"
+        />
+        <KPICard
+          label="Paid share"
+          value={`${paidShare}%`}
+          sub="Leads with utm_source"
+          accent="purple"
+        />
+      </StatsGroup>
+
+      <StatsGroup title="Pipeline Health">
+        <KPICard
+          label="Median first response"
+          value={medianRespondMin > 0 ? formatDuration(medianRespondMin) : '—'}
+          sub={`${respondedLeads.length} responded leads`}
+          accent="green"
+        />
+        <KPICard
+          label="Median time to won"
+          value={medianWonDays > 0 ? `${medianWonDays.toFixed(1)}d` : '—'}
+          sub={`${wonLeads.length} won leads`}
+          accent="emerald"
+        />
+        <KPICard
+          label="Top loss reason"
+          value={topLossReason ? readableLabel(topLossReason.key) : '—'}
+          sub={topLossReason ? `${topLossReason.count} leads` : 'No lost leads'}
+          accent="red"
+        />
+      </StatsGroup>
+
+      {lostReasonCounts.length > 0 ? (
+        <section className="rounded-2xl border border-(--border-subtle) bg-(--surface-2) p-4">
+          <h2 className="mb-3 text-[12px] font-semibold uppercase tracking-wider text-(--text-tertiary)">
+            Loss reason breakdown
+          </h2>
+          <ul className="space-y-2">
+            {lostReasonCounts.map((row) => {
+              const pct = Math.round((row.count / lostReasonCounts.reduce((s, r) => s + r.count, 0)) * 100)
+              return (
+                <li key={row.key}>
+                  <div className="flex items-center justify-between text-[13px]">
+                    <span className="capitalize text-(--text-primary)">{readableLabel(row.key)}</span>
+                    <span className="tabular-nums text-(--text-secondary)">{row.count} · {pct}%</span>
+                  </div>
+                  <div className="mt-1 h-1.5 overflow-hidden rounded-full bg-(--surface-3)">
+                    <div className="h-full bg-red-500" style={{ width: `${pct}%` }} />
+                  </div>
+                </li>
+              )
+            })}
+          </ul>
+        </section>
+      ) : null}
+
       <ChartContainer
         title="Sales funnel"
         subtitle="All-time lead → customer → quote → job"
@@ -220,6 +361,13 @@ export default async function StatsPage() {
       </ChartContainer>
     </div>
   )
+}
+
+function formatDuration(minutes: number): string {
+  if (minutes < 60) return `${Math.round(minutes)}m`
+  const hours = minutes / 60
+  if (hours < 24) return `${hours.toFixed(1)}h`
+  return `${(hours / 24).toFixed(1)}d`
 }
 
 function StatsGroup({ title, children }: { title: string; children: React.ReactNode }) {

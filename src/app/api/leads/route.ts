@@ -5,6 +5,7 @@ import { getAdminClient } from '@/lib/supabase/admin'
 import { notifyNewLead } from '@/lib/lead-notifications'
 import { verifyHCaptchaToken } from '@/lib/captcha'
 import { checkRateLimit, getClientIp } from '@/lib/rate-limit'
+import { inferIntentStage } from '@/lib/intent-stage'
 
 export const dynamic = 'force-dynamic'
 
@@ -48,6 +49,19 @@ const leadSchema = z.object({
   timeline:         z.enum(['asap', 'this_week', 'this_month', 'planning']).optional(),
   is_military:      z.boolean().default(false),
   message:          z.string().max(1000).optional(),
+  // Attribution (migration 014). All optional — public form populates
+  // them from URL params + window.location + document.referrer when
+  // the visitor has them. landing_url + referrer_url fall back to
+  // request headers if the client didn't send.
+  utm_source:       z.string().max(200).optional(),
+  utm_medium:       z.string().max(200).optional(),
+  utm_campaign:     z.string().max(200).optional(),
+  utm_term:         z.string().max(200).optional(),
+  utm_content:      z.string().max(200).optional(),
+  gclid:            z.string().max(200).optional(),
+  fbclid:           z.string().max(200).optional(),
+  landing_url:      z.string().max(2000).optional(),
+  referrer_url:     z.string().max(2000).optional(),
   // hCaptcha token (validated by verifyHCaptchaToken before insert).
   // Optional in dev when HCAPTCHA_SECRET_KEY is unset.
   captcha_token:    z.string().optional(),
@@ -113,6 +127,11 @@ export async function POST(request: NextRequest) {
       ? `${data.width}W × ${data.length}L${data.height ? ` × ${data.height}H` : ''} ft`
       : null
 
+    // Header fallback: if the client didn't send referrer_url, the
+    // browser's Referer header is the next-best signal.
+    const referrerUrl = data.referrer_url || request.headers.get('referer') || null
+    const intentStage = inferIntentStage({ timeline: data.timeline })
+
     // Persist to Supabase
     const { data: lead, error } = await getAdminClient()
       .from('leads')
@@ -130,6 +149,16 @@ export async function POST(request: NextRequest) {
         is_military:     data.is_military,
         message:         [sizeLine, data.message?.trim()].filter(Boolean).join('\n\n') || null,
         source:          'website_form',
+        utm_source:      data.utm_source || null,
+        utm_medium:      data.utm_medium || null,
+        utm_campaign:    data.utm_campaign || null,
+        utm_term:        data.utm_term || null,
+        utm_content:     data.utm_content || null,
+        gclid:           data.gclid || null,
+        fbclid:          data.fbclid || null,
+        landing_url:     data.landing_url || null,
+        referrer_url:    referrerUrl,
+        intent_stage:    intentStage,
       })
       .select()
       .single()
