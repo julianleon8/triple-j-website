@@ -17,13 +17,14 @@ const lineSchema = z.object({
 })
 
 const bodySchema = z.object({
-  vendor:       z.string().trim().nullable(),
-  receipt_date: z.string().trim().nullable(),  // YYYY-MM-DD
-  subtotal:     z.number().nonnegative().nullable(),
-  tax:          z.number().nonnegative().nullable(),
-  total:        z.number().nonnegative(),
-  line_items:   z.array(lineSchema).max(40),
-  memo:         z.string().trim().nullable().optional(),
+  vendor:        z.string().trim().nullable(),
+  receipt_date:  z.string().trim().nullable(),  // YYYY-MM-DD
+  cost_category: z.enum(['material', 'concrete_sub', 'fuel', 'permit', 'equipment', 'misc']).optional(),
+  subtotal:      z.number().nonnegative().nullable(),
+  tax:           z.number().nonnegative().nullable(),
+  total:         z.number().nonnegative(),
+  line_items:    z.array(lineSchema).max(40),
+  memo:          z.string().trim().nullable().optional(),
 })
 
 /**
@@ -107,13 +108,14 @@ export async function POST(
     const { error: updateErr } = await db
       .from('job_receipts')
       .update({
-        vendor:       body.vendor,
-        receipt_date: body.receipt_date,
-        subtotal:     body.subtotal,
-        tax:          body.tax,
-        total:        body.total,
-        line_items:   body.line_items,
-        memo:         body.memo ?? null,
+        vendor:        body.vendor,
+        receipt_date:  body.receipt_date,
+        cost_category: body.cost_category ?? 'material',
+        subtotal:      body.subtotal,
+        tax:           body.tax,
+        total:         body.total,
+        line_items:    body.line_items,
+        memo:          body.memo ?? null,
       })
       .eq('id', id)
     if (updateErr) {

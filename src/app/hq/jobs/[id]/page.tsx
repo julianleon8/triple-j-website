@@ -10,6 +10,9 @@ import { JobMapHero } from './components/JobMapHero'
 import { JobPhotoStrip, type JobPhotoStripPhoto } from '@/components/hq/JobPhotoStrip'
 import { JobReceiptStrip, type JobReceipt, type ReceiptLineItem } from '@/components/hq/JobReceiptStrip'
 import { CardSkeleton } from '@/components/hq/Skeleton'
+import { JobMarginKPIs } from './components/JobMarginKPIs'
+import { CostLedger } from './components/CostLedger'
+import { TimeEntries } from './components/TimeEntries'
 
 type JobRecord = {
   id: string
@@ -30,6 +33,10 @@ type JobRecord = {
   balance_due: number | null
   crew_notes: string | null
   internal_notes: string | null
+  // Migration 016 — cached profit columns
+  contract_signed_date: string | null
+  gross_profit_cached: number | null
+  gross_margin_cached: number | null
   customers: { id: string; name: string; phone: string | null } | null
   quotes: { id: string; quote_number: string; total: number | null } | null
 }
@@ -118,6 +125,7 @@ export default async function JobDetailPage({ params }: { params: Promise<{ id: 
       <section className="rounded-2xl border border-(--border-subtle) bg-(--surface-2) p-5">
         <h2 className="text-[13px] font-semibold uppercase tracking-wider text-(--text-tertiary)">Schedule & finance</h2>
         <dl className="mt-3 grid grid-cols-2 gap-y-2.5 gap-x-6 text-[15px]">
+          <Field label="Contract signed" value={formatDate(job.contract_signed_date)} />
           <Field label="Scheduled" value={formatDate(job.scheduled_date)} />
           <Field label="Completed" value={formatDate(job.completed_date)} />
           <Field label="Contract" value={money(job.total_contract)} />
@@ -126,6 +134,20 @@ export default async function JobDetailPage({ params }: { params: Promise<{ id: 
           <Field label="Address" value={[job.address, job.city].filter(Boolean).join(', ') || null} />
         </dl>
       </section>
+
+      <JobMarginKPIs
+        totalContract={job.total_contract}
+        grossProfit={job.gross_profit_cached}
+        grossMargin={job.gross_margin_cached}
+      />
+
+      <Suspense fallback={<CardSkeleton height="h-32" radius="rounded-2xl" />}>
+        <CostLedger jobId={job.id} />
+      </Suspense>
+
+      <Suspense fallback={<CardSkeleton height="h-32" radius="rounded-2xl" />}>
+        <TimeEntries jobId={job.id} />
+      </Suspense>
 
       {/* Related customer + quote */}
       {job.customers && (
@@ -249,7 +271,7 @@ async function DeferredJobReceipts({ jobId }: { jobId: string }) {
   const { data: receiptsRaw } = await admin
     .from('job_receipts')
     .select(
-      'id, vendor, receipt_date, subtotal, tax, total, line_items, memo, image_url, extraction_confidence, qbo_expense_id, qbo_pushed_at, qbo_push_error, created_at',
+      'id, vendor, receipt_date, subtotal, tax, total, line_items, memo, image_url, extraction_confidence, qbo_expense_id, qbo_pushed_at, qbo_push_error, cost_category, created_at',
     )
     .eq('job_id', jobId)
     .order('created_at', { ascending: false })

@@ -28,6 +28,23 @@ import { useHaptics } from '@/lib/hq/haptics'
  *   POST /api/hq/receipt/{id}/confirm     → { pushed, qbo_expense_id?, reason?, error? }
  */
 
+export type CostCategory =
+  | 'material'
+  | 'concrete_sub'
+  | 'fuel'
+  | 'permit'
+  | 'equipment'
+  | 'misc'
+
+export const COST_CATEGORIES: Array<{ value: CostCategory; label: string }> = [
+  { value: 'material',     label: 'Material' },
+  { value: 'concrete_sub', label: 'Concrete sub' },
+  { value: 'fuel',         label: 'Fuel' },
+  { value: 'permit',       label: 'Permit' },
+  { value: 'equipment',    label: 'Equipment' },
+  { value: 'misc',         label: 'Misc' },
+]
+
 export type JobReceipt = {
   id: string
   vendor: string | null
@@ -42,6 +59,7 @@ export type JobReceipt = {
   qbo_expense_id: string | null
   qbo_pushed_at: string | null
   qbo_push_error: string | null
+  cost_category: CostCategory | null
   created_at: string
 }
 
@@ -65,6 +83,7 @@ type SheetState =
       imageUrl: string
       vendor: string
       receiptDate: string
+      costCategory: CostCategory
       subtotal: string
       tax: string
       total: string
@@ -116,6 +135,7 @@ export function JobReceiptStrip({ jobId, receipts: initialReceipts }: Props) {
       imageUrl: r.image_url,
       vendor: r.vendor ?? '',
       receiptDate: r.receipt_date ?? '',
+      costCategory: r.cost_category ?? 'material',
       subtotal: asString(r.subtotal),
       tax: asString(r.tax),
       total: asString(r.total),
@@ -192,6 +212,7 @@ export function JobReceiptStrip({ jobId, receipts: initialReceipts }: Props) {
           qbo_expense_id: null,
           qbo_pushed_at: null,
           qbo_push_error: null,
+          cost_category: 'material',
           created_at: new Date().toISOString(),
         }
         setReceipts((prev) => [newRow, ...prev])
@@ -261,13 +282,14 @@ export function JobReceiptStrip({ jobId, receipts: initialReceipts }: Props) {
     }
 
     const body = {
-      vendor:       sheet.vendor.trim() || null,
-      receipt_date: sheet.receiptDate || null,
-      subtotal:     parseNum(sheet.subtotal),
-      tax:          parseNum(sheet.tax),
-      total:        totalNum,
-      line_items:   linesPayload,
-      memo:         sheet.memo.trim() || null,
+      vendor:        sheet.vendor.trim() || null,
+      receipt_date:  sheet.receiptDate || null,
+      cost_category: sheet.costCategory,
+      subtotal:      parseNum(sheet.subtotal),
+      tax:           parseNum(sheet.tax),
+      total:         totalNum,
+      line_items:    linesPayload,
+      memo:          sheet.memo.trim() || null,
     }
 
     try {
@@ -568,6 +590,20 @@ function ConfirmForm({ sheet, onChange, onLineUpdate, onLineAdd, onLineRemove, o
           value={sheet.receiptDate}
           onChange={(e) => onChange({ receiptDate: e.target.value })}
         />
+        <label className="block">
+          <span className="mb-1.5 block text-[12px] font-medium text-(--text-tertiary)">
+            Cost category
+          </span>
+          <select
+            value={sheet.costCategory}
+            onChange={(e) => onChange({ costCategory: e.target.value as CostCategory })}
+            className="block w-full rounded-xl border border-(--border-subtle) bg-(--surface-1) px-3 py-3 text-[15px] text-(--text-primary) outline-none focus:border-(--brand-fg)"
+          >
+            {COST_CATEGORIES.map((c) => (
+              <option key={c.value} value={c.value}>{c.label}</option>
+            ))}
+          </select>
+        </label>
         <div className="grid grid-cols-3 gap-2">
           <Input
             label="Subtotal"

@@ -26,6 +26,8 @@ type Job = {
   total_contract: number | null
   completed_date: string | null
   scheduled_date: string | null
+  gross_profit_cached: number | null
+  gross_margin_cached: number | null
 }
 type PermitLead = { status: string }
 
@@ -88,6 +90,16 @@ function countBuckets(values: (string | null)[]): { key: string; count: number }
     .sort((a, b) => b.count - a.count)
 }
 
+function countAmounts(rows: { cost_type: string; amount: number }[]): { key: string; total: number }[] {
+  const totals = new Map<string, number>()
+  for (const r of rows) {
+    totals.set(r.cost_type, (totals.get(r.cost_type) ?? 0) + Number(r.amount))
+  }
+  return [...totals.entries()]
+    .map(([key, total]) => ({ key, total }))
+    .sort((a, b) => b.total - a.total)
+}
+
 function median(nums: number[]): number {
   if (nums.length === 0) return 0
   const sorted = [...nums].sort((a, b) => a - b)
@@ -132,12 +144,14 @@ export default async function StatsPage() {
     { data: quotes },
     { data: jobs },
     { data: permitLeads },
+    { data: jobCosts },
   ] = await Promise.all([
     db.from('leads').select('status, timeline, created_at, source, utm_source, utm_campaign, first_response_at, won_at, lost_reason'),
     db.from('customers').select('created_at, lead_id'),
     db.from('quotes').select('status, total, sent_at'),
-    db.from('jobs').select('status, total_contract, completed_date, scheduled_date'),
+    db.from('jobs').select('status, total_contract, completed_date, scheduled_date, gross_profit_cached, gross_margin_cached'),
     db.from('permit_leads').select('status'),
+    db.from('job_costs').select('cost_type, amount'),
   ])
 
   const L = (leads ?? []) as Lead[]
@@ -145,6 +159,7 @@ export default async function StatsPage() {
   const Q = (quotes ?? []) as Quote[]
   const J = (jobs ?? []) as Job[]
   const P = (permitLeads ?? []) as PermitLead[]
+  const JC = (jobCosts ?? []) as Array<{ cost_type: string; amount: number }>
 
   const thirtyDaysAgo = daysAgoIso(30)
   const monthStart = startOfMonth()
@@ -226,6 +241,26 @@ export default async function StatsPage() {
   const medianWonDays = median(timeToWonDays)
   const topLossReason = topBucket(L.map(l => l.lost_reason))
   const lostReasonCounts = countBuckets(L.map(l => l.lost_reason))
+
+  // Job Economics (migrations 016/017/018/020)
+  const jobsWithMargin = J.filter(j => j.gross_margin_cached != null)
+  const avgMargin = jobsWithMargin.length > 0
+    ? jobsWithMargin.reduce((s, j) => s + Number(j.gross_margin_cached ?? 0), 0) / jobsWithMargin.length
+    : 0
+  const lowMarginJobs = J.filter(j =>
+    j.gross_margin_cached != null && Number(j.gross_margin_cached) < 0.20,
+  ).length
+  const totalRevenueCompleted = J
+    .filter(j => j.status === 'completed' && (j.total_contract ?? 0) > 0)
+    .reduce((s, j) => s + Number(j.total_contract ?? 0), 0)
+  const laborSpend = JC
+    .filter(c => c.cost_type === 'labor')
+    .reduce((s, c) => s + Number(c.amount), 0)
+  const laborShareOfRevenue = totalRevenueCompleted > 0
+    ? Math.round((laborSpend / totalRevenueCompleted) * 100)
+    : 0
+  // Cost-by-type totals
+  const costByType = countAmounts(JC)
 
   // Funnel: Leads → Customers (with lead_id) → Quotes (sent/acc/dec) → Jobs (active or done)
   const funnelData = [
@@ -326,6 +361,52 @@ export default async function StatsPage() {
           accent="red"
         />
       </StatsGroup>
+
+      <StatsGroup title="Job Economics">
+        <KPICard
+          label="Avg gross margin"
+          value={jobsWithMargin.length > 0 ? `${(avgMargin * 100).toFixed(1)}%` : '—'}
+          sub={`${jobsWithMargin.length} jobs with cached margin`}
+          accent="emerald"
+        />
+        <KPICard
+          label="Low-margin jobs"
+          value={String(lowMarginJobs)}
+          sub="Below 20% gross margin"
+          accent="amber"
+        />
+        <KPICard
+          label="Labor share"
+          value={`${laborShareOfRevenue}%`}
+          sub={`${fmtUSD(laborSpend)} of ${fmtUSD(totalRevenueCompleted)}`}
+          accent="purple"
+        />
+      </StatsGroup>
+
+      {costByType.length > 0 ? (
+        <section className="rounded-2xl border border-(--border-subtle) bg-(--surface-2) p-4">
+          <h2 className="mb-3 text-[12px] font-semibold uppercase tracking-wider text-(--text-tertiary)">
+            Spend by cost type
+          </h2>
+          <ul className="space-y-2">
+            {costByType.map((row) => {
+              const grand = costByType.reduce((s, r) => s + r.total, 0)
+              const pct = grand > 0 ? Math.round((row.total / grand) * 100) : 0
+              return (
+                <li key={row.key}>
+                  <div className="flex items-center justify-between text-[13px]">
+                    <span className="capitalize text-(--text-primary)">{readableLabel(row.key)}</span>
+                    <span className="tabular-nums text-(--text-secondary)">{fmtUSD(row.total)} · {pct}%</span>
+                  </div>
+                  <div className="mt-1 h-1.5 overflow-hidden rounded-full bg-(--surface-3)">
+                    <div className="h-full bg-(--brand-fg)" style={{ width: `${pct}%` }} />
+                  </div>
+                </li>
+              )
+            })}
+          </ul>
+        </section>
+      ) : null}
 
       {lostReasonCounts.length > 0 ? (
         <section className="rounded-2xl border border-(--border-subtle) bg-(--surface-2) p-4">
