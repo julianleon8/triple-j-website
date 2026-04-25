@@ -11,7 +11,12 @@ import { ImageResponse } from 'next/og'
  * Falls back to /og-default.jpg sitewide if this route fails to render.
  */
 
-export const runtime = 'edge'
+// Default Node serverless runtime. Edge would be cheaper per-request
+// but the ImageResponse bundle (@vercel/og + satori + resvg WASM)
+// exceeds Vercel's 1 MB Edge Function size limit. Node serverless has
+// a 50 MB function limit and OG images are cached aggressively by
+// crawlers + the CDN, so cold-start cost is paid at most once per
+// invalidation.
 export const alt =
   'Triple J Metal — Fort Cavazos Carports & Same-Week PCS Installs'
 export const size = { width: 1200, height: 630 }
@@ -38,13 +43,16 @@ export default async function MilitaryOpenGraphImage() {
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <div
             style={{
+              display: 'flex',
               fontSize: 36,
               fontWeight: 800,
               letterSpacing: '-0.02em',
               textTransform: 'uppercase',
+              gap: 10,
             }}
           >
-            Triple J <span style={{ color: '#4d8dff' }}>Metal</span>
+            <span>Triple J</span>
+            <span style={{ color: '#4d8dff' }}>Metal</span>
           </div>
           <div
             style={{
@@ -70,6 +78,8 @@ export default async function MilitaryOpenGraphImage() {
         <div style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
           <div
             style={{
+              display: 'flex',
+              flexDirection: 'column',
               fontSize: 86,
               fontWeight: 900,
               lineHeight: 1.0,
@@ -78,9 +88,11 @@ export default async function MilitaryOpenGraphImage() {
               maxWidth: 1000,
             }}
           >
-            Same-Week Carports
-            <br />
-            for <span style={{ color: '#4d8dff' }}>PCS Families.</span>
+            <span>Same-Week Carports</span>
+            <span style={{ display: 'flex', gap: 18 }}>
+              <span>for</span>
+              <span style={{ color: '#4d8dff' }}>PCS Families.</span>
+            </span>
           </div>
           <div style={{ fontSize: 26, color: 'rgba(255,255,255,0.75)', maxWidth: 950 }}>
             Welded or bolted. Concrete pad in the same contract. 7% military
