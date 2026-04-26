@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import Image from 'next/image'
 import { Container } from '@/components/ui/Container'
 import { ButtonLink } from '@/components/ui/Button'
 import { QuoteForm } from '@/components/sections/QuoteForm'
@@ -151,6 +152,79 @@ export default function AboutPage() {
                 <p className="text-sm text-ink-500 leading-relaxed">{body}</p>
               </div>
             ))}
+          </div>
+        </Container>
+      </section>
+
+      {/* ── Our Rig (equipment trust signal) ─────────────────────────────
+          Two branded trucks + skid-steer = "we own the gear, not just the
+          marketing site." Sits between the differentiators list and the
+          supplier story so the page reads: what we are (story) → why we're
+          different (sets us apart) → proof we're real (rig) → who we buy
+          from (suppliers) → how we work (values). Equipment photos come
+          from the /hq/gallery "Triple J Equipment" item — refreshed when
+          Julian uploads new equipment shots there. */}
+      <section className="py-16 md:py-24 bg-ink-900 text-white overflow-hidden">
+        <Container>
+          <div className="max-w-2xl mb-10">
+            <span className="text-xs font-bold uppercase tracking-[0.18em] text-brand-400">
+              Our Rig
+            </span>
+            <h2 className="mt-3 text-white">
+              Two branded trucks. One crew. Our own gear.
+            </h2>
+            <p className="mt-4 text-white/70 text-lg leading-relaxed">
+              When a national kit dealer drops your structure off, that&rsquo;s the last you see
+              of them. Triple J shows up with the equipment to actually build it — and we own
+              every piece of it ourselves. No rentals, no sub-rentals, no &ldquo;the guy didn&rsquo;t
+              show up&rdquo; excuses.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5 md:gap-6">
+            <figure className="group">
+              <div className="relative aspect-[4/3] overflow-hidden rounded-2xl bg-ink-800 border border-white/10">
+                <Image
+                  src="https://idrbgxlvvnqduvbqtaei.supabase.co/storage/v1/object/public/gallery/1777195958360.jpg"
+                  alt="Triple J Metal RAM and second branded work truck on a Central Texas job site"
+                  fill
+                  sizes="(max-width: 768px) 100vw, 50vw"
+                  className="object-cover transition-transform duration-700 ease-out group-hover:scale-[1.03]"
+                />
+                <div aria-hidden="true" className="absolute inset-0 bg-gradient-to-t from-ink-900/40 via-transparent to-transparent" />
+              </div>
+              <figcaption className="mt-4">
+                <p className="text-xs font-bold uppercase tracking-[0.16em] text-brand-400">
+                  Branded fleet
+                </p>
+                <p className="mt-1 text-base text-white/85 leading-relaxed">
+                  Two trucks, both branded, both ours. If you see them in your driveway it means
+                  the build crew is here — not a salesperson, not a sub.
+                </p>
+              </figcaption>
+            </figure>
+
+            <figure className="group">
+              <div className="relative aspect-[4/3] overflow-hidden rounded-2xl bg-ink-800 border border-white/10">
+                <Image
+                  src="https://idrbgxlvvnqduvbqtaei.supabase.co/storage/v1/object/public/gallery/items/c99a3a48-34c9-4caa-9343-7e65a87e5110/1777195959738.jpeg"
+                  alt="Triple J Metal skid steer lifting structural steel next to a warehouse under construction"
+                  fill
+                  sizes="(max-width: 768px) 100vw, 50vw"
+                  className="object-cover transition-transform duration-700 ease-out group-hover:scale-[1.03]"
+                />
+                <div aria-hidden="true" className="absolute inset-0 bg-gradient-to-t from-ink-900/40 via-transparent to-transparent" />
+              </div>
+              <figcaption className="mt-4">
+                <p className="text-xs font-bold uppercase tracking-[0.16em] text-brand-400">
+                  40-ft vertical reach
+                </p>
+                <p className="mt-1 text-base text-white/85 leading-relaxed">
+                  Our skid-steer handles ranch warehouses, two-story barns, and tall-clearance
+                  RV covers — without renting boom trucks or waiting on outside operators.
+                </p>
+              </figcaption>
+            </figure>
           </div>
         </Container>
       </section>
