@@ -1,8 +1,9 @@
 'use client'
 
 import Link from 'next/link'
-import { Suspense } from 'react'
-import { usePathname } from 'next/navigation'
+import { Suspense, useTransition } from 'react'
+import { usePathname, useRouter } from 'next/navigation'
+import { RefreshCw } from 'lucide-react'
 import { InstallPrompt } from '@/components/hq/InstallPrompt'
 import { SignOutButton } from '@/components/hq/SignOutButton'
 import { BottomTabBar } from './BottomTabBar'
@@ -18,6 +19,9 @@ const NAV = [
 
 export default function HqChrome({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
+  const router = useRouter()
+  const [isRefreshing, startRefreshTransition] = useTransition()
+  const handleRefresh = () => startRefreshTransition(() => router.refresh())
 
   return (
     <div className="min-h-screen bg-(--surface-1) text-(--text-primary)">
@@ -54,6 +58,15 @@ export default function HqChrome({ children }: { children: React.ReactNode }) {
                 </Link>
               )
             })}
+            <button
+              type="button"
+              onClick={handleRefresh}
+              disabled={isRefreshing}
+              className="flex h-8 w-8 items-center justify-center rounded-full bg-white/10 hover:bg-white/20 text-white disabled:opacity-50 transition-colors"
+              aria-label="Refresh page"
+            >
+              <RefreshCw size={15} strokeWidth={2.3} className={isRefreshing ? 'animate-spin' : ''} />
+            </button>
             <SignOutButton variant="compact" />
           </nav>
         </div>

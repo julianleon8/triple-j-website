@@ -1,8 +1,8 @@
 'use client'
 
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
-import { useCallback, useEffect, useRef, useState } from 'react'
-import { Plus } from 'lucide-react'
+import { useCallback, useEffect, useRef, useState, useTransition } from 'react'
+import { Plus, RefreshCw } from 'lucide-react'
 import { OfflineBadge } from '@/components/hq/OfflineBadge'
 import { CreatePopover } from '@/components/hq/CreatePopover'
 import {
@@ -67,6 +67,14 @@ export function HqHeader() {
 
   const [scrolled, setScrolled] = useState(false)
   const [createOpen, setCreateOpen] = useState(false)
+  const [isRefreshing, startRefreshTransition] = useTransition()
+
+  const onRefresh = useCallback(() => {
+    haptics.warn()
+    startRefreshTransition(() => {
+      router.refresh()
+    })
+  }, [haptics, router])
 
   const [overlayPhase, setOverlayPhase] = useState<VoiceOverlayPhase | null>(null)
   const [level, setLevel] = useState(0)
@@ -318,6 +326,15 @@ export function HqHeader() {
           <OfflineBadge />
         </div>
         <div className="relative flex items-center gap-1.5">
+          <button
+            type="button"
+            onClick={onRefresh}
+            disabled={isRefreshing}
+            className="flex h-9 w-9 items-center justify-center rounded-full text-(--text-primary) bg-(--surface-2) border border-(--border-subtle) tap-solid disabled:opacity-50"
+            aria-label="Refresh page"
+          >
+            <RefreshCw size={17} strokeWidth={2.3} className={isRefreshing ? 'animate-spin' : ''} />
+          </button>
           <button
             ref={plusRef}
             type="button"

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useMemo, useTransition } from 'react'
+import { useState, useMemo } from 'react'
 import { useRouter } from 'next/navigation'
 import { CheckCircle2, ChevronDown, FileText, Trash2 } from 'lucide-react'
 import type { PipelineRow } from '@/lib/pipeline'
@@ -8,7 +8,6 @@ import { LEAD_STATUS_CLASS, leadToRow, type LeadForRow } from '@/lib/pipeline'
 import { SegmentedControl } from '@/components/hq/ui/SegmentedControl'
 import { MessagesRow } from '@/components/hq/MessagesRow'
 import { SwipeActions, type SwipeAction } from '@/components/hq/SwipeActions'
-import { PullToRefresh } from '@/components/hq/PullToRefresh'
 import { ActionDrawer } from '@/components/hq/ActionDrawer'
 
 type Counts = { new: number; hot: number; all: number; done: number }
@@ -41,7 +40,6 @@ export function LeadsInbox({ rows: initialRows, counts, pageSize, totalAll }: Pr
   const router = useRouter()
   const [rows, setRows] = useState(initialRows)
   const [seg, setSeg] = useState<Segment>('new')
-  const [, startTransition] = useTransition()
   const [drawerId, setDrawerId] = useState<string | null>(null)
   const [loadingMore, setLoadingMore] = useState(false)
   const [loadMoreError, setLoadMoreError] = useState<string | null>(null)
@@ -57,12 +55,6 @@ export function LeadsInbox({ rows: initialRows, counts, pageSize, totalAll }: Pr
   }
   function removeRow(id: string) {
     setRows((prev) => prev.filter((r) => r.id !== id))
-  }
-
-  async function refresh() {
-    await new Promise<void>((resolve) => {
-      startTransition(() => { router.refresh(); resolve() })
-    })
   }
 
   async function markContacted(id: string) {
@@ -152,8 +144,7 @@ export function LeadsInbox({ rows: initialRows, counts, pageSize, totalAll }: Pr
 
   return (
     <>
-      <PullToRefresh onRefresh={refresh}>
-        <div className="space-y-3">
+      <div className="space-y-3">
           <SegmentedControl
             ariaLabel="Filter leads"
             value={seg}
@@ -214,8 +205,7 @@ export function LeadsInbox({ rows: initialRows, counts, pageSize, totalAll }: Pr
               That&rsquo;s every lead in the database.
             </p>
           )}
-        </div>
-      </PullToRefresh>
+      </div>
 
       <ActionDrawer
         open={drawerId !== null}

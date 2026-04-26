@@ -6,7 +6,6 @@ import type { PipelineKind, PipelineRow } from '@/lib/pipeline'
 import { LEAD_STATUS_CLASS, PERMIT_STATUS_CLASS, QUOTE_STATUS_CLASS, JOB_STATUS_CLASS } from '@/lib/pipeline'
 import { ListRow } from './ListRow'
 import { MessagesRow } from './MessagesRow'
-import { PullToRefresh } from './PullToRefresh'
 import { SwipeActions, type SwipeAction } from './SwipeActions'
 
 type FilterKey = 'all' | PipelineKind | 'done'
@@ -97,8 +96,7 @@ export function PipelineList({ rows: initialRows, paramKey = 'type', hideFilters
   }
 
   return (
-    <PullToRefresh onRefresh={refresh}>
-      <div className="space-y-3">
+    <div className="space-y-3">
         {/* Filter pills + explicit refresh button */}
         {!filtersHidden && (
         <div className="flex items-center gap-2">
@@ -181,8 +179,7 @@ export function PipelineList({ rows: initialRows, paramKey = 'type', hideFilters
             })}
           </ul>
         )}
-      </div>
-    </PullToRefresh>
+    </div>
   )
 }
 
