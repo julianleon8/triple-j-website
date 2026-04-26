@@ -18,14 +18,16 @@ import { getAdminClient } from "@/lib/supabase/admin";
 
 /* ─── Per-service photo map (kept in sync with /services list page) ──────
    When swapping or adding service photos, update both this file and
-   src/app/(marketing)/services/page.tsx. */
+   src/app/(marketing)/services/page.tsx. URLs point to real builds in the
+   /hq/gallery (Supabase Storage); see services/page.tsx for the source map
+   and a query template for finding new candidate covers. */
 const SERVICE_PHOTOS: Record<string, string> = {
-  carports: "/images/carport-gable-residential.jpg",
-  "turnkey-carports-with-concrete": "/images/carport-truck-concrete-hero.jpg",
+  carports: "https://idrbgxlvvnqduvbqtaei.supabase.co/storage/v1/object/public/gallery/1777195148318.jpg",
+  "turnkey-carports-with-concrete": "https://idrbgxlvvnqduvbqtaei.supabase.co/storage/v1/object/public/gallery/1777195038839.jpeg",
   "metal-garages": "/images/metal-garage-green.jpg",
-  barns: "/images/double-carport-install.jpg",
-  "rv-covers": "/images/porch-cover-lean-to.jpg",
-  "hoa-compliant-structures": "/images/carport-gable-residential.jpg",
+  barns: "https://idrbgxlvvnqduvbqtaei.supabase.co/storage/v1/object/public/gallery/1777195257805.jpg",
+  "rv-covers": "https://idrbgxlvvnqduvbqtaei.supabase.co/storage/v1/object/public/gallery/1777195863079.jpg",
+  "hoa-compliant-structures": "https://idrbgxlvvnqduvbqtaei.supabase.co/storage/v1/object/public/gallery/1777194918087.jpg",
 };
 
 /* Default hero photo when a city doesn't yet have a landmark photo sourced. */
