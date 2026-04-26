@@ -5,7 +5,7 @@ import { redirect } from 'next/navigation'
 import { NextActionCard } from './components/NextActionCard'
 import { NeedsAttentionFeed } from './components/NeedsAttentionFeed'
 import { CompactKPIStrip } from './components/CompactKPIStrip'
-import { CardSkeleton, RowSkeleton, StripSkeleton } from '@/components/hq/Skeleton'
+import { CardSkeleton, RowSkeleton } from '@/components/hq/Skeleton'
 
 type SearchParams = Promise<{ tab?: string; type?: string }>
 
@@ -17,7 +17,12 @@ export default async function TodayPage({ searchParams }: { searchParams: Search
 
   return (
     <div className="space-y-5">
-      <Suspense fallback={<CardSkeleton height="h-40" />}>
+      {/* Skeleton heights tuned to real content (CLS reduction):
+          - NextActionCard renders ~h-48 with eyebrow + title + 2 buttons
+          - CompactKPIStrip is a 4-up grid with ~h-20 cells, NOT the
+            generic h-16 StripSkeleton (which was causing a small CLS jump
+            when the real strip resolved taller). */}
+      <Suspense fallback={<CardSkeleton height="h-48" />}>
         <NextActionCard />
       </Suspense>
 
@@ -25,7 +30,7 @@ export default async function TodayPage({ searchParams }: { searchParams: Search
         <NeedsAttentionFeed />
       </Suspense>
 
-      <Suspense fallback={<StripSkeleton />}>
+      <Suspense fallback={<CardSkeleton height="h-24" radius="rounded-2xl" />}>
         <CompactKPIStrip />
       </Suspense>
     </div>

@@ -2,7 +2,7 @@
 
 import { useState, useRef } from 'react'
 import Image from 'next/image'
-import { Lightbox } from '@/components/hq/Lightbox'
+import { Lightbox, prefetchLightbox } from '@/components/hq/Lightbox'
 import { PANEL_COLORS } from '@/lib/colors'
 import {
   colorOptionLabel,
@@ -997,6 +997,8 @@ export default function GalleryManager({ initialItems }: { initialItems: Gallery
                           itemId: item.id,
                         })
                       }}
+                      onPointerEnter={prefetchLightbox}
+                      onFocus={prefetchLightbox}
                       className="absolute inset-0 h-full w-full cursor-zoom-in"
                       aria-label={`View photos of ${item.title}`}
                     >
