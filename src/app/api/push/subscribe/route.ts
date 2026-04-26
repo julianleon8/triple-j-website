@@ -52,5 +52,29 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Failed to save subscription' }, { status: 500 })
   }
 
+  // Sweep stale endpoints from the same browser. iOS Safari rotates the push
+  // endpoint URL periodically (PWA reinstall, iOS update, occasional Apple-
+  // initiated refresh); the upsert above creates a new row each time, leaving
+  // the old endpoint dead. sendPush prunes 410s lazily, but if no push has
+  // been sent recently the dead rows linger in the dashboard. We proactively
+  // delete prior rows from the same user+UA — only if their updated_at is
+  // older than 6h, so two distinct active iPhones with identical UAs (same
+  // iOS version) don't kick each other out (they each phone home on PWA open
+  // well within that window).
+  if (userAgent) {
+    const sixHoursAgo = new Date(Date.now() - 6 * 60 * 60 * 1000).toISOString()
+    const { error: pruneErr } = await getAdminClient()
+      .from('push_subscriptions')
+      .delete()
+      .eq('user_id', user.id)
+      .eq('user_agent', userAgent)
+      .neq('endpoint', parsed.data.endpoint)
+      .lt('updated_at', sixHoursAgo)
+    if (pruneErr) {
+      // Non-fatal — the new subscription is already saved.
+      console.error('[push/subscribe] dedupe prune failed:', pruneErr)
+    }
+  }
+
   return NextResponse.json({ success: true })
 }
