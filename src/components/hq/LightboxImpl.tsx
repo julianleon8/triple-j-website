@@ -2,15 +2,20 @@
 
 import { useCallback, useEffect, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
-import { ChevronLeft, ChevronRight, X } from 'lucide-react'
+import { ChevronLeft, ChevronRight, Star, X } from 'lucide-react'
 
-export type LightboxPhoto = { src: string; alt?: string }
+export type LightboxPhoto = { src: string; alt?: string; isCover?: boolean }
 
 export type LightboxProps = {
   photos: LightboxPhoto[]
   startIndex?: number
   open: boolean
   onClose: () => void
+  /** When provided, renders a "Set as cover" star button overlay. Called
+   *  with the index of the currently-viewed photo. Pass undefined to hide
+   *  (used by surfaces where cover-swapping isn't applicable, e.g. customer
+   *  detail pages). */
+  onSetCover?: (index: number) => void | Promise<void>
 }
 
 /**
@@ -18,8 +23,9 @@ export type LightboxProps = {
  * (desktop) + horizontal swipe (mobile) + keyboard arrows navigate. Locks
  * body scroll while open. Respects safe-area-inset-top for the close button.
  */
-export function LightboxImpl({ photos, startIndex = 0, open, onClose }: LightboxProps) {
+export function LightboxImpl({ photos, startIndex = 0, open, onClose, onSetCover }: LightboxProps) {
   const [index, setIndex] = useState(startIndex)
+  const [coverPending, setCoverPending] = useState(false)
 
   // Sync when a different start index comes in (new photo set selected).
   // React 19 idiom: previous-value comparison via useState during render,
@@ -55,6 +61,17 @@ export function LightboxImpl({ photos, startIndex = 0, open, onClose }: Lightbox
   }, [open, onClose, next, prev])
 
   const photo = photos[index]
+  const isCurrentCover = !!photo?.isCover
+
+  async function handleSetCover() {
+    if (!onSetCover || isCurrentCover || coverPending) return
+    setCoverPending(true)
+    try {
+      await onSetCover(index)
+    } finally {
+      setCoverPending(false)
+    }
+  }
 
   return (
     <AnimatePresence>
@@ -86,6 +103,25 @@ export function LightboxImpl({ photos, startIndex = 0, open, onClose }: Lightbox
             >
               {index + 1} / {photos.length}
             </div>
+          )}
+
+          {/* Set as cover (HQ-only — only renders when callback provided) */}
+          {onSetCover && (
+            <button
+              type="button"
+              onClick={(e) => { e.stopPropagation(); handleSetCover() }}
+              disabled={isCurrentCover || coverPending}
+              aria-label={isCurrentCover ? 'Already the cover' : 'Set as cover'}
+              className={`absolute left-4 z-10 inline-flex items-center gap-1.5 rounded-full px-3.5 backdrop-blur-sm text-[12px] font-bold uppercase tracking-wider transition-colors ${
+                isCurrentCover
+                  ? 'bg-amber-500/90 text-white cursor-default'
+                  : 'bg-white/15 text-white hover:bg-white/30 active:bg-white/40'
+              } ${coverPending ? 'opacity-60' : ''}`}
+              style={{ top: 'max(env(safe-area-inset-top), 1rem)', height: '36px' }}
+            >
+              <Star size={14} strokeWidth={2.2} fill={isCurrentCover ? 'currentColor' : 'none'} />
+              {isCurrentCover ? 'Cover' : coverPending ? 'Setting…' : 'Set as cover'}
+            </button>
           )}
 
           {/* Prev / next */}

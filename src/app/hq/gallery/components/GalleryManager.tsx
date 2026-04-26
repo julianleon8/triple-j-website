@@ -2,7 +2,7 @@
 
 import { useState, useRef } from 'react'
 import Image from 'next/image'
-import { Lightbox, type LightboxPhoto } from '@/components/hq/Lightbox'
+import { Lightbox } from '@/components/hq/Lightbox'
 import { PANEL_COLORS } from '@/lib/colors'
 import {
   colorOptionLabel,
@@ -200,7 +200,7 @@ export default function GalleryManager({ initialItems }: { initialItems: Gallery
   const [busyId, setBusyId] = useState<string | null>(null)
   const [uploadError, setUploadError] = useState<string | null>(null)
   const [expandedId, setExpandedId] = useState<string | null>(null)
-  const [lightbox, setLightbox] = useState<{ photos: LightboxPhoto[]; index: number } | null>(null)
+  const [lightbox, setLightbox] = useState<{ photos: Photo[]; index: number; itemId: string } | null>(null)
   const [folderName, setFolderName] = useState<string | null>(null)
   const [uploadStatuses, setUploadStatuses] = useState<UploadFileStatus[]>([])
   const fileRef = useRef<HTMLInputElement>(null)
@@ -992,8 +992,9 @@ export default function GalleryManager({ initialItems }: { initialItems: Gallery
                       onClick={() => {
                         const sorted = sortPhotos(item.gallery_photos)
                         setLightbox({
-                          photos: sorted.map((p) => ({ src: p.image_url, alt: p.alt_text ?? item.title })),
+                          photos: sorted,
                           index: 0,
+                          itemId: item.id,
                         })
                       }}
                       className="absolute inset-0 h-full w-full cursor-zoom-in"
@@ -1134,8 +1135,30 @@ export default function GalleryManager({ initialItems }: { initialItems: Gallery
       <Lightbox
         open={lightbox !== null}
         onClose={() => setLightbox(null)}
-        photos={lightbox?.photos ?? []}
+        photos={
+          lightbox?.photos.map((p) => ({
+            src: p.image_url,
+            alt: p.alt_text ?? '',
+            isCover: p.is_cover,
+          })) ?? []
+        }
         startIndex={lightbox?.index ?? 0}
+        onSetCover={async (idx) => {
+          if (!lightbox) return
+          const photo = lightbox.photos[idx]
+          const targetItem = items.find((i) => i.id === lightbox.itemId)
+          if (!targetItem) return
+          await setPhotoCover(targetItem, photo)
+          // Mirror locally so the ★ flips to "Cover" without re-opening.
+          setLightbox((prev) =>
+            prev
+              ? {
+                  ...prev,
+                  photos: prev.photos.map((p) => ({ ...p, is_cover: p.id === photo.id })),
+                }
+              : null,
+          )
+        }}
       />
     </div>
   )

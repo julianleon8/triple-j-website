@@ -79,7 +79,6 @@ export default async function GalleryDetailPage(
   const photos = sortPhotos(item.gallery_photos ?? [])
   if (photos.length === 0) notFound()
   const cover = photos[0]
-  const rest = photos.slice(1)
 
   const colors = describeGalleryColors({
     panelColor: item.panel_color,
@@ -158,17 +157,26 @@ export default async function GalleryDetailPage(
                 </TrackedPhoneLink>
               </div>
             </div>
-            <figure className="relative aspect-4/3 rounded-2xl overflow-hidden bg-ink-800 shadow-xl">
+            <a
+              href="#project-photos"
+              className="group relative block aspect-4/3 rounded-2xl overflow-hidden bg-ink-800 shadow-xl"
+              aria-label={`View all ${photos.length} photos of ${item.title}`}
+            >
               <Image
                 src={cover.image_url}
                 alt={cover.alt_text || item.title}
                 fill
                 sizes="(max-width: 768px) 100vw, 460px"
-                className="object-cover"
+                className="object-cover object-center transition-transform duration-500 group-hover:scale-[1.02]"
                 unoptimized={cover.image_url.startsWith('/')}
                 priority
               />
-            </figure>
+              {/* Click affordance overlay */}
+              <div aria-hidden="true" className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+              <span className="absolute bottom-3 right-3 inline-flex items-center gap-1.5 rounded-full bg-white/15 backdrop-blur-md text-white text-xs font-bold uppercase tracking-wider px-3 py-1.5 group-hover:bg-white/25 transition-colors">
+                View all {photos.length} photos →
+              </span>
+            </a>
           </div>
         </Container>
       </section>
@@ -178,10 +186,12 @@ export default async function GalleryDetailPage(
         <Container size="wide">
           <div className="grid md:grid-cols-[1fr_300px] gap-12">
             <div>
-              <h2 className="mb-6">Project Photos</h2>
-              {rest.length > 0 ? (
+              <h2 id="project-photos" className="mb-6 scroll-mt-24">
+                Project Photos
+              </h2>
+              {photos.length > 0 ? (
                 <PhotoLightbox
-                  photos={rest.map((p) => ({
+                  photos={photos.map((p) => ({
                     id: p.id,
                     src: p.image_url,
                     alt: p.alt_text || item.title,
