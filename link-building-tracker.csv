@@ -1,5 +1,12 @@
 Week,Status,Category,Source,URL,Cost,Date Submitted,Date Live,Notes
-1,Not started,Citation,Yelp Business,https://biz.yelp.com,Free,,,Claim listing if exists; create if not. Add 5+ photos.
+1,Not started,Brand Cleanup,Sunset triplejjjmetal.com (waiting on Abel Rivas),n/a,Free or ~$15/yr,,,Old domain still serving content. 301 redirect or shut down. See audit Issue #2.
+1,Not started,Brand Cleanup,Yelp duplicate listing consolidation,https://m.yelp.com/biz/triple-j-metal-temple,Free,,,Two Yelp listings exist; merge into canonical "Triple J Metal" one
+1,Not started,Brand Cleanup,Facebook page rename,https://www.facebook.com/Triplejmetaltx,Free,,,Rename "Triple J Metal Buildings" to "Triple J Metal" + add website URL
+1,Not started,Brand Cleanup,MapQuest NAP cleanup,https://www.mapquest.com/us/texas/triple-j-metal-construction-794014290,Free,,,Listed as "Triple J Metal Construction" — claim + rename
+1,Not started,Brand Cleanup,Yahoo Local NAP cleanup,https://local.yahoo.com/manufacturing-and-industrial-supplies/metal-industries/tx/temple/,Free,,,Same — claim + rename
+1,Not started,Reviews,Text 5 past customers for Google reviews,n/a,Free,,,#1 GBP ranking factor — Mexicano/Ranch/Killeen/Taylor/Waco customers
+1,Not started,Reviews,Text 5 past customers for website link/mention,n/a,Free,,,Ranches churches businesses with own sites
+1,Not started,Citation,Yelp Business,https://biz.yelp.com,Free,,,Claim BOTH listings (see Brand Cleanup), then add 5+ photos to canonical
 1,Not started,Citation,Bing Places,https://www.bingplaces.com,Free,,,Bing Maps + voice search citations
 1,Not started,Citation,Apple Business Connect,https://businessconnect.apple.com,Free,,,Apple Maps citations — iPhone-heavy market
 1,Not started,Citation,Google Business Profile,https://business.google.com,Free,,,Already in progress per GBP Setup Checklist
@@ -27,7 +34,6 @@ Week,Status,Category,Source,URL,Cost,Date Submitted,Date Live,Notes
 7,Not started,Earned Media,KWTX-TV pitch,https://www.kwtx.com,Free pitch,,,Same angle second outlet
 8,Not started,Earned Media,Temple Daily Telegram,https://www.tdtnews.com,Free pitch,,,Local newspaper backlink
 8,Not started,Earned Media,Killeen Daily Herald,https://kdhnews.com,Free pitch,,,Same play second outlet
-9,Not started,Reviews,5 past customer Google review requests,n/a,Free,,,#1 GBP ranking factor
-9,Not started,Reviews,5 past customer link requests,n/a,Free,,,Ranches churches businesses with own sites
+9,Not started,Reviews,Second wave of customer review requests (5 more),n/a,Free,,,After Week 1's first wave lands
 9,Not started,Affinity,Texas A&M Aggie Network,https://www.aggienetwork.com,Free if eligible,,,Only if family member is alum
 10,Not started,Earned Media,MetalMax customer-spotlight pitch,(TBD),Free,,,Only after partnership lands

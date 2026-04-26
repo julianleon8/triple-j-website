@@ -16,11 +16,32 @@ Started **2026-04-26** as part of the SEO outreach plan (Option C from the seo-b
 
 ---
 
-## Week 1 — Free citations (2 hours total)
+## Week 1 — Top priority (free, but critical) — 3-4 hours total
+
+> **Reordered 2026-04-26** based on audit findings (`SEO Online Presence Audit 2026-04-26.md`). The brand-fragmentation cleanup + customer reviews push got promoted to Week 1 because they're higher leverage than any new citation submission.
+
+### 🔥 Brand cleanup (urgent — your existing online presence is split across 4+ name variations)
 
 | Status | Source | URL | Cost | Date Submitted | Date Live | Notes |
 |---|---|---|---|---|---|---|
-| 🔴 | Yelp Business | https://biz.yelp.com | Free | | | Claim listing if it exists; create if not. Add 5+ photos. |
+| 🔴 | **Sunset triplejjjmetal.com** (waiting on Abel Rivas for Wix access) | n/a | Free (or ~$15-20/yr to keep + redirect) | | | Old domain still serving content. 301 redirect to triplejmetaltx.com OR shut down. See audit Issue #2. |
+| 🔴 | Yelp duplicate listing consolidation | https://m.yelp.com/biz/triple-j-metal-temple + https://m.yelp.com/biz/triple-j-metal-construction-temple | Free | | | TWO Yelp listings exist (canonical + retired-alias). Claim both, request merge into the "Triple J Metal" one. |
+| 🔴 | Facebook page rename | https://www.facebook.com/Triplejmetaltx | Free | | | Currently named "Triple J Metal Buildings" — rename to "Triple J Metal" + add website URL |
+| 🔴 | MapQuest NAP cleanup | https://www.mapquest.com/us/texas/triple-j-metal-construction-794014290 | Free | | | Listed as "Triple J Metal Construction" — claim + rename + add website |
+| 🔴 | Yahoo Local NAP cleanup | https://local.yahoo.com/manufacturing-and-industrial-supplies/metal-industries/tx/temple/ | Free | | | Same — claim + rename + add website |
+
+### 💎 Customer reviews push (#1 GBP ranking factor — moved from Week 9)
+
+| Status | Source | URL | Cost | Date Submitted | Date Live | Notes |
+|---|---|---|---|---|---|---|
+| 🔴 | Text 5 past customers asking for Google reviews | n/a | Free | | | Mexicano Grille / Custom Ranch / Killeen 20x20 / Taylor / Waco Tractor — text the owners using template at bottom of this file |
+| 🔴 | Text 5 past customers asking for website mention/link if they have one | n/a | Free | | | Ranches, churches, businesses with their own sites |
+
+### Free citations (the original Week 1 work)
+
+| Status | Source | URL | Cost | Date Submitted | Date Live | Notes |
+|---|---|---|---|---|---|---|
+| 🔴 | Yelp Business | https://biz.yelp.com | Free | | | Claim BOTH listings (see brand cleanup above), then add 5+ photos to the canonical one |
 | 🔴 | Bing Places | https://www.bingplaces.com | Free | | | Bing Maps + voice search citations |
 | 🔴 | Apple Business Connect | https://businessconnect.apple.com | Free | | | Apple Maps citations — iPhone-heavy market |
 | 🔴 | Google Business Profile | https://business.google.com | Free | | | Already in progress per `GBP Setup Checklist.md` — finish it |
@@ -84,13 +105,12 @@ Started **2026-04-26** as part of the SEO outreach plan (Option C from the seo-b
 | 🔴 | Temple Daily Telegram | https://www.tdtnews.com | Free pitch | | | Local newspaper backlink, hometown coverage |
 | 🔴 | Killeen Daily Herald | https://kdhnews.com | Free pitch | | | Same play, second outlet |
 
-## Week 9 — Customer reviews + affinity links
+## Week 9 — Affinity links (customer reviews moved to Week 1)
 
 | Status | Source | URL | Cost | Date Submitted | Date Live | Notes |
 |---|---|---|---|---|---|---|
-| 🔴 | 5 past customers — Google review request | n/a | Free | | | Send personalized texts. Customer reviews = #1 GBP ranking factor |
-| 🔴 | 5 past customers — ask for website mention/link if they have one | n/a | Free | | | Ranches, churches, businesses with their own sites |
 | 🔴 | Texas A&M Aggie Network | https://www.aggienetwork.com | Free if eligible | | | Affinity link if any family member is an alum |
+| 🔴 | Second wave of customer review requests (5 more past customers) | n/a | Free | | | After Week 1's first wave lands, do another batch |
 
 ## Week 10 — Supplier partnership earned media
 

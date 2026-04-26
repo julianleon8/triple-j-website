@@ -31,6 +31,7 @@ export type CompetitorSlug =
   | 'texas-custom-carports'
   | 'a-plus-sheds-carports'
   | 'premier-portables'
+  | 'temple-steel-buildings'
   | 'triple-j-metal'
 
 export type CompetitorType = 'national-kit' | 'local' | 'self'
@@ -137,6 +138,16 @@ export const COMPETITORS: Record<CompetitorSlug, Competitor> = {
     type: 'local',
     homeUrl: 'https://www.yelp.com/search?find_desc=Premier+Portables&find_loc=Temple%2C+TX',
     oneLiner: 'Temple provider of on-site custom-built sheds, carports, and patios.',
+    coverage: 'Temple, TX area',
+    asOf: '2026-04-26',
+  },
+  'temple-steel-buildings': {
+    slug: 'temple-steel-buildings',
+    name: 'Temple Steel Buildings',
+    type: 'local',
+    homeUrl: 'https://templesteelbuildingsintx.com/',
+    oneLiner:
+      'Temple-based steel building + barndominium builder led by Brice Evans, with 15+ years in welding and metal building.',
     coverage: 'Temple, TX area',
     asOf: '2026-04-26',
   },
@@ -257,6 +268,7 @@ export const LOCAL_ROUNDUP_COMPARISON_ROWS: ComparisonRow[] = [
       'texas-custom-carports': 'unknown',
       'a-plus-sheds-carports': 'unknown',
       'premier-portables': 'unknown',
+      'temple-steel-buildings': { status: 'yes', note: '15+ yrs welding' },
     },
   },
   {
@@ -268,6 +280,7 @@ export const LOCAL_ROUNDUP_COMPARISON_ROWS: ComparisonRow[] = [
       'texas-custom-carports': 'yes',
       'a-plus-sheds-carports': 'yes',
       'premier-portables': 'yes',
+      'temple-steel-buildings': 'unknown',
     },
   },
   {
@@ -279,6 +292,7 @@ export const LOCAL_ROUNDUP_COMPARISON_ROWS: ComparisonRow[] = [
       'texas-custom-carports': 'unknown',
       'a-plus-sheds-carports': 'unknown',
       'premier-portables': 'unknown',
+      'temple-steel-buildings': 'unknown',
     },
   },
   {
@@ -290,6 +304,7 @@ export const LOCAL_ROUNDUP_COMPARISON_ROWS: ComparisonRow[] = [
       'texas-custom-carports': 'partial',
       'a-plus-sheds-carports': 'yes',
       'premier-portables': 'yes',
+      'temple-steel-buildings': { status: 'yes', note: 'Barndominiums' },
     },
   },
   {
@@ -301,6 +316,7 @@ export const LOCAL_ROUNDUP_COMPARISON_ROWS: ComparisonRow[] = [
       'texas-custom-carports': 'unknown',
       'a-plus-sheds-carports': 'unknown',
       'premier-portables': 'unknown',
+      'temple-steel-buildings': 'unknown',
     },
   },
   {
@@ -312,6 +328,7 @@ export const LOCAL_ROUNDUP_COMPARISON_ROWS: ComparisonRow[] = [
       'texas-custom-carports': 'unknown',
       'a-plus-sheds-carports': 'unknown',
       'premier-portables': 'unknown',
+      'temple-steel-buildings': 'unknown',
     },
   },
 ]
@@ -561,4 +578,5 @@ export const LOCAL_ROUNDUP_SLUGS: CompetitorSlug[] = [
   'texas-custom-carports',
   'a-plus-sheds-carports',
   'premier-portables',
+  'temple-steel-buildings',
 ]
