@@ -7,6 +7,7 @@ import { Container } from "@/components/ui/Container";
 import { Reveal } from "@/components/ui/Reveal";
 import { ArrowRightIcon, PhoneIcon, PinIcon } from "@/components/ui/icons";
 import { ButtonLink } from "@/components/ui/Button";
+import { RelatedReading } from "@/components/sections/RelatedReading";
 import { BreadcrumbJsonLd } from "@/components/seo/BreadcrumbJsonLd";
 import { TrackedPhoneLink, TrackedPhoneNumber } from "@/components/site/TrackedPhone";
 import { LOCATIONS, LOCATION_SLUGS } from "@/lib/locations";
@@ -454,6 +455,11 @@ export default async function LocationPage(
           </div>
         </Container>
       </section>
+
+      {/* ─── Further reading (only when relatedPosts is populated) ──── */}
+      {loc.relatedPosts && loc.relatedPosts.length > 0 ? (
+        <RelatedReading postSlugs={loc.relatedPosts} />
+      ) : null}
 
       {/* ─── Per-city callout sections (stacked, in array order) ─────── */}
       {loc.callouts && loc.callouts.length > 0 ? (

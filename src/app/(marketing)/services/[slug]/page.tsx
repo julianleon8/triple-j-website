@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation'
 import { ButtonLink } from '@/components/ui/Button'
 import { Container } from '@/components/ui/Container'
 import { QuoteForm } from '@/components/sections/QuoteForm'
+import { RelatedReading } from '@/components/sections/RelatedReading'
 import { BreadcrumbJsonLd } from '@/components/seo/BreadcrumbJsonLd'
 import { TrackedPhoneLink } from '@/components/site/TrackedPhone'
 import { SERVICES, SERVICE_SLUGS } from '@/lib/services'
@@ -187,6 +188,11 @@ export default async function ServicePage(
           </div>
         </Container>
       </section>
+
+      {/* ── Further reading (only when relatedPosts is populated) ── */}
+      {svc.relatedPosts && svc.relatedPosts.length > 0 && (
+        <RelatedReading postSlugs={svc.relatedPosts} />
+      )}
 
       {/* ── Competitor comparison ── */}
       <section className="py-16 md:py-24 bg-white">

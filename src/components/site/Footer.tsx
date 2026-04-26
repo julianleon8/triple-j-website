@@ -152,7 +152,7 @@ export function Footer() {
               ))}
               <li className="pt-1">
                 <Link
-                  href="/service-areas"
+                  href="/locations"
                   className="text-white/45 hover:text-white text-xs uppercase tracking-wider font-semibold"
                 >
                   View all →

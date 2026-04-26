@@ -572,7 +572,7 @@ Julian dropped critical context that reframes everything built today:
 - inspiration/screenshots/ folder created for visual reference drops
 
 **New pages added (previous commit f82cc33 + refinement pass):**
-- /gallery, /about, /contact, /service-areas
+- /gallery, /about, /contact, /service-areas (/service-areas later folded into /locations on 2026-04-26)
 - /services/pbr-vs-pbu-panels
 - 9 new location pages: Salado, Waco, Georgetown, Round Rock, Lampasas, Holland, Taylor, Troy, Nolanville
 - Total: 14 location pages, 7 service pages

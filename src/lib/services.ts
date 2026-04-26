@@ -37,6 +37,9 @@ export type ServiceData = {
   faqs: FAQ[]
   militaryAngle: boolean        // show Fort Cavazos / PCS section
   relatedSlugs: string[]
+  /** Blog post slugs to feature in the inline 'Further Reading' callout.
+   *  Up to 3 render. Omit or leave empty to suppress the section. */
+  relatedPosts?: string[]
 }
 
 export const SERVICES: Record<string, ServiceData> = {
@@ -115,6 +118,7 @@ export const SERVICES: Record<string, ServiceData> = {
     ],
     militaryAngle: false,
     relatedSlugs: ['turnkey-carports-with-concrete', 'rv-covers', 'metal-garages'],
+    relatedPosts: ['welded-vs-bolted-metal-buildings-central-texas'],
   },
 
   // ─── GAP 1: Turnkey + Concrete ───────────────────────────────────────────
@@ -191,6 +195,10 @@ export const SERVICES: Record<string, ServiceData> = {
     ],
     militaryAngle: false,
     relatedSlugs: ['carports', 'metal-garages', 'barns'],
+    relatedPosts: [
+      'welded-vs-bolted-metal-buildings-central-texas',
+      'blackland-prairie-soil-metal-building-foundation',
+    ],
   },
 
   // ─── Metal Garages ───────────────────────────────────────────────────────
@@ -262,6 +270,7 @@ export const SERVICES: Record<string, ServiceData> = {
     ],
     militaryAngle: false,
     relatedSlugs: ['carports', 'turnkey-carports-with-concrete', 'barns'],
+    relatedPosts: ['welded-vs-bolted-metal-buildings-central-texas'],
   },
 
   // ─── Barns ───────────────────────────────────────────────────────────────
@@ -333,6 +342,7 @@ export const SERVICES: Record<string, ServiceData> = {
     ],
     militaryAngle: false,
     relatedSlugs: ['turnkey-carports-with-concrete', 'metal-garages', 'carports'],
+    relatedPosts: ['welded-vs-bolted-metal-buildings-central-texas'],
   },
 
   // ─── GAP 3: Speed + Military ─────────────────────────────────────────────
@@ -484,6 +494,7 @@ export const SERVICES: Record<string, ServiceData> = {
     ],
     militaryAngle: false,
     relatedSlugs: ['carports', 'rv-covers', 'metal-garages'],
+    relatedPosts: ['hoa-compliant-metal-buildings-heritage-oaks-bella-charca'],
   },
 }
 

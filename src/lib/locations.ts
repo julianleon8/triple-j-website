@@ -92,6 +92,9 @@ export type LocationData = {
    *  Permit Advisory + Ranch/Ag for Belton, etc.). Multiple callouts stack
    *  vertically in array order. */
   callouts?: CityCallout[]
+  /** Blog post slugs to feature in the inline 'Further Reading' callout.
+   *  Up to 3 render. Omit or leave empty to suppress the section. */
+  relatedPosts?: string[]
 }
 
 export const LOCATIONS: Record<string, LocationData> = {
@@ -137,6 +140,11 @@ export const LOCATIONS: Record<string, LocationData> = {
         ctaLabel: 'See Fort Cavazos page',
         ctaHref: '/military',
       },
+    ],
+    relatedPosts: [
+      'fort-cavazos-pcs-metal-carport',
+      'bell-county-metal-building-permit-guide-2025',
+      'hoa-compliant-metal-buildings-heritage-oaks-bella-charca',
     ],
   },
 
@@ -235,6 +243,10 @@ export const LOCATIONS: Record<string, LocationData> = {
         ctaLabel: 'See Round Rock builds',
         ctaHref: '/locations/round-rock',
       },
+    ],
+    relatedPosts: [
+      'fort-cavazos-pcs-metal-carport',
+      'bell-county-metal-building-permit-guide-2025',
     ],
   },
 
@@ -386,6 +398,10 @@ export const LOCATIONS: Record<string, LocationData> = {
         ctaHref: '/locations/waco',
       },
     ],
+    relatedPosts: [
+      'bell-county-metal-building-permit-guide-2025',
+      'blackland-prairie-soil-metal-building-foundation',
+    ],
   },
 
   belton: {
@@ -495,6 +511,10 @@ export const LOCATIONS: Record<string, LocationData> = {
         ctaLabel: 'See Georgetown builds',
         ctaHref: '/locations/georgetown',
       },
+    ],
+    relatedPosts: [
+      'bell-county-metal-building-permit-guide-2025',
+      'hoa-compliant-metal-buildings-heritage-oaks-bella-charca',
     ],
   },
 
@@ -629,6 +649,7 @@ export const LOCATIONS: Record<string, LocationData> = {
         ctaHref: '/services/hoa-compliant-structures',
       },
     ],
+    relatedPosts: ['blackland-prairie-soil-metal-building-foundation'],
   },
 
   georgetown: {
@@ -1015,6 +1036,7 @@ export const LOCATIONS: Record<string, LocationData> = {
       copy: "Fort Cavazos sits in western Bell County and drives the local PCS economy. Triple J Metal builds RV covers, carports, and garages same-week for active duty and veteran families across Killeen, Harker Heights, Nolanville, Copperas Cove, and Belton. Mention your service when you call or check the military box on the quote form for your discount.",
       keywords: ['Bell County military carport', 'Fort Cavazos PCS protection', 'Killeen Harker Heights military discount'],
     },
+    relatedPosts: ['bell-county-metal-building-permit-guide-2025'],
   },
 
   'mclennan-county': {

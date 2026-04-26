@@ -228,6 +228,7 @@ export default function ServicesPage() {
                     {[
                       { href: "/services/colors", label: "39 Color Options" },
                       { href: "/services/pbr-vs-pbu-panels", label: "PBR vs PBU Panel Guide" },
+                      { href: "/services/hybrid-projects", label: "Custom Hybrid Projects" },
                       { href: "/locations", label: "Service Locations" },
                     ].map((link) => (
                       <li key={link.href}>

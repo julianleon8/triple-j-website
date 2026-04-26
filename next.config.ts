@@ -29,6 +29,13 @@ const nextConfig: NextConfig = {
         destination: "/contact",
         permanent: false,
       },
+      {
+        // /service-areas folded into /locations on 2026-04-26 (near-duplicate
+        // hub pages were splitting Google's ranking signal).
+        source: "/service-areas",
+        destination: "/locations",
+        permanent: true,
+      },
     ];
   },
   async headers() {

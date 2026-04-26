@@ -61,7 +61,7 @@ _Historical: Previously listed "all code committed to GitHub, Vercel connected b
 - Multi-step QuoteForm: Step 1 (NAP+ZIP) → Step 2 (service+type+dimensions) → Step 3 (concrete+timeline+military)
 - 14 location pages: Temple, Belton, Killeen, Harker Heights, Copperas Cove, Salado, Waco, Georgetown, Round Rock, Lampasas, Holland, Taylor, Troy, Nolanville
 - 7 service pages: carports, garages, barns, rv-covers, hoa-structures, metal-porch-covers, pbr-vs-pbu-panels
-- Additional pages: /gallery, /about, /contact, /service-areas
+- Additional pages: /gallery, /about, /contact (/service-areas killed 2026-04-26 — 301 → /locations)
 - Full backend: Supabase leads table with ZIP, concrete, timeline, military fields; Resend email alerts
 - Owner dashboard at /dashboard (Supabase Auth protected)
 - inspiration/screenshots/ folder — drop zone for visual reference
