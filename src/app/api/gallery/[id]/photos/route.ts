@@ -58,7 +58,8 @@ export async function POST(
     .upload(path, bytes, { contentType: file.type, upsert: false })
 
   if (uploadError) {
-    return NextResponse.json({ error: 'Image upload failed' }, { status: 500 })
+    console.error('[gallery photos POST] storage upload failed', { path, contentType: file.type, size: bytes.byteLength, uploadError })
+    return NextResponse.json({ error: `Image upload failed: ${uploadError.message}` }, { status: 500 })
   }
 
   const { data: { publicUrl } } = getAdminClient()
@@ -89,8 +90,9 @@ export async function POST(
     .single()
 
   if (error || !photo) {
+    console.error('[gallery photos POST] gallery_photos insert failed', { itemId: id, error })
     await getAdminClient().storage.from('gallery').remove([uploadData.path])
-    return NextResponse.json({ error: 'Photo record insert failed' }, { status: 500 })
+    return NextResponse.json({ error: `Photo record insert failed: ${error?.message ?? 'unknown'}` }, { status: 500 })
   }
 
   return NextResponse.json({ photo }, { status: 201 })

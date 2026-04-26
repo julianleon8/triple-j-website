@@ -51,7 +51,8 @@ export async function POST(request: NextRequest) {
     .upload(path, bytes, { contentType: file.type, upsert: false })
 
   if (uploadError) {
-    return NextResponse.json({ error: 'Image upload failed' }, { status: 500 })
+    console.error('[gallery POST] storage upload failed', { path, contentType: file.type, size: bytes.byteLength, uploadError })
+    return NextResponse.json({ error: `Image upload failed: ${uploadError.message}` }, { status: 500 })
   }
 
   const { data: { publicUrl } } = getAdminClient()
@@ -93,7 +94,8 @@ export async function POST(request: NextRequest) {
     .single()
 
   if (error || !item) {
-    return NextResponse.json({ error: 'Database insert failed' }, { status: 500 })
+    console.error('[gallery POST] gallery_items insert failed', { error })
+    return NextResponse.json({ error: `Database insert failed: ${error?.message ?? 'unknown'}` }, { status: 500 })
   }
 
   // Create the initial cover photo row in gallery_photos
@@ -110,10 +112,11 @@ export async function POST(request: NextRequest) {
     .single()
 
   if (photoError) {
+    console.error('[gallery POST] gallery_photos insert failed', { itemId: item.id, photoError })
     // Roll back the item insert so we don't leave an orphan
     await getAdminClient().from('gallery_items').delete().eq('id', item.id)
     await getAdminClient().storage.from('gallery').remove([uploadData.path])
-    return NextResponse.json({ error: 'Photo record insert failed' }, { status: 500 })
+    return NextResponse.json({ error: `Photo record insert failed: ${photoError.message}` }, { status: 500 })
   }
 
   return NextResponse.json({ item: { ...item, gallery_photos: [coverPhoto] } }, { status: 201 })

@@ -171,7 +171,18 @@ async function fetchWithRetry(input: RequestInfo, init: RequestInit): Promise<Re
       })
       // Don't retry client errors — they won't get better.
       if (res.ok || (res.status >= 400 && res.status < 500)) return res
-      lastErr = new Error(`Server returned ${res.status}`)
+      // Read the JSON error body on the final attempt so the user sees the
+      // real reason, not just the status code. Clone first — the caller can't
+      // re-read a consumed body, and we still want to return the original
+      // response on the off chance someone wants the raw status.
+      const detail = await res
+        .clone()
+        .json()
+        .then((j) => (j && typeof j.error === 'string' ? j.error : null))
+        .catch(() => null)
+      lastErr = new Error(
+        detail ? `Server returned ${res.status}: ${detail}` : `Server returned ${res.status}`,
+      )
     } catch (err) {
       lastErr = err
     }
