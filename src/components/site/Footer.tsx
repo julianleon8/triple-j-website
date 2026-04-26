@@ -185,6 +185,14 @@ export function Footer() {
                   Fort Cavazos Military
                 </Link>
               </li>
+              <li>
+                <Link
+                  href="/best-metal-carport-builders-temple-tx"
+                  className="text-white/70 hover:text-white transition-colors"
+                >
+                  Compare Builders
+                </Link>
+              </li>
               <li className="pt-1">
                 <Link
                   href="/#quote"

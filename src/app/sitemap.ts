@@ -1,6 +1,7 @@
 import type { MetadataRoute } from "next";
 
 import { BLOG_POSTS } from "@/lib/blog";
+import { ALTERNATIVES_SLUGS } from "@/lib/competitors";
 import { LOCATIONS } from "@/lib/locations";
 import { SERVICE_SLUGS } from "@/lib/services";
 import { getSiteUrl } from "@/lib/site-url";
@@ -19,6 +20,7 @@ const STATIC_PATHS = [
   "/services/colors",
   "/services/pbr-vs-pbu-panels",
   "/services/hybrid-projects",
+  "/best-metal-carport-builders-temple-tx",
   "/privacy",
   "/terms",
 ] as const;
@@ -69,6 +71,15 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       lastModified: now,
       changeFrequency: "monthly",
       priority: 0.8,
+    });
+  }
+
+  for (const slug of ALTERNATIVES_SLUGS) {
+    entries.push({
+      url: `${base}/alternatives/${slug}`,
+      lastModified: now,
+      changeFrequency: "monthly",
+      priority: 0.7,
     });
   }
 
