@@ -5,6 +5,7 @@ import type { Metadata } from "next";
 import { ButtonLink } from "@/components/ui/Button";
 import { Container } from "@/components/ui/Container";
 import { ArrowRightIcon, PhoneIcon } from "@/components/ui/icons";
+import { GoogleAdsConversion } from "@/components/seo/GoogleAdsConversion";
 import { TrackedPhoneLink, TrackedPhoneNumber } from "@/components/site/TrackedPhone";
 import { SITE } from "@/lib/site";
 
@@ -42,6 +43,12 @@ const NEXT_STEPS = [
 export default function ThankYouPage() {
   return (
     <>
+      {/* Fires the Google Ads "lead submitted" conversion exactly once,
+          on every /thank-you mount. Server-side QuoteForm always lands here
+          on success, so this is the canonical conversion point. No-ops when
+          NEXT_PUBLIC_GOOGLE_ADS_ID + _CONVERSION_LABEL aren't set. */}
+      <GoogleAdsConversion />
+
       {/* Hero with the same atmospheric language as the homepage hero,
           minus the ken-burns animation (this page is a closer, not an
           opener). */}

@@ -4,6 +4,7 @@ import { Footer } from "@/components/site/Footer";
 import { Header } from "@/components/site/Header";
 import { MobileCallBar } from "@/components/site/MobileCallBar";
 import { PreFooterCta } from "@/components/site/PreFooterCta";
+import { GoogleAdsTag } from "@/components/seo/GoogleAdsTag";
 import { OrganizationJsonLd } from "@/components/seo/OrganizationJsonLd";
 
 /**
@@ -31,6 +32,7 @@ export default function MarketingLayout({
       style={{ colorScheme: "light" }}
     >
       <OrganizationJsonLd />
+      <GoogleAdsTag />
       <Header />
       <main className="flex-1">{children}</main>
       <PreFooterCta />
