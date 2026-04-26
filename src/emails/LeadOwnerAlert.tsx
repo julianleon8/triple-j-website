@@ -1,5 +1,5 @@
-import { Heading, Text, Section, Row, Column, Link } from '@react-email/components'
-import BrandLayout, { BRAND_COLOR } from './BrandLayout'
+import { Heading, Text, Section, Row, Column, Link, Hr } from '@react-email/components'
+import BrandLayout, { BRAND_COLOR, INK_900 } from './BrandLayout'
 
 interface LeadOwnerAlertProps {
   leadId: string
@@ -40,17 +40,21 @@ export default function LeadOwnerAlert(props: LeadOwnerAlertProps) {
     submittedAt,
   } = props
 
-  const urgency = timeline === 'asap'
-    ? { label: '⚡ ASAP', color: '#dc2626' }
+  const isHot = timeline === 'asap'
+  const urgencyBadge = isHot
+    ? { label: '⚡ ASAP', bg: '#dc2626' }
     : timeline === 'this_week'
-    ? { label: 'This Week', color: '#d97706' }
+    ? { label: 'This Week', bg: '#d97706' }
     : null
 
+  const phoneClean = phone.replace(/\D/g, '')
+  const hqUrl = `https://www.triplejmetaltx.com/hq/leads/${leadId}`
+
   const rows: [string, React.ReactNode][] = [
-    ['Name', name],
-    ['Phone', <Link key="p" href={`tel:${phone}`} style={{ color: BRAND_COLOR, fontWeight: 700 }}>{phone}</Link>],
+    ['Name', <strong key="n" style={{ color: '#0a0e1a' }}>{name}</strong>],
+    ['Phone', <Link key="p" href={`tel:${phone}`} style={dataLink}>{phone}</Link>],
   ]
-  if (email) rows.push(['Email', email])
+  if (email) rows.push(['Email', <Link key="e" href={`mailto:${email}`} style={dataLink}>{email}</Link>])
   rows.push(['Location', `${city}${zip ? ` (${zip})` : ''}`])
   rows.push(['Service', serviceType.replace(/_/g, ' ')])
   if (structureType) rows.push(['Steel type', structureType])
@@ -58,87 +62,212 @@ export default function LeadOwnerAlert(props: LeadOwnerAlertProps) {
   if (needsConcreteLabel) rows.push(['Concrete pad', needsConcreteLabel])
   if (currentSurfaceLabel) rows.push(['Current surface', currentSurfaceLabel])
   if (timelineLabel) rows.push(['Timeline', timelineLabel])
-  rows.push(['Military/FR', isMilitary ? '✅ Yes — apply discount' : 'No'])
-  if (message) rows.push(['Notes', message])
+  rows.push(['Military/FR', isMilitary ? '✅ Yes — apply 7% discount' : 'No'])
+  if (message) rows.push(['Notes', <em key="m" style={{ color: '#374151' }}>&ldquo;{message}&rdquo;</em>])
 
   return (
-    <BrandLayout preview={`New lead — ${name} (${city}) — ${serviceType}`}>
-      <Heading as="h2" style={{ fontSize: 18, fontWeight: 700, margin: '0 0 4px', color: '#111827' }}>
-        New lead
+    <BrandLayout preview={`${isHot ? '⚡ HOT — ' : ''}${name} · ${city} · ${serviceType.replace(/_/g, ' ')}`}>
+      {/* ── Eyebrow + headline ────────────────────────────────────── */}
+      <Text style={eyebrow}>
+        {isHot ? '⚡ HOT LEAD' : 'NEW LEAD'} · {submittedAt}
+      </Text>
+      <Heading as="h1" style={headline}>
+        {name}
       </Heading>
-      <Text style={{ fontSize: 12, color: '#6b7280', margin: '0 0 16px' }}>
-        {urgency && (
-          <span style={{
-            background: urgency.color,
-            color: '#fff',
-            padding: '2px 8px',
-            borderRadius: 4,
-            fontSize: 11,
-            fontWeight: 700,
-            marginRight: 8,
-          }}>
-            {urgency.label}
-          </span>
-        )}
-        {isMilitary && (
-          <span style={{
-            background: '#1d4ed8',
-            color: '#fff',
-            padding: '2px 8px',
-            borderRadius: 4,
-            fontSize: 11,
-            fontWeight: 700,
-            marginRight: 8,
-          }}>
-            ⭐ Military/FR
-          </span>
-        )}
-        {submittedAt}
+      <Text style={subhead}>
+        {city}{zip ? `, TX ${zip}` : ', TX'} · {serviceType.replace(/_/g, ' ')}
+        {sizeLine ? ` · ${sizeLine}` : ''}
       </Text>
 
-      <Section style={{ border: '1px solid #e5e7eb', borderRadius: 8, overflow: 'hidden' }}>
+      {/* ── Urgency / military badges ─────────────────────────────── */}
+      {(urgencyBadge || isMilitary) && (
+        <Section style={{ margin: '14px 0 22px' }}>
+          {urgencyBadge && (
+            <span style={{ ...badgeBase, background: urgencyBadge.bg }}>
+              {urgencyBadge.label}
+            </span>
+          )}
+          {isMilitary && (
+            <span style={{ ...badgeBase, background: BRAND_COLOR, marginLeft: urgencyBadge ? 6 : 0 }}>
+              ⭐ MILITARY / FR
+            </span>
+          )}
+        </Section>
+      )}
+
+      {/* ── Quick-action buttons ──────────────────────────────────── */}
+      <Section style={{ margin: '0 0 22px' }}>
+        <table cellPadding={0} cellSpacing={0} role="presentation" style={{ width: '100%' }}>
+          <tr>
+            <td style={{ paddingRight: 6 }}>
+              <Link href={`tel:${phoneClean}`} style={ctaPrimary}>
+                📞 Call now
+              </Link>
+            </td>
+            <td style={{ paddingLeft: 6, paddingRight: 6 }}>
+              <Link href={`sms:${phoneClean}`} style={ctaSecondary}>
+                💬 Text
+              </Link>
+            </td>
+            <td style={{ paddingLeft: 6 }}>
+              <Link href={hqUrl} style={ctaSecondary}>
+                📋 Open in HQ
+              </Link>
+            </td>
+          </tr>
+        </table>
+      </Section>
+
+      {/* ── Detail table ──────────────────────────────────────────── */}
+      <Text style={sectionLabel}>LEAD DETAILS</Text>
+      <Section style={dataCard}>
         {rows.map(([label, value], i) => (
           <Row key={label} style={{ background: i % 2 === 0 ? '#f9fafb' : '#ffffff' }}>
-            <Column style={{ padding: '10px 14px', fontWeight: 600, fontSize: 13, color: '#374151', width: 130, verticalAlign: 'top' }}>
-              {label}
-            </Column>
-            <Column style={{ padding: '10px 14px', fontSize: 13, color: '#111827' }}>
-              {value}
-            </Column>
+            <Column style={dataLabelCell}>{label}</Column>
+            <Column style={dataValueCell}>{value}</Column>
           </Row>
         ))}
       </Section>
 
-      <Text style={{ color: '#9ca3af', fontSize: 11, margin: '20px 0 0' }}>
-        Lead ID: {leadId}
+      <Hr style={{ borderColor: '#e5e7eb', margin: '20px 0 12px' }} />
+      <Text style={metaLine}>
+        Lead ID: <code style={{ background: '#f3f4f6', padding: '2px 6px', borderRadius: 4, fontSize: 11 }}>{leadId}</code>
       </Text>
     </BrandLayout>
   )
 }
 
 export function leadOwnerAlertText(props: LeadOwnerAlertProps): string {
+  const isHot = props.timeline === 'asap'
   const lines = [
-    `NEW LEAD — Triple J Metal`,
+    `${isHot ? '⚡ HOT LEAD' : 'NEW LEAD'} — ${props.name}`,
+    `${props.city}${props.zip ? `, TX ${props.zip}` : ', TX'} · ${props.serviceType.replace(/_/g, ' ')}`,
     ``,
-    `Name: ${props.name}`,
-    `Phone: ${props.phone}`,
+    `📞 ${props.phone}`,
   ]
-  if (props.email) lines.push(`Email: ${props.email}`)
-  lines.push(`Location: ${props.city}${props.zip ? ` (${props.zip})` : ''}`)
-  lines.push(`Service: ${props.serviceType.replace(/_/g, ' ')}`)
-  if (props.structureType) lines.push(`Steel type: ${props.structureType}`)
+  if (props.email) lines.push(`✉️  ${props.email}`)
+  lines.push(``)
+  lines.push(`— DETAILS —`)
+  if (props.structureType) lines.push(`Steel: ${props.structureType}`)
   if (props.sizeLine) lines.push(`Size: ${props.sizeLine}`)
-  if (props.needsConcreteLabel) lines.push(`Concrete pad: ${props.needsConcreteLabel}`)
-  if (props.currentSurfaceLabel) lines.push(`Current surface: ${props.currentSurfaceLabel}`)
+  if (props.needsConcreteLabel) lines.push(`Concrete: ${props.needsConcreteLabel}`)
+  if (props.currentSurfaceLabel) lines.push(`Surface: ${props.currentSurfaceLabel}`)
   if (props.timelineLabel) lines.push(`Timeline: ${props.timelineLabel}`)
-  lines.push(`Military/FR: ${props.isMilitary ? 'Yes — apply discount' : 'No'}`)
+  lines.push(`Military/FR: ${props.isMilitary ? 'Yes — apply 7% discount' : 'No'}`)
   if (props.message) lines.push(`Notes: ${props.message}`)
   lines.push(``)
-  lines.push(`Lead ID: ${props.leadId}`)
+  lines.push(`Open in HQ: https://www.triplejmetaltx.com/hq/leads/${props.leadId}`)
   lines.push(``)
   lines.push(`Submitted: ${props.submittedAt}`)
-  lines.push(``)
-  lines.push(`—`)
-  lines.push(`Triple J Metal · 3319 Tem-Bel Ln, Temple, TX 76502 · 254-346-7764`)
+  lines.push(`Lead ID: ${props.leadId}`)
   return lines.join('\n')
+}
+
+/* ── Styles ────────────────────────────────────────────────────── */
+
+const eyebrow = {
+  color: BRAND_COLOR,
+  fontSize: '11px',
+  fontWeight: 700,
+  letterSpacing: '0.18em',
+  textTransform: 'uppercase' as const,
+  margin: '0 0 6px',
+}
+
+const headline = {
+  color: INK_900,
+  fontSize: '28px',
+  fontWeight: 800,
+  letterSpacing: '-0.01em',
+  lineHeight: 1.1,
+  margin: '0 0 6px',
+}
+
+const subhead = {
+  color: '#374151',
+  fontSize: '14px',
+  margin: 0,
+}
+
+const badgeBase = {
+  display: 'inline-block',
+  color: '#ffffff',
+  padding: '4px 10px',
+  borderRadius: 4,
+  fontSize: 11,
+  fontWeight: 700,
+  letterSpacing: '0.05em',
+  textTransform: 'uppercase' as const,
+}
+
+const ctaPrimary = {
+  display: 'block',
+  background: BRAND_COLOR,
+  color: '#ffffff',
+  textAlign: 'center' as const,
+  padding: '12px 8px',
+  borderRadius: 8,
+  fontSize: 14,
+  fontWeight: 700,
+  textDecoration: 'none',
+  letterSpacing: '0.01em',
+}
+
+const ctaSecondary = {
+  display: 'block',
+  background: '#f3f4f6',
+  color: INK_900,
+  textAlign: 'center' as const,
+  padding: '12px 8px',
+  borderRadius: 8,
+  fontSize: 14,
+  fontWeight: 700,
+  textDecoration: 'none',
+  letterSpacing: '0.01em',
+  border: '1px solid #e5e7eb',
+}
+
+const sectionLabel = {
+  color: '#6b7280',
+  fontSize: '11px',
+  fontWeight: 700,
+  letterSpacing: '0.16em',
+  textTransform: 'uppercase' as const,
+  margin: '0 0 8px',
+}
+
+const dataCard = {
+  border: '1px solid #e5e7eb',
+  borderRadius: 8,
+  overflow: 'hidden',
+}
+
+const dataLabelCell = {
+  padding: '10px 14px',
+  fontWeight: 600,
+  fontSize: 12,
+  color: '#6b7280',
+  width: 120,
+  verticalAlign: 'top' as const,
+  textTransform: 'uppercase' as const,
+  letterSpacing: '0.04em',
+}
+
+const dataValueCell = {
+  padding: '10px 14px',
+  fontSize: 14,
+  color: '#111827',
+  verticalAlign: 'top' as const,
+}
+
+const dataLink = {
+  color: BRAND_COLOR,
+  fontWeight: 700,
+  textDecoration: 'none',
+}
+
+const metaLine = {
+  color: '#9ca3af',
+  fontSize: 11,
+  margin: 0,
 }
