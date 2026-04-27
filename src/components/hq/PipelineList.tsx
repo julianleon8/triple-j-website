@@ -7,6 +7,7 @@ import { LEAD_STATUS_CLASS, PERMIT_STATUS_CLASS, QUOTE_STATUS_CLASS, JOB_STATUS_
 import { ListRow } from './ListRow'
 import { MessagesRow } from './MessagesRow'
 import { SwipeActions, type SwipeAction } from './SwipeActions'
+import { ForceDeleteWrapper } from './ForceDeleteWrapper'
 
 type FilterKey = 'all' | PipelineKind | 'done'
 
@@ -39,9 +40,11 @@ type PipelineListProps = {
   hideFilters?: boolean
   /** 'default' = ListRow (Jobs, Funnel). 'messages' = MessagesRow + force-hide filter pills (Today's feed, Customers). */
   variant?: 'default' | 'messages'
+  /** Long-press any row to Force Delete (with FK cleanup). Used on the Needs Attention feed. */
+  enableForceDelete?: boolean
 }
 
-export function PipelineList({ rows: initialRows, paramKey = 'type', hideFilters = false, variant = 'default' }: PipelineListProps) {
+export function PipelineList({ rows: initialRows, paramKey = 'type', hideFilters = false, variant = 'default', enableForceDelete = false }: PipelineListProps) {
   const filtersHidden = hideFilters || variant === 'messages'
   const router = useRouter()
   const searchParams = useSearchParams()
@@ -169,11 +172,18 @@ export function PipelineList({ rows: initialRows, paramKey = 'type', hideFilters
           <ul className="divide-y divide-(--border-subtle) overflow-hidden rounded-xl border border-(--border-subtle) bg-(--surface-2)">
             {filtered.map((row) => {
               const actions = actionsForRow(row, patchRow, removeRow)
+              const inner = (
+                <SwipeActions leading={actions.leading} trailing={actions.trailing} hapticOnCommit="success">
+                  {variant === 'messages' ? <MessagesRow row={row} /> : <ListRow row={row} />}
+                </SwipeActions>
+              )
               return (
                 <li key={`${row.kind}-${row.id}`}>
-                  <SwipeActions leading={actions.leading} trailing={actions.trailing} hapticOnCommit="success">
-                    {variant === 'messages' ? <MessagesRow row={row} /> : <ListRow row={row} />}
-                  </SwipeActions>
+                  {enableForceDelete ? (
+                    <ForceDeleteWrapper row={row} onDeleted={removeRow}>
+                      {inner}
+                    </ForceDeleteWrapper>
+                  ) : inner}
                 </li>
               )
             })}
