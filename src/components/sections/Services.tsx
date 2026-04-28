@@ -11,10 +11,8 @@ import { ArrowRightIcon } from "@/components/ui/icons";
  * brand-blue accents). Card treatment: photo-dominant with dark gradient
  * overlay + title overlaid on photo, body blurb in white panel below.
  *
- * Photo notes: barns + rv-covers cards reuse adjacent imagery (no true barn
- * or RV-cover photo in the library yet). Heavy gradient + the title text
- * doing semantic work makes the mismatch read as intentional brand language
- * rather than missing assets.
+ * Card images sourced from real Triple J jobs in the Supabase gallery so
+ * each card matches the offering it represents (no carport-as-barn stand-ins).
  */
 
 const SERVICE_CARDS = [
@@ -37,14 +35,19 @@ const SERVICE_CARDS = [
     title: "Metal Barns",
     blurb:
       "Agricultural and ranch barns engineered for Texas wind loads and hailstorm resistance.",
-    image: "/images/double-carport-install.jpg",
+    // Custom Ranch Build (in progress) — Temple TX hybrid red-iron build,
+    // closest thing in the gallery to a true ranch barn.
+    image:
+      "https://idrbgxlvvnqduvbqtaei.supabase.co/storage/v1/object/public/gallery/items/e83d6a82-6138-40e1-a60b-c4fe4b7d8a30/1777195267509.jpg",
   },
   {
     slug: "rv-covers",
     title: "RV & Boat Covers",
     blurb:
       "Extra-tall clearance structures for RVs, boats, trailers, and oversize equipment storage.",
-    image: "/images/porch-cover-lean-to.jpg",
+    // RV Cover 20×35 (Double-Wide) — Copperas Cove TX bolted build.
+    image:
+      "https://idrbgxlvvnqduvbqtaei.supabase.co/storage/v1/object/public/gallery/1777251893180.jpg",
   },
 ] as const;
 

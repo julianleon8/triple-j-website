@@ -109,8 +109,10 @@ type ServiceChip = { value: ServiceType; label: string; sublabel: string; image:
 const SERVICE_CHIPS: readonly ServiceChip[] = [
   { value: "carport",  label: "Carport",     sublabel: "Welded or bolted",  image: "/images/carport-gable-residential.jpg" },
   { value: "garage",   label: "Metal Garage", sublabel: "Fully enclosed",   image: "/images/metal-garage-green.jpg" },
-  { value: "barn",     label: "Metal Barn",  sublabel: "Ranch & ag",        image: "/images/double-carport-install.jpg" },
-  { value: "rv_cover", label: "RV / Boat",   sublabel: "Tall clearance",    image: "/images/porch-cover-lean-to.jpg" },
+  // Real Triple J ranch build (Temple) and RV cover (Copperas Cove) from /hq/gallery —
+  // matches the Services grid swap so the lead-form chip imagery is consistent.
+  { value: "barn",     label: "Metal Barn",  sublabel: "Ranch & ag",        image: "https://idrbgxlvvnqduvbqtaei.supabase.co/storage/v1/object/public/gallery/items/e83d6a82-6138-40e1-a60b-c4fe4b7d8a30/1777195267509.jpg" },
+  { value: "rv_cover", label: "RV / Boat",   sublabel: "Tall clearance",    image: "https://idrbgxlvvnqduvbqtaei.supabase.co/storage/v1/object/public/gallery/1777251893180.jpg" },
 ];
 
 function ServiceChipCard({

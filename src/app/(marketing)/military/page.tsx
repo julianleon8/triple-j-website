@@ -170,7 +170,7 @@ function jsonLd(baseUrl: string) {
 export default function MilitaryPage() {
   const baseUrl = getSiteUrl()
   return (
-    <>
+    <div data-theme="military">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
@@ -190,11 +190,19 @@ export default function MilitaryPage() {
             sizes="100vw"
             className="object-cover opacity-30"
           />
+          {/* Light-tactical overlay — faint digital-camo tile behind the
+              dark gradient so the hero reads "tactical" without becoming a
+              literal camo wallpaper. Opacity stays low (~10%) to preserve
+              text legibility. */}
+          <div
+            aria-hidden="true"
+            className="absolute inset-0 bg-mil-camo opacity-10 mix-blend-overlay"
+          />
           <div
             className="absolute inset-0"
             style={{
               background:
-                'linear-gradient(135deg, rgba(0,0,0,0.92) 0%, rgba(15,23,42,0.85) 50%, rgba(30,107,214,0.25) 100%)',
+                'linear-gradient(135deg, rgba(0,0,0,0.92) 0%, rgba(15,23,42,0.85) 50%, rgba(75,83,32,0.35) 100%)',
             }}
             aria-hidden="true"
           />
@@ -499,6 +507,6 @@ export default function MilitaryPage() {
           </Reveal>
         </Container>
       </section>
-    </>
+    </div>
   )
 }
