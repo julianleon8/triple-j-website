@@ -183,10 +183,7 @@ export const LOCATIONS: Record<string, LocationData> = {
     },
 
     // ── NEW personalization (military-first per 2026-04-23 design pass) ──
-    // Photo TODO: hero + landmark images currently use placeholder Triple J
-    // photos. Replace with real Fort Cavazos main gate + Stillhouse Hollow
-    // shots when sourced from Unsplash / Pexels — alt text already accurate.
-    heroImage: '/images/red-iron-frame-hero.jpg',
+    heroImage: '/images/locations/killeen/fort-cavazos.jpg',
     heroImageAlt: 'Fort Cavazos main gate near Killeen, Texas',
     customHeadline: {
       line1: 'Built in Killeen.',
@@ -200,16 +197,17 @@ export const LOCATIONS: Record<string, LocationData> = {
       "Killeen runs on Fort Cavazos. PCS season hits, hail season hits, and military families need vehicles and equipment under cover before household goods arrive. Triple J Metal is 25 minutes up the road in Temple — a real local crew with welded red-iron carports, RV covers, and garages built same-week. We honor a 7% Fort Cavazos military and first-responder discount on every install. Hablamos español con Juan y Freddy.",
     landmarks: [
       {
-        name: 'Fort Cavazos',
+        name: 'Bella Charca & Heritage Oaks',
         blurb:
-          "We build for the Fort Cavazos community across every PCS season — from incoming families needing carports to retiring veterans protecting RVs and tools.",
-        // imageSrc TODO: Unsplash search 'fort hood gate' / 'army base gate texas'
+          "Killeen isn't just the back gate of Cavazos. Bella Charca and Heritage Oaks are the HOA-grade subdivisions where the higher-end residential market lives — concealed-fastener panels, color-matched trim, builds that read residential, not utility. We've cleared architectural review boards there before.",
+        imageSrc: '/images/locations/killeen/bella-charca.jpg',
+        imageAlt: 'Bella Charca subdivision in Killeen, Texas — HOA-grade residential development',
       },
       {
         name: 'Stillhouse Hollow Lake',
         blurb:
           "South Killeen's lake-and-marina country. RVs, boats, and trailers belong under cover before hail season — we build extra-tall clearance covers same-week.",
-        // imageSrc TODO: Unsplash search 'central texas lake' / 'stillhouse hollow'
+        // imageSrc TODO: lake / marina shot
       },
     ],
     neighborhoods: [
@@ -330,12 +328,8 @@ export const LOCATIONS: Record<string, LocationData> = {
     ],
 
     // ── NEW personalization (HQ-pride + lakeside lifestyle, per 2026-04-23 design pass) ──
-    // Photo TODO: hero + 3 landmark images currently use placeholder (hero = existing
-    // Triple J residential photo). Replace with real Lake Belton + Santa Fe Depot +
-    // Scott & White + Temple-area shots when sourced from Unsplash/Pexels and dropped
-    // into /public/images/locations/temple/. Alt text already accurate.
-    heroImage: '/images/carport-gable-residential.jpg',
-    heroImageAlt: 'Lake Belton near Temple, Texas',
+    heroImage: '/images/locations/temple/temple-aerial.jpg',
+    heroImageAlt: 'Aerial drone view of Temple, Texas — Triple J Metal home base',
     customHeadline: {
       line1: 'Built in Temple.',
       line2: 'Built where we live.',
@@ -351,19 +345,22 @@ export const LOCATIONS: Record<string, LocationData> = {
         name: 'Lake Belton',
         blurb:
           "Temple's weekend center. Lakeside properties need RV covers, boat covers, and shoreline barns engineered for Lake Belton's wind exposure — we build same-week before storm season.",
-        // imageSrc TODO: Unsplash 'lake belton texas' / 'central texas lake'
+        imageSrc: '/images/locations/temple/lake-belton.jpg',
+        imageAlt: 'Lake Belton shoreline near Temple, Texas',
       },
       {
-        name: 'Santa Fe Depot',
+        name: 'Downtown Temple & Santa Fe Heritage',
         blurb:
-          "The 1910 depot anchors downtown Temple and the city's railroad heritage. Built to last over a century — the same standard we hold ourselves to with welded red-iron framing.",
-        // imageSrc TODO: Unsplash 'santa fe depot temple texas' / 'historic train depot texas'
+          "The 1910 Santa Fe depot anchors downtown Temple and the city's railroad heritage. Built to last over a century — the same standard we hold ourselves to with welded red-iron framing.",
+        imageSrc: '/images/locations/temple/downtown-temple.jpg',
+        imageAlt: 'Downtown Temple, Texas — historic Santa Fe railroad district',
       },
       {
         name: 'Scott & White',
         blurb:
           "Baylor Scott & White is Temple's biggest employer and pulls professional families into Western Hills, Heritage Acres, and the lakeside developments — the residential market we know best.",
-        // imageSrc TODO: Unsplash 'medical center texas' / 'modern hospital exterior'
+        imageSrc: '/images/locations/temple/scott-white-temple.webp',
+        imageAlt: 'Baylor Scott & White Medical Center in Temple, Texas',
       },
     ],
     neighborhoods: [
@@ -435,12 +432,8 @@ export const LOCATIONS: Record<string, LocationData> = {
     ],
 
     // ── NEW personalization (county-seat authority + range, per 2026-04-23 design pass) ──
-    // Photo TODO: hero + 3 landmark images currently use placeholder Triple J photos.
-    // Replace with real Bell County Courthouse + Lake Belton + Pendleton ranch + downtown
-    // Belton shots when sourced from Unsplash/Pexels into /public/images/locations/belton/.
-    // Alt text already accurate.
-    heroImage: '/images/double-carport-install.jpg',
-    heroImageAlt: 'Bell County Courthouse in downtown Belton, Texas',
+    heroImage: '/images/locations/belton/downtown-belton.jpg',
+    heroImageAlt: 'Downtown Belton, Texas — Bell County seat',
     customHeadline: {
       line1: 'Built in Belton.',
       line2: "Bell County's home crew.",
@@ -456,19 +449,21 @@ export const LOCATIONS: Record<string, LocationData> = {
         name: 'Bell County Courthouse',
         blurb:
           "1885 limestone landmark and the seat of permit authority for the whole county. We've pulled permits through these doors more times than we can count — it's part of what 'local' actually means.",
-        // imageSrc TODO: Unsplash 'bell county courthouse' / 'historic texas courthouse'
+        imageSrc: '/images/locations/belton/bell-county-courthouse.jpg',
+        imageAlt: '1885 Bell County Courthouse in downtown Belton, Texas',
       },
       {
         name: 'Lake Belton & BLORA',
         blurb:
           "Belton's lake country runs along the western edge — Lakeshore Drive properties, weekend barns, RV and boat covers. Lakeside structures we've been building for years.",
-        // imageSrc TODO: Unsplash 'lake belton texas' / 'central texas lake'
+        imageSrc: '/images/locations/belton/lake-belton.jpg',
+        imageAlt: 'Lake Belton shoreline in Belton, Texas',
       },
       {
         name: 'Pendleton & Ranch Country',
         blurb:
           "South Bell County opens into pasture, ranch land, and rural property. Welded red-iron barns, equipment sheds, and lean-tos — the structures rural buyers actually need.",
-        // imageSrc TODO: Unsplash 'texas ranch pasture' / 'rural texas farm'
+        // imageSrc TODO: ranch / pasture shot
       },
     ],
     neighborhoods: [
@@ -582,14 +577,11 @@ export const LOCATIONS: Record<string, LocationData> = {
     ],
 
     // ── NEW personalization (closest neighbor + supplier proximity + ag/Magnolia split + bilingual) ──
-    // Photo TODO: hero + 3 landmark images currently use existing Triple J photos.
-    // Replace with Waco landmark shots (Magnolia silos, Lake Waco, Baylor) when sourced
-    // from Unsplash/Pexels into /public/images/locations/waco/. Alt text already accurate.
     // Note (per Decisions.md 2026-04-23): supplier-agnostic positioning — never name
     // a specific Waco supplier (e.g. MetalMax) in customer copy. Phrase as "regional
     // Texas steel suppliers" or "supplier relationships rooted in McLennan County."
-    heroImage: '/images/carport-concrete-rural.jpg',
-    heroImageAlt: 'McLennan County ranch property with metal building near Waco, Texas',
+    heroImage: '/images/locations/waco/magnolia-silos.jpg',
+    heroImageAlt: 'Magnolia Silos in downtown Waco, Texas',
     customHeadline: {
       line1: 'Built for Waco.',
       line2: "McLennan County's welded crew.",
@@ -605,16 +597,22 @@ export const LOCATIONS: Record<string, LocationData> = {
         name: 'Magnolia Market & Silos',
         blurb:
           "Chip and Joanna's silos reset what residential design looks like in Central Texas. Board & Batten siding, black-trim color contrast, farmhouse pitch — the Waco aesthetic our HOA-compliant carports are dialed in for.",
+        imageSrc: '/images/locations/waco/magnolia-silos.jpg',
+        imageAlt: 'Magnolia Market & Silos in downtown Waco, Texas',
       },
       {
         name: 'Lake Waco',
         blurb:
           "60+ miles of shoreline and the weekend center for west McLennan. Lakeside RV covers, boat covers, and shoreline barns are routine work — we engineer for the wind exposure that comes with open lake frontage.",
+        imageSrc: '/images/locations/waco/lake-waco.jpg',
+        imageAlt: 'Lake Waco shoreline in McLennan County, Texas',
       },
       {
         name: 'Baylor University',
         blurb:
           "Baylor pulls professional families into Woodway and Hewitt and a steady student-rental market closer in. The neighborhoods around campus are mixed — HOA-compliant secondary structures and rental-property carports both come up regularly.",
+        imageSrc: '/images/locations/waco/baylor.jpg',
+        imageAlt: 'Baylor University campus in Waco, Texas',
       },
     ],
     neighborhoods: [
