@@ -149,6 +149,7 @@ export function PartnerInquiryForm() {
             value={form.company_type}
             onChange={(e) => update('company_type', e.target.value as CompanyType | '')}
             className={inputCls}
+            aria-label="Company type"
           >
             <option value="">Select…</option>
             {COMPANY_TYPE_OPTIONS.map((o) => (
@@ -164,6 +165,7 @@ export function PartnerInquiryForm() {
             onChange={(e) => update('contact_name', e.target.value)}
             className={inputCls}
             autoComplete="name"
+            aria-label="Your name"
           />
         </Field>
 
@@ -185,6 +187,7 @@ export function PartnerInquiryForm() {
             onChange={(e) => update('email', e.target.value)}
             className={inputCls}
             autoComplete="email"
+            aria-label="Email"
           />
         </Field>
 
@@ -195,6 +198,7 @@ export function PartnerInquiryForm() {
             onChange={(e) => update('phone', e.target.value)}
             className={inputCls}
             autoComplete="tel"
+            aria-label="Phone"
           />
         </Field>
 
@@ -203,6 +207,7 @@ export function PartnerInquiryForm() {
             value={form.estimated_volume}
             onChange={(e) => update('estimated_volume', e.target.value as Volume)}
             className={inputCls}
+            aria-label="Estimated volume in Central TX"
           >
             <option value="">Select…</option>
             {VOLUME_OPTIONS.map((o) => (

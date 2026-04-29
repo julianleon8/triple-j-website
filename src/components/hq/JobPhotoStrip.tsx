@@ -178,6 +178,7 @@ export function JobPhotoStrip({ jobId, photos: initialPhotos, photoCount }: Prop
           multiple
           className="hidden"
           onChange={onFiles}
+          aria-label="Upload job photos"
         />
       </div>
 

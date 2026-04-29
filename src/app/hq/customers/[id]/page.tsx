@@ -67,14 +67,14 @@ export default async function CustomerDetailPage({ params }: { params: Promise<{
           <a
             href={customer.phone ? `tel:${customer.phone}` : undefined}
             className="flex items-center justify-center gap-2 rounded-xl bg-(--brand-fg) px-3 py-3 text-[16px] font-semibold text-white tap-solid"
-            aria-disabled={!customer.phone}
+            aria-disabled={!customer.phone ? "true" : undefined}
           >
             <Phone size={18} strokeWidth={2} /> Call
           </a>
           <a
             href={customer.phone ? `sms:${customer.phone}` : undefined}
             className="flex items-center justify-center gap-2 rounded-xl border border-(--border-subtle) bg-(--surface-1) px-3 py-3 text-[16px] font-semibold text-(--text-primary) tap-list"
-            aria-disabled={!customer.phone}
+            aria-disabled={!customer.phone ? "true" : undefined}
           >
             <MessageSquare size={18} strokeWidth={2} /> SMS
           </a>

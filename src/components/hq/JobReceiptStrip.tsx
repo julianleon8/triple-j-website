@@ -410,6 +410,7 @@ export function JobReceiptStrip({ jobId, receipts: initialReceipts }: Props) {
           capture="environment"
           className="hidden"
           onChange={onCapture}
+          aria-label="Upload receipt photo"
         />
       </div>
 

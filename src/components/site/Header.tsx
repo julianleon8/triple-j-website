@@ -96,7 +96,7 @@ export function Header() {
 
       {/* Main nav */}
       <div
-        className={`border-b transition-all duration-300 ease-out ${
+        className={`relative z-50 border-b transition-all duration-300 ease-out ${
           transparent
             ? "bg-transparent border-transparent"
             : scrolled
@@ -191,7 +191,7 @@ export function Header() {
               <button
                 type="button"
                 aria-label={mobileOpen ? "Close menu" : "Open menu"}
-                aria-expanded={mobileOpen ? "true" : "false"}
+                aria-expanded={mobileOpen}
                 onClick={() => setMobileOpen((v) => !v)}
                 className="lg:hidden inline-flex items-center justify-center h-11 w-11 rounded-md text-white hover:bg-white/10"
               >
@@ -211,7 +211,7 @@ export function Header() {
         className={`lg:hidden fixed inset-x-0 top-0 bottom-0 z-40 bg-[color:var(--color-ink-900)] pt-20 transition-transform duration-300 ease-out ${
           mobileOpen ? "translate-y-0" : "-translate-y-full"
         }`}
-        aria-hidden={mobileOpen ? "false" : "true"}
+        aria-hidden={!mobileOpen}
       >
         <Container size="wide">
           <nav
