@@ -6,7 +6,8 @@
       "Skill(firecrawl-search)",
       "Skill(firecrawl-search:*)",
       "Bash(rm homepage.html)",
-      "Bash(python3 -c ' *)"
+      "Bash(python3 -c ' *)",
+      "mcp__e5d290a8-4f5a-4d0c-a62c-16422b2e6017__execute_sql"
     ]
   }
 }
