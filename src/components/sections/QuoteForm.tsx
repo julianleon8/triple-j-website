@@ -549,6 +549,29 @@ export function QuoteForm({ initialMilitary = false }: QuoteFormProps = {}) {
             : "Something went wrong. Please call us directly.",
         );
       }
+      // Stash the lead's contact data for the /thank-you page to pass
+      // to Google Ads enhanced conversions via gtag('set','user_data').
+      // gtag.js SHA-256-hashes these client-side before sending — we
+      // just provide trimmed plain strings; GoogleAdsConversion does
+      // the normalization (lowercase email, E.164 phone, name split)
+      // and clears this key after firing. sessionStorage so the data
+      // dies with the tab — never persisted.
+      if (typeof window !== "undefined") {
+        try {
+          sessionStorage.setItem(
+            "tj_ec_user_data",
+            JSON.stringify({
+              name:  form.name.trim(),
+              phone: form.phone.trim(),
+              email: form.email.trim(),
+              zip:   form.zip.trim(),
+            }),
+          );
+        } catch {
+          // Private mode / quota — non-fatal; conversion still fires
+          // without enhanced match data.
+        }
+      }
       // Success — redirect to /thank-you for clean conversion analytics
       // (per 2026-04-23 design decision). The router push preserves
       // history so back-button still works for the user.
