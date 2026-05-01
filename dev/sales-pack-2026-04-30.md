@@ -242,6 +242,100 @@ Use one variant per group. Don't post the same text in 5 different groups — Fa
 
 ---
 
+## 2A. Triple J Metal Page (@triplejmetaltx) — Distribution Layer
+
+**The reality:** most community FB groups (B/S/T, neighborhood, military spouse, ranch/ag) auto-flag or block posts made *from a Page*. Admin queues sit on them; some auto-reject as advertising; repeat offenders get the Page banned from the group. **Don't post the 5 group variants above directly from the Page.** Post them from your personal profile (Julian / Juan / Freddy) as already drafted.
+
+What the Page IS good for: (a) appearing in group posts via tagging, (b) own-wall posts to followers, (c) cross-sharing the 3 Marketplace listings to amplify reach without re-posting from scratch.
+
+### A. Tag the Page in every group post
+
+Before posting any of Variants 1–5, add this line to the body (right above the phone signature):
+
+> Page: **@triplejmetaltx** (Triple J Metal on FB) — see our build photos and reviews there.
+
+Or inline: type `@` + start typing `Triple J Metal` and pick the Page from the autocomplete. Tagging gives the Page a click-through from inside the group post without the group treating the post as a Page broadcast.
+
+### B. One Page-wall post — for Triple J Metal followers' feed
+
+This goes on the Page's own wall (facebook.com/triplejmetaltx). Visible to existing Page followers + anyone who's previously engaged with Triple J content. No group rules apply here.
+
+> 🔨 Open install slots this month — Central Texas
+>
+> Triple J Metal — same-week welded or bolted carports, garages, RV covers, and workshops across Bell, McLennan, Coryell, Lampasas, and Williamson counties.
+>
+> ✅ Welded red-iron OR bolted kit — your call
+> ✅ 4,000 PSI concrete pad poured by our crew (most use 3,000)
+> ✅ Same-week install once steel arrives
+> ✅ Two in-house welders, zero subcontractors
+> ✅ Bilingual · Se habla español
+> ✅ Fort Cavazos military discount
+>
+> 💰 **2026 anchor pricing — turnkey:**
+> • 20×20 carport: $3,000
+> • 30×30 garage: $5,500
+> • 20×40 RV cover: $6,500 ($8,300 at 14' clear for 5th-wheels)
+> • 40×100 commercial flat: $29,500
+>
+> ⚡ First 3 bookings by **2026-05-08** get a **free colored-panel upgrade** ($400 value — pick any of 39 colors instead of standard Galvalume).
+>
+> 📞 254-346-7764
+> 💬 m.me/triplejmetaltx
+> 🌐 triplejmetaltx.com
+
+**Photos:** lead with a 4-image carousel from `/hq/gallery` — finished welded carport, crew welding mid-build, completed pour with crew visible, wide hero. Same photo discipline as the Marketplace listings: real jobsites, no stock renders.
+
+**Refresh:** repost a fresh version weekly with one new photo + tweaked opener (e.g. "Two install slots left this week" / "Booking next week's calendar — Killeen + Belton priority").
+
+### C. Page-wall post — Spanish version
+
+Post separately on the Page wall (don't combine into one bilingual post — algorithm rewards single-language posts).
+
+> 🔨 Cupos de instalación abiertos este mes — Centro de Texas
+>
+> Triple J Metal — cocheras, garajes, cubiertas para RV y talleres soldados o atornillados. Servimos los condados de Bell, McLennan, Coryell, Lampasas y Williamson.
+>
+> ✅ Soldado o atornillado — tú eliges
+> ✅ Losa de concreto 4,000 PSI vertida por nuestro equipo (la mayoría usa 3,000)
+> ✅ Instalación en la misma semana una vez que llega el acero
+> ✅ Dos soldadores propios, cero subcontratistas
+> ✅ Hablamos español e inglés
+> ✅ Descuento militar Fort Cavazos
+>
+> 💰 **Precios ancla 2026 — todo incluido:**
+> • Cochera 20×20: $3,000
+> • Garaje 30×30: $5,500
+> • Cubierta RV 20×40: $6,500 ($8,300 con 14' libres para 5th-wheels)
+> • Comercial 40×100: $29,500
+>
+> ⚡ Las primeras 3 reservas antes del **2026-05-08** reciben **mejora gratis al color del panel** (valor $400 — cualquiera de 39 colores en vez del Galvalume estándar).
+>
+> 📞 254-346-7764
+> 💬 m.me/triplejmetaltx
+> 🌐 triplejmetaltx.com
+
+### D. Cross-share each Marketplace listing to the Page
+
+Once Listings A/B/C are live on Marketplace from your personal profile:
+
+1. Open each listing on facebook.com.
+2. Hit the **Share** button → **Share to Page** → pick *Triple J Metal*.
+3. Add a short caption when sharing — examples:
+   - Listing A → *"20×20 turnkey carports — $3,000, same-week install. DM with your ZIP."*
+   - Listing B → *"30×30 turnkey garage — $5,500, welded or bolted. Open slot this month."*
+   - Listing C → *"20×40 RV cover — $6,500, taller version $8,300 for 5th-wheels."*
+4. The Page now has 3 listing-driven posts on its wall, the Marketplace listings get a second distribution boost, and Page followers see them in their feed.
+
+This is the highest-leverage Page move — zero new copy, doubles the reach of the work you've already done.
+
+### E. Don't do this
+
+- ❌ Don't copy/paste Variants 1–5 directly from the Page into community groups. They'll get rejected, flagged, or get the Page banned.
+- ❌ Don't run paid Boosts on these Page posts yet. Reviews are too thin (~0 vs competitors' 9+) — the boost dollars convert poorly until trust signals catch up. Revisit after 10+ Google reviews land.
+- ❌ Don't post the same wall content more than once per 7 days — algorithm decay + follower fatigue.
+
+---
+
 ## 3. SMS template — Past Customer Blast
 
 Send manually one at a time so it doesn't trigger spam filters. ~50 customers × 2 minutes each = ~1.5 hours of texting.
@@ -455,14 +549,19 @@ This satisfies the federal CAN-SPAM Act (valid postal address + opt-out mechanis
 
 ## Deployment Checklist
 
-- [ ] Marketplace Listing A (Carport) — posted
-- [ ] Marketplace Listing B (Garage) — posted
-- [ ] Marketplace Listing C (RV/Cover) — posted
-- [ ] FB Group post — Temple/Belton classifieds (Variant 1)
-- [ ] FB Group post — Killeen/Cavazos military (Variant 2)
-- [ ] FB Group post — Ranch/ag groups (Variant 3)
-- [ ] FB Group post — Waco/McLennan (Variant 4)
-- [ ] FB Group post — Spanish-language (Variant 5)
+- [ ] Marketplace Listing A (Carport) — posted from personal profile
+- [ ] Marketplace Listing B (Garage) — posted from personal profile
+- [ ] Marketplace Listing C (RV/Cover) — posted from personal profile
+- [ ] FB Group post — Temple/Belton classifieds (Variant 1) — personal, with @triplejmetaltx tag
+- [ ] FB Group post — Killeen/Cavazos military (Variant 2) — personal, with @triplejmetaltx tag
+- [ ] FB Group post — Ranch/ag groups (Variant 3) — personal, with @triplejmetaltx tag
+- [ ] FB Group post — Waco/McLennan (Variant 4) — personal, with @triplejmetaltx tag
+- [ ] FB Group post — Spanish-language (Variant 5) — personal, with @triplejmetaltx tag
+- [ ] Page wall — English announcement post (Section 2A.B)
+- [ ] Page wall — Spanish announcement post (Section 2A.C)
+- [ ] Page wall — Listing A cross-shared from Marketplace
+- [ ] Page wall — Listing B cross-shared from Marketplace
+- [ ] Page wall — Listing C cross-shared from Marketplace
 - [ ] Past-customer SMS blast — 50+ contacts
 - [ ] Realtor cold emails sent — [N] agents
 - [ ] GC cold emails sent — [N] contractors
