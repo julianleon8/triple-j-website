@@ -32,7 +32,7 @@ Default incentive used throughout: **free upgrade to colored panels** (perceived
 > ✅ **4,000 PSI concrete pad** poured by our crew (most competitors use 3,000 PSI)
 > ✅ Vertical roof, drip edge, trim
 > ✅ Same-week install once materials drop — not 4–16 weeks
-> ✅ ZERO subcontractors — Julian + Freddy weld every joint themselves
+> ✅ ZERO subcontractors — our in-house welders do every joint themselves
 > ✅ Bilingual crew · Se habla español
 > ✅ Fort Cavazos military discount
 >
@@ -55,7 +55,7 @@ Default incentive used throughout: **free upgrade to colored panels** (perceived
 >
 > Not exactly what you need? Message me anyway — we build any dimension, any config. Send your ZIP + rough size and I'll have a same-day quote in your inbox.
 >
-> Julian — Triple J Metal
+> Triple J Metal · Temple, TX
 > 📞 254-346-7764
 > 🌐 triplejmetaltx.com
 
@@ -106,7 +106,7 @@ Default incentive used throughout: **free upgrade to colored panels** (perceived
 >
 > Bigger or smaller? Different config? Message me — we build any dimension. Send ZIP + rough size, I'll quote same day.
 >
-> Julian — Triple J Metal
+> Triple J Metal · Temple, TX
 > 📞 254-346-7764
 > 🌐 triplejmetaltx.com
 
@@ -148,7 +148,7 @@ Default incentive used throughout: **free upgrade to colored panels** (perceived
 >
 > Got a 38' Class A and need a custom span? A boat-and-truck combo cover? A ranch equipment shed? Message me with your dimensions and I'll quote same day.
 >
-> Julian — Triple J Metal
+> Triple J Metal · Temple, TX
 > 📞 254-346-7764
 > 🌐 triplejmetaltx.com
 
@@ -168,7 +168,7 @@ Use one variant per group. Don't post the same text in 5 different groups — Fa
 >
 > If you've been thinking about adding one, message me with your zip and rough size — I'll send a quote same day. No pushy follow-ups.
 >
-> Julian — 254-346-7764
+> Triple J Metal · 254-346-7764
 > triplejmetaltx.com
 
 ---
@@ -187,7 +187,7 @@ Use one variant per group. Don't post the same text in 5 different groups — Fa
 >
 > Send me a message with your address and what you're looking at — I'll quote same day. Military discount built in, no need to ask.
 >
-> Julian — 254-346-7764
+> Triple J Metal · 254-346-7764
 
 ---
 
@@ -203,7 +203,7 @@ Use one variant per group. Don't post the same text in 5 different groups — Fa
 >
 > Drop your zip and rough size in a DM — I'll have a quote in your hands same day.
 >
-> Julian — 254-346-7764
+> Triple J Metal · 254-346-7764
 > triplejmetaltx.com
 
 ---
@@ -221,7 +221,7 @@ Use one variant per group. Don't post the same text in 5 different groups — Fa
 >
 > Message me with zip + dimensions, I'll send a quote same day.
 >
-> Julian — 254-346-7764
+> Triple J Metal · 254-346-7764
 
 ---
 
@@ -237,7 +237,7 @@ Use one variant per group. Don't post the same text in 5 different groups — Fa
 >
 > Mándame mensaje con tu código postal y el tamaño aproximado — te mando cotización el mismo día.
 >
-> Julian — 254-346-7764
+> Triple J Metal · 254-346-7764
 > triplejmetaltx.com
 
 ---
