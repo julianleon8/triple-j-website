@@ -49,7 +49,7 @@ Default incentive used throughout: **free upgrade to colored panels** (perceived
 > • 30×30 flat: $5,500 · 30×30 gabled: $7,000
 > • Walls, rollup doors, windows, taller heights, colored panels — quoted on top
 >
-> ⚡ **Open install slot this month.** First 3 callers booked by **2026-05-08** get a **free upgrade to colored panels** (any of 39 colors instead of standard Galvalume — a $400 upgrade, free).
+> ⚡ **Open install slot this month.** First 3 callers booked by **2026-05-15** get a **free upgrade to colored panels** (any of 39 colors instead of standard Galvalume — a $400 upgrade, free).
 >
 > 📍 Serving Temple, Belton, Killeen, Harker Heights, Copperas Cove, Salado, Holland, Troy, Nolanville, Waco, Lampasas, Taylor, Round Rock, Georgetown — wider Central Texas on request.
 >
@@ -100,7 +100,7 @@ Default incentive used throughout: **free upgrade to colored panels** (perceived
 > • Welded surcharge over bolted: +$600 flat (if you want welded permanence)
 > • Colored panels (39 options): +$400 — **free for first 3 bookings this week**
 >
-> ⚡ **Open install slot this month.** First 3 callers booked by **2026-05-08** get **free colored-panel upgrade** (skip Galvalume, pick any of 39 colors).
+> ⚡ **Open install slot this month.** First 3 callers booked by **2026-05-15** get **free colored-panel upgrade** (skip Galvalume, pick any of 39 colors).
 >
 > 📍 Serving Bell County, McLennan County, Williamson County, Coryell, Lampasas, and surrounding.
 >
@@ -142,7 +142,7 @@ Default incentive used throughout: **free upgrade to colored panels** (perceived
 > • Add walls to enclose: +$1,400/wall (scales with size) · doors +$800 · windows +$350
 > • Welded surcharge over bolted: +$600 flat
 >
-> ⚡ **Open install slot this month.** First 3 callers booked by **2026-05-08** get **free colored-panel upgrade** (39 colors).
+> ⚡ **Open install slot this month.** First 3 callers booked by **2026-05-15** get **free colored-panel upgrade** (39 colors).
 >
 > 📍 Serving Temple, Belton, Killeen, Harker Heights, Copperas Cove, Salado, Lampasas, Holland, Taylor, Troy, Nolanville, Waco — wider Central Texas on request.
 >
@@ -201,7 +201,7 @@ Default incentive used throughout: **free upgrade to colored panels** (perceived
 > • Add walls (+$1,400 ea), rollup doors (+$800), windows (+$350)
 > • Colored panels (39 options): +$400 — **free for first 3 bookings**
 >
-> ⚡ **Open install slot this month.** First 3 callers booked by **2026-05-08** get **free colored-panel upgrade**.
+> ⚡ **Open install slot this month.** First 3 callers booked by **2026-05-15** get **free colored-panel upgrade**.
 >
 > 📍 Serving Temple, Belton, Killeen, Harker Heights, Copperas Cove, Salado, Holland, Troy, Nolanville, Waco, Lampasas — wider Central Texas on request.
 >
@@ -248,7 +248,7 @@ Default incentive used throughout: **free upgrade to colored panels** (perceived
 > • Heights above 12': +$450/ft
 > • Colored panels: +$400 — **free for first 3 bookings**
 >
-> ⚡ **Open install slot this month.** First 3 callers booked by **2026-05-08** get **free colored-panel upgrade**.
+> ⚡ **Open install slot this month.** First 3 callers booked by **2026-05-15** get **free colored-panel upgrade**.
 >
 > 📍 Serving Bell, McLennan, Williamson, Coryell, Lampasas counties.
 >
@@ -301,7 +301,7 @@ Default incentive used throughout: **free upgrade to colored panels** (perceived
 >
 > Fully enclosed 30×30 turnkey workshop runs **~$11,500** with 4 walls, 1 rollup door, 1 walk door, and 2 windows. Want a quote spec'd to your finish-out plan? DM me.
 >
-> ⚡ **Open install slot this month.** First 3 callers booked by **2026-05-08** get **free colored-panel upgrade**.
+> ⚡ **Open install slot this month.** First 3 callers booked by **2026-05-15** get **free colored-panel upgrade**.
 >
 > 📍 Serving Bell, McLennan, Williamson, Coryell, Lampasas, Burnet counties.
 >
@@ -350,7 +350,7 @@ Default incentive used throughout: **free upgrade to colored panels** (perceived
 > • Insulation, HVAC pre-prep, electrical chase: quoted on plans
 > • Colored panel upgrade (39 options): +$400 — **free for first 3 bookings**
 >
-> ⚡ **Open install slot this month** for one commercial-scale build. First 3 callers booked by **2026-05-08** get the **free colored-panel upgrade** + priority concrete-cure scheduling.
+> ⚡ **Open install slot this month** for one commercial-scale build. First 3 callers booked by **2026-05-15** get the **free colored-panel upgrade** + priority concrete-cure scheduling.
 >
 > 📍 Serving Bell, McLennan, Williamson, Coryell, Lampasas, Burnet, Falls counties — wider Texas on request for $30K+ jobs.
 >
@@ -398,7 +398,7 @@ Default incentive used throughout: **free upgrade to colored panels** (perceived
 > • 25×25 plana: $4,000 · 30×30 plana: $5,500
 > • Paredes, puertas enrollables, ventanas, alturas mayores, paneles de color — cotizamos aparte
 >
-> ⚡ **Cupos de instalación abiertos este mes.** Las primeras 3 reservas antes del **2026-05-08** reciben **mejora gratis al color del panel** (cualquiera de 39 colores en vez del Galvalume estándar — valor $400, gratis).
+> ⚡ **Cupos de instalación abiertos este mes.** Las primeras 3 reservas antes del **2026-05-15** reciben **mejora gratis al color del panel** (cualquiera de 39 colores en vez del Galvalume estándar — valor $400, gratis).
 >
 > 📍 Servimos Temple, Belton, Killeen, Harker Heights, Copperas Cove, Salado, Holland, Troy, Nolanville, Waco, Lampasas, Taylor, Round Rock, Georgetown — centro de Texas en general.
 >
@@ -451,7 +451,7 @@ Default incentive used throughout: **free upgrade to colored panels** (perceived
 > • Soldado vs atornillado: +$600
 > • Paneles de color (39 opciones): +$400 — **gratis para las primeras 3 reservas**
 >
-> ⚡ **Cupos abiertos este mes.** Las primeras 3 reservas antes del **2026-05-08** reciben **mejora gratis al color del panel** (cualquiera de 39 colores).
+> ⚡ **Cupos abiertos este mes.** Las primeras 3 reservas antes del **2026-05-15** reciben **mejora gratis al color del panel** (cualquiera de 39 colores).
 >
 > 📍 Servimos los condados de Bell, McLennan, Williamson, Coryell, Lampasas y alrededores.
 >
@@ -473,7 +473,7 @@ Use one variant per group. Don't post the same text in 5 different groups — Fa
 >
 > Triple J Metal — Temple-based family business, 150+ builds done across Central Texas. Welded or bolted, your choice. Turnkey: we pour the concrete, frame it, panel it. Same-week install once materials drop.
 >
-> First 3 people booked by 2026-05-08 get a **free colored-panel upgrade** (any of 39 colors instead of standard Galvalume).
+> First 3 people booked by 2026-05-15 get a **free colored-panel upgrade** (any of 39 colors instead of standard Galvalume).
 >
 > If you've been thinking about adding one, message me with your zip and rough size — I'll send a quote same day. No pushy follow-ups.
 >
@@ -492,7 +492,7 @@ Use one variant per group. Don't post the same text in 5 different groups — Fa
 > – Concrete pad poured by our crew (4,000 PSI)
 > – English & Spanish on the crew
 >
-> First 3 bookings by 2026-05-08 get **free colored panel upgrade.**
+> First 3 bookings by 2026-05-15 get **free colored panel upgrade.**
 >
 > Send me a message with your address and what you're looking at — I'll quote same day. Military discount built in, no need to ask.
 >
@@ -508,7 +508,7 @@ Use one variant per group. Don't post the same text in 5 different groups — Fa
 >
 > Built tough enough for Central Texas wind. 4,000 PSI pads (most do 3,000), welded red-iron frame option for permanence.
 >
-> First 3 bookings by 2026-05-08 get **free panel-color upgrade.**
+> First 3 bookings by 2026-05-15 get **free panel-color upgrade.**
 >
 > Drop your zip and rough size in a DM — I'll have a quote in your hands same day.
 >
@@ -526,7 +526,7 @@ Use one variant per group. Don't post the same text in 5 different groups — Fa
 > – Same-week install once steel arrives
 > – 150+ builds done since founding
 >
-> First 3 bookings by 2026-05-08 get **free colored panel upgrade** — any of 39 colors instead of Galvalume.
+> First 3 bookings by 2026-05-15 get **free colored panel upgrade** — any of 39 colors instead of Galvalume.
 >
 > Message me with zip + dimensions, I'll send a quote same day.
 >
@@ -542,7 +542,7 @@ Use one variant per group. Don't post the same text in 5 different groups — Fa
 >
 > Hablamos español y inglés. Sin subcontratistas — solo nuestro equipo.
 >
-> Las primeras 3 personas que reserven antes del 2026-05-08 reciben **mejora gratis al color del panel** (cualquiera de 39 colores).
+> Las primeras 3 personas que reserven antes del 2026-05-15 reciben **mejora gratis al color del panel** (cualquiera de 39 colores).
 >
 > Mándame mensaje con tu código postal y el tamaño aproximado — te mando cotización el mismo día.
 >
@@ -586,7 +586,7 @@ This goes on the Page's own wall (facebook.com/triplejmetaltx). Visible to exist
 > • 20×40 RV cover: $6,500 ($8,300 at 14' clear for 5th-wheels)
 > • 40×100 commercial flat: $29,500
 >
-> ⚡ First 3 bookings by **2026-05-08** get a **free colored-panel upgrade** ($400 value — pick any of 39 colors instead of standard Galvalume).
+> ⚡ First 3 bookings by **2026-05-15** get a **free colored-panel upgrade** ($400 value — pick any of 39 colors instead of standard Galvalume).
 >
 > 📞 254-346-7764
 > 💬 m.me/triplejmetaltx
@@ -617,7 +617,7 @@ Post separately on the Page wall (don't combine into one bilingual post — algo
 > • Cubierta RV 20×40: $6,500 ($8,300 con 14' libres para 5th-wheels)
 > • Comercial 40×100: $29,500
 >
-> ⚡ Las primeras 3 reservas antes del **2026-05-08** reciben **mejora gratis al color del panel** (valor $400 — cualquiera de 39 colores en vez del Galvalume estándar).
+> ⚡ Las primeras 3 reservas antes del **2026-05-15** reciben **mejora gratis al color del panel** (valor $400 — cualquiera de 39 colores en vez del Galvalume estándar).
 >
 > 📞 254-346-7764
 > 💬 m.me/triplejmetaltx
@@ -651,11 +651,11 @@ Send manually one at a time so it doesn't trigger spam filters. ~50 customers ×
 
 **Template (English):**
 
-> Hey [FIRST_NAME], it's Julian from Triple J Metal. Hope the [STRUCTURE — carport / garage / cover] is treating you good. Quick heads up — we've got open install slots this month and I'm reaching out to past clients first. If you've been thinking about adding another structure, or know a friend or neighbor who has, send them my way and I'll take care of you both. First few referrals booked by 2026-05-08 get a free colored-panel upgrade. — Julian, 254-346-7764
+> Hey [FIRST_NAME], it's Julian from Triple J Metal. Hope the [STRUCTURE — carport / garage / cover] is treating you good. Quick heads up — we've got open install slots this month and I'm reaching out to past clients first. If you've been thinking about adding another structure, or know a friend or neighbor who has, send them my way and I'll take care of you both. First few referrals booked by 2026-05-15 get a free colored-panel upgrade. — Julian, 254-346-7764
 
 **Template (Spanish):**
 
-> Hola [FIRST_NAME], soy Julian de Triple J Metal. Espero que la [STRUCTURE] siga bien. Aviso rápido — tenemos cupo de instalación abierto este mes y le estoy avisando primero a clientes pasados. Si has pensado en agregar otra estructura, o conoces a alguien que la necesite, mándamelos. Las primeras referencias reservadas antes del 2026-05-08 reciben mejora gratis al color del panel. — Julian, 254-346-7764
+> Hola [FIRST_NAME], soy Julian de Triple J Metal. Espero que la [STRUCTURE] siga bien. Aviso rápido — tenemos cupo de instalación abierto este mes y le estoy avisando primero a clientes pasados. Si has pensado en agregar otra estructura, o conoces a alguien que la necesite, mándamelos. Las primeras referencias reservadas antes del 2026-05-15 reciben mejora gratis al color del panel. — Julian, 254-346-7764
 
 **Tracking:** put a quick note in `/hq/customers` for each contact — when you texted, response, status. Otherwise you'll lose track at 50 names.
 
