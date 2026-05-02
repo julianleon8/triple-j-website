@@ -11,9 +11,10 @@ import { ArrowRightIcon } from "@/components/ui/icons";
  * Barlow display headline + Inter body below, hairline rule capping a
  * "From $X · same-week start" + "See builds →" meta row.
  *
- * `priceFrom` floors come from the locked 2026 anchor sheet. Carport,
- * Barn, and RV/Boat floors are direct entries from the sheet; the Garage
- * floor is extrapolated as 20×20 + 4 walls + 1 roll-up door.
+ * `priceFrom` aligns with the Marketplace canonical anchors so Triple J
+ * is consistent across channels. All four numbers are STEEL + INSTALL
+ * floors only (per Decisions.md 2026-05-02 — concrete, walls, doors
+ * are quoted on top per spec).
  */
 
 const SERVICE_CARDS = [
@@ -29,11 +30,11 @@ const SERVICE_CARDS = [
   {
     slug: "metal-garages",
     eyebrow: "Garages",
-    headline: "Enclosed shop space, ready to lock up.",
+    headline: "Enclosed shop space — your spec, our crew.",
     blurb:
-      "Fully-enclosed steel garages with roll-up doors, walk-throughs, and insulation options.",
+      "30×30 welded shell starts here. Walls, roll-up doors, walk-throughs, and insulation are quoted on top per your spec.",
     image: "/images/metal-garage-green.jpg",
-    priceFrom: "9,400",
+    priceFrom: "5,500",
   },
   {
     slug: "barns",
@@ -132,7 +133,9 @@ export function Services() {
                       <b className="text-[color:var(--color-ink-900)] tabular-nums">
                         ${service.priceFrom}
                       </b>{" "}
-                      · same-week start
+                      <span className="text-[color:var(--color-ink-400)]">
+                        steel + install
+                      </span>
                     </span>
                     <span className="ml-auto inline-flex items-center gap-1 text-[13px] font-semibold text-[color:var(--color-brand-600)] group-hover:gap-2 transition-all">
                       See builds
