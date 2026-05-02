@@ -258,6 +258,39 @@ p { line-height: 1.6; }
   );
 }
 
+/* Hero scrim — strong left-to-right ramp protecting the text column
+   across bright photo bottoms. 4-stop, can't be expressed in Tailwind's
+   from/via/to utility. Pairs with .hero-bottom-fade below the chip row. */
+.hero-scrim {
+  background: linear-gradient(
+    to right,
+    rgba(0, 0, 0, 0.88) 0%,
+    rgba(0, 0, 0, 0.72) 45%,
+    rgba(0, 0, 0, 0.28) 70%,
+    rgba(0, 0, 0, 0) 92%
+  );
+}
+
+/* Hero bottom fade — keeps the form-chip ribbon legible against bright
+   photo bottoms. Sibling to .hero-scrim. */
+.hero-bottom-fade {
+  background: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0) 55%,
+    rgba(0, 0, 0, 0.7) 100%
+  );
+}
+
+/* Hero chip overlay — dark bottom gradient inside each form-chip image,
+   so the Barlow label sits readably without a solid plate. */
+.hero-chip-overlay {
+  background: linear-gradient(
+    to top,
+    rgba(0, 0, 0, 0.85),
+    rgba(0, 0, 0, 0.05) 55%
+  );
+}
+
 /* Decorative grid texture — used as low-opacity background on light
    sections (Services, etc.) to add magazine-style structure without
    competing with content. Apply opacity from the parent (e.g. opacity-[0.04]). */

@@ -122,7 +122,7 @@ export function Header() {
                 width={44}
                 height={44}
                 priority
-                className={`transition-all duration-300 shrink-0 ${
+                className={`transition-all duration-300 shrink-0 -mt-1 ${
                   scrolled ? "h-9 w-9" : "h-11 w-11"
                 } object-contain`}
               />
