@@ -90,9 +90,9 @@ export function Services() {
             <span className="text-[color:var(--color-brand-600)]">Built whole, by us.</span>
           </h2>
           <p className="mt-5 text-base leading-relaxed text-[color:var(--color-ink-600)] max-w-2xl">
-            Every structure is welded or bolted from red-iron steel and installed
-            by our crew. Concrete pads, walls, doors, and windows are quoted on
-            top per your spec. No kits, no subcontractors.
+            Every structure is welded or bolted from red-iron steel and delivered
+            turnkey — site prep, concrete pad, and installation all under one
+            contract. No kits, no subcontractors.
           </p>
         </Reveal>
 
