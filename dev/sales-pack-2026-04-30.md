@@ -37,10 +37,10 @@ Default incentive used throughout: **free upgrade to colored panels** (perceived
 >
 > 💰 **Price Breakdown (20×20 flat, 10' height — turnkey)**
 > • Bolted red-iron kit + install + 20×20 concrete pad: **$3,000 + tax**
-> • Welded upgrade (permanent, storm-proof joints): **+$600 → $3,600 + tax**
+> • Welded upgrade (permanent, storm-proof joints): **+10% → $3,300 + tax**
 > • 4,000 PSI concrete instead of 3,000 PSI: ask, we'll quote it
 >
-> **Bigger sizes (bolted base prices — welded is +$600 across the board):**
+> **Bigger sizes (bolted base prices — welded is +10% across the board):**
 > • 20×20 gabled: $4,000 · 20×30 flat: $4,300
 > • 20×40 flat: $6,500 · 20×40 gabled: $8,000
 > • 25×25 flat: $4,000 · 25×50 flat: $8,000
@@ -84,10 +84,10 @@ Default incentive used throughout: **free upgrade to colored panels** (perceived
 >
 > 💰 **Price Breakdown (30×30 flat, 10' height — turnkey)**
 > • Bolted red-iron kit + install + 30×30 concrete pad: **$5,500 + tax**
-> • Welded upgrade (permanent, storm-proof joints): **+$600 → $6,100 + tax**
+> • Welded upgrade (permanent, storm-proof joints): **+10% → $6,050 + tax**
 > • 4,000 PSI concrete instead of 3,000 PSI: ask, we'll quote it
 >
-> **Sizes & configs (bolted base — welded +$600 flat):**
+> **Sizes & configs (bolted base — welded is +10% across the board):**
 > • 25×25 flat: $4,000 · 25×25 gabled: $5,200
 > • 25×50 flat: $8,000
 > • 30×30 gabled: $7,000
@@ -134,7 +134,7 @@ Default incentive used throughout: **free upgrade to colored panels** (perceived
 > 💰 **Price Breakdown — turnkey, pad included**
 > • 20×40 flat, 10' clear, bolted (boats, side-by-sides, small RVs): **$6,500 + tax**
 > • 20×40 flat, **14' clear**, bolted (5th wheels, Class A motorhomes, lifted big rigs): **$8,300 + tax** (+$1,800 for the taller columns)
-> • Welded upgrade on either: **+$600**
+> • Welded upgrade on either: **+10%** ($7,150 on the $6,500 base · $9,130 on the $8,300 14'-clear base)
 > • 20×40 gabled, 10' bolted: $8,000
 > • Smaller RV/boat sizes start at $3,000 bolted (20×20)
 > • Add walls to enclose: +$1,400/wall (scales with size) · doors +$800 · windows +$350
@@ -188,10 +188,10 @@ Default incentive used throughout: **free upgrade to colored panels** (perceived
 >
 > 💰 **Price Breakdown (25×25 flat, 10' height — turnkey)**
 > • Bolted heavy-gauge clear-span kit + install + 25×25 concrete pad: **$4,000 + tax**
-> • Welded upgrade (permanent, storm-proof joints): **+$600 → $4,600 + tax**
+> • Welded upgrade (permanent, storm-proof joints): **+10% → $4,400 + tax**
 > • 4,000 PSI concrete instead of 3,000 PSI: ask, we'll quote it
 >
-> **Other clear-span sizes (bolted base — welded +$600):**
+> **Other clear-span sizes (bolted base — welded is +10%):**
 > • 20×25 flat (8" material): $3,800
 > • 25×25 gabled: $5,200
 > • 25×50 flat: $8,000
@@ -233,10 +233,10 @@ Default incentive used throughout: **free upgrade to colored panels** (perceived
 >
 > 💰 **Price Breakdown (20×40 gabled, 10' height — turnkey)**
 > • Bolted gabled kit + install + 20×40 concrete pad: **$8,000 + tax**
-> • Welded upgrade (permanent, storm-proof joints): **+$600 → $8,600 + tax**
+> • Welded upgrade (permanent, storm-proof joints): **+10% → $8,800 + tax**
 > • 4,000 PSI concrete instead of 3,000 PSI: ask, we'll quote it
 >
-> **Sizes & configs (bolted base — welded +$600):**
+> **Sizes & configs (bolted base — welded is +10%):**
 > • 20×20 gabled: $4,000
 > • 25×25 gabled: $5,200
 > • 30×30 gabled: $7,000
@@ -284,7 +284,7 @@ Default incentive used throughout: **free upgrade to colored panels** (perceived
 >
 > 💰 **Price Breakdown (30×30 flat, 10' height — turnkey)**
 > • Bolted shell + install + 30×30 slab: **$5,500 + tax**
-> • Welded upgrade (permanent, storm-proof joints): **+$600 → $6,100 + tax**
+> • Welded upgrade (permanent, storm-proof joints): **+10% → $6,050 + tax**
 > • 4,000 PSI concrete instead of 3,000 PSI: ask, we'll quote it
 >
 > **Common workshop add-ons:**
@@ -295,7 +295,7 @@ Default incentive used throughout: **free upgrade to colored panels** (perceived
 > • Heights above 12' (for lifts, racking): +$450/ft
 > • Colored panels: +$400 — **free for first 3 bookings**
 >
-> Fully enclosed 30×30 bolted turnkey workshop runs **~$11,500** with 4 walls, 1 rollup door, 1 walk door, and 2 windows (welded version: +$600). Want a quote spec'd to your finish-out plan? DM us.
+> Fully enclosed 30×30 bolted turnkey workshop runs **~$11,500** with 4 walls, 1 rollup door, 1 walk door, and 2 windows (welded version: +10%, ~$12,650). Want a quote spec'd to your finish-out plan? DM us.
 >
 > ⚡ **Open install slot this month.** First 3 callers booked by **2026-05-15** get **free colored-panel upgrade**.
 >
@@ -324,7 +324,7 @@ Default incentive used throughout: **free upgrade to colored panels** (perceived
 >
 > 4,000 sqft of clear-span shop, equipment storage, ranch operations building, GC overflow shop, or commercial warehouse. Single-contract turnkey, same-week install once steel arrives — months faster than the national-kit dealers.
 >
-> ✅ Welded OR bolted red-iron frame — your choice (welded is +$600 flat — recommended at this scale)
+> ✅ Welded OR bolted red-iron frame — your choice (welded is +10% — recommended at this scale)
 > ✅ 14-gauge steel · 140 MPH wind rated · engineered for Central Texas
 > ✅ Concrete slab poured by our crew (3,000 PSI standard — 4,000 PSI available on request)
 > ✅ Single-contract turnkey — structure + slab + panels in one bill
@@ -334,7 +334,7 @@ Default incentive used throughout: **free upgrade to colored panels** (perceived
 >
 > 💰 **Price Breakdown (40×100 flat, 10' height — turnkey)**
 > • Bolted structure + install + 40×100 slab: **$29,500 + tax** *(works out to $7.38/sqft — 50%+ under the local market on $/sqft basis)*
-> • Welded upgrade (recommended at this scale): **+$600 → $30,100 + tax**
+> • Welded upgrade (recommended at this scale): **+10% → $32,450 + tax**
 > • 4,000 PSI concrete instead of 3,000 PSI: ask, we'll quote it
 >
 > **Common commercial add-ons:**
@@ -384,10 +384,10 @@ Default incentive used throughout: **free upgrade to colored panels** (perceived
 >
 > 💰 **Desglose de Precio (20×20 plana, 10' de altura — todo incluido)**
 > • Kit atornillado de viga roja + instalación + losa 20×20: **$3,000 + impuestos**
-> • Mejora a soldada (uniones permanentes, resistente a tormentas): **+$600 → $3,600 + impuestos**
+> • Mejora a soldada (uniones permanentes, resistente a tormentas): **+10% → $3,300 + impuestos**
 > • Concreto 4,000 PSI en vez de 3,000: pídelo, te lo cotizamos
 >
-> **Otras medidas (precio base atornillada — soldada +$600 plano):**
+> **Otras medidas (precio base atornillada — soldada +10% en todas las medidas):**
 > • 20×20 con dos aguas: $4,000
 > • 20×30 plana: $4,300
 > • 20×40 plana: $6,500 · 20×40 dos aguas: $8,000
@@ -433,10 +433,10 @@ Default incentive used throughout: **free upgrade to colored panels** (perceived
 >
 > 💰 **Desglose de Precio (30×30 plana, 10' de altura — todo incluido)**
 > • Kit atornillado + instalación + losa 30×30: **$5,500 + impuestos**
-> • Mejora a soldada (uniones permanentes, resistente a tormentas): **+$600 → $6,100 + impuestos**
+> • Mejora a soldada (uniones permanentes, resistente a tormentas): **+10% → $6,050 + impuestos**
 > • Concreto 4,000 PSI en vez de 3,000: pídelo, te lo cotizamos
 >
-> **Medidas y configuraciones (precio base atornillada — soldada +$600 plano):**
+> **Medidas y configuraciones (precio base atornillada — soldada +10% en todas las medidas):**
 > • 25×25 plana: $4,000 · 25×25 dos aguas: $5,200
 > • 25×50 plana: $8,000
 > • 30×30 dos aguas: $7,000
@@ -483,7 +483,7 @@ Use one variant per group. Don't post the same text in 5 different groups — Fa
 >
 > If you've PCS'd in and need a carport or RV cover before the next storm, we can usually start within the week. We work with a lot of military families — same-week installs because we know orders move fast.
 >
-> – Welded or bolted (welded is +$600 for permanence)
+> – Welded or bolted (welded is +10% for permanence)
 > – Concrete pad poured by our crew (4,000 PSI available on request)
 > – English & Spanish on the crew
 >
@@ -501,7 +501,7 @@ Use one variant per group. Don't post the same text in 5 different groups — Fa
 >
 > Family-run out of Temple, 150+ structures done, two in-house welders so we don't lose days waiting on subs. We do the concrete, the steel, the panels — single contract, single crew.
 >
-> Built tough enough for Central Texas wind. 4,000 PSI concrete available on request, welded red-iron frame option for permanence (+$600 over bolted).
+> Built tough enough for Central Texas wind. 4,000 PSI concrete available on request, welded red-iron frame option for permanence (+10% over bolted).
 >
 > First 3 bookings by 2026-05-15 get **free panel-color upgrade.**
 >
@@ -516,7 +516,7 @@ Use one variant per group. Don't post the same text in 5 different groups — Fa
 
 > Triple J Metal — based in Temple but we run jobs in Waco and surrounding McLennan County weekly. Open install slot this month if anyone's been thinking about a carport, garage, or RV cover.
 >
-> – Welded or bolted (welded is +$600 for permanence)
+> – Welded or bolted (welded is +10% for permanence)
 > – Concrete pad included, poured by our crew (4,000 PSI available on request)
 > – Same-week install once steel arrives
 > – 150+ builds done since founding
@@ -533,7 +533,7 @@ Use one variant per group. Don't post the same text in 5 different groups — Fa
 
 > Triple J Metal — empresa familiar de Temple, 150+ proyectos completados en el centro de Texas.
 >
-> Tenemos cupo de instalación abierto este mes para cocheras, garajes, cubiertas para RV, o talleres. Todo incluido: nosotros vertemos el concreto (4,000 PSI disponible si lo pides), instalamos la estructura de acero, y los paneles. Soldado o atornillado — soldado es +$600 por permanencia. Instalación en la misma semana una vez que llega el material.
+> Tenemos cupo de instalación abierto este mes para cocheras, garajes, cubiertas para RV, o talleres. Todo incluido: nosotros vertemos el concreto (4,000 PSI disponible si lo pides), instalamos la estructura de acero, y los paneles. Soldado o atornillado — soldado es +10% por permanencia. Instalación en la misma semana una vez que llega el material.
 >
 > Hablamos español y inglés. Sin subcontratistas — solo nuestro equipo.
 >
@@ -568,18 +568,18 @@ This goes on the Page's own wall (facebook.com/triplejmetaltx). Visible to exist
 >
 > Triple J Metal — same-week welded or bolted carports, garages, RV covers, and workshops across Bell, McLennan, Coryell, Lampasas, and Williamson counties.
 >
-> ✅ Welded OR bolted red-iron — your choice (welded is +$600 for permanence)
+> ✅ Welded OR bolted red-iron — your choice (welded is +10% for permanence)
 > ✅ Concrete pad poured by our crew (3,000 PSI standard — 4,000 PSI available on request)
 > ✅ Same-week install once steel arrives
 > ✅ Two in-house welders, zero subcontractors
 > ✅ Bilingual · Se habla español
 > ✅ Fort Cavazos military discount
 >
-> 💰 **2026 anchor pricing — bolted base, turnkey (welded +$600 across the board):**
-> • 20×20 carport: from $3,000
-> • 30×30 garage: from $5,500
-> • 20×40 RV cover: from $6,500 ($8,300 at 14' clear for 5th-wheels)
-> • 40×100 commercial flat: from $29,500
+> 💰 **2026 anchor pricing — bolted base, turnkey (welded is +10% across the board):**
+> • 20×20 carport: from $3,000 (welded $3,300)
+> • 30×30 garage: from $5,500 (welded $6,050)
+> • 20×40 RV cover: from $6,500 (welded $7,150) — or $8,300 at 14' clear (welded $9,130)
+> • 40×100 commercial flat: from $29,500 (welded $32,450)
 >
 > ⚡ First 3 bookings by **2026-05-15** get a **free colored-panel upgrade** ($400 value — pick any of 39 colors instead of standard Galvalume).
 >
@@ -599,18 +599,18 @@ Post separately on the Page wall (don't combine into one bilingual post — algo
 >
 > Triple J Metal — cocheras, garajes, cubiertas para RV y talleres soldados o atornillados. Servimos los condados de Bell, McLennan, Coryell, Lampasas y Williamson.
 >
-> ✅ Soldado o atornillado — tú eliges (soldado es +$600 por permanencia)
+> ✅ Soldado o atornillado — tú eliges (soldado es +10% por permanencia)
 > ✅ Losa de concreto vertida por nuestro equipo (3,000 PSI estándar — 4,000 PSI disponible si lo pides)
 > ✅ Instalación en la misma semana una vez que llega el acero
 > ✅ Dos soldadores propios, cero subcontratistas
 > ✅ Hablamos español e inglés
 > ✅ Descuento militar Fort Cavazos
 >
-> 💰 **Precios ancla 2026 — base atornillada, todo incluido (soldado +$600 plano):**
-> • Cochera 20×20: desde $3,000
-> • Garaje 30×30: desde $5,500
-> • Cubierta RV 20×40: desde $6,500 ($8,300 con 14' libres para 5th-wheels)
-> • Comercial 40×100: desde $29,500
+> 💰 **Precios ancla 2026 — base atornillada, todo incluido (soldado es +10% en todas las medidas):**
+> • Cochera 20×20: desde $3,000 (soldada $3,300)
+> • Garaje 30×30: desde $5,500 (soldado $6,050)
+> • Cubierta RV 20×40: desde $6,500 (soldada $7,150) — o $8,300 con 14' libres (soldada $9,130)
+> • Comercial 40×100: desde $29,500 (soldado $32,450)
 >
 > ⚡ Las primeras 3 reservas antes del **2026-05-15** reciben **mejora gratis al color del panel** (valor $400 — cualquiera de 39 colores en vez del Galvalume estándar).
 >
@@ -626,7 +626,7 @@ Once Listings A/B/C are live on Marketplace from your personal profile:
 2. Hit the **Share** button → **Share to Page** → pick *Triple J Metal*.
 3. Add a short caption when sharing — examples:
    - Listing A → *"20×20 turnkey carport — from $3,000 bolted, same-week install. DM with your ZIP."*
-   - Listing B → *"30×30 turnkey garage — from $5,500 bolted, welded +$600. Open slot this month."*
+   - Listing B → *"30×30 turnkey garage — from $5,500 bolted, welded +10%. Open slot this month."*
    - Listing C → *"20×40 RV cover — from $6,500 bolted, taller version from $8,300 for 5th-wheels."*
 4. The Page now has 3 listing-driven posts on its wall, the Marketplace listings get a second distribution boost, and Page followers see them in their feed.
 
