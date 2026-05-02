@@ -15,12 +15,12 @@ import { SITE } from "@/lib/site";
 export const metadata: Metadata = {
   title: "Metal Carports, Garages & Barns in Temple, Central Texas",
   description:
-    "Turnkey metal buildings welded or bolted on-site by Triple J Metal — Temple, TX. Carports, garages, barns, RV covers with concrete pads. Same-week scheduling across Bell, Coryell, and McLennan counties. Call 254-346-7764.",
+    "Welded or bolted metal carports, garages, and barns by Triple J Metal — Temple, TX. Steel + install from $3,000; concrete pad add-on quoted separately. Same-week scheduling across Bell, Coryell, and McLennan counties. Call 254-346-7764.",
   alternates: { canonical: "/" },
   openGraph: {
     title: "Metal Carports, Garages & Barns in Central Texas — Triple J Metal",
     description:
-      "Welded or bolted metal buildings built by our Temple TX crew — turnkey with concrete, same-week scheduling.",
+      "Welded or bolted metal buildings built by our Temple TX crew — steel + install from $3,000, concrete pad add-on, same-week scheduling.",
     url: "/",
     type: "website",
   },
