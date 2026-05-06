@@ -18,7 +18,7 @@
 export type BuildingType = 'carport' | 'garage' | 'barn' | 'rv_cover'
 export type RoofStyle = 'flat' | 'gabled'
 export type ColumnTier = '6_inch' | '8_inch' | '10_inch'
-export type RollupSize = '9x8' | '10x10' | '12x12' | '14x14' | '16x14'
+export type RollupSize = '8x8' | '10x10' | '12x12' | '14x14' | '16x16'
 export type MarginBuffer = 0.10 | 0.15 | 0.20
 
 export type WallSection = {
@@ -164,15 +164,19 @@ const HEIGHT_SURCHARGE_STARTS_AT_FT = 12   // CONFIRMED from prompt
 const HEIGHT_SURCHARGE_PER_FT = 400        // CONFIRMED from prompt
 
 /**
- * Roll-up door pricing by size.
- * TODO_PRICING: replace with real numbers.
+ * Roll-up door pricing by size. Locked from the 2026-05-06 handwritten
+ * Triple J price sheet (Freddy/Juan estimator). Prices are installed,
+ * customer-facing — buffer is NOT re-applied at calc time for these.
+ *
+ * Note: 10x10 ($1,900) sits above 12x12 ($1,800) on the sheet — kept
+ * as written; flagged for review by Julian on next price-sheet pass.
  */
 const ROLLUP_DOOR_PRICE: Record<RollupSize, number> = {
-  '9x8':   850,
-  '10x10': 1100,
-  '12x12': 1450,
-  '14x14': 1900,
-  '16x14': 2200,
+  '8x8':   1000,
+  '10x10': 1900,
+  '12x12': 1800,
+  '14x14': 2200,
+  '16x16': 2600,
 }
 
 /** Walk-through door (3'×7' standard). TODO_PRICING. */

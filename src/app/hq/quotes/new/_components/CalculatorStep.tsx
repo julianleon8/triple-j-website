@@ -38,7 +38,7 @@ const ROOF_STYLES: { value: RoofStyle; label: string }[] = [
   { value: 'flat',   label: 'Flat' },
 ]
 
-const ROLLUP_SIZES: RollupSize[] = ['9x8', '10x10', '12x12', '14x14', '16x14']
+const ROLLUP_SIZES: RollupSize[] = ['8x8', '10x10', '12x12', '14x14', '16x16']
 
 const MARGIN_BUFFERS: { value: MarginBuffer; label: string }[] = [
   { value: 0.10, label: '10%' },
