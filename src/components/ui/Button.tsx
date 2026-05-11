@@ -60,11 +60,9 @@ export function ButtonLink({
   children,
   ...props
 }: LinkButtonProps) {
-  return (
-    <Link
-      className={`${base} ${variants[variant]} ${sizes[size]} ${className}`}
-      {...props}
-    >
+  const cls = `${base} ${variants[variant]} ${sizes[size]} ${className}`;
+  const content = (
+    <>
       {icon && iconPosition === "left" ? (
         <span aria-hidden="true" className="shrink-0">
           {icon}
@@ -76,6 +74,31 @@ export function ButtonLink({
           {icon}
         </span>
       ) : null}
+    </>
+  );
+
+  // Hash anchors (e.g. "#quote", "/#quote") must use a plain <a>. Next.js
+  // <Link> intercepts the tap but doesn't reliably trigger native hash-scroll
+  // inside Android in-app WebViews (Facebook Messenger, etc.), so the click
+  // appears to do nothing. Plain <a> hands hash navigation back to the
+  // browser, which always works. We keep the original href verbatim —
+  // "/#quote" still correctly cross-navigates from non-home pages.
+  const { href, onClick } = props;
+  if (typeof href === "string" && href.includes("#")) {
+    return (
+      <a
+        className={cls}
+        href={href}
+        onClick={onClick as ComponentProps<"a">["onClick"]}
+      >
+        {content}
+      </a>
+    );
+  }
+
+  return (
+    <Link className={cls} {...props}>
+      {content}
     </Link>
   );
 }

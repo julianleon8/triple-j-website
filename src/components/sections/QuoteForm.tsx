@@ -590,7 +590,7 @@ export function QuoteForm({ initialMilitary = false }: QuoteFormProps = {}) {
     <section
       id="quote"
       aria-labelledby="quote-heading"
-      className="relative overflow-hidden bg-black text-white py-20 md:py-28"
+      className="relative overflow-hidden bg-black text-white py-20 md:py-28 scroll-mt-20"
     >
       {/* Full-bleed photo backdrop with heavy dark gradient */}
       <div className="absolute inset-0">

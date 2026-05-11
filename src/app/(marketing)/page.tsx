@@ -1,5 +1,4 @@
 import Image from "next/image";
-import Link from "next/link";
 import type { Metadata } from "next";
 
 import { Gallery } from "@/components/sections/Gallery";
@@ -74,10 +73,12 @@ export default function HomePage() {
               className="object-cover"
             />
           </div>
-          {/* Left-to-right scrim — protects the text column across the photo */}
-          <div aria-hidden="true" className="absolute inset-0 hero-scrim" />
+          {/* Left-to-right scrim — protects the text column across the photo.
+              pointer-events-none so Android WebViews can't route taps to the
+              overlay layer ahead of the content beneath. */}
+          <div aria-hidden="true" className="pointer-events-none absolute inset-0 hero-scrim" />
           {/* Bottom fade — keeps the chip row legible against bright photo bottoms */}
-          <div aria-hidden="true" className="absolute inset-0 hero-bottom-fade" />
+          <div aria-hidden="true" className="pointer-events-none absolute inset-0 hero-bottom-fade" />
 
           {/* Verified chip — generic (no fabricated build metadata) */}
           <span className="absolute top-24 right-4 sm:right-8 inline-flex items-center gap-1.5 rounded-md bg-white/95 backdrop-blur-md px-3 py-1.5 text-[10.5px] font-bold uppercase tracking-[0.14em] text-[color:var(--color-ink-900)] shadow-sm">
@@ -123,9 +124,14 @@ export default function HomePage() {
                 </div>
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 max-w-xl">
                   {HERO_CHIPS.map((chip) => (
-                    <Link
+                    // Plain <a> (not next/link) — Android in-app browsers
+                    // (Facebook Messenger WebView, etc.) drop the scroll-to-hash
+                    // when Next.js intercepts the click, so taps appear to do
+                    // nothing. Letting the browser handle the hash natively is
+                    // reliable everywhere.
+                    <a
                       key={chip.label}
-                      href="/#quote"
+                      href="#quote"
                       className="group relative rounded-[10px] overflow-hidden border-[1.5px] border-white/20 hover:border-white/40 bg-white/5 transition-colors"
                     >
                       <div className="relative aspect-[5/4] overflow-hidden">
@@ -136,12 +142,12 @@ export default function HomePage() {
                           sizes="(max-width: 640px) 50vw, 144px"
                           className="object-cover transition-transform duration-500 ease-out group-hover:scale-105"
                         />
-                        <div aria-hidden="true" className="absolute inset-0 hero-chip-overlay" />
-                        <span className="absolute left-2.5 bottom-2 font-display font-extrabold uppercase text-sm leading-none text-white">
+                        <div aria-hidden="true" className="pointer-events-none absolute inset-0 hero-chip-overlay" />
+                        <span className="pointer-events-none absolute left-2.5 bottom-2 font-display font-extrabold uppercase text-sm leading-none text-white">
                           {chip.label}
                         </span>
                       </div>
-                    </Link>
+                    </a>
                   ))}
                 </div>
                 <div className="mt-2.5 flex items-center gap-2.5 max-w-xl">

@@ -206,10 +206,17 @@ export function Header() {
         </Container>
       </div>
 
-      {/* Mobile drawer */}
+      {/* Mobile drawer — when closed we ALSO disable pointer events and
+          mark it invisible. On Android in-app browsers (Facebook Messenger
+          WebView, etc.) the address-bar height makes 100vh unreliable, so
+          `-translate-y-full` can leave a sliver of the drawer covering the
+          hero and silently eating taps. invisible + pointer-events-none make
+          this bulletproof regardless of viewport math. */}
       <div
         className={`lg:hidden fixed inset-x-0 top-0 bottom-0 z-40 bg-[color:var(--color-ink-900)] pt-20 transition-transform duration-300 ease-out ${
-          mobileOpen ? "translate-y-0" : "-translate-y-full"
+          mobileOpen
+            ? "translate-y-0"
+            : "-translate-y-full invisible pointer-events-none"
         }`}
         aria-hidden={!mobileOpen}
       >

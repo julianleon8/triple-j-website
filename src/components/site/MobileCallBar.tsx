@@ -1,5 +1,3 @@
-import Link from "next/link";
-
 import { PhoneIcon, ArrowRightIcon } from "@/components/ui/icons";
 import { TrackedPhoneLink } from "@/components/site/TrackedPhone";
 
@@ -26,13 +24,18 @@ export function MobileCallBar() {
             English · Español
           </span>
         </TrackedPhoneLink>
-        <Link
+        {/* Plain <a> (not next/link) — Android in-app browsers drop the
+            scroll when Next.js intercepts the click for same-page hash
+            anchors. Browser-native hash-scroll works everywhere. We use
+            "/#quote" (not "#quote") so the call bar still navigates to
+            the homepage form from /services, /locations, /about, etc. */}
+        <a
           href="/#quote"
           className="flex items-center justify-center gap-2 h-12 rounded-md bg-white/10 hover:bg-white/20 text-white font-semibold tracking-tight transition-colors"
         >
           <span>Free Quote</span>
           <ArrowRightIcon className="h-4 w-4" />
-        </Link>
+        </a>
       </div>
     </div>
   );
