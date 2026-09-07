@@ -9,6 +9,18 @@ describe('marketing attribution', () => {
     expect(firstTouch('https://example.com/contact', 'https://example.com/blog', original)).toEqual(original);
     expect(original).toMatchObject({ utm_source: 'google', gclid: 'click123', referrer_url: 'https://google.com/' });
   });
+  it('captures ?src= as the campaign source for our own short links', () => {
+    // /quote?src=fb is the Facebook funnel target; before this it was captured
+    // by nothing and the lead landed with a null utm_source.
+    expect(firstTouch('https://example.com/quote?src=fb', '').utm_source).toBe('fb');
+  });
+  it('lets a real utm_source win over ?src=', () => {
+    const out = firstTouch('https://example.com/quote?utm_source=google&src=fb', '');
+    expect(out.utm_source).toBe('google');
+  });
+  it('ignores an empty ?src=', () => {
+    expect(firstTouch('https://example.com/quote?src=', '').utm_source).toBeUndefined();
+  });
   it('keeps first-touch fields together rather than mixing subsequent campaigns', () => {
     const original = firstTouch('https://example.com/?utm_source=facebook&fbclid=first', '');
     expect(firstTouch('https://example.com/?utm_source=google&gclid=second', '', original)).toEqual(original);

@@ -1,5 +1,16 @@
 # Session Notes
 
+## 2026-09-07 — `/quote` landing page
+
+Shipped the dedicated quote page the site never had. It coexists with the fourteen inline `#quote` sections — none removed, only the two Header CTAs repointed — so no existing page loses its form. `QuoteForm` gained a `chrome` prop rather than being forked; a render test guards the split because that change touches every page embedding it. The page supplies its own dark ground, which the form card requires. Prefills from `?service`, `?city`/`?zip` and `?project`, dropping unrecognised values instead of guessing. Added a build-summary echo above the submit button, a tracked "or just call" CTA, a Spanish line, and advisory-only permit copy.
+
+Two migrations applied to production and verified. 029 adds `quote_page` to the `leads.source` allowlist and repaired two faults it inherited: the constraint had been `NOT VALID` since 014 (now validated — all 8 rows conformed), and `hq_test` was missing from the list, which had been silently breaking `POST /api/test/lead` since 014 landed. 030 adds `best_time_to_call`, now collected on every form and surfaced twice in the owner alert.
+
+Also found and reported, not fixed: migration `028_backfill_lead_city` is in the repo but was never applied, so four of the eight leads still hold a ZIP in the `city` column; and a migration named `private_lead_photos` is applied with no file in the repo.
+
+Typecheck, lint, and 218 tests pass. The local production build cannot complete in this environment — there is no `.env.local`, and `/gallery/[id]` queries the database in `generateStaticParams` — but TypeScript compiled clean before that step.
+
+
 ## 2026-09-07 — Project-to-inquiry feature (local)
 
 Implemented approved project-reference handoff and related service builds. Reference validates against active gallery data; deleted references do not block the inquiry, lookup failures are retryable, and customer edits survive removal. Added mocked lead-route tests and owner-email text verification without sending real messages. Related query verified with public gallery access: one garage project with photos. Typecheck, lint, 76 tests pass. No deployment; use the local preview for review.

@@ -12,6 +12,13 @@ export function firstTouch(url: string, referrer: string, previous?: Attribution
     const value = parsed.searchParams.get(key);
     if (value) result[key] = value.slice(0, 200);
   }
+  // `?src=` is the short form our own ad creatives and Marketplace listings use
+  // (the /quote?src=fb funnel). Without this it was captured by nothing and the
+  // lead landed with a null utm_source. Never overrides a real utm_source.
+  if (!result.utm_source) {
+    const src = parsed.searchParams.get('src');
+    if (src) result.utm_source = src.slice(0, 200);
+  }
   return result;
 }
 

@@ -39,6 +39,8 @@ export const SITE = {
   established: 2025,
   stats: {
     projects: "150+",
+    /** Approved trust copy pairs this with `projects` -- see Website Copy & Messaging. */
+    clients: "50+",
   },
   social: {
     instagram: "https://www.instagram.com/triplejmetal/",

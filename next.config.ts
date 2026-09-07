@@ -20,13 +20,32 @@ const nextConfig: NextConfig = {
         permanent: true,
       },
       {
+        // These two have no service page of their own yet. /quote beats
+        // /contact for them: the visitor asked for a specific build, and the
+        // prefill lands them on a form already set to it. Still 307 — a real
+        // service page may yet claim these URLs.
         source: "/services/lean-to-patios",
-        destination: "/contact",
+        destination: "/quote?service=lean_to",
         permanent: false,
       },
       {
         source: "/services/house-additions",
-        destination: "/contact",
+        destination: "/quote",
+        permanent: false,
+      },
+
+      // ── Short aliases for /quote ────────────────────────────────────────
+      // Printed on cards and said out loud, so the obvious misses resolve.
+      // 307 rather than 301 for now: a cached permanent redirect on a
+      // brand-new alias is expensive to undo if the shape changes.
+      {
+        source: "/free-quote",
+        destination: "/quote",
+        permanent: false,
+      },
+      {
+        source: "/estimate",
+        destination: "/quote",
         permanent: false,
       },
       {

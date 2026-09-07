@@ -29,6 +29,7 @@ const leadSchema = z.object({
   needs_concrete:   z.enum(['yes', 'already_have', 'unsure']).optional(),
   current_surface:  z.enum(['dirt', 'gravel', 'asphalt', 'concrete']).optional(),
   timeline:         z.enum(['asap', 'this_week', 'this_month', 'planning']).optional(),
+  best_time_to_call: z.enum(['morning', 'afternoon', 'evening']).optional(),
   is_military:      z.boolean().default(false),
   message:          z.string().max(1000).optional(),
   // Estimated budget (migration 014). Range from a public-form pill.
@@ -51,6 +52,17 @@ const leadSchema = z.object({
   // Optional in dev when HCAPTCHA_SECRET_KEY is unset.
   reference_project_id: z.string().uuid().optional(),
   captcha_token:    z.string().optional(),
+  // Which public funnel this came from. This route is unauthenticated by
+  // design, so the value is client-supplied — but it is a closed enum, not a
+  // free string. leads.source is CHECK-constrained (029); a free string would
+  // turn a typo into a constraint violation surfacing as a 500, losing the
+  // lead. Here a bad value is a 400 before anything is written.
+  //
+  // Every other leads.source value (facebook_lead_ads, voice_memo, …) is set
+  // server-side by its own ingest path and is deliberately not accepted here.
+  // Spoofing this is uninteresting: anyone who can POST already controls name,
+  // phone, message and every utm_* field.
+  source:           z.enum(['website_form', 'quote_page']).default('website_form'),
 })
 
 export async function GET(request: NextRequest) {
@@ -154,9 +166,10 @@ export async function POST(request: NextRequest) {
         needs_concrete:  data.needs_concrete || null,
         current_surface: data.current_surface || null,
         timeline:        data.timeline || null,
+        best_time_to_call: data.best_time_to_call || null,
         is_military:     data.is_military,
         message:         [sizeLine, projectNotes, projectNotes && data.message?.trim() ? `Customer notes:\n${data.message.trim()}` : data.message?.trim()].filter(Boolean).join('\n\n') || null,
-        source:          'website_form',
+        source:          data.source,
         utm_source:      data.utm_source || null,
         utm_medium:      data.utm_medium || null,
         utm_campaign:    data.utm_campaign || null,

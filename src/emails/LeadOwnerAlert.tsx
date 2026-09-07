@@ -19,6 +19,8 @@ interface LeadOwnerAlertProps {
   currentSurfaceLabel?: string | null
   timelineLabel?: string | null
   timeline?: string | null
+  /** When the customer said they can take a call, e.g. "Evening (after 5)". */
+  bestTimeLabel?: string | null
   isMilitary: boolean
   message?: string | null
   submittedAt: string
@@ -40,6 +42,7 @@ export default function LeadOwnerAlert(props: LeadOwnerAlertProps) {
     needsConcreteLabel,
     currentSurfaceLabel,
     timelineLabel,
+    bestTimeLabel,
     timeline,
     isMilitary,
     message,
@@ -61,6 +64,7 @@ export default function LeadOwnerAlert(props: LeadOwnerAlertProps) {
     ['Phone', <Link key="p" href={`tel:${phone}`} style={dataLink}>{phone}</Link>],
   ]
   if (email) rows.push(['Email', <Link key="e" href={`mailto:${email}`} style={dataLink}>{email}</Link>])
+  if (bestTimeLabel) rows.push(['Best time', bestTimeLabel])
   // Distance is the first thing Julian wants off a new lead — it decides
   // whether the job is worth the truck before anything else on this card does.
   rows.push([
@@ -129,6 +133,14 @@ export default function LeadOwnerAlert(props: LeadOwnerAlertProps) {
         </table>
       </Section>
 
+      {/* The one thing that decides whether tapping "Call now" right now is a
+          good idea. Sits with the buttons, not down in the detail table. */}
+      {bestTimeLabel ? (
+        <Text style={{ margin: '-14px 0 22px', fontSize: 13, color: '#6b7280', textAlign: 'center' }}>
+          📞 Best time to call: <strong style={{ color: '#374151' }}>{bestTimeLabel}</strong>
+        </Text>
+      ) : null}
+
       {/* ── Detail table ──────────────────────────────────────────── */}
       <Text style={sectionLabel}>LEAD DETAILS</Text>
       <Section style={dataCard}>
@@ -157,6 +169,7 @@ export function leadOwnerAlertText(props: LeadOwnerAlertProps): string {
     `📞 ${props.phone}`,
   ]
   if (props.email) lines.push(`✉️  ${props.email}`)
+  if (props.bestTimeLabel) lines.push(`⏰ Best time: ${props.bestTimeLabel}`)
   lines.push(``)
   lines.push(`— DETAILS —`)
   if (props.structureType) lines.push(`Steel: ${props.structureType}`)

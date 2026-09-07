@@ -105,7 +105,14 @@ export function detectTrafficSource({ search = '', referrer = '' }: DetectInput)
   detail: NonNullable<TrackingResult['detail']>
 } {
   const params = new URLSearchParams(search.startsWith('?') ? search.slice(1) : search)
-  const utmSource = (params.get('utm_source') ?? '').toLowerCase().trim() || undefined
+  // `?src=` mirrors the same fallback in marketing-attribution.ts. If only one
+  // of the two honoured it, an ?src=fb visitor would be recorded as Facebook on
+  // the lead row while being shown the canonical phone number -- the two systems
+  // disagreeing about a single visit.
+  const utmSource =
+    (params.get('utm_source') ?? '').toLowerCase().trim() ||
+    (params.get('src') ?? '').toLowerCase().trim() ||
+    undefined
   const utmMedium = (params.get('utm_medium') ?? '').toLowerCase().trim() || undefined
   const utmCampaign = (params.get('utm_campaign') ?? '').toLowerCase().trim() || undefined
   const gclid = params.get('gclid') ?? undefined

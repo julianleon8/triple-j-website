@@ -11,6 +11,7 @@ const STATIC_PATHS = [
   "/",
   "/about",
   "/contact",
+  "/quote",
   "/services",
   "/locations",
   "/military",
@@ -37,7 +38,7 @@ export const dynamic = "force-dynamic";
 // trusting the signal site-wide — including for the gallery rows, where it is
 // real. Bump this when the corresponding page copy actually changes; the
 // gallery rows below keep their true per-row timestamps from Supabase.
-const CONTENT_REVISED = new Date("2026-09-06T00:00:00.000Z");
+const CONTENT_REVISED = new Date("2026-09-07T00:00:00.000Z");
 
 type GalleryItemRow = {
   id: string;
@@ -59,7 +60,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority:
         path === "/"
           ? 1
-          : path === "/contact" || path === "/services" || path === "/military"
+          : path === "/contact" || path === "/quote" || path === "/services" || path === "/military"
             ? 0.9
             : 0.8,
     });

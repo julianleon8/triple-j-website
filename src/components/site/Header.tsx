@@ -179,7 +179,7 @@ export function Header() {
                 </span>
               </TrackedPhoneLink>
               <ButtonLink
-                href="/#quote"
+                href="/quote"
                 variant="primary"
                 size="md"
                 className="hidden sm:inline-flex"
@@ -231,7 +231,7 @@ export function Header() {
           </nav>
           <div className="mt-4 flex flex-col gap-3">
             <ButtonLink
-              href="/#quote"
+              href="/quote"
               variant="primary"
               size="lg"
               onClick={() => setMobileOpen(false)}

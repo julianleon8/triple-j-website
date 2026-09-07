@@ -28,6 +28,7 @@ type LeadRecord = {
   needs_concrete: string | null
   current_surface: string | null
   timeline: string | null
+  best_time_to_call: string | null
   is_military: boolean | null
   message: string | null
   status: string
@@ -133,6 +134,7 @@ export default async function LeadDetailPage({ params }: { params: Promise<{ id:
           <Field label="Service" value={readable(lead.service_type)} />
           <Field label="Structure" value={readable(lead.structure_type)} />
           <Field label="Timeline" value={readable(lead.timeline)} />
+          <Field label="Best time to call" value={readable(lead.best_time_to_call)} />
           <Field label="Concrete" value={readable(lead.needs_concrete)} />
           <Field label="Surface" value={readable(lead.current_surface)} />
           <Field label="City / ZIP" value={[lead.city, lead.zip].filter(Boolean).join(' · ') || null} />

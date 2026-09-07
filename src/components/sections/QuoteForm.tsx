@@ -9,7 +9,8 @@ import type HCaptcha from "@hcaptcha/react-hcaptcha";
 import { Button } from "@/components/ui/Button";
 import { Container } from "@/components/ui/Container";
 import { ArrowRightIcon } from "@/components/ui/icons";
-import { projectService, type ProjectReference } from "@/lib/project-reference";
+import { projectService, type ProjectReference, type ReferenceService } from "@/lib/project-reference";
+import { summarizeBuild } from "@/lib/quote-summary";
 import { captureAttribution } from "@/lib/marketing-attribution";
 
 // Lazy-load hCaptcha — its 20 KB chunk only fetches when step 2 first
@@ -39,6 +40,7 @@ type NeedsConcrete = "yes" | "already_have" | "unsure";
 type Surface = "dirt" | "gravel" | "asphalt" | "concrete";
 type Timeline = "asap" | "this_week" | "this_month" | "planning";
 type BudgetBand = "under_5k" | "5_10k" | "10_20k" | "20_40k" | "over_40k";
+type BestTime = "morning" | "afternoon" | "evening";
 
 const BUDGET_BANDS: Array<{ v: BudgetBand; label: string; min: number; max: number | null }> = [
   { v: "under_5k", label: "Under $5K",   min: 0,     max: 5000 },
@@ -63,6 +65,7 @@ type FormState = {
   needs_concrete: NeedsConcrete | "";
   current_surface: Surface | "";
   timeline: Timeline | "";
+  best_time_to_call: BestTime | "";
   budget: BudgetBand | "";
   is_military: boolean;
   message: string;
@@ -73,6 +76,7 @@ const INITIAL: FormState = {
   width: "", length: "", height: "", zip: "",
   name: "", phone: "", email: "",
   needs_concrete: "", current_surface: "", timeline: "",
+  best_time_to_call: "",
   budget: "",
   is_military: false, message: "",
 };
@@ -401,6 +405,27 @@ function StepContact({
         </div>
       </div>
 
+      {/* Best time to call — pairs with Timeline but answers a different
+          question: when the job needs doing vs. when they can pick up. */}
+      <div>
+        <FieldLabel optional>Best Time To Call</FieldLabel>
+        <div className="flex flex-wrap gap-2">
+          {([
+            { v: "morning" as BestTime, label: "Morning (before noon)" },
+            { v: "afternoon" as BestTime, label: "Afternoon (12–5)" },
+            { v: "evening" as BestTime, label: "Evening (after 5)" },
+          ]).map((opt) => (
+            <OptionPill
+              key={opt.v}
+              selected={form.best_time_to_call === opt.v}
+              onClick={() => update("best_time_to_call", opt.v)}
+            >
+              {opt.label}
+            </OptionPill>
+          ))}
+        </div>
+      </div>
+
       {/* Budget */}
       <div>
         <FieldLabel optional>Budget Range</FieldLabel>
@@ -457,18 +482,59 @@ function StepContact({
 
 /* ─── Main form ────────────────────────────────────────────────────────── */
 
-type QuoteFormProps = {
+export type QuoteFormProps = {
   /** Pre-check the "Active military or first responder" box on step 2.
    *  Used by /military so PCS visitors don't have to remember the discount toggle. */
   initialMilitary?: boolean;
   projectReference?: ProjectReference;
+  /**
+   * Render the surrounding section — dark photo backdrop, Container, eyebrow
+   * trio, discount line and heading — or just the form card on its own.
+   *
+   * Defaults to `true`, and must stay that way: fourteen marketing pages render
+   * this as a page-closing section and four of them pass no props at all.
+   *
+   * `false` is for /quote, which supplies its own headline. The card is styled
+   * for a dark ground unconditionally (white text on white/5 fill), so a host
+   * page passing `chrome={false}` MUST provide that ground itself or the form
+   * renders white-on-white.
+   */
+  chrome?: boolean;
+  /** Preselected service chip, from ?service= on /quote. */
+  initialService?: ReferenceService;
+  /** Prefilled ZIP, from ?city= or ?zip= on /quote. */
+  initialZip?: string;
+  /**
+   * Which funnel this submission belongs to. Constrained to the two values the
+   * public API accepts from a client; every other `leads.source` value is set
+   * server-side by an ingest path.
+   */
+  source?: "website_form" | "quote_page";
 };
 
-export function QuoteForm({ initialMilitary = false, projectReference }: QuoteFormProps = {}) {
+export function QuoteForm({
+  initialMilitary = false,
+  projectReference,
+  chrome = true,
+  initialService,
+  initialZip,
+  source = "website_form",
+}: QuoteFormProps = {}) {
   const router = useRouter();
   const [reference, setReference] = useState(projectReference);
   const [step, setStep] = useState<1 | 2>(1);
-  const [form, setForm] = useState<FormState>({ ...INITIAL, is_military: initialMilitary, service_type: projectReference ? projectService(projectReference.type) : "" });
+  // A project reference outranks ?service= — it is the more specific signal,
+  // and it is what the customer was looking at when they clicked.
+  const [form, setForm] = useState<FormState>({
+    ...INITIAL,
+    is_military: initialMilitary,
+    service_type: projectReference ? projectService(projectReference.type) : initialService ?? "",
+    zip: initialZip ?? "",
+  });
+  // The /quote hero promises "Same day, guaranteed within 24 hours". The
+  // below-submit line has to agree with it, or the page contradicts itself
+  // between its headline and its button.
+  const isQuotePage = source === "quote_page";
   const [status, setStatus] = useState<"idle" | "submitting" | "err">("idle");
   const [captchaToken, setCaptchaToken] = useState<string | null>(null);
   const captchaRef = useRef<HCaptcha | null>(null);
@@ -533,6 +599,8 @@ export function QuoteForm({ initialMilitary = false, projectReference }: QuoteFo
       needs_concrete:  form.needs_concrete || undefined,
       current_surface: form.current_surface || undefined,
       timeline:        form.timeline || undefined,
+      best_time_to_call: form.best_time_to_call || undefined,
+      source,
       estimated_budget_min: budgetBand?.min,
       estimated_budget_max: budgetBand?.max ?? undefined,
       is_military:     form.is_military,
@@ -582,7 +650,9 @@ export function QuoteForm({ initialMilitary = false, projectReference }: QuoteFo
       // Success — redirect to /thank-you for clean conversion analytics
       // (per 2026-04-23 design decision). The router push preserves
       // history so back-button still works for the user.
-      router.push("/thank-you");
+      // ?from=quote lets /thank-you acknowledge the ad funnel. Deliberately
+      // carries no PII — name, phone and ZIP never go in a URL.
+      router.push(isQuotePage ? "/thank-you?from=quote" : "/thank-you");
     } catch (err) {
       setStatus("err");
       setErrMsg(err instanceof Error ? err.message : "Unknown error");
@@ -593,42 +663,28 @@ export function QuoteForm({ initialMilitary = false, projectReference }: QuoteFo
 
   const progressPct = step === 1 ? 50 : 100;
 
-  return (
-    <section
-      id="quote"
-      aria-labelledby="quote-heading"
-      className="scroll-mt-24 relative overflow-hidden bg-black text-white py-20 md:py-28"
-    >
-      {/* Full-bleed photo backdrop with heavy dark gradient */}
-      <div className="absolute inset-0">
-        <Image
-          src="/images/red-iron-frame-hero.jpg"
-          alt=""
-          fill
-          sizes="100vw"
-          className="object-cover opacity-50"
-        />
-      </div>
-      <div
-        aria-hidden="true"
-        className="absolute inset-0 bg-gradient-to-tr from-black/95 via-black/80 to-[color:var(--color-brand-700)]/40"
-      />
+  const buildSummary = step === 2 ? summarizeBuild(form) : null;
 
-      <Container size="wide" className="relative">
-        <div className="mx-auto max-w-xl">
-          {reference && (
-            <div className="mb-7 flex items-start gap-4 rounded-lg border border-white/20 bg-black/50 p-4">
-              <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-md">
-                <Image src={reference.image} alt="" fill sizes="80px" className="object-cover" />
-              </div>
-              <div className="min-w-0 flex-1">
-                <p className="text-xs uppercase tracking-wider text-brand-300">Inspired by this project</p>
-                <p className="mt-1 text-base font-semibold">{reference.title}</p>
-                <p className="text-sm text-white/70">{reference.city}</p>
-                <button type="button" onClick={() => setReference(undefined)} className="mt-1 min-h-11 text-sm text-white/80 underline underline-offset-4">Remove reference</button>
-              </div>
-            </div>
-          )}
+  // The reference card and the form card render in both modes; everything
+  // between them is chrome. Kept as one expression so bare mode is provably
+  // the same markup minus the wrapper, rather than a second copy of it.
+  const body = (
+    <div className="mx-auto max-w-xl">
+      {reference && (
+        <div className="mb-7 flex items-start gap-4 rounded-lg border border-white/20 bg-black/50 p-4">
+          <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-md">
+            <Image src={reference.image} alt="" fill sizes="80px" className="object-cover" />
+          </div>
+          <div className="min-w-0 flex-1">
+            <p className="text-xs uppercase tracking-wider text-brand-300">Inspired by this project</p>
+            <p className="mt-1 text-base font-semibold">{reference.title}</p>
+            <p className="text-sm text-white/70">{reference.city}</p>
+            <button type="button" onClick={() => setReference(undefined)} className="mt-1 min-h-11 text-sm text-white/80 underline underline-offset-4">Remove reference</button>
+          </div>
+        </div>
+      )}
+      {chrome ? (
+        <>
           {/* Discount + trust eyebrow trio above the form */}
           <div className="mb-6 flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-[11px] font-bold uppercase tracking-[0.15em] text-white/65">
             <span className="inline-flex items-center gap-1.5">
@@ -668,130 +724,173 @@ export function QuoteForm({ initialMilitary = false, projectReference }: QuoteFo
               not a form into a black hole.
             </p>
           </div>
+        </>
+      ) : null}
 
-          {/* Glass form card */}
-          <div className="rounded-2xl border border-white/10 bg-white/[0.04] backdrop-blur-md shadow-2xl p-6 sm:p-8">
-            {/* Slim progress bar */}
-            <div className="mb-7">
-              <div className="flex items-center justify-between text-[11px] font-bold uppercase tracking-[0.18em] text-white/55 mb-2">
-                <span>
-                  <span className="text-[color:var(--color-brand-400)]">Step {step}</span> of 2
-                </span>
-                <span>{step === 1 ? "Project" : "Contact + Details"}</span>
-              </div>
-              <div
-                className="relative h-1 rounded-full bg-white/8 overflow-hidden"
-                role="progressbar"
-                aria-label="Quote form progress"
-                aria-valuenow={progressPct as number}
-                aria-valuemin={0 as number}
-                aria-valuemax={100 as number}
-              >
-                <div
-                  className="absolute inset-y-0 left-0 bg-[color:var(--color-brand-400)] transition-[width] duration-500 ease-out"
-                  style={{ width: `${progressPct}%` }}
-                />
-              </div>
-            </div>
-
-            {/* Step content with onKeyDown=Enter advances (per locked
-                anti-implicit-submit pattern: NOT a <form> element). */}
+      {/* Glass form card */}
+      <div className="rounded-2xl border border-white/10 bg-white/[0.04] backdrop-blur-md shadow-2xl p-6 sm:p-8">
+        {/* Slim progress bar */}
+        <div className="mb-7">
+          <div className="flex items-center justify-between text-[11px] font-bold uppercase tracking-[0.18em] text-white/55 mb-2">
+            <span>
+              <span className="text-[color:var(--color-brand-400)]">Step {step}</span> of 2
+            </span>
+            <span>{step === 1 ? "Project" : "Contact + Details"}</span>
+          </div>
+          <div
+            className="relative h-1 rounded-full bg-white/8 overflow-hidden"
+            role="progressbar"
+            aria-label="Quote form progress"
+            aria-valuenow={progressPct as number}
+            aria-valuemin={0 as number}
+            aria-valuemax={100 as number}
+          >
             <div
-              onKeyDown={(e) => {
-                if (
-                  e.key === "Enter" &&
-                  step < 2 &&
-                  (e.target as HTMLElement).tagName !== "TEXTAREA"
-                ) {
-                  e.preventDefault();
-                  if (canAdvance()) next();
-                }
-              }}
-            >
-              {/* Re-key the wrapper so React re-mounts → animation re-fires */}
-              <div key={step} className="step-slide-in">
-                {step === 1 ? (
-                  <StepProject form={form} update={update} />
-                ) : (
-                  <StepContact form={form} update={update} />
-                )}
-              </div>
-
-              {/* Captcha — lazy-loaded on step 2 first render */}
-              {step === 2 && HCAPTCHA_SITE_KEY ? (
-                <div className="mt-6 flex justify-center">
-                  <HCaptchaWidget
-                    ref={captchaRef}
-                    sitekey={HCAPTCHA_SITE_KEY}
-                    theme="dark"
-                    onVerify={(token) => setCaptchaToken(token)}
-                    onExpire={() => setCaptchaToken(null)}
-                    onError={() => setCaptchaToken(null)}
-                  />
-                </div>
-              ) : null}
-
-              {/* Error */}
-              {status === "err" ? (
-                <div className="mt-5 rounded-lg border border-red-400/40 bg-red-500/10 text-red-100 px-4 py-3 text-sm">
-                  {errMsg}
-                </div>
-              ) : null}
-
-              {/* Navigation */}
-              <div className={`mt-7 flex gap-3 ${step > 1 ? "justify-between" : "justify-end"}`}>
-                {step > 1 ? (
-                  <button
-                    type="button"
-                    onClick={back}
-                    className="h-12 px-5 rounded-lg border border-white/15 bg-white/5 text-sm font-semibold text-white/75 hover:border-white/30 hover:text-white transition-colors"
-                  >
-                    ← Back
-                  </button>
-                ) : null}
-
-                {step < 2 ? (
-                  <Button
-                    type="button"
-                    variant="primary"
-                    size="lg"
-                    disabled={!canAdvance()}
-                    icon={<ArrowRightIcon className="h-5 w-5" />}
-                    iconPosition="right"
-                    onClick={next}
-                    className="flex-1"
-                  >
-                    Continue
-                  </Button>
-                ) : (
-                  <Button
-                    type="button"
-                    variant="primary"
-                    size="lg"
-                    disabled={status === "submitting" || !canAdvance()}
-                    icon={<ArrowRightIcon className="h-5 w-5" />}
-                    iconPosition="right"
-                    onClick={handleSubmit}
-                    className="flex-1"
-                  >
-                    {status === "submitting" ? "Sending…" : "Send to Triple J"}
-                  </Button>
-                )}
-              </div>
-
-              {/* Below-submit reassurance line */}
-              <p className="mt-5 text-center text-[12px] text-white/55 leading-relaxed">
-                Free quote — no spam, no obligation. Most replies within 24 hours.
-              </p>
-
-              {/* Consent micro-text */}
-              <p className="mt-2 text-center text-[11px] text-white/35">
-                By submitting you consent to be contacted by phone, text, or email.
-              </p>
-            </div>
+              className="absolute inset-y-0 left-0 bg-[color:var(--color-brand-400)] transition-[width] duration-500 ease-out"
+              style={{ width: `${progressPct}%` }}
+            />
           </div>
         </div>
-      </Container>
+
+        {/* Step content with onKeyDown=Enter advances (per locked
+            anti-implicit-submit pattern: NOT a <form> element). */}
+        <div
+          onKeyDown={(e) => {
+            if (
+              e.key === "Enter" &&
+              step < 2 &&
+              (e.target as HTMLElement).tagName !== "TEXTAREA"
+            ) {
+              e.preventDefault();
+              if (canAdvance()) next();
+            }
+          }}
+        >
+          {/* Re-key the wrapper so React re-mounts → animation re-fires */}
+          <div key={step} className="step-slide-in">
+            {step === 1 ? (
+              <StepProject form={form} update={update} />
+            ) : (
+              <StepContact form={form} update={update} />
+            )}
+          </div>
+
+          {/* Build echo — a confirmation, never an estimate. summarizeBuild
+              returns null until there is something worth repeating back. */}
+          {buildSummary ? (
+            <div className="mt-6 rounded-lg border border-white/20 bg-black/40 px-4 py-3">
+              <p className="text-[11px] font-bold uppercase tracking-wider text-[color:var(--color-brand-300)]">
+                Your build
+              </p>
+              <p className="mt-1 text-sm text-white/85">{buildSummary}</p>
+            </div>
+          ) : null}
+
+          {/* Captcha — lazy-loaded on step 2 first render */}
+          {step === 2 && HCAPTCHA_SITE_KEY ? (
+            <div className="mt-6 flex justify-center">
+              <HCaptchaWidget
+                ref={captchaRef}
+                sitekey={HCAPTCHA_SITE_KEY}
+                theme="dark"
+                onVerify={(token) => setCaptchaToken(token)}
+                onExpire={() => setCaptchaToken(null)}
+                onError={() => setCaptchaToken(null)}
+              />
+            </div>
+          ) : null}
+
+          {/* Error */}
+          {status === "err" ? (
+            <div className="mt-5 rounded-lg border border-red-400/40 bg-red-500/10 text-red-100 px-4 py-3 text-sm">
+              {errMsg}
+            </div>
+          ) : null}
+
+          {/* Navigation */}
+          <div className={`mt-7 flex gap-3 ${step > 1 ? "justify-between" : "justify-end"}`}>
+            {step > 1 ? (
+              <button
+                type="button"
+                onClick={back}
+                className="h-12 px-5 rounded-lg border border-white/15 bg-white/5 text-sm font-semibold text-white/75 hover:border-white/30 hover:text-white transition-colors"
+              >
+                ← Back
+              </button>
+            ) : null}
+
+            {step < 2 ? (
+              <Button
+                type="button"
+                variant="primary"
+                size="lg"
+                disabled={!canAdvance()}
+                icon={<ArrowRightIcon className="h-5 w-5" />}
+                iconPosition="right"
+                onClick={next}
+                className="flex-1"
+              >
+                Continue
+              </Button>
+            ) : (
+              <Button
+                type="button"
+                variant="primary"
+                size="lg"
+                disabled={status === "submitting" || !canAdvance()}
+                icon={<ArrowRightIcon className="h-5 w-5" />}
+                iconPosition="right"
+                onClick={handleSubmit}
+                className="flex-1"
+              >
+                {status === "submitting" ? "Sending…" : "Send to Triple J"}
+              </Button>
+            )}
+          </div>
+
+          {/* Below-submit reassurance line */}
+          <p className="mt-5 text-center text-[12px] text-white/55 leading-relaxed">
+            Free quote — no spam, no obligation.{" "}
+            {isQuotePage ? "Same day, guaranteed within 24 hours." : "Most replies within 24 hours."}
+          </p>
+
+          {/* Consent micro-text */}
+          <p className="mt-2 text-center text-[11px] text-white/35">
+            By submitting you consent to be contacted by phone, text, or email.
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+
+  // Bare mode: the host page owns the heading and, critically, the dark ground
+  // the card is styled against. `id="quote"` lives on the wrapper there.
+  if (!chrome) return body;
+
+  return (
+    <section
+      id="quote"
+      // Pairs with the <h2 id="quote-heading"> above, which is chrome-only —
+      // the two must stay in the same branch or this points at nothing.
+      aria-labelledby="quote-heading"
+      className="scroll-mt-24 relative overflow-hidden bg-black text-white py-20 md:py-28"
+    >
+      {/* Full-bleed photo backdrop with heavy dark gradient */}
+      <div className="absolute inset-0">
+        <Image
+          src="/images/red-iron-frame-hero.jpg"
+          alt=""
+          fill
+          sizes="100vw"
+          className="object-cover opacity-50"
+        />
+      </div>
+      <div
+        aria-hidden="true"
+        className="absolute inset-0 bg-gradient-to-tr from-black/95 via-black/80 to-[color:var(--color-brand-700)]/40"
+      />
+
+      <Container size="wide" className="relative">{body}</Container>
     </section>
   );
 }

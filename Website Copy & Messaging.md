@@ -20,6 +20,13 @@ _Last updated: 2026-04-15_
 ## Trust / Credibility Section Copy
 'Since our establishment in 2025, we have successfully delivered over 150 completed projects for more than 50 satisfied clients across Central Texas.'
 
+## Quote page copy rules (2026-09-07)
+
+- **Response promise on `/quote` and `/thank-you?from=quote`:** "Same day, guaranteed within 24 hours." Both figures in one line, deliberately — the confirmation email arrives minutes later, and a bare "same day" would read as a downgrade against it. Every other surface keeps "within 24 hours". Nothing may say "most replies".
+- **Permits:** advisory only — "Building permits? We'll talk you through it." Never "we handle permits", "we pull permits", or any guarantee. Permit handling is an opportunity in `Operational Notes.md`, not a shipped service.
+- **Spanish:** "Se habla español — pregunta por Juan o Freddy." Name those two; Julian is English-only.
+- **No prices, no deposit or payment terms, no stars or review counts** on `/quote`.
+
 ## Things to REMOVE / Avoid
 - '5+ Industry Awards' — was placeholder text, not real. Remove entirely.
 - 'Electrostatic painting' — replaced by MetalMax material marketing

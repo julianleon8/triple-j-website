@@ -62,3 +62,44 @@ describe('lead project handoff', () => {
     expect(mock.insert).not.toHaveBeenCalled();
   });
 });
+
+describe('lead funnel source', () => {
+  it('defaults to website_form when the client sends nothing', async () => {
+    expect((await POST(request())).status).toBe(200);
+    expect(mock.insert.mock.calls[0][0].source).toBe('website_form');
+  });
+  it('records a quote_page submission against its own funnel', async () => {
+    expect((await POST(request({ source: 'quote_page' }))).status).toBe(200);
+    expect(mock.insert.mock.calls[0][0].source).toBe('quote_page');
+  });
+  it('rejects a source the public form has no business sending', async () => {
+    // These are real leads.source values, but every one of them is set
+    // server-side by its own ingest path. Rejecting here means the DB CHECK
+    // constraint is unreachable from this route, so a bad value can never
+    // become a 500 that loses the lead.
+    for (const source of ['facebook_lead_ads', 'voice_memo', 'referral', 'hq_test']) {
+      vi.clearAllMocks();
+      mock.rate.mockReturnValue({ allowed: true });
+      mock.captcha.mockResolvedValue({ success: true });
+      expect((await POST(request({ source }))).status).toBe(400);
+      expect(mock.insert).not.toHaveBeenCalled();
+      expect(mock.notify).not.toHaveBeenCalled();
+    }
+  });
+});
+
+describe('best time to call', () => {
+  it('saves the window and passes it to the owner alert', async () => {
+    expect((await POST(request({ best_time_to_call: 'evening' }))).status).toBe(200);
+    expect(mock.insert.mock.calls[0][0].best_time_to_call).toBe('evening');
+    expect(mock.notify.mock.calls[0][0].lead.best_time_to_call).toBe('evening');
+  });
+  it('stores null rather than an empty string when unanswered', async () => {
+    expect((await POST(request())).status).toBe(200);
+    expect(mock.insert.mock.calls[0][0].best_time_to_call).toBeNull();
+  });
+  it('rejects a window outside the three the column allows', async () => {
+    expect((await POST(request({ best_time_to_call: 'midnight' }))).status).toBe(400);
+    expect(mock.insert).not.toHaveBeenCalled();
+  });
+});

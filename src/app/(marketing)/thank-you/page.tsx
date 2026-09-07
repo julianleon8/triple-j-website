@@ -39,7 +39,13 @@ const NEXT_STEPS = [
   },
 ] as const;
 
-export default function ThankYouPage() {
+export default async function ThankYouPage({ searchParams }: PageProps<'/thank-you'>) {
+  // ?from=quote is set by the /quote landing page, which promises "same day,
+  // guaranteed within 24 hours". This paragraph is the next thing that visitor
+  // reads, so it has to say the same thing. Deliberately the only param — no
+  // name, phone or ZIP ever goes in a URL.
+  const fromQuotePage = (await searchParams).from === 'quote'
+
   return (
     <>
       {/* Fires the Google Ads "lead submitted" conversion exactly once,
@@ -80,8 +86,17 @@ export default function ThankYouPage() {
             </h1>
 
             <p className="mt-6 text-lg sm:text-xl leading-relaxed text-white/80 max-w-2xl">
-              Your request landed. A real person from Triple J Metal will call
-              you back within 24 hours — usually the same day.
+              {fromQuotePage ? (
+                <>
+                  Your request landed. A real person from Triple J Metal will call
+                  you back today — guaranteed within 24 hours.
+                </>
+              ) : (
+                <>
+                  Your request landed. A real person from Triple J Metal will call
+                  you back within 24 hours — usually the same day.
+                </>
+              )}
             </p>
 
             <div className="mt-10 flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-6">

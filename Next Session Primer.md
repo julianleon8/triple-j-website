@@ -1,5 +1,20 @@
 # Next Session Primer — Read This First
 
+## `/quote` landing page — shipped 2026-09-07
+
+`/quote` exists now and is the header CTA destination. It coexists with the inline `#quote` sections; do not "tidy up" the asymmetry by repointing `Footer`, `MobileCallBar`, `PreFooterCta` or the ~20 in-page anchors — those still target `/#quote` deliberately, so pages keep converting on their own form.
+
+`QuoteForm` takes a `chrome` prop. It defaults to `true` and must stay that way — fourteen pages depend on it, four of them passing no props at all. In bare mode the card has no dark background of its own; the host page owns it. `src/components/sections/QuoteForm.test.ts` is the guard.
+
+Migrations 029 and 030 are applied and verified in production.
+
+**Two pre-existing drift items found and left alone, both worth a decision:**
+1. `028_backfill_lead_city.sql` is committed but was never applied. Four of the eight live leads still hold a ZIP in `leads.city` — the exact corruption it was written to repair. Applying it is a targeted two-statement update.
+2. A migration `private_lead_photos` (version 20260907143042) is applied to the database with no corresponding file in `supabase/migrations/`. This is the out-of-band drift `scripts/check-migrations.mjs` exists to catch; the DDL should be reconstructed into a file.
+
+Unrelated uncommitted work was present in the working tree during this session — a `/login` refactor splitting `LoginForm` into its own file. It was left untouched and not committed.
+
+
 ## Project inquiry feature — local implementation, 2026-09-07
 
 Built the approved next feature: project-page CTA targets its own form; removable inspiration card; building-type-only prefill; optional reference_project_id validated and resolved server-side into lead notes. Owner email already consumes those notes. RelatedProjects shows up to three photographed type/tag matches on service pages, while the existing hybrid gallery moves directly below its hero. No schema changes, no real lead submissions, no customer messages. Typecheck, lint, and 76 tests passed; production build validation reported in the task. Local preview: http://127.0.0.1:3210/gallery/162e4b86-b8d7-4bbb-b828-bc23f90d256d#quote . This feature has not been committed or published.

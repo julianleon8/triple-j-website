@@ -16,6 +16,14 @@ const SURFACE_LABELS: Record<string, string> = {
   asphalt: 'Asphalt',
   concrete: 'Existing concrete',
 }
+// When the customer said they can pick up — distinct from TIMELINE_LABELS,
+// which is when the job needs doing. An ASAP job from someone who only answers
+// after 5pm is still an evening callback.
+const BEST_TIME_LABELS: Record<string, string> = {
+  morning: 'Morning (before noon)',
+  afternoon: 'Afternoon (12–5)',
+  evening: 'Evening (after 5)',
+}
 const TIMELINE_LABELS: Record<string, string> = {
   asap: 'ASAP — this week if possible',
   this_week: 'This week',
@@ -40,6 +48,7 @@ export interface LeadRecord {
   needs_concrete: string | null
   current_surface: string | null
   timeline: string | null
+  best_time_to_call: string | null
   is_military: boolean | null
   message: string | null
   source: string | null
@@ -107,6 +116,7 @@ export async function notifyNewLead({ lead, sizeLine = null }: NotifyNewLeadInpu
     currentSurfaceLabel: label(lead.current_surface, SURFACE_LABELS),
     timelineLabel: label(lead.timeline, TIMELINE_LABELS),
     timeline: lead.timeline,
+    bestTimeLabel: label(lead.best_time_to_call, BEST_TIME_LABELS),
     isMilitary: !!lead.is_military,
     message: lead.message?.trim() || null,
     submittedAt,
