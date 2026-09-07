@@ -1,11 +1,16 @@
 import { describe, it, expect } from 'vitest'
 import { PDF_HREF_PATTERN, PERMIT_SOURCES, getEnabledSources } from './permit-sources'
 
-/** Mirrors how fetchLatestPdfUrl consumes the pattern. */
+/** Mirrors how listReports consumes the pattern: group 1 is the path. */
 function hrefs(html: string): string[] {
   const out = new Set<string>()
   for (const m of html.matchAll(PDF_HREF_PATTERN)) out.add(m[1])
   return [...out]
+}
+
+/** Group 2 is the query string, kept for the upload stamp. */
+function queries(html: string): (string | undefined)[] {
+  return [...html.matchAll(PDF_HREF_PATTERN)].map((m) => m[2])
 }
 
 describe('PDF_HREF_PATTERN', () => {
@@ -23,12 +28,18 @@ describe('PDF_HREF_PATTERN', () => {
     ])
   })
 
-  it('strips a cache-busting query string from the capture', () => {
-    // The second half of the same bug. ?t=... must not reach the capture
-    // group: inferDateFromPath and looksLikeReport both read the filename.
+  it('keeps the cache-busting query string out of the path capture', () => {
+    // ?t=... must not reach the path: the filename is what gets labelled.
     expect(hrefs('<a href="docs/260105agenda.pdf?t=202601141218480">Agenda</a>')).toEqual([
       'docs/260105agenda.pdf',
     ])
+  })
+
+  it('captures the query string separately — it is the upload timestamp', () => {
+    expect(queries('<a href="docs/260105agenda.pdf?t=202601141218480">Agenda</a>')).toEqual([
+      '?t=202601141218480',
+    ])
+    expect(queries('<a href="docs/260105agenda.pdf">Agenda</a>')).toEqual([undefined])
   })
 
   it('handles the exact Bell County markup — space and query together', () => {
@@ -38,6 +49,17 @@ describe('PDF_HREF_PATTERN', () => {
       ' target="_blank"  >Meeting Agenda</a></td>'
     expect(hrefs(html)).toEqual([
       'county_government/commissioners_court/docs/260105agenda.pdf',
+    ])
+  })
+
+  it('handles the exact Temple markup — spaces, ampersand and parentheses in the path', () => {
+    const html =
+      '<a href="Building Permits & Inspections/Weekly Permit Reports/Aug 21-27.pdf?t=202608281048470" ' +
+      'target="_blank"><span class="fa fa-file-text-o dot-doc" aria-hidden="true"></span>Aug 21-27</a>' +
+      '<a href="City of Temple Weekly Building Permit Report (Sept 20-26, 2024).pdf?t=202409271200000">x</a>'
+    expect(hrefs(html)).toEqual([
+      'Building Permits & Inspections/Weekly Permit Reports/Aug 21-27.pdf',
+      'City of Temple Weekly Building Permit Report (Sept 20-26, 2024).pdf',
     ])
   })
 
@@ -81,9 +103,15 @@ describe('PERMIT_SOURCES', () => {
     expect(new Set(ids).size).toBe(ids.length)
   })
 
-  it('enables only sources reachable without a headless browser', () => {
-    // Harker Heights went behind Cloudflare (403) and Temple's listing is
-    // JS-hydrated; both are disabled until the Firecrawl work lands.
-    expect(getEnabledSources().map((s) => s.jurisdiction)).toEqual(['bell_county'])
+  it('enables Temple and nothing else', () => {
+    // Bell County: scanned PDFs, page stale since April 2026, agendas are not
+    // permits. Harker Heights: Cloudflare 403. CivicPlus/Granicus: headless.
+    expect(getEnabledSources().map((s) => s.jurisdiction)).toEqual(['temple'])
+  })
+
+  it('every source declares a path filter', () => {
+    for (const s of PERMIT_SOURCES) {
+      expect(s.pathFilter).toBeInstanceOf(RegExp)
+    }
   })
 })

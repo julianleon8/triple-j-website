@@ -12,6 +12,12 @@ type PermitLead = {
   source_report_date: string | null;
   permit_number: string | null;
   permit_type: string | null;
+  job_type_code: string | null;
+  job_status: string | null;
+  owner_name: string | null;
+  applicant_name: string | null;
+  contractor_name: string | null;
+  lead_class: string | null;
   address: string | null;
   city: string | null;
   zip: string | null;
@@ -55,6 +61,25 @@ const STATUS_FILTERS = [
   { key: 'all', label: 'All' },
 ];
 
+const CLASS_FILTERS = [
+  { key: 'all', label: 'All types' },
+  { key: 'accessory', label: 'Accessory' },
+  { key: 'new_home', label: 'New homes' },
+  { key: 'commercial', label: 'Commercial' },
+];
+
+const CLASS_LABELS: Record<string, string> = {
+  accessory: 'Accessory',
+  new_home: 'New home',
+  commercial: 'Commercial',
+};
+
+const CLASS_STYLES: Record<string, string> = {
+  accessory: 'bg-emerald-100 text-emerald-700',
+  new_home: 'bg-sky-100 text-sky-700',
+  commercial: 'bg-violet-100 text-violet-700',
+};
+
 function scoreColor(score: number | null): string {
   if (score === null) return 'bg-gray-100 text-gray-400';
   if (score >= 7) return 'bg-green-100 text-green-700';
@@ -69,21 +94,42 @@ function formatValuation(v: number | null): string {
   return `$${v}`;
 }
 
+function formatDay(iso: string): string {
+  return new Date(iso).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+}
+
+type ScrapeReport = {
+  label: string;
+  url: string;
+  permits: number;
+  kept: number;
+  leads: number;
+  inserted: number;
+  updated: number;
+  errors: string[];
+};
+
+type ScrapeJurisdictionResult = {
+  inserted: number;
+  updated?: number;
+  skipped: number;
+  errors: string[];
+  reportsListed?: number;
+  reportsProcessed?: number;
+  newestUploadedAt?: string | null;
+  reports?: ScrapeReport[];
+  candidatesConsidered?: string[];
+};
+
 export default function PermitLeadsTable({
   initialLeads,
   activeStatus,
+  activeClass,
 }: {
   initialLeads: PermitLead[];
   activeStatus: string;
+  activeClass: string;
 }) {
-  type ScrapeJurisdictionResult = {
-    inserted: number;
-    skipped: number;
-    errors: string[];
-    pdfUrl?: string;
-    candidatesConsidered?: string[];
-  };
-
   const [leads, setLeads] = useState(initialLeads);
   const [expanded, setExpanded] = useState<string | null>(null);
   const [updating, setUpdating] = useState<string | null>(null);
@@ -104,16 +150,24 @@ export default function PermitLeadsTable({
       if (!res.ok) {
         setScrapeResult(`Error: ${data.error ?? 'Scrape failed'}`);
       } else {
-        // The per-jurisdiction breakdown moved under `detail` when this route
+        // The per-jurisdiction breakdown lives under `detail` since the route
         // adopted the shared cron envelope (cron_runs records `detail` as-is).
         const summary = (data.detail?.summary ?? {}) as Record<string, ScrapeJurisdictionResult>;
-        const total = Object.values(summary).reduce((sum, s) => sum + s.inserted, 0);
-        const sources = Object.keys(summary).length;
-        const errors = Object.entries(summary).filter(([, s]) => s.errors.length > 0);
-        const errMsg = errors.length > 0 ? ` · ${errors.length} with errors` : '';
-        setScrapeResult(`Scraped ${total} new permits across ${sources} jurisdictions${errMsg}`);
+        const all = Object.values(summary);
+        const inserted = all.reduce((n, s) => n + s.inserted, 0);
+        const updated = all.reduce((n, s) => n + (s.updated ?? 0), 0);
+        const reports = all.reduce((n, s) => n + (s.reportsProcessed ?? 0), 0);
+        const withErrors = all.filter((s) => s.errors.length > 0).length;
+        const errMsg = withErrors > 0 ? ` · ${withErrors} with errors` : '';
+        setScrapeResult(
+          reports === 0 && withErrors === 0
+            ? 'Nothing new — every listed report has already been read'
+            : `${reports} report${reports === 1 ? '' : 's'} read · ${inserted} new permit${inserted === 1 ? '' : 's'}` +
+                (updated > 0 ? ` · ${updated} updated` : '') +
+                errMsg,
+        );
         setScrapeDetail(summary);
-        setDetailOpen(errors.length > 0);
+        setDetailOpen(withErrors > 0);
         startTransition(() => router.refresh());
       }
     } catch (err) {
@@ -158,26 +212,46 @@ export default function PermitLeadsTable({
     setUpdating(null);
   };
 
-  const changeStatusFilter = (key: string) => {
+  const navigate = (status: string, cls: string) => {
+    const params = new URLSearchParams();
+    if (status !== 'new') params.set('status', status);
+    if (cls !== 'all') params.set('class', cls);
+    const qs = params.toString();
     startTransition(() => {
-      const next = key === 'new' ? '/hq/permit-leads' : `/hq/permit-leads?status=${key}`;
-      router.push(next);
+      router.push(qs ? `/hq/permit-leads?${qs}` : '/hq/permit-leads');
     });
   };
 
+  const detailHasErrors =
+    scrapeDetail !== null && Object.values(scrapeDetail).some((s) => s.errors.length > 0);
+
   return (
     <div className="space-y-4">
-      {/* Status filter pills + manual scrape */}
+      {/* Filters + manual scrape */}
       <div className="flex items-center justify-between gap-4 flex-wrap">
-        <div className="flex gap-2 flex-wrap">
+        <div className="flex items-center gap-2 flex-wrap">
           {STATUS_FILTERS.map(f => (
             <button
               key={f.key}
-              onClick={() => changeStatusFilter(f.key)}
+              onClick={() => navigate(f.key, activeClass)}
               className={`px-3 py-1.5 rounded-full text-xs font-semibold transition ${
                 activeStatus === f.key
                   ? 'bg-black text-white'
                   : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+              }`}
+            >
+              {f.label}
+            </button>
+          ))}
+          <span className="hidden sm:inline-block w-px h-5 bg-gray-200 mx-1" aria-hidden="true" />
+          {CLASS_FILTERS.map(f => (
+            <button
+              key={f.key}
+              onClick={() => navigate(activeStatus, f.key)}
+              className={`px-3 py-1.5 rounded-full text-xs font-semibold border transition ${
+                activeClass === f.key
+                  ? 'border-black bg-black text-white'
+                  : 'border-gray-200 bg-white text-gray-600 hover:bg-gray-50'
               }`}
             >
               {f.label}
@@ -200,43 +274,63 @@ export default function PermitLeadsTable({
         </div>
       </div>
 
-      {scrapeDetail && Object.entries(scrapeDetail).some(([, s]) => s.errors.length > 0) && (
-        <div className="border border-amber-300 bg-amber-50 rounded-xl overflow-hidden">
+      {scrapeDetail && (
+        <div
+          className={`border rounded-xl overflow-hidden ${
+            detailHasErrors ? 'border-amber-300 bg-amber-50' : 'border-gray-200 bg-gray-50'
+          }`}
+        >
           <button
             type="button"
             onClick={() => setDetailOpen(o => !o)}
             className="w-full flex items-center justify-between px-4 py-3 text-left"
           >
-            <span className="text-sm font-semibold text-amber-900">
-              Scrape details — {Object.values(scrapeDetail).filter(s => s.errors.length > 0).length} jurisdiction(s) with errors
+            <span className={`text-sm font-semibold ${detailHasErrors ? 'text-amber-900' : 'text-gray-800'}`}>
+              Scrape details
+              {detailHasErrors &&
+                ` — ${Object.values(scrapeDetail).filter(s => s.errors.length > 0).length} jurisdiction(s) with errors`}
             </span>
-            <span className="text-amber-700 text-xs">{detailOpen ? 'Hide' : 'Show'}</span>
+            <span className={`text-xs ${detailHasErrors ? 'text-amber-700' : 'text-gray-500'}`}>
+              {detailOpen ? 'Hide' : 'Show'}
+            </span>
           </button>
           {detailOpen && (
             <div className="px-4 pb-4 space-y-3">
               {Object.entries(scrapeDetail).map(([jur, s]) => (
-                <div key={jur} className="bg-white border border-amber-200 rounded-lg p-3 text-xs">
+                <div key={jur} className="bg-white border border-gray-200 rounded-lg p-3 text-xs">
                   <div className="flex items-baseline justify-between gap-2 mb-1">
                     <span className="font-bold text-gray-800">{JURISDICTION_LABELS[jur] ?? jur}</span>
                     <span className="text-gray-500">
-                      {s.inserted} inserted · {s.skipped} skipped · {s.errors.length} error(s)
+                      {s.reportsListed ?? 0} listed · {s.reportsProcessed ?? 0} read · {s.inserted} new ·{' '}
+                      {s.updated ?? 0} updated · {s.skipped} skipped · {s.errors.length} error(s)
                     </span>
                   </div>
+                  {s.newestUploadedAt && (
+                    <div className="text-gray-500 mb-1">
+                      Newest report uploaded {formatDay(s.newestUploadedAt)}
+                    </div>
+                  )}
                   {s.errors.length > 0 && (
                     <div className="text-red-700 mb-2">
                       {s.errors.map((e, i) => <div key={i}>• {e}</div>)}
                     </div>
                   )}
-                  {s.pdfUrl && (
-                    <div className="mb-1">
-                      <span className="text-gray-500">Chosen PDF: </span>
-                      <a href={s.pdfUrl} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline break-all">{s.pdfUrl}</a>
-                    </div>
+                  {s.reports && s.reports.length > 0 && (
+                    <ul className="space-y-0.5 text-gray-600 mb-1">
+                      {s.reports.map((r) => (
+                        <li key={r.url}>
+                          <a href={r.url} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
+                            {r.label}
+                          </a>
+                          {' '}— {r.permits} permits · {r.kept} sent to Claude · {r.leads} stored · {r.inserted} new
+                        </li>
+                      ))}
+                    </ul>
                   )}
                   {s.candidatesConsidered && s.candidatesConsidered.length > 0 && (
                     <details>
                       <summary className="cursor-pointer text-gray-500 hover:text-gray-700">
-                        Candidates considered ({s.candidatesConsidered.length})
+                        Reports listed on the page ({s.reportsListed ?? s.candidatesConsidered.length})
                       </summary>
                       <ul className="mt-1 space-y-0.5 text-gray-600">
                         {s.candidatesConsidered.slice(0, 10).map((h, i) => (
@@ -254,10 +348,10 @@ export default function PermitLeadsTable({
 
       {/* Table */}
       <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-x-auto">
-        <table className="w-full text-sm min-w-[1100px]">
+        <table className="w-full text-sm min-w-[1300px]">
           <thead className="bg-gray-50 text-gray-500 uppercase text-xs border-b">
             <tr>
-              {['Score', 'Jurisdiction', 'Date', 'Address', 'Type', 'Value', 'Permit #', 'Status', 'Action'].map(h => (
+              {['Score', 'Type', 'Date', 'Address', 'Work', 'Owner', 'Contractor', 'Permit #', 'Status', 'Action'].map(h => (
                 <th key={h} className="px-4 py-3 text-left font-medium whitespace-nowrap">
                   {h}
                 </th>
@@ -267,19 +361,17 @@ export default function PermitLeadsTable({
           <tbody className="divide-y divide-gray-100">
             {leads.length === 0 && (
               <tr>
-                <td colSpan={9} className="px-4 py-8 text-center text-gray-400">
-                  No permit leads yet. Run the cron to populate:
-                  <br />
-                  <code className="text-xs bg-gray-100 px-2 py-0.5 rounded">
-                    curl -H &quot;Authorization: Bearer $CRON_SECRET&quot; http://localhost:3000/api/cron/scrape-permits
-                  </code>
+                <td colSpan={10} className="px-4 py-8 text-center text-gray-400">
+                  No permit leads yet. Press <strong className="text-gray-600">Run Scrape Now</strong> — the City of
+                  Temple posts a new weekly report most Fridays, and each run reads up to three unseen reports.
                 </td>
               </tr>
             )}
             {leads.map(lead => (
               <Fragment key={lead.id}>
                 <tr
-                  className="hover:bg-gray-50 cursor-pointer transition-colors"
+                  id={lead.id}
+                  className="hover:bg-gray-50 cursor-pointer transition-colors scroll-mt-24"
                   onClick={() => setExpanded(expanded === lead.id ? null : lead.id)}
                 >
                   <td className="px-4 py-3">
@@ -289,19 +381,22 @@ export default function PermitLeadsTable({
                       {lead.wheelhouse_score ?? '—'}
                     </span>
                   </td>
-                  <td className="px-4 py-3 text-xs text-gray-500 whitespace-nowrap">
-                    {JURISDICTION_LABELS[lead.jurisdiction] ?? lead.jurisdiction}
+                  <td className="px-4 py-3 whitespace-nowrap">
+                    {lead.lead_class ? (
+                      <span
+                        className={`inline-block px-2 py-0.5 rounded-full text-xs font-semibold ${CLASS_STYLES[lead.lead_class] ?? 'bg-gray-100 text-gray-600'}`}
+                      >
+                        {CLASS_LABELS[lead.lead_class] ?? lead.lead_class}
+                      </span>
+                    ) : (
+                      <span className="text-xs text-gray-400">—</span>
+                    )}
+                    <div className="text-[11px] text-gray-400 mt-0.5">
+                      {JURISDICTION_LABELS[lead.jurisdiction] ?? lead.jurisdiction}
+                    </div>
                   </td>
                   <td className="px-4 py-3 text-gray-400 whitespace-nowrap">
-                    {lead.source_report_date
-                      ? new Date(lead.source_report_date).toLocaleDateString('en-US', {
-                          month: 'short',
-                          day: 'numeric',
-                        })
-                      : new Date(lead.created_at).toLocaleDateString('en-US', {
-                          month: 'short',
-                          day: 'numeric',
-                        })}
+                    {formatDay(lead.source_report_date ?? lead.created_at)}
                   </td>
                   <td className="px-4 py-3 whitespace-nowrap">
                     <div className="font-semibold">{lead.address ?? '—'}</div>
@@ -312,15 +407,26 @@ export default function PermitLeadsTable({
                       </div>
                     )}
                   </td>
-                  <td className="px-4 py-3 text-gray-600 max-w-[220px] truncate">
+                  <td className="px-4 py-3 text-gray-600 max-w-[240px] truncate">
                     {lead.permit_type ?? '—'}
                     {lead.description && (
                       <div className="text-xs text-gray-400 truncate">{lead.description}</div>
                     )}
                   </td>
-                  <td className="px-4 py-3 font-mono text-xs">{formatValuation(lead.valuation)}</td>
-                  <td className="px-4 py-3 font-mono text-xs text-gray-500">
+                  <td className="px-4 py-3 max-w-[200px]">
+                    <div className="truncate">{lead.owner_name ?? '—'}</div>
+                    {lead.applicant_name && (
+                      <div className="text-xs text-gray-400 truncate">{lead.applicant_name}</div>
+                    )}
+                  </td>
+                  <td className="px-4 py-3 text-gray-600 max-w-[180px] truncate">
+                    {lead.contractor_name ?? '—'}
+                  </td>
+                  <td className="px-4 py-3 font-mono text-xs text-gray-500 whitespace-nowrap">
                     {lead.permit_number ?? '—'}
+                    {lead.job_status && (
+                      <div className="font-sans text-[11px] text-gray-400 mt-0.5">{lead.job_status}</div>
+                    )}
                   </td>
                   <td className="px-4 py-3" onClick={e => e.stopPropagation()}>
                     <select
@@ -349,7 +455,7 @@ export default function PermitLeadsTable({
                 </tr>
                 {expanded === lead.id && (
                   <tr className="bg-gray-50">
-                    <td colSpan={9} className="px-6 py-5 border-t border-gray-100">
+                    <td colSpan={10} className="px-6 py-5 border-t border-gray-100">
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
                           <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">
@@ -366,6 +472,22 @@ export default function PermitLeadsTable({
                               <li className="text-gray-400 italic">No reasoning recorded.</li>
                             )}
                           </ul>
+
+                          <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mt-4 mb-2">
+                            Permit
+                          </h3>
+                          <dl className="text-sm text-gray-700 grid grid-cols-[auto_1fr] gap-x-3 gap-y-1">
+                            <dt className="text-gray-400">Code</dt>
+                            <dd>{lead.job_type_code ?? '—'}</dd>
+                            <dt className="text-gray-400">Municipal status</dt>
+                            <dd>{lead.job_status ?? '—'}</dd>
+                            <dt className="text-gray-400">Applicant</dt>
+                            <dd>{lead.applicant_name ?? '—'}</dd>
+                            <dt className="text-gray-400">Contractor</dt>
+                            <dd>{lead.contractor_name ?? '—'}</dd>
+                            <dt className="text-gray-400">Valuation</dt>
+                            <dd>{formatValuation(lead.valuation)}</dd>
+                          </dl>
 
                           <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mt-4 mb-2">
                             Source

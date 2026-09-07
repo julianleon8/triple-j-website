@@ -136,7 +136,9 @@ export function TestActions() {
           const res = await fetch('/api/cron/scrape-permits', { method: 'POST' })
           const data = await res.json().catch(() => ({}))
           if (!res.ok) throw new Error(data.error ?? `Failed (${res.status})`)
-          const summary = data.summary ?? {}
+          // The per-jurisdiction breakdown lives under `detail` since the
+          // route adopted the shared cron envelope.
+          const summary = data.detail?.summary ?? data.summary ?? {}
           const parts: string[] = []
           let totalInserted = 0
           for (const [j, s] of Object.entries(summary as Record<string, { inserted: number; errors: string[] }>)) {

@@ -209,7 +209,8 @@ export function unifyEvents(args: {
       startDate,
       endDate: startDate,
       startTime,
-      href: `/hq/permit-leads/${p.id}`,
+      // There is no per-permit page; the table row carries the id as its anchor.
+      href: `/hq/permit-leads?status=all#${p.id}`,
     })
   }
 

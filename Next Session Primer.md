@@ -1,5 +1,23 @@
 # Next Session Primer — Read This First
 
+## Permit scraper — rebuilt on Temple, 2026-09-07
+
+Read the Lead Engine section of `Locked Decisions.md` before touching it. What is true now: `temple` is the only enabled source; `permit_reports` records which PDFs have been processed; permits carry a `lead_class` (accessory / new_home / commercial); Bell County is off for good reasons, not a bug.
+
+**Check first, in this order:**
+1. `select job, started_at, ok, yield, error from cron_runs where job = 'scrape-permits' order by started_at desc limit 3;` — the first run after deploy should be `ok = true, yield > 0`; the run after that `yield = 0` with `detail.summary.temple.reportsProcessed = 0` (idempotent).
+2. `select lead_class, count(*) from permit_leads group by 1;` and `select label, uploaded_at, permit_count, kept_count, lead_count from permit_reports order by uploaded_at desc;`
+3. `/hq/permit-leads` — class pills, Owner / Contractor columns, the expanded row's Permit block.
+
+If `permit_reports` is still empty after a run with `ok = true`, suspect the Claude step (`cron_runs.error`, `detail.summary.temple.reports[].errors`), not the fetch — the fetch and parse path is fixture-tested against the real markup and the real row layout.
+
+**Backlog:** ~110 historical weekly reports drain at three per run. "Run Scrape Now" or `POST /api/cron/scrape-permits` with `{ "maxReports": 20 }` (owner session or `CRON_SECRET`) drains faster; a report costs cents.
+
+**Not done, deliberately:** OCR / PDF-vision for Bell County; headless for Harker Heights and the CivicPlus sources; the public `/market-report` (Temple's monthly totals PDFs are aggregate and PII-free — the right input if it is ever built). A local `next dev` scrape throws inside `unpdf` on Node 22; production is on 24.
+
+Still open from earlier today: the `private_lead_photos` migration is applied with no file in the repo.
+
+
 ## `/quote` landing page — shipped 2026-09-07
 
 `/quote` exists now and is the header CTA destination. It coexists with the inline `#quote` sections; do not "tidy up" the asymmetry by repointing `Footer`, `MobileCallBar`, `PreFooterCta` or the ~20 in-page anchors — those still target `/#quote` deliberately, so pages keep converting on their own form.

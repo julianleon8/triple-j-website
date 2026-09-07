@@ -5,7 +5,9 @@ import { ChartContainer } from '@/components/hq/ChartContainer';
 import { JurisdictionStack } from '@/components/hq/JurisdictionStack';
 import PermitLeadsTable from './components/PermitLeadsTable';
 
-type SearchParams = Promise<{ status?: string }>;
+type SearchParams = Promise<{ status?: string; class?: string }>;
+
+const LEAD_CLASSES = new Set(['accessory', 'new_home', 'commercial']);
 
 type CountRow = { jurisdiction: string | null; status: string };
 type StackRow = { jurisdiction: string; new: number; called: number; qualified: number };
@@ -31,17 +33,20 @@ export default async function PermitLeadsPage({
 }: {
   searchParams: SearchParams;
 }) {
-  const { status } = await searchParams;
+  const { status, class: rawClass } = await searchParams;
+  const leadClass = rawClass && LEAD_CLASSES.has(rawClass) ? rawClass : 'all';
   const db = getAdminClient();
 
-  const listQuery = db
+  let listQuery = db
     .from('permit_leads')
     .select('*')
     .order('wheelhouse_score', { ascending: false })
     .order('created_at', { ascending: false })
     .limit(500);
 
-  const filtered = status && status !== 'all' ? listQuery.eq('status', status) : listQuery;
+  if (status && status !== 'all') listQuery = listQuery.eq('status', status);
+  if (leadClass !== 'all') listQuery = listQuery.eq('lead_class', leadClass);
+  const filtered = listQuery;
 
   const [{ data: leads }, { data: forChart }] = await Promise.all([
     filtered,
@@ -58,8 +63,8 @@ export default async function PermitLeadsPage({
       <div className="hidden sm:block mb-6">
         <h1 className="text-2xl font-bold">Permit Leads</h1>
         <p className="text-sm text-(--text-secondary) mt-1">
-          Daily-scraped Central TX permits, scored against Triple J&apos;s wheelhouse.
-          Sorted by fit score, newest first.
+          City of Temple weekly building-permit reports, read daily. Accessory work to call on,
+          new homes to market to later, small commercial. Sorted by fit score, newest first.
         </p>
       </div>
 
@@ -77,6 +82,7 @@ export default async function PermitLeadsPage({
       <PermitLeadsTable
         initialLeads={leads ?? []}
         activeStatus={status ?? 'new'}
+        activeClass={leadClass}
       />
     </div>
   );

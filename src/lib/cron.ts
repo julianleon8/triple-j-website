@@ -128,7 +128,8 @@ export async function cronAuth(request: NextRequest): Promise<'cron' | 'session'
  */
 export async function withCronRun(
   job: string,
-  fn: (ctx: CronContext) => Promise<CronResult>,
+  fn: (ctx: CronContext, request?: NextRequest) => Promise<CronResult>,
+  request?: NextRequest,
 ): Promise<CronResult & { job: string; ranAt: string }> {
   const db = getAdminClient()
   const ranAt = new Date().toISOString()
@@ -154,7 +155,7 @@ export async function withCronRun(
 
   let result: CronResult
   try {
-    result = await fn({ db, ...streaks })
+    result = await fn({ db, ...streaks }, request)
   } catch (err) {
     result = { ok: false, error: err instanceof Error ? err.message : String(err) }
     console.error(`[${job}] threw:`, err)
@@ -178,11 +179,20 @@ export async function withCronRun(
   return { ...result, job, ranAt }
 }
 
-/** Builds the standard cron route handler. */
-export function cronRoute(job: string, fn: (ctx: CronContext) => Promise<CronResult>) {
+/**
+ * Builds the standard cron route handler.
+ *
+ * The job also receives the request, so a manual POST from /hq can carry
+ * options (the permit scraper reads `maxReports` from the body). Vercel Cron
+ * sends a bare GET; jobs that take no options ignore the second argument.
+ */
+export function cronRoute(
+  job: string,
+  fn: (ctx: CronContext, request?: NextRequest) => Promise<CronResult>,
+) {
   return async function handler(request: NextRequest) {
     const who = await cronAuth(request)
     if (!who) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-    return NextResponse.json(await withCronRun(job, fn))
+    return NextResponse.json(await withCronRun(job, fn, request))
   }
 }
