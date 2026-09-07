@@ -39,6 +39,7 @@ Every fact has exactly one owner. Restating an owned fact anywhere else creates 
 ## Rules
 
 - **Vault sync.** A decision made or reversed in conversation is logged in the *same turn*: append a row to `Decisions.md` **and** overwrite the affected line in `Locked Decisions.md`. Both, or the memory is wrong. A `Stop` hook warns when the product surface changed and neither ledger was written.
+- **Retired copy self-corrects.** A `PostToolUse` hook rewrites retired phrases ("48-hour build", old brand aliases) the moment they are written, and tells you it did. Claims needing judgement — the 4,000 PSI spec — are reported, never rewritten. Sweep existing files with `node scripts/check-vault.mjs --fix`.
 - **Wait for the plan.** Do not touch `src/` until the user has laid out the larger picture. They prefer to spend tokens on execution, not on planning you did unasked.
 - **Ask before scraping or deep research.** Never run a scrape skill or a multi-step research pass without explicit per-run approval. Token cost is high.
 - **Secrets.** Never write a real credential into any tracked file. `.env.example` documents key names with placeholder values only. `.githooks/pre-commit` and a `PreToolUse` hook both block this; do not reach for `--no-verify`.

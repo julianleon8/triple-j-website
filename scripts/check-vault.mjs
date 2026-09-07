@@ -6,13 +6,17 @@
 //
 // Exit 0 = clean, 1 = findings. No dependencies.
 
-import { readFileSync, existsSync, readdirSync } from 'node:fs'
+import { readFileSync, writeFileSync, existsSync, readdirSync } from 'node:fs'
 import { execFileSync } from 'node:child_process'
 import path from 'node:path'
+import { applyFixes, DEFINES } from './lib/copy-fixes.mjs'
 
 const ROOT = execFileSync('git', ['rev-parse', '--show-toplevel'], { encoding: 'utf8' }).trim()
 const read = (p) => readFileSync(path.join(ROOT, p), 'utf8')
 const has = (p) => existsSync(path.join(ROOT, p))
+
+const FIX = process.argv.includes('--fix')
+const fixed = []
 
 const findings = []
 const fail = (file, line, msg) => findings.push({ file, line, msg })
@@ -115,9 +119,6 @@ const rootMd = readdirSync(ROOT).filter((f) => f.endsWith('.md')).sort()
   ]
   const EXEMPT = new Set(['Decisions.md', 'Session Notes.md', 'Locked Decisions.md'])
 
-  // A line that names a retired claim in order to ban it is not a violation.
-  const DEFINES = /retired|never say|never use|do not use|not the promised|instead of|reversed/i
-
   const scanText = (rel, text, report = fail) => {
     text.split('\n').forEach((line, i) => {
       if (DEFINES.test(line)) return
@@ -127,7 +128,17 @@ const rootMd = readdirSync(ROOT).filter((f) => f.endsWith('.md')).sort()
     })
   }
 
-  for (const rel of rootMd.filter((f) => !EXEMPT.has(f))) scanText(rel, read(rel))
+  const autofix = (rel) => {
+    const before = read(rel)
+    const { text, changes } = applyFixes(before)
+    if (!changes.length) return
+    writeFileSync(path.join(ROOT, rel), text)
+    for (const c of changes) fixed.push({ file: rel, line: c.line, to: c.to })
+  }
+
+  const live = rootMd.filter((f) => !EXEMPT.has(f))
+  if (FIX) for (const rel of live) autofix(rel)
+  for (const rel of live) scanText(rel, read(rel))
 
   // Shipped source is customer-facing copy, held to the same rules.
   const srcFiles = execFileSync('git', ['ls-files', 'src'], { encoding: 'utf8' })
@@ -145,6 +156,7 @@ const rootMd = readdirSync(ROOT).filter((f) => f.endsWith('.md')).sort()
   ])
   for (const rel of srcFiles) {
     if (!has(rel)) continue
+    if (FIX) autofix(rel)
     scanText(rel, read(rel), KNOWN_DRIFT.has(rel) ? warn : fail)
   }
 }
@@ -165,6 +177,12 @@ const rootMd = readdirSync(ROOT).filter((f) => f.endsWith('.md')).sort()
 }
 
 // ---------------------------------------------------------------------------
+if (fixed.length) {
+  console.error(`\nAuto-fixed ${fixed.length} retired phrase(s):\n`)
+  for (const f of fixed) console.error(`  ${f.file}:${f.line} -> "${f.to}"`)
+  console.error('')
+}
+
 if (warnings.length) {
   console.error(`\n! Known drift (${warnings.length}) - tracked, not failing:\n`)
   for (const w of warnings) console.error(`  ${w.file}:${w.line} - ${w.msg}`)
@@ -182,5 +200,5 @@ if (findings.length) {
   console.error(`\n${findings.length} finding(s).\n`)
   process.exit(1)
 }
-console.log('Vault check passed')
+console.log(FIX && fixed.length ? `Vault check passed (${fixed.length} auto-fixed)` : 'Vault check passed')
 process.exit(0)

@@ -1,14 +1,15 @@
 {
   "permissions": {
     "allow": [
-      "Bash(npm run lint)",
-      "Bash(npm run typecheck)",
-      "Bash(npm run test)",
-      "Bash(git status:*)",
       "Bash(git diff:*)",
       "Bash(git log:*)",
+      "Bash(git status:*)",
       "Bash(node scripts/check-secrets.mjs:*)",
-      "Bash(node scripts/check-vault.mjs)"
+      "Bash(node scripts/check-vault.mjs)",
+      "Bash(node scripts/check-vault.mjs:*)",
+      "Bash(npm run lint)",
+      "Bash(npm run test)",
+      "Bash(npm run typecheck)"
     ],
     "deny": [
       "Read(./.env)",
@@ -22,20 +23,44 @@
       {
         "matcher": "Write|Edit|MultiEdit",
         "hooks": [
-          { "type": "command", "command": "node \"$CLAUDE_PROJECT_DIR/scripts/hook-write-guard.mjs\"", "timeout": 5 }
+          {
+            "type": "command",
+            "command": "node \"$CLAUDE_PROJECT_DIR/scripts/hook-write-guard.mjs\"",
+            "timeout": 5
+          }
         ]
       },
       {
         "matcher": "Bash",
         "hooks": [
-          { "type": "command", "command": "node \"$CLAUDE_PROJECT_DIR/scripts/hook-commit-guard.mjs\"", "timeout": 10 }
+          {
+            "type": "command",
+            "command": "node \"$CLAUDE_PROJECT_DIR/scripts/hook-commit-guard.mjs\"",
+            "timeout": 10
+          }
         ]
       }
     ],
     "Stop": [
       {
         "hooks": [
-          { "type": "command", "command": "node \"$CLAUDE_PROJECT_DIR/scripts/hook-vault-nudge.mjs\"", "timeout": 5 }
+          {
+            "type": "command",
+            "command": "node \"$CLAUDE_PROJECT_DIR/scripts/hook-vault-nudge.mjs\"",
+            "timeout": 5
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"$CLAUDE_PROJECT_DIR/scripts/hook-autofix.mjs\"",
+            "timeout": 10
+          }
         ]
       }
     ]

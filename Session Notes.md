@@ -49,6 +49,15 @@ Nothing was enforced mechanically.
   placeholder, and completed deploy action items. Age dropped everywhere - a fact with an annual
   expiry and no operational value.
 
+**Auto-repair (added after review)**
+- `scripts/lib/copy-fixes.mjs` - one table of mechanical corrections, shared by the hook and the checker.
+- `scripts/hook-autofix.mjs` - `PostToolUse` on `Write|Edit|MultiEdit`. Rewrites retired phrasing in
+  place and returns `additionalContext` so the agent knows its in-context copy is stale. Never blocks.
+  Exempts the ledgers and `archive/` - those record what was true then.
+- `check-vault.mjs --fix` applies the same table in bulk.
+- The 4,000 PSI claim is deliberately NOT auto-fixed: several occurrences tie the spec to specific soil
+  claims, so the replacement wording differs case by case. It stays a report.
+
 **Connectors**
 - `Connectors.md` (new) registers all 14 external services with env vars, read sites, failure modes,
   and verification steps. Records three non-obvious states: Supabase MCP needs interactive OAuth,
