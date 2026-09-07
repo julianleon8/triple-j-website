@@ -8,9 +8,9 @@
 
 Migrations 029 and 030 are applied and verified in production.
 
-**Two pre-existing drift items found and left alone, both worth a decision:**
-1. `028_backfill_lead_city.sql` is committed but was never applied. Four of the eight live leads still hold a ZIP in `leads.city` — the exact corruption it was written to repair. Applying it is a targeted two-statement update.
-2. A migration `private_lead_photos` (version 20260907143042) is applied to the database with no corresponding file in `supabase/migrations/`. This is the out-of-band drift `scripts/check-migrations.mjs` exists to catch; the DDL should be reconstructed into a file.
+**028 has since been applied** (owner approved, same session). `leads.city` is a city name or NULL across all eight rows — 78664 resolved to Round Rock, and 76877/76566/76577 went NULL with their ZIPs preserved in `leads.zip`. Migrations 028, 029 and 030 are all in the ledger.
+
+**One drift item remains and is worth a decision:** a migration `private_lead_photos` (version 20260907143042) is applied to the database with no corresponding file in `supabase/migrations/`. This is the out-of-band drift `scripts/check-migrations.mjs` exists to catch — the same failure mode that left `gallery_photos` unreproducible. The DDL should be reconstructed into a file so the schema can be rebuilt from the repo.
 
 Unrelated uncommitted work was present in the working tree during this session — a `/login` refactor splitting `LoginForm` into its own file. It was left untouched and not committed.
 

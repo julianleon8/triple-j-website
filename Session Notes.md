@@ -6,7 +6,7 @@ Shipped the dedicated quote page the site never had. It coexists with the fourte
 
 Two migrations applied to production and verified. 029 adds `quote_page` to the `leads.source` allowlist and repaired two faults it inherited: the constraint had been `NOT VALID` since 014 (now validated — all 8 rows conformed), and `hq_test` was missing from the list, which had been silently breaking `POST /api/test/lead` since 014 landed. 030 adds `best_time_to_call`, now collected on every form and surfaced twice in the owner alert.
 
-Also found and reported, not fixed: migration `028_backfill_lead_city` is in the repo but was never applied, so four of the eight leads still hold a ZIP in the `city` column; and a migration named `private_lead_photos` is applied with no file in the repo.
+Also found: migration `028_backfill_lead_city` was in the repo but had never been applied, so four of the eight leads still held a ZIP in the `city` column. Reported, then applied on the owner's approval — 78664 resolved to Round Rock, 76877/76566/76577 went NULL, every `leads.zip` preserved, and the four already-correct rows untouched. The invariant it restores is that `leads.city` is a city name or NULL, never a ZIP. Still outstanding: a migration named `private_lead_photos` is applied with no file in the repo.
 
 Typecheck, lint, and 218 tests pass. The local production build cannot complete in this environment — there is no `.env.local`, and `/gallery/[id]` queries the database in `generateStaticParams` — but TypeScript compiled clean before that step.
 
