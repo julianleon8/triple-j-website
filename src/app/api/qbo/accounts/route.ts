@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { createClient } from '@/lib/supabase/server'
+import { requireOwner } from '@/lib/auth'
 import { listExpenseAccounts } from '@/lib/qbo'
 
 export const dynamic = 'force-dynamic'
@@ -16,9 +16,8 @@ export const maxDuration = 15
  * Owner-auth only. Returns 503 if QBO isn't connected.
  */
 export async function GET() {
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  const denied = await requireOwner()
+  if (denied) return denied
 
   try {
     const accounts = await listExpenseAccounts()

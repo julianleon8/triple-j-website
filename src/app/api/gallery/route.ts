@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createClient } from '@/lib/supabase/server'
+import { requireOwner } from '@/lib/auth'
 import { getAdminClient } from '@/lib/supabase/admin'
 import { parseColorValue } from '@/lib/gallery-colors'
 
@@ -19,9 +19,8 @@ export async function GET() {
 
 // POST /api/gallery — authenticated, uploads image + inserts DB row
 export async function POST(request: NextRequest) {
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  const denied = await requireOwner()
+  if (denied) return denied
 
   const formData = await request.formData()
   const file = formData.get('file') as File | null

@@ -12,8 +12,8 @@ function LoginForm() {
   const [loading, setLoading] = useState(false)
   const router = useRouter()
 
-  // Middleware bounces signed-in accounts that aren't in OWNER_EMAIL back here.
-  // Without this the redirect looks like a silent failure.
+  // The proxy (and the QBO callback) bounces signed-in accounts that aren't in
+  // OWNER_EMAIL back here. Without this the redirect looks like a silent failure.
   const notAuthorized = useSearchParams().get('error') === 'not_authorized'
 
   const handleLogin = async (e: React.FormEvent) => {

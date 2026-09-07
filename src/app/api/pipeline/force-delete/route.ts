@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod'
-import { createClient } from '@/lib/supabase/server'
+import { requireOwner } from '@/lib/auth'
 import { getAdminClient } from '@/lib/supabase/admin'
 
 export const dynamic = 'force-dynamic'
@@ -23,9 +23,8 @@ const schema = z.object({
 // time_entries, job_costs) and SET NULL refs (email_events, gallery_items)
 // are handled by the database itself.
 export async function POST(request: NextRequest) {
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  const denied = await requireOwner()
+  if (denied) return denied
 
   const body = await request.json().catch(() => ({}))
   const parsed = schema.safeParse(body)

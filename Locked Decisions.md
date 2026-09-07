@@ -61,6 +61,21 @@ Do not copy anything from this file into `AGENTS.md`. That duplication is what p
 - **One shared `PDF_HREF_PATTERN`** in `src/lib/permit-sources.ts`. Never inline a per-source copy again — seven copies of a subtly wrong regex is how the scraper yielded zero from day one. It tolerates whitespace around `href=` and strips a trailing query string. (2026-09-07)
 - **The scraper returning HTTP 200 does not mean it worked.** Zero-yield with a clean status is its normal failure mode. Check `cron_runs.yield`, not the status code. (2026-09-07)
 
+## HQ access
+
+- **"Is this the owner?" has exactly one definition:** `isOwnerEmail()` in `src/lib/owner.ts`, read from
+  `OWNER_EMAIL`. It is enforced by `src/proxy.ts` (pages), by `requireOwner()` / `checkOwner()` /
+  `getOwner()` in `src/lib/auth.ts` (**every** route under `src/app/api`), and by `cronAuth()`'s session
+  branch. Never re-check `auth.getUser()` in a route — "signed in" is not "authorized", and that gap is
+  what this replaced. Deny is **401** when nobody is signed in, **403** when signed in but not an owner.
+  (2026-09-07)
+- **An unset `OWNER_EMAIL` deliberately admits any authenticated user.** A missing env var must not lock
+  the owner out of a live business tool; disabled signups and RLS are the real control. `owner.test.ts`
+  pins this — if it fails, the trade-off changed. (2026-09-07)
+- **Public endpoints carry no session check and must not gain one:** `POST /api/leads` and
+  `POST /api/partner-inquiries` (hCaptcha + rate limit), `POST /api/quotes/[id]/accept` (bearer is the
+  `accept_token`), `GET /api/gallery`, `/api/setup` (`SETUP_KEY`), and both webhooks (HMAC). (2026-09-07)
+
 ## HQ automation
 
 - **Scheduled jobs record every run** to `public.cron_runs` via `withCronRun()` in `src/lib/cron.ts`. That ledger is the only source of "when did this last run / has it gone quiet". Job registry and schedules: `Connectors.md`. (2026-09-07)

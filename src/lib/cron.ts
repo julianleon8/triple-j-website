@@ -20,6 +20,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import type { SupabaseClient } from '@supabase/supabase-js'
 import { getAdminClient } from '@/lib/supabase/admin'
 import { createClient } from '@/lib/supabase/server'
+import { isOwnerEmail } from '@/lib/owner'
 
 /** What a job reports back. Anything omitted is recorded as zero / null. */
 export type CronResult = {
@@ -109,9 +110,11 @@ export async function cronAuth(request: NextRequest): Promise<'cron' | 'session'
   const header = request.headers.get('authorization')
   if (secret && header === `Bearer ${secret}`) return 'cron'
 
+  // The session branch exists so /hq buttons can trigger a job by hand, so it
+  // has to hold to the same bar as the rest of HQ: owner, not merely signed in.
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
-  return user ? 'session' : null
+  return user && isOwnerEmail(user.email) ? 'session' : null
 }
 
 /**

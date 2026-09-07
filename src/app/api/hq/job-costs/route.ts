@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod'
-import { createClient } from '@/lib/supabase/server'
+import { requireOwner } from '@/lib/auth'
 import { getAdminClient } from '@/lib/supabase/admin'
 
 export const dynamic = 'force-dynamic'
@@ -32,9 +32,8 @@ const bodySchema = z.object({
  * in cash, fuel without a receipt, etc.).
  */
 export async function POST(request: NextRequest) {
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  const denied = await requireOwner()
+  if (denied) return denied
 
   const body = await request.json().catch(() => ({}))
   const parsed = bodySchema.safeParse(body)
@@ -73,9 +72,8 @@ const idSchema = z.object({ id: z.string().uuid() })
  * stays consistent — but this endpoint accepts any row by id.
  */
 export async function DELETE(request: NextRequest) {
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  const denied = await requireOwner()
+  if (denied) return denied
 
   const url = new URL(request.url)
   const parsed = idSchema.safeParse({ id: url.searchParams.get('id') ?? '' })

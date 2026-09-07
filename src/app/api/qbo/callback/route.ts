@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createClient } from '@/lib/supabase/server'
+import { getOwner } from '@/lib/auth'
 import { saveTokens, QBO_TOKEN_URL, getMissingQboEnv } from '@/lib/qbo'
 
 export const dynamic = 'force-dynamic'
@@ -17,9 +17,14 @@ export async function GET(request: NextRequest) {
     )
   }
 
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) return NextResponse.redirect(new URL('/login', request.url))
+  // This one lands in the browser, so it redirects rather than returning JSON —
+  // and mirrors the proxy's signal so a non-owner sees the same message here as
+  // they would walking into /hq.
+  if (!(await getOwner())) {
+    const denied = new URL('/login', request.url)
+    denied.searchParams.set('error', 'not_authorized')
+    return NextResponse.redirect(denied)
+  }
 
   const { searchParams } = new URL(request.url)
   const code = searchParams.get('code')

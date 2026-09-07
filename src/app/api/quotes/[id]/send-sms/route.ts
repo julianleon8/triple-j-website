@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createClient } from '@/lib/supabase/server'
+import { requireOwner } from '@/lib/auth'
 import { getAdminClient } from '@/lib/supabase/admin'
 import { sendSms, isTwilioConfigured, toE164 } from '@/lib/twilio'
 
@@ -21,9 +21,8 @@ export async function POST(
   _request: NextRequest,
   { params }: { params: Promise<{ id: string }> },
 ) {
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  const denied = await requireOwner()
+  if (denied) return denied
 
   if (!isTwilioConfigured()) {
     return NextResponse.json(

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod'
-import { createClient } from '@/lib/supabase/server'
+import { requireOwner } from '@/lib/auth'
 import { getAdminClient } from '@/lib/supabase/admin'
 import { notifyNewLead } from '@/lib/lead-notifications'
 import { verifyHCaptchaToken } from '@/lib/captcha'
@@ -51,9 +51,8 @@ const leadSchema = z.object({
 })
 
 export async function GET(request: NextRequest) {
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  const denied = await requireOwner()
+  if (denied) return denied
 
   // Cursor pagination via ?before=<iso-created-at>&limit=<n>. The /hq/leads
   // page server-renders the first 50 directly; this endpoint serves the

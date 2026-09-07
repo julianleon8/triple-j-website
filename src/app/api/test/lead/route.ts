@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createClient } from '@/lib/supabase/server'
+import { requireOwner } from '@/lib/auth'
 import { getAdminClient } from '@/lib/supabase/admin'
 import { sendPushBackground } from '@/lib/push'
 
@@ -15,9 +15,8 @@ export const dynamic = 'force-dynamic'
  * DELETE /api/leads/:id once they've verified the push arrived.
  */
 export async function POST(_request: NextRequest) {
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  const denied = await requireOwner()
+  if (denied) return denied
 
   const stamp = new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })
   const name = `TEST · ${stamp}`

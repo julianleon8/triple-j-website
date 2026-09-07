@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse, after } from 'next/server'
-import { createClient } from '@/lib/supabase/server'
+import { requireOwner } from '@/lib/auth'
 import { getAdminClient } from '@/lib/supabase/admin'
 import { transcribeAudio, OpenAIConfigError } from '@/lib/openai'
 import {
@@ -67,9 +67,8 @@ function buildInsertRow(
 
 export async function POST(request: NextRequest) {
   // Auth — voice memos are owner-only. No captcha (authed users only).
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  const denied = await requireOwner()
+  if (denied) return denied
 
   let form: FormData
   try {

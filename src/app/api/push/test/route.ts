@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createClient } from '@/lib/supabase/server'
+import { requireOwner } from '@/lib/auth'
 import { sendPush, getVapidError } from '@/lib/push'
 
 export const dynamic = 'force-dynamic'
@@ -14,9 +14,8 @@ export const dynamic = 'force-dynamic'
  */
 export async function POST(_request: NextRequest) {
   try {
-    const supabase = await createClient()
-    const { data: { user } } = await supabase.auth.getUser()
-    if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    const denied = await requireOwner()
+    if (denied) return denied
 
     const publicKey = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY
     const privateKey = process.env.VAPID_PRIVATE_KEY

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createClient } from '@/lib/supabase/server'
+import { requireOwner } from '@/lib/auth'
 import { buildAuthUrl, getMissingQboEnv } from '@/lib/qbo'
 import { randomBytes } from 'crypto'
 
@@ -7,9 +7,8 @@ export const dynamic = 'force-dynamic'
 
 export async function GET(request: NextRequest) {
   // Only authenticated owners can initiate the OAuth flow
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  const denied = await requireOwner()
+  if (denied) return denied
 
   const missing = getMissingQboEnv()
   if (missing.length > 0) {

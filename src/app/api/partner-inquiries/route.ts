@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod'
-import { createClient } from '@/lib/supabase/server'
+import { requireOwner } from '@/lib/auth'
 import { getAdminClient } from '@/lib/supabase/admin'
 import { getResend } from '@/lib/resend'
 import PartnerInquiryOwnerAlert, { partnerInquiryOwnerAlertText } from '@/emails/PartnerInquiryOwnerAlert'
@@ -44,9 +44,8 @@ const partnerInquirySchema = z.object({
 })
 
 export async function GET() {
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  const denied = await requireOwner()
+  if (denied) return denied
 
   const { data: inquiries, error } = await getAdminClient()
     .from('partner_inquiries')

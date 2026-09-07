@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { createClient } from '@/lib/supabase/server'
+import { requireOwner } from '@/lib/auth'
 import { getAdminClient } from '@/lib/supabase/admin'
 import { pushPendingReceipts } from '@/lib/jobs/receipt-push'
 
@@ -17,9 +17,8 @@ export const maxDuration = 60
  * Returns: { attempted, succeeded, reconciled, failures: [{ id, vendor, error }] }
  */
 export async function POST() {
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  const denied = await requireOwner()
+  if (denied) return denied
 
   const result = await pushPendingReceipts(getAdminClient())
 

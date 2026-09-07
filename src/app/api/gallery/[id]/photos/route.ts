@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createClient } from '@/lib/supabase/server'
+import { getOwner, requireOwner } from '@/lib/auth'
 import { getAdminClient } from '@/lib/supabase/admin'
 
 export const dynamic = 'force-dynamic'
@@ -24,10 +24,9 @@ export async function GET(
     .single()
 
   if (!item?.is_active) {
-    // Signed-in owner can still read unpublished items (HQ gallery manager).
-    const supabase = await createClient()
-    const { data: { user } } = await supabase.auth.getUser()
-    if (!user) {
+    // The owner can still read unpublished items (HQ gallery manager). Anyone
+    // else gets 404 rather than 403 — a 403 would confirm the item exists.
+    if (!(await getOwner())) {
       return NextResponse.json({ error: 'Not found' }, { status: 404 })
     }
   }
@@ -50,9 +49,8 @@ export async function POST(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> },
 ) {
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  const denied = await requireOwner()
+  if (denied) return denied
 
   const { id } = await params
 
