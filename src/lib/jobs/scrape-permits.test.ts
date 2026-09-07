@@ -18,6 +18,10 @@ import {
   keepsRow,
   leadClassHint,
   chunk,
+  parseJsonArrayLoose,
+  hasBudget,
+  REPORT_TIME_BUDGET_MS,
+  ROWS_PER_CALL,
   reportStalled,
   stallPushDue,
   digestBody,
@@ -234,6 +238,41 @@ describe('normalizePermitNumber / leadClassHint / chunk', () => {
     expect(chunk([1, 2, 3, 4, 5], 2)).toEqual([[1, 2], [3, 4], [5]])
     expect(chunk([], 2)).toEqual([])
     expect(chunk([1, 2], 0)).toEqual([[1, 2]])
+  })
+})
+
+describe('parseJsonArrayLoose', () => {
+  it('parses a bare array', () => {
+    expect(parseJsonArrayLoose('[{"a":1},{"a":2}]')).toEqual([{ a: 1 }, { a: 2 }])
+  })
+
+  it('strips a ```json fence and a prose preamble', () => {
+    expect(parseJsonArrayLoose('Here you go:\n```json\n[{"a":1}]\n```\nDone.')).toEqual([{ a: 1 }])
+  })
+
+  it('returns null for output truncated mid-array — the first live run', () => {
+    const truncated =
+      '```json\n[\n  {\n    "permit_number": "FY-26-124-FLAT",\n    "job_type_code": "FLAT",\n' +
+      '    "wheelhouse_reasons": ["sidewalk", "not metal"],\n    "lead_class": null,'
+    expect(parseJsonArrayLoose(truncated)).toBeNull()
+  })
+
+  it('returns null when there is no array at all', () => {
+    expect(parseJsonArrayLoose('I could not find any permits.')).toBeNull()
+    expect(parseJsonArrayLoose('{"permits": 3}')).toBeNull()
+  })
+})
+
+describe('time budget and batch size', () => {
+  it('leaves a minute of headroom under the 300s maxDuration', () => {
+    expect(REPORT_TIME_BUDGET_MS).toBeLessThanOrEqual(240_000)
+    expect(hasBudget(0, REPORT_TIME_BUDGET_MS - 1)).toBe(true)
+    expect(hasBudget(0, REPORT_TIME_BUDGET_MS)).toBe(false)
+  })
+
+  it('keeps batches small enough that a full batch cannot reach the output cap', () => {
+    // ~250 output tokens a row; the cap is 16k. 15 rows is ~4k.
+    expect(ROWS_PER_CALL).toBeLessThanOrEqual(15)
   })
 })
 

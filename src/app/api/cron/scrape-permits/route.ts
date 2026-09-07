@@ -15,6 +15,7 @@ import {
   splitPermitRows,
   preFilter,
   leadClassHint,
+  hasBudget,
   stallPushDue,
   digestBody,
   emptyClassCounts,
@@ -72,6 +73,8 @@ type JurisdictionSummary = {
   errors: string[];
   reportsListed: number;
   reportsProcessed: number;
+  /** Unseen reports left for the next run because the time budget ran out. */
+  deferred: number;
   newestUploadedAt: string | null;
   reports: ReportSummary[];
   // First ~15 report hrefs seen on the index page. Lets the /hq panel explain
@@ -87,11 +90,12 @@ async function readMaxReports(request?: NextRequest): Promise<number> {
 
 async function runScrape(ctx: CronContext, request?: NextRequest): Promise<CronResult> {
   const maxReports = await readMaxReports(request);
-  const now = new Date();
+  const startedAt = Date.now();
+  const now = new Date(startedAt);
   const summary: Record<string, JurisdictionSummary> = {};
 
   for (const source of getEnabledSources()) {
-    summary[source.jurisdiction] = await scrapeOne(source, ctx.db, maxReports, now);
+    summary[source.jurisdiction] = await scrapeOne(source, ctx.db, maxReports, now, startedAt);
   }
 
   const jurisdictions = Object.values(summary);
@@ -123,6 +127,7 @@ async function scrapeOne(
   db: SupabaseClient,
   maxReports: number,
   now: Date,
+  startedAt: number,
 ): Promise<JurisdictionSummary> {
   const s: JurisdictionSummary = {
     inserted: 0,
@@ -132,6 +137,7 @@ async function scrapeOne(
     errors: [],
     reportsListed: 0,
     reportsProcessed: 0,
+    deferred: 0,
     newestUploadedAt: null,
     reports: [],
   };
@@ -166,7 +172,13 @@ async function scrapeOne(
     );
 
     const hot: ExtractedLead[] = [];
-    for (const report of unseen) {
+    for (const [i, report] of unseen.entries()) {
+      if (!hasBudget(startedAt, Date.now())) {
+        // Leave the rest for the next run rather than be killed mid-report at
+        // maxDuration, which would strand this run's cron_runs row open.
+        s.deferred = unseen.length - i;
+        break;
+      }
       const r = await processReport(report, source, db, hot);
       s.reports.push(r);
       s.inserted += r.inserted;

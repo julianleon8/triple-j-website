@@ -9,7 +9,7 @@ Read the Lead Engine section of `Locked Decisions.md` before touching it. What i
 2. `select lead_class, count(*) from permit_leads group by 1;` and `select label, uploaded_at, permit_count, kept_count, lead_count from permit_reports order by uploaded_at desc;`
 3. `/hq/permit-leads` — class pills, Owner / Contractor columns, the expanded row's Permit block.
 
-If `permit_reports` is still empty after a run with `ok = true`, suspect the Claude step (`cron_runs.error`, `detail.summary.temple.reports[].errors`), not the fetch — the fetch and parse path is fixture-tested against the real markup and the real row layout.
+If `permit_reports` is still empty after a run with `ok = true`, suspect the Claude step (`cron_runs.error`, `detail.summary.temple.reports[].errors`), not the fetch — the fetch and parse path is fixture-tested against the real markup and the real row layout. The 2026-09-07 18:49 UTC `cron_runs` row with `ok IS NULL` is the first live run, killed at `maxDuration` before the time budget existed; it is not a live problem.
 
 **Backlog:** ~110 historical weekly reports drain at three per run. "Run Scrape Now" or `POST /api/cron/scrape-permits` with `{ "maxReports": 20 }` (owner session or `CRON_SECRET`) drains faster; a report costs cents.
 

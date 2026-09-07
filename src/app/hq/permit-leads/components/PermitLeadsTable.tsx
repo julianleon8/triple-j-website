@@ -116,6 +116,7 @@ type ScrapeJurisdictionResult = {
   errors: string[];
   reportsListed?: number;
   reportsProcessed?: number;
+  deferred?: number;
   newestUploadedAt?: string | null;
   reports?: ScrapeReport[];
   candidatesConsidered?: string[];
@@ -171,11 +172,21 @@ export default function PermitLeadsTable({
         startTransition(() => router.refresh());
       }
     } catch (err) {
-      setScrapeResult(`Error: ${err instanceof Error ? err.message : String(err)}`);
+      // Leaving the tab kills this fetch, not the job: it keeps running on the
+      // server and its rows land in the table on the next refresh.
+      setScrapeResult(
+        `Connection dropped (${err instanceof Error ? err.message : String(err)}) — the scrape is still running on the server. Refresh in a couple of minutes.`,
+      );
     } finally {
       setScraping(false);
     }
   };
+
+  const resultTone = scrapeResult?.startsWith('Error')
+    ? 'text-red-600'
+    : scrapeResult?.startsWith('Connection dropped')
+      ? 'text-amber-700'
+      : 'text-green-700';
 
   const patch = async (
     id: string,
@@ -260,7 +271,7 @@ export default function PermitLeadsTable({
         </div>
         <div className="flex items-center gap-3">
           {scrapeResult && (
-            <span className={`text-xs ${scrapeResult.startsWith('Error') ? 'text-red-600' : 'text-green-700'}`}>
+            <span className={`text-xs ${resultTone}`}>
               {scrapeResult}
             </span>
           )}
@@ -268,8 +279,9 @@ export default function PermitLeadsTable({
             onClick={runScrape}
             disabled={scraping}
             className="bg-blue-600 hover:bg-blue-500 disabled:bg-blue-300 text-white text-xs font-bold px-4 py-2 rounded-lg transition"
+            title="Runs on the server for up to five minutes. Leaving the tab does not cancel it."
           >
-            {scraping ? 'Scraping…' : 'Run Scrape Now'}
+            {scraping ? 'Scraping… (safe to leave)' : 'Run Scrape Now'}
           </button>
         </div>
       </div>
@@ -303,6 +315,7 @@ export default function PermitLeadsTable({
                     <span className="text-gray-500">
                       {s.reportsListed ?? 0} listed · {s.reportsProcessed ?? 0} read · {s.inserted} new ·{' '}
                       {s.updated ?? 0} updated · {s.skipped} skipped · {s.errors.length} error(s)
+                      {s.deferred ? ` · ${s.deferred} left for next run` : ''}
                     </span>
                   </div>
                   {s.newestUploadedAt && (

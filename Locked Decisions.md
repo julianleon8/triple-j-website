@@ -78,6 +78,8 @@ Do not copy anything from this file into `AGENTS.md`. That duplication is what p
 - **`permit_reports` is the processed-document ledger** (migration 031); `cron_runs` records runs, not documents. Backfill drains 3 reports per run; a manual POST may carry `{ maxReports }` up to 20. Dedup key is a full `unique (jurisdiction, permit_number)` — the code suffix is part of the number because Temple reuses the sequence across codes. (2026-09-07)
 - **The scraper returning HTTP 200 does not mean it worked.** Zero-yield with a clean status is its normal failure mode — and over a weekly source it is also its normal *success* six days in seven. Check `permit_reports.uploaded_at`, not the yield streak; the stall alarm fires after 14 quiet days, on Mondays only. (2026-09-07)
 - **Owner names from permit reports are public record, HQ-only, never rendered publicly.** Consistent with the 2026-04-21 publish-the-narrative, hoard-the-leads split. (2026-09-07)
+- **Claude's extraction output is a forced tool call, never free-text JSON.** The first live run got a ```json fence plus an array truncated at the 8k output cap — unparseable, so two reports were recorded with zero leads. A tool call cannot be fenced; truncation is detected via `stop_reason` and the batch is halved. Batches are 15 rows (`ROWS_PER_CALL`) against a 16k cap. (2026-09-07)
+- **A run stops starting new reports after 240s** (`REPORT_TIME_BUDGET_MS`) so it is never killed at the 300s `maxDuration`. A killed run leaves `cron_runs.ok IS NULL` forever — the 2026-09-07 18:49 UTC row is exactly that, not a live problem. Unstarted reports wait for the next run and show as "left for next run" in the HQ panel. (2026-09-07)
 
 ## HQ access
 

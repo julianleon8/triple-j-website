@@ -246,14 +246,54 @@ export function leadClassHint(code: string | null | undefined): LeadClass | null
   return null
 }
 
-/** Rows per Claude call. ~150 output tokens a row keeps a batch well inside max_tokens. */
-export const ROWS_PER_CALL = 40
+/**
+ * Rows per Claude call.
+ *
+ * The first live run (2026-09-07) sent 40 rows against an 8k output cap and
+ * every batch truncated mid-array — a row is ~250 output tokens, not 150 — so
+ * both reports were recorded with zero leads. 15 rows is ~4k tokens against a
+ * 16k cap, and the extractor still halves any batch that reports
+ * stop_reason max_tokens.
+ */
+export const ROWS_PER_CALL = 15
 
 export function chunk<T>(items: T[], size: number): T[][] {
   if (size < 1) return [items]
   const out: T[][] = []
   for (let i = 0; i < items.length; i += size) out.push(items.slice(i, i + size))
   return out
+}
+
+/**
+ * Pulls a JSON array out of free text: tolerant of ```json fences, a prose
+ * preamble and trailing commentary. Returns null when the text holds no
+ * complete array — including output truncated at max_tokens, which is why the
+ * extractor asks for tool-use output and treats this as the fallback only.
+ */
+export function parseJsonArrayLoose(text: string): unknown[] | null {
+  const start = text.indexOf('[')
+  const end = text.lastIndexOf(']')
+  if (start < 0 || end <= start) return null
+  try {
+    const value: unknown = JSON.parse(text.slice(start, end + 1))
+    return Array.isArray(value) ? value : null
+  } catch {
+    return null
+  }
+}
+
+// ── Time budget ─────────────────────────────────────────────────────────────
+
+/**
+ * The route's maxDuration is 300s. Starting another report with less than a
+ * minute left risks the platform killing the function mid-report, which
+ * strands the open cron_runs row (ok IS NULL forever). Unstarted reports
+ * simply wait for the next run.
+ */
+export const REPORT_TIME_BUDGET_MS = 240_000
+
+export function hasBudget(startedAt: number, now: number, budget = REPORT_TIME_BUDGET_MS): boolean {
+  return now - startedAt < budget
 }
 
 // ── Stall detection ─────────────────────────────────────────────────────────
