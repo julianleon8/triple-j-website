@@ -68,6 +68,8 @@ yarn-error.log*
 .vibe/
 .windsurf/
 .zencoder/
+# same origin as the dotfolders above: symlinks created by `npx skills add`
+skills/
 
 # local-only archive of browser-saved HTML and retired canvas files
 /_archive/
