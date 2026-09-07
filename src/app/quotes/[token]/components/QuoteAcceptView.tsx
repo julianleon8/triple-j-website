@@ -100,8 +100,8 @@ export default function QuoteAcceptView({ quote, token }: Props) {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-50">
+              {/* Ordered by sort_order in the page query — no client-side sort. */}
               {quote.quote_line_items
-                .sort((a, b) => 0) // preserve order from DB
                 .map(item => (
                   <tr key={item.id}>
                     <td className="py-3 text-gray-800">{item.description}</td>

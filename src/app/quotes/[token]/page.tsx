@@ -8,10 +8,17 @@ export default async function QuotePublicPage({
 }) {
   const { token } = await params
 
+  // Column-scoped on purpose. `select('*')` would ship every quote column into
+  // the RSC payload the customer's browser receives — including `internal_notes`,
+  // which QuoteWizard packs with the calculator's cost + margin JSON. Never widen
+  // this to '*'; add columns explicitly as the view needs them.
   const { data: quote, error } = await getAdminClient()
     .from('quotes')
-    .select('*, customers(name), quote_line_items(*)')
+    // Must stay a single string literal — supabase-js infers the row type by
+    // parsing this at compile time, and concatenation defeats that.
+    .select('id, quote_number, status, total, valid_until, notes, customers(name), quote_line_items(id, description, quantity, unit_price, total_price, sort_order)')
     .eq('accept_token', token)
+    .order('sort_order', { referencedTable: 'quote_line_items', ascending: true })
     .single()
 
   if (error || !quote) {
@@ -28,5 +35,12 @@ export default async function QuotePublicPage({
     )
   }
 
-  return <QuoteAcceptView quote={quote} token={token} />
+  // Without generated DB types, supabase-js infers embedded relations as arrays.
+  // `customers` is a to-one FK and comes back as a single object at runtime, so
+  // normalize both shapes rather than casting the whole row.
+  const customers = Array.isArray(quote.customers)
+    ? quote.customers[0] ?? null
+    : quote.customers
+
+  return <QuoteAcceptView quote={{ ...quote, customers }} token={token} />
 }

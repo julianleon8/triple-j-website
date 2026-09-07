@@ -4,13 +4,35 @@ import { getAdminClient } from '@/lib/supabase/admin'
 
 export const dynamic = 'force-dynamic'
 
-// GET /api/gallery/[id]/photos — list photos for a gallery item, sorted
+// GET /api/gallery/[id]/photos — list photos for a gallery item, sorted.
+//
+// Public, but only for items already published to /gallery. Jobsite photos are
+// created by /api/hq/job-photo with is_active:false precisely so they stay
+// private; without the parent-item check below, anyone holding a gallery_items
+// id could pull those URLs out of the public storage bucket.
 export async function GET(
   _request: NextRequest,
   { params }: { params: Promise<{ id: string }> },
 ) {
   const { id } = await params
-  const { data, error } = await getAdminClient()
+  const db = getAdminClient()
+
+  const { data: item } = await db
+    .from('gallery_items')
+    .select('is_active')
+    .eq('id', id)
+    .single()
+
+  if (!item?.is_active) {
+    // Signed-in owner can still read unpublished items (HQ gallery manager).
+    const supabase = await createClient()
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) {
+      return NextResponse.json({ error: 'Not found' }, { status: 404 })
+    }
+  }
+
+  const { data, error } = await db
     .from('gallery_photos')
     .select('*')
     .eq('gallery_item_id', id)

@@ -1,16 +1,20 @@
 'use client'
 export const dynamic = 'force-dynamic'
 
-import { useState } from 'react'
+import { Suspense, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 
-export default function LoginPage() {
+function LoginForm() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
   const router = useRouter()
+
+  // Middleware bounces signed-in accounts that aren't in OWNER_EMAIL back here.
+  // Without this the redirect looks like a silent failure.
+  const notAuthorized = useSearchParams().get('error') === 'not_authorized'
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -37,6 +41,11 @@ export default function LoginPage() {
           <h1 className="text-2xl font-bold tracking-tight">Triple J Metal</h1>
           <p className="text-gray-500 text-sm mt-1">Owner Dashboard</p>
         </div>
+        {notAuthorized && (
+          <p className="mb-4 rounded-lg bg-red-50 px-3 py-2 text-sm text-red-600">
+            That account isn&apos;t authorized for HQ.
+          </p>
+        )}
         <form onSubmit={handleLogin} className="space-y-4">
           <input
             type="email"
@@ -65,5 +74,14 @@ export default function LoginPage() {
         </form>
       </div>
     </div>
+  )
+}
+
+export default function LoginPage() {
+  // useSearchParams needs a Suspense boundary above it.
+  return (
+    <Suspense fallback={null}>
+      <LoginForm />
+    </Suspense>
   )
 }

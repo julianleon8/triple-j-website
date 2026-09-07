@@ -34,10 +34,19 @@ export async function verifyHCaptchaToken(
 ): Promise<CaptchaVerifyResult> {
   const secret = process.env.HCAPTCHA_SECRET_KEY
   if (!secret) {
-    // Dev mode with no key configured — let the submission through. Production
-    // should always have this set; deploy checks include `vercel env ls | grep
-    // hcaptcha` as part of the verification checklist.
-    console.warn('[captcha] HCAPTCHA_SECRET_KEY not set — skipping verification')
+    // Gated on the *public* site key rather than NODE_ENV, deliberately.
+    //
+    // If the site key is unset the widget never renders, so there is no token to
+    // verify and failing closed here would reject every legitimate lead. If the
+    // site key IS set, the form is showing a captcha the server isn't checking —
+    // that's the dangerous half-configured state, and it fails closed.
+    if (process.env.NEXT_PUBLIC_HCAPTCHA_SITE_KEY) {
+      console.error(
+        '[captcha] site key configured but HCAPTCHA_SECRET_KEY is missing — rejecting submission'
+      )
+      return { success: false, errorCodes: ['missing-secret'] }
+    }
+    console.warn('[captcha] hCaptcha not configured — skipping verification')
     return { success: true, skipped: true }
   }
 
