@@ -95,3 +95,7 @@ public/images/*.mov
 
 # Obsidian rewrites this on every open — pure diff noise
 .obsidian/workspace.json
+
+# large source media — keep locally, host on a CDN if ever needed
+public/images/*.mp4
+public/images/*.mov
