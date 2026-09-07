@@ -1,5 +1,18 @@
 # Session Notes
 
+## 2026-09-07 — The secret scan failed open on non-ASCII filenames
+
+Surfaced by committing the primer archive: the pre-commit hook printed `fatal: ambiguous argument` and let the
+commit through. `scripts/check-secrets.mjs` walked git without `-z`, so `core.quotepath` handed it a quoted,
+octal-escaped path, `git show :<path>` failed, and `catch { continue }` skipped the file silently.
+
+- **Proved first**: a Stripe-shaped key in `café — probe.md` passed `--staged` with exit 0. Then fixed with `-z`
+  + NUL split on both git calls, and re-ran the same probe — now caught. `--all` clean on the real tree.
+- **Blast radius**: `--staged` (pre-commit + the Claude Code Bash guard) and `--all` (CI Governance), plus
+  `.secretsignore` globs, which were being matched against the quoted name.
+- Since `governance.yml` is explicitly "a detector, not a gate", any file with an accent or em-dash in its name
+  had no secret gate at all.
+
 ## 2026-09-07 — Primer drift: the "one block" rule finally has a check
 
 Audited this vault against the Mesa/Mexicno repo's memory system and found the one live defect on this side:
