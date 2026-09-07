@@ -24,6 +24,9 @@ import { z } from 'zod';
 import type { PermitSource } from './permit-sources';
 import {
   LEAD_CLASSES,
+  ALL_CATEGORIES,
+  CLAUDE_TAGS,
+  MATERIALS,
   ROWS_PER_CALL,
   chunk,
   normalizePermitNumber,
@@ -57,12 +60,22 @@ const claudeLeadSchema = z.object({
   owner_name: z.string().nullable(),
   applicant_name: z.string().nullable(),
   contractor_name: z.string().nullable(),
+  contractor_company: z.string().nullable(),
   address: z.string().nullable(),
   city: z.string().nullable(),
   zip: z.string().nullable(),
   description: z.string().nullable(),
   valuation: z.number().nullable(),
   lead_class: z.enum(LEAD_CLASSES).nullable(),
+  // Free strings here; normalizeCategory() / mergeTags() constrain them to
+  // the vocabulary so one stray value cannot drop a whole row.
+  category: z.string().nullable(),
+  tags: z.array(z.string()),
+  sqft: z.number().int().nullable(),
+  dimensions: z.string().nullable(),
+  height_ft: z.number().nullable(),
+  material: z.string().nullable(),
+  applied_at: z.string().nullable(),
   wheelhouse_score: z.number().int().min(1).max(10),
   wheelhouse_reasons: z.array(z.string()),
 });
@@ -97,19 +110,31 @@ const PERMIT_TOOL: Anthropic.Tool = {
             owner_name: nullableString,
             applicant_name: nullableString,
             contractor_name: nullableString,
+            contractor_company: {
+              type: ['string', 'null'],
+              description: 'The contractor as a company name only, no person; null when none is named',
+            },
             address: nullableString,
             city: nullableString,
             zip: nullableString,
             description: nullableString,
             valuation: { type: ['number', 'null'] },
             lead_class: { type: ['string', 'null'], enum: [...LEAD_CLASSES, null] },
+            category: { type: ['string', 'null'], enum: [...ALL_CATEGORIES, null] },
+            tags: { type: 'array', items: { type: 'string', enum: [...CLAUDE_TAGS] } },
+            sqft: { type: ['integer', 'null'], description: 'Total square feet when stated' },
+            dimensions: { type: ['string', 'null'], description: 'Footprint as WxL in feet, e.g. "30x40"' },
+            height_ft: { type: ['number', 'null'], description: 'Height in decimal feet when stated' },
+            material: { type: ['string', 'null'], enum: [...MATERIALS, null] },
+            applied_at: { type: ['string', 'null'], description: 'The trailing date stamp as YYYY-MM-DD' },
             wheelhouse_score: { type: 'integer', minimum: 1, maximum: 10 },
             wheelhouse_reasons: { type: 'array', items: { type: 'string' } },
           },
           required: [
             'permit_number', 'job_type_code', 'permit_type', 'job_status', 'owner_name',
-            'applicant_name', 'contractor_name', 'address', 'city', 'zip', 'description',
-            'valuation', 'lead_class', 'wheelhouse_score', 'wheelhouse_reasons',
+            'applicant_name', 'contractor_name', 'contractor_company', 'address', 'city', 'zip',
+            'description', 'valuation', 'lead_class', 'category', 'tags', 'sqft', 'dimensions',
+            'height_ft', 'material', 'applied_at', 'wheelhouse_score', 'wheelhouse_reasons',
           ],
         },
       },
@@ -138,11 +163,36 @@ Call the record_permits tool exactly once, with one element per input row, in in
 - job_status: e.g. "Plan Review - PR", "Approved (Issued) - AP", "Closed - Final Inspection".
 - owner_name: Property Owner as printed; null when the row has none.
 - applicant_name: the text after "Applicant:", person and company.
-- contractor_name: General Contractor Business Name; null if absent.
+- contractor_name: General Contractor Business Name exactly as printed; null if absent.
+- contractor_company: the same contractor as a COMPANY name only — drop any person's name the City appended ("Flintrock Builders Aaron Yates" → "Flintrock Builders"; "Patco David Patterson" → "Patco"). Null when no company is named. If only a person is named and no company, null.
 - address: street address only, e.g. "321 EXAMPLE DR". city: "Temple" unless the row says otherwise. zip: 5 digits.
 - description: the project description, once, trimmed.
 - valuation: USD if a dollar figure is printed; Temple usually prints none → null.
+- sqft: total square feet as an integer when the row states one ("1854 SQ FT", "18,000 SF", "1,200 sqft"); for a WxL footprint with no stated area, compute W×L. Null otherwise.
+- dimensions: the footprint as "WxL" in whole feet when stated ("35 ft by 40 ft" → "35x40", "12 X 16" → "12x16"). Null otherwise.
+- height_ft: stated height in decimal feet ("9'2''" → 9.2, "12'10''" → 12.8). Null otherwise.
+- material: metal | wood | concrete | masonry | mixed, only when the row says (steel, red iron, PEMB → metal; stick-frame, wood → wood; brick, block, CMU → masonry; slab-only → concrete). Null when it does not say. A prefab shed with no material stated is null.
+- applied_at: the date stamp at the very end of the row ("8/22/2026 9:14:02 AM" → "2026-08-22") as YYYY-MM-DD. Null if absent.
 - wheelhouse_reasons: 1-3 terse bullets.
+
+## category — one per row, from the list for its lead_class
+
+accessory: carport (open vehicle cover) · garage (enclosed vehicle building) · shop_barn (workshop, barn, pole barn, metal building for equipment) · storage_shed (shed or storage building, prefab or built) · patio_cover (patio/porch cover, awning, pergola, residential shade) · addition (living-space addition to the house) · slab_flatwork (driveway, slab or flatwork only, no structure) · manufactured_setup (manufactured/prefab unit set on site) · accessory_other
+new_home: single_family · duplex · multifamily
+commercial: self_storage · auto_shop (auto repair, tire, detail, car wash) · warehouse_industrial · retail_remodel (store build-out or remodel) · office_medical · restaurant_food · commercial_canopy (shade structure, canopy, covered area) · commercial_other
+
+Pick the most specific that fits. A "12x16 shed" is storage_shed even if metal. A metal building "for equipment" is shop_barn. When lead_class is null, category is null.
+
+## tags — zero or more, only from this list
+
+- metal: the text says metal, steel, PEMB, pre-engineered, red iron, or names a metal building
+- slab: a new concrete slab, foundation, driveway or flatwork is part of the work
+- prefab_kit: a dealer-delivered prefab unit or kit (Tuff Shed and the like, "prefabricated", "delivered and set")
+- no_contractor: no general contractor named and the applicant reads as the owner or an individual
+- engineer_applicant: the applicant is an engineering, design, architecture or permit-service firm
+- large: footprint at or above 1,000 sq ft, any dimension at or above 30 ft, or valuation at or above $250,000
+- cover: an open-sided cover, canopy, carport or shade structure
+- enclosed: a walled, enclosed structure
 
 ## lead_class
 

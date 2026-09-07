@@ -11,7 +11,9 @@ Read the Lead Engine section of `Locked Decisions.md` before touching it. What i
 
 If `permit_reports` is still empty after a run with `ok = true`, suspect the Claude step (`cron_runs.error`, `detail.summary.temple.reports[].errors`), not the fetch — the fetch and parse path is fixture-tested against the real markup and the real row layout. The 2026-09-07 18:49 UTC `cron_runs` row with `ok IS NULL` is the first live run, killed at `maxDuration` before the time budget existed; it is not a live problem.
 
-**Backlog:** ~110 historical weekly reports drain at three per run. "Run Scrape Now" or `POST /api/cron/scrape-permits` with `{ "maxReports": 20 }` (owner session or `CRON_SECRET`) drains faster; a report costs cents.
+**Backlog:** ~110 historical weekly reports. "Load all history" on `/hq/permit-leads` chains runs until they are all read (the 240s budget fits four or five per run at ~50s each); a report costs cents. Or `POST /api/cron/scrape-permits` with `{ "maxReports": 20 }` per run.
+
+**Vocabulary:** `PERMIT_CATEGORIES`, `CLAUDE_TAGS`/`STATUS_TAGS`, `MATERIALS` in `src/lib/jobs/scrape-permits.ts` — add a value there and it exists in Claude's tool schema, the enforcement, and the HQ filters. Rows with `labeled_at IS NULL` (the 79 from the first successful run) are relabelled by the next run, 45 at a time; check `select count(*) from permit_leads where labeled_at is null`.
 
 **Not done, deliberately:** OCR / PDF-vision for Bell County; headless for Harker Heights and the CivicPlus sources; the public `/market-report` (Temple's monthly totals PDFs are aggregate and PII-free — the right input if it is ever built). A local `next dev` scrape throws inside `unpdf` on Node 22; production is on 24.
 

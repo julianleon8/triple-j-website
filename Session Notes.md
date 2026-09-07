@@ -10,7 +10,9 @@ First live run (18:49 UTC, from the HQ button) found the last two defects. Claud
 
 The second live run (19:04 UTC) worked — 79 permits stored from two reports, one deferred by the budget, four pushes sent — but Julian again saw only a dropped request, because a five-minute fetch dies when the tab is left. Third commit: the manual POST now answers 202 and runs the job in `after()`, 409 while one is open; a new owner-only status route returns the latest `cron_runs` row; the page renders that row as a "last run" card and polls it every five seconds while a run is open, so the result is on the page whether or not the tab survived. Claude batches within a report now run concurrently, so a report takes about a third of the time.
 
-Validation: typecheck, lint, all tests pass.
+Then Julian asked to categorize and label everything, and for more data rather than less. Fourth commit: every permit now carries a `category` (20 values under the three classes — carport, garage, shop/barn, storage shed, patio cover, addition, slab, single-family, duplex, self-storage, auto shop, and so on), `tags` (metal, slab, prefab kit, no contractor, engineer applicant, large, open cover, enclosed, plus one status tag), a `contractor_company` and a normalised `contractor_key` so "OMEGA BUILDERS" and "Omega Builders" count once, and measured facts as columns: `sqft`, `dimensions`, `height_ft`, `material`, `applied_at`. The vocabulary is owned by `src/lib/jobs/scrape-permits.ts`, tested, and rendered by HQ: a category dropdown, clickable label chips, a by-category strip for what is on screen, and a builders card. Rows stored before the vocabulary are relabelled from their stored source text, 45 per run, with class and score untouched. A "Load all history" button chains detached runs until every listed report is read. Migration 032 applied to production.
+
+Validation: typecheck, lint, 274 tests across 21 files pass.
 
 
 ## 2026-09-07 — `/quote` landing page

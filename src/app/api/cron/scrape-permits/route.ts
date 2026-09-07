@@ -19,6 +19,13 @@ import {
   preFilter,
   leadClassHint,
   hasBudget,
+  normalizeCategory,
+  normalizeMaterial,
+  mergeTags,
+  claudeTagsOf,
+  contractorKey,
+  rowsFromStored,
+  RELABEL_BATCH,
   stallPushDue,
   digestBody,
   emptyClassCounts,
@@ -26,6 +33,7 @@ import {
   type ReportLink,
   type ClassCounts,
   type LeadClass,
+  type StoredForRelabel,
 } from '@/lib/jobs/scrape-permits';
 import { sendPush } from '@/lib/push';
 
@@ -78,6 +86,8 @@ type JurisdictionSummary = {
   reportsProcessed: number;
   /** Unseen reports left for the next run because the time budget ran out. */
   deferred: number;
+  /** Stored rows that predated the category/tag vocabulary and got labelled this run. */
+  relabeled: number;
   newestUploadedAt: string | null;
   reports: ReportSummary[];
   // First ~15 report hrefs seen on the index page. Lets the /hq panel explain
@@ -169,6 +179,7 @@ async function scrapeOne(
     reportsListed: 0,
     reportsProcessed: 0,
     deferred: 0,
+    relabeled: 0,
     newestUploadedAt: null,
     reports: [],
   };
@@ -218,6 +229,14 @@ async function scrapeOne(
       s.errors.push(...r.errors);
     }
     s.reportsProcessed = s.reports.filter((r) => r.errors.length === 0).length;
+
+    // Rows stored before the vocabulary existed (or after it changed) get
+    // their category and tags from the stored source text, when time allows.
+    if (hasBudget(startedAt, Date.now())) {
+      const r = await relabelPass(source, db);
+      s.relabeled = r.relabeled;
+      s.errors.push(...r.errors);
+    }
 
     s.notified += await notify(source, s, hot, newest, now);
   } catch (err) {
@@ -288,31 +307,35 @@ async function processReport(
     if (fullRows.length > 0) {
       const { data: existing, error: existingError } = await db
         .from('permit_leads')
-        .select('permit_number, source_report_date')
+        .select('permit_number, source_report_date, tags')
         .eq('jurisdiction', source.jurisdiction)
         .in('permit_number', fullRows.map((r) => r.permit_number));
       if (existingError) throw new Error(`permit_leads read: ${existingError.message}`);
 
-      const known = new Map(
-        ((existing ?? []) as { permit_number: string; source_report_date: string | null }[]).map(
-          (e) => [e.permit_number, e.source_report_date],
-        ),
+      type Known = { source_report_date: string | null; tags: string[] | null };
+      const known = new Map<string, Known>(
+        ((existing ?? []) as ({ permit_number: string } & Known)[]).map((e) => [
+          e.permit_number,
+          { source_report_date: e.source_report_date, tags: e.tags },
+        ]),
       );
 
       const inserts = fullRows.filter((r) => !known.has(r.permit_number));
       // Re-sightings: update the municipal status only when this report is at
       // least as new as the one the row came from, so backfilling an older
-      // week never rolls a permit's status backwards.
+      // week never rolls a permit's status backwards. The status tag follows
+      // the status; Claude's tags on the row are kept as they were.
       const resights = fullRows
         .filter((r) => known.has(r.permit_number))
         .filter((r) => {
-          const prev = known.get(r.permit_number) ?? null;
+          const prev = known.get(r.permit_number)?.source_report_date ?? null;
           return !prev || !reportDate || reportDate >= prev;
         })
         .map((r) => ({
           jurisdiction: r.jurisdiction,
           permit_number: r.permit_number,
           job_status: r.job_status,
+          tags: mergeTags(claudeTagsOf(known.get(r.permit_number)?.tags), r.job_status),
           source_url: r.source_url,
           source_report_date: r.source_report_date,
           updated_at: new Date().toISOString(),
@@ -366,6 +389,66 @@ async function processReport(
   }
 
   return out;
+}
+
+/**
+ * Labels rows that have no category yet, from the source text already stored.
+ * Class and score are left alone — this adds the vocabulary, it does not
+ * re-judge the lead. Bounded, so it never starves the report loop.
+ */
+async function relabelPass(
+  source: PermitSource,
+  db: SupabaseClient,
+): Promise<{ relabeled: number; errors: string[] }> {
+  const { data, error } = await db
+    .from('permit_leads')
+    .select('id, permit_number, job_type_code, job_status, lead_class, raw_source_text')
+    .eq('jurisdiction', source.jurisdiction)
+    .is('labeled_at', null)
+    .order('created_at', { ascending: true })
+    .limit(RELABEL_BATCH);
+  if (error) return { relabeled: 0, errors: [`relabel read: ${error.message}`] };
+
+  type Stored = StoredForRelabel & { job_status: string | null; lead_class: LeadClass | null };
+  const stored = (data ?? []) as Stored[];
+  if (stored.length === 0) return { relabeled: 0, errors: [] };
+
+  const rows = rowsFromStored(stored);
+  const byNumber = new Map(stored.map((s) => [s.permit_number, s]));
+
+  try {
+    const leads = rows.length > 0 ? await extractLeadsFromRows(rows, source) : [];
+    const now = new Date().toISOString();
+    let relabeled = 0;
+    const errors: string[] = [];
+
+    await Promise.all(
+      leads.map(async (lead) => {
+        const row = lead.permit_number ? byNumber.get(lead.permit_number) : undefined;
+        if (!row) return;
+        const cls = row.lead_class ?? leadClassHint(row.job_type_code) ?? 'accessory';
+        const { error: updateError } = await db
+          .from('permit_leads')
+          .update({
+            category: normalizeCategory(lead.category, cls, row.job_type_code),
+            tags: mergeTags(lead.tags, row.job_status),
+            contractor_company: lead.contractor_company,
+            contractor_key: contractorKey(lead.contractor_company ?? lead.contractor_name),
+            ...measurements(lead),
+            labeled_at: now,
+            updated_at: now,
+          })
+          .eq('id', row.id);
+        if (updateError) errors.push(`relabel ${row.permit_number}: ${updateError.message}`);
+        else relabeled += 1;
+      }),
+    );
+
+    return { relabeled, errors };
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : String(err);
+    return { relabeled: 0, errors: [`relabel: ${msg}`] };
+  }
 }
 
 /** Digest for the reports processed, one hot-permit push, and the weekly stall nag. */
@@ -442,6 +525,8 @@ function toRow(
     owner_name: lead.owner_name,
     applicant_name: lead.applicant_name,
     contractor_name: lead.contractor_name,
+    contractor_company: lead.contractor_company,
+    contractor_key: contractorKey(lead.contractor_company ?? lead.contractor_name),
     address: lead.address,
     city: lead.city,
     state: 'TX',
@@ -449,9 +534,27 @@ function toRow(
     description: lead.description,
     valuation: lead.valuation,
     lead_class: leadClass,
+    category: normalizeCategory(lead.category, leadClass, lead.job_type_code),
+    tags: mergeTags(lead.tags, lead.job_status),
+    ...measurements(lead),
+    labeled_at: new Date().toISOString(),
     wheelhouse_score: lead.wheelhouse_score,
     wheelhouse_reasons: lead.wheelhouse_reasons,
     raw_source_text: lead.raw_source_text,
     extraction_model: EXTRACTION_MODEL,
+  };
+}
+
+/** The measured facts Claude reads off the row, constrained to sane values. */
+function measurements(lead: ExtractedLead) {
+  const sqft = lead.sqft !== null && lead.sqft > 0 && lead.sqft < 10_000_000 ? lead.sqft : null;
+  const height = lead.height_ft !== null && lead.height_ft > 0 && lead.height_ft < 300 ? lead.height_ft : null;
+  const applied = lead.applied_at && /^\d{4}-\d{2}-\d{2}$/.test(lead.applied_at) ? lead.applied_at : null;
+  return {
+    sqft,
+    dimensions: lead.dimensions?.trim() || null,
+    height_ft: height,
+    material: normalizeMaterial(lead.material),
+    applied_at: applied,
   };
 }

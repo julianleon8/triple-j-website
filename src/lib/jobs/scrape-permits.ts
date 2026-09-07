@@ -296,6 +296,206 @@ export function hasBudget(startedAt: number, now: number, budget = REPORT_TIME_B
   return now - startedAt < budget
 }
 
+// ── Categories, labels, builders ────────────────────────────────────────────
+//
+// The vocabulary the whole Lead Engine uses. Claude picks from it; the code
+// enforces it; the HQ filters render it. Add a value here and it exists
+// everywhere. Nothing else may hard-code a category or tag string.
+
+export const PERMIT_CATEGORIES = {
+  accessory: [
+    'carport',
+    'garage',
+    'shop_barn',
+    'storage_shed',
+    'patio_cover',
+    'addition',
+    'slab_flatwork',
+    'manufactured_setup',
+    'accessory_other',
+  ],
+  new_home: ['single_family', 'duplex', 'multifamily'],
+  commercial: [
+    'self_storage',
+    'auto_shop',
+    'warehouse_industrial',
+    'retail_remodel',
+    'office_medical',
+    'restaurant_food',
+    'commercial_canopy',
+    'commercial_other',
+  ],
+} as const satisfies Record<LeadClass, readonly string[]>
+
+export type PermitCategory = (typeof PERMIT_CATEGORIES)[LeadClass][number]
+
+export const ALL_CATEGORIES: readonly PermitCategory[] = [
+  ...PERMIT_CATEGORIES.accessory,
+  ...PERMIT_CATEGORIES.new_home,
+  ...PERMIT_CATEGORIES.commercial,
+]
+
+export const CATEGORY_LABELS: Record<PermitCategory, string> = {
+  carport: 'Carport',
+  garage: 'Garage',
+  shop_barn: 'Shop / barn',
+  storage_shed: 'Storage shed',
+  patio_cover: 'Patio / porch cover',
+  addition: 'Addition',
+  slab_flatwork: 'Slab / flatwork',
+  manufactured_setup: 'Manufactured setup',
+  accessory_other: 'Other accessory',
+  single_family: 'Single-family',
+  duplex: 'Duplex',
+  multifamily: 'Multifamily',
+  self_storage: 'Self-storage',
+  auto_shop: 'Auto shop',
+  warehouse_industrial: 'Warehouse / industrial',
+  retail_remodel: 'Retail remodel',
+  office_medical: 'Office / medical',
+  restaurant_food: 'Restaurant / food',
+  commercial_canopy: 'Commercial canopy',
+  commercial_other: 'Other commercial',
+}
+
+const CATEGORY_FALLBACK: Record<LeadClass, PermitCategory> = {
+  accessory: 'accessory_other',
+  new_home: 'single_family',
+  commercial: 'commercial_other',
+}
+
+/**
+ * Claude's category, constrained to the class it belongs to. A category from
+ * the wrong class, an unknown string or null falls back to the class default,
+ * except that a DUPX code is always a duplex.
+ */
+export function normalizeCategory(
+  category: string | null | undefined,
+  leadClass: LeadClass,
+  code?: string | null,
+): PermitCategory {
+  const allowed = PERMIT_CATEGORIES[leadClass] as readonly string[]
+  if (category && allowed.includes(category)) return category as PermitCategory
+  if (leadClass === 'new_home' && code === 'DUPX') return 'duplex'
+  return CATEGORY_FALLBACK[leadClass]
+}
+
+/** Primary structural material, when the row says. */
+export const MATERIALS = ['metal', 'wood', 'concrete', 'masonry', 'mixed'] as const
+export type Material = (typeof MATERIALS)[number]
+
+export function normalizeMaterial(material: string | null | undefined): Material | null {
+  return material && (MATERIALS as readonly string[]).includes(material) ? (material as Material) : null
+}
+
+/** Labels Claude reads off the row text. */
+export const CLAUDE_TAGS = [
+  'metal',
+  'slab',
+  'prefab_kit',
+  'no_contractor',
+  'engineer_applicant',
+  'large',
+  'cover',
+  'enclosed',
+] as const
+
+/** Labels derived from the municipal status, never asked of Claude. */
+export const STATUS_TAGS = ['applied', 'in_review', 'issued', 'closed'] as const
+
+export type PermitTag = (typeof CLAUDE_TAGS)[number] | (typeof STATUS_TAGS)[number]
+
+export const ALL_TAGS: readonly PermitTag[] = [...CLAUDE_TAGS, ...STATUS_TAGS]
+
+export const TAG_LABELS: Record<PermitTag, string> = {
+  metal: 'Metal',
+  slab: 'Slab',
+  prefab_kit: 'Prefab kit',
+  no_contractor: 'No contractor',
+  engineer_applicant: 'Engineer applicant',
+  large: 'Large',
+  cover: 'Open cover',
+  enclosed: 'Enclosed',
+  applied: 'Applied',
+  in_review: 'In review',
+  issued: 'Issued',
+  closed: 'Closed',
+}
+
+/** "Approved (Issued) - AP" → issued; "Plan Review - PR" → in_review; and so on. */
+export function statusTag(jobStatus: string | null | undefined): (typeof STATUS_TAGS)[number] | null {
+  if (!jobStatus) return null
+  const s = jobStatus.toLowerCase()
+  if (s.includes('closed') || s.includes('final')) return 'closed'
+  if (s.includes('issued') || s.includes('approved')) return 'issued'
+  if (s.includes('review') || s.includes('pending')) return 'in_review'
+  if (s.includes('accepted') || s.includes('applied') || s.includes('application')) return 'applied'
+  return null
+}
+
+/** Claude's tags filtered to the vocabulary, plus the status tag. Deduplicated, stable order. */
+export function mergeTags(
+  claudeTags: readonly string[] | null | undefined,
+  jobStatus: string | null | undefined,
+): PermitTag[] {
+  const out: PermitTag[] = []
+  for (const t of CLAUDE_TAGS) if (claudeTags?.includes(t)) out.push(t)
+  const st = statusTag(jobStatus)
+  if (st) out.push(st)
+  return out
+}
+
+/** Only Claude's tags from a stored tags array — used to carry them across a status change. */
+export function claudeTagsOf(tags: readonly string[] | null | undefined): string[] {
+  return (tags ?? []).filter((t) => (CLAUDE_TAGS as readonly string[]).includes(t))
+}
+
+const CONTRACTOR_NOISE = new Set([
+  'llc', 'l.l.c', 'ltd', 'inc', 'co', 'corp', 'corporation', 'company', 'dba', 'the', 'lp', 'l.p', 'pllc', 'llp',
+])
+
+/**
+ * "OMEGA BUILDERS", "Omega Builders" and "Omega Builders, LLC" all become
+ * "omega builders", so a builder counts once. Person names appended by the
+ * City ("Flintrock Builders Aaron Yates") are Claude's job to strip into
+ * contractor_company; this only normalises what it is given.
+ */
+export function contractorKey(name: string | null | undefined): string | null {
+  if (!name) return null
+  const key = name
+    .toLowerCase()
+    .replace(/[^a-z0-9\s]/g, ' ')
+    .split(/\s+/)
+    .filter((t) => t && !CONTRACTOR_NOISE.has(t))
+    .join(' ')
+    .trim()
+  return key || null
+}
+
+/** Rows already in permit_leads that still need a category and tags. */
+export type StoredForRelabel = {
+  id: string
+  permit_number: string
+  job_type_code: string | null
+  raw_source_text: string | null
+}
+
+/** Per run, per source. Six Claude calls at most, after the reports are done. */
+export const RELABEL_BATCH = 45
+
+/** Rebuilds PermitRows from stored source text so old rows can be relabelled without refetching PDFs. */
+export function rowsFromStored(stored: StoredForRelabel[]): PermitRow[] {
+  const out: PermitRow[] = []
+  for (const s of stored) {
+    const text = s.raw_source_text?.trim()
+    if (!text) continue
+    const code = s.job_type_code ?? s.permit_number.split('-').slice(3).join('-')
+    if (!code) continue
+    out.push({ permitNumber: s.permit_number, code, text })
+  }
+  return out
+}
+
 // ── Run status for the HQ page ──────────────────────────────────────────────
 
 /** The cron_runs columns the /hq page reads. */

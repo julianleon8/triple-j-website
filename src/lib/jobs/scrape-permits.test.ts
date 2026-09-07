@@ -25,6 +25,19 @@ import {
   runState,
   RUN_CUTOFF_MS,
   type ScrapeRunRow,
+  PERMIT_CATEGORIES,
+  ALL_CATEGORIES,
+  CATEGORY_LABELS,
+  normalizeCategory,
+  CLAUDE_TAGS,
+  ALL_TAGS,
+  TAG_LABELS,
+  statusTag,
+  mergeTags,
+  claudeTagsOf,
+  contractorKey,
+  rowsFromStored,
+  normalizeMaterial,
   reportStalled,
   stallPushDue,
   digestBody,
@@ -276,6 +289,88 @@ describe('time budget and batch size', () => {
   it('keeps batches small enough that a full batch cannot reach the output cap', () => {
     // ~250 output tokens a row; the cap is 16k. 15 rows is ~4k.
     expect(ROWS_PER_CALL).toBeLessThanOrEqual(15)
+  })
+})
+
+describe('categories', () => {
+  it('every category has a label and belongs to exactly one class', () => {
+    for (const c of ALL_CATEGORIES) expect(CATEGORY_LABELS[c]).toBeTruthy()
+    const all = [...PERMIT_CATEGORIES.accessory, ...PERMIT_CATEGORIES.new_home, ...PERMIT_CATEGORIES.commercial]
+    expect(new Set(all).size).toBe(all.length)
+  })
+
+  it('keeps a category that matches the class and falls back when it does not', () => {
+    expect(normalizeCategory('carport', 'accessory')).toBe('carport')
+    expect(normalizeCategory('carport', 'commercial')).toBe('commercial_other')
+    expect(normalizeCategory('flying_saucer', 'accessory')).toBe('accessory_other')
+    expect(normalizeCategory(null, 'commercial')).toBe('commercial_other')
+  })
+
+  it('knows a DUPX permit is a duplex even when Claude said nothing', () => {
+    expect(normalizeCategory(null, 'new_home', 'DUPX')).toBe('duplex')
+    expect(normalizeCategory(null, 'new_home', 'SFR')).toBe('single_family')
+  })
+})
+
+describe('tags', () => {
+  it('every tag has a label', () => {
+    for (const t of ALL_TAGS) expect(TAG_LABELS[t]).toBeTruthy()
+  })
+
+  it('reads the status tag from Temple\'s status strings', () => {
+    expect(statusTag('Approved (Issued) - AP')).toBe('issued')
+    expect(statusTag('Plan Review - PR')).toBe('in_review')
+    expect(statusTag('Pending Verification')).toBe('in_review')
+    expect(statusTag('Application Accepted')).toBe('applied')
+    expect(statusTag('Closed - Final Inspection')).toBe('closed')
+    expect(statusTag(null)).toBeNull()
+    expect(statusTag('Something else')).toBeNull()
+  })
+
+  it('merges Claude tags with the status tag, dropping unknown strings, in vocabulary order', () => {
+    expect(mergeTags(['slab', 'metal', 'bogus'], 'Approved (Issued) - AP')).toEqual(['metal', 'slab', 'issued'])
+    expect(mergeTags(null, 'Plan Review - PR')).toEqual(['in_review'])
+    expect(mergeTags(['metal', 'metal'], null)).toEqual(['metal'])
+  })
+
+  it('separates stored Claude tags from status tags so a status change keeps the former', () => {
+    expect(claudeTagsOf(['metal', 'issued', 'slab'])).toEqual(['metal', 'slab'])
+    expect(CLAUDE_TAGS).not.toContain('issued')
+  })
+})
+
+describe('normalizeMaterial', () => {
+  it('keeps vocabulary values and drops anything else', () => {
+    expect(normalizeMaterial('metal')).toBe('metal')
+    expect(normalizeMaterial('steel')).toBeNull()
+    expect(normalizeMaterial(null)).toBeNull()
+  })
+})
+
+describe('contractorKey', () => {
+  it('collapses case, punctuation and corporate suffixes', () => {
+    expect(contractorKey('OMEGA BUILDERS')).toBe('omega builders')
+    expect(contractorKey('Omega Builders, LLC')).toBe('omega builders')
+    expect(contractorKey('KIELLA HOMEBUILDERS LTD')).toBe('kiella homebuilders')
+    expect(contractorKey('The Tuff Shed Co.')).toBe('tuff shed')
+  })
+  it('is null for nothing', () => {
+    expect(contractorKey(null)).toBeNull()
+    expect(contractorKey('LLC')).toBeNull()
+  })
+})
+
+describe('rowsFromStored', () => {
+  it('rebuilds rows from stored source text and recovers the code from the number if needed', () => {
+    const rows = rowsFromStored([
+      { id: '1', permit_number: 'FY-26-132-ACRS', job_type_code: 'ACRS', raw_source_text: 'FY-26-132- ACRS ... shed' },
+      { id: '2', permit_number: 'FY-26-117-RES-FENCE', job_type_code: null, raw_source_text: 'FY-26-117- RES-FENCE ...' },
+      { id: '3', permit_number: 'FY-26-1-GT', job_type_code: 'GT', raw_source_text: '   ' },
+    ])
+    expect(rows.map((r) => [r.permitNumber, r.code])).toEqual([
+      ['FY-26-132-ACRS', 'ACRS'],
+      ['FY-26-117-RES-FENCE', 'RES-FENCE'],
+    ])
   })
 })
 
