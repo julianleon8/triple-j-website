@@ -94,6 +94,33 @@ An account missing from `OWNER_EMAIL` signs in fine and then gets 403 everywhere
 
 Accounts as of 2026-09-07: `juanleon1905@gmail.com`, `julianleon0724@yahoo.com`.
 
+### Passkeys (WebAuthn)
+
+Sign-in with Face ID / Touch ID / a security key. Code is shipped; the **project config is a
+Dashboard step that has to be done once** or every call fails with `passkey_disabled`:
+
+**Authentication → Passkeys → Enable**, then set
+
+- **Relying Party ID:** `triplejmetaltx.com` — the bare domain, no scheme or `www`.
+- **Relying Party Origins:** `https://www.triplejmetaltx.com`
+- **Display Name:** `Triple J Metal`
+
+> **The RP ID is effectively permanent.** Passkeys are cryptographically bound to it, so changing
+> it later silently invalidates every enrolled key and everyone must re-enrol. Using the bare
+> domain (not the `www` host) is what keeps `www` and apex both working.
+
+Then: sign in with a password once → **HQ → Settings → Passkeys → Add a passkey** → sign out and
+use the passkey button on `/login`. There is **no passkey sign-*up*** — Supabase requires an
+existing confirmed user before one can be registered.
+
+Implementation notes:
+- Requires `@supabase/supabase-js` **≥ 2.105.0** and `auth.experimental.passkey: true` on *both*
+  `src/lib/supabase/{client,server}.ts`. Without the flag every `auth.passkey.*` call throws.
+- Supabase ships this as **experimental** and may change the API without a major version — treat a
+  supabase-js bump as a reason to re-test `/login`, not a routine upgrade.
+- `src/lib/passkey.ts` maps error codes to copy and deliberately returns `null` for a dismissed OS
+  prompt, which is the common case and not a failure.
+
 ### Creating an owner by SQL — the NULL-token trap
 
 `/api/setup` only works while **zero** users exist; it 409s afterwards, so it is not the tool for

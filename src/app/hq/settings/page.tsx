@@ -1,6 +1,6 @@
 export const dynamic = 'force-dynamic'
 
-import { Bell, Database, FlaskConical, Handshake, Link2, ScrollText } from 'lucide-react'
+import { Bell, Database, FlaskConical, Handshake, KeyRound, Link2, ScrollText } from 'lucide-react'
 import { getAdminClient } from '@/lib/supabase/admin'
 import { GroupedList } from '@/components/hq/ui/GroupedList'
 import { SignOutButton } from '@/components/hq/SignOutButton'
@@ -32,6 +32,13 @@ export default async function SettingsHubPage() {
                 label: 'Notifications',
                 sublabel: 'Push alerts for new leads, hot permits, accepted quotes',
                 href: '/hq/settings/notifications',
+              },
+              {
+                icon: KeyRound,
+                iconTone: 'bg-indigo-500',
+                label: 'Passkeys',
+                sublabel: 'Sign in with Face ID, Touch ID, or a security key',
+                href: '/hq/settings/passkeys',
               },
             ],
           },

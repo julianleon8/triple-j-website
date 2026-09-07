@@ -4,13 +4,18 @@ export const dynamic = 'force-dynamic'
 import { Suspense, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter, useSearchParams } from 'next/navigation'
+import { usePasskeySupport, passkeyErrorMessage } from '@/lib/passkey'
 
 function LoginForm() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
+  const [passkeyBusy, setPasskeyBusy] = useState(false)
   const router = useRouter()
+
+  // False during SSR, resolved on hydration — see usePasskeySupport.
+  const canUsePasskey = usePasskeySupport()
 
   // The proxy (and the QBO callback) bounces signed-in accounts that aren't in
   // OWNER_EMAIL back here. Without this the redirect looks like a silent failure.
@@ -27,6 +32,29 @@ function LoginForm() {
     if (error) {
       setError(error.message)
       setLoading(false)
+      return
+    }
+
+    router.push('/hq')
+    router.refresh()
+  }
+
+  /**
+   * Discoverable-credential sign-in: the authenticator resolves which account
+   * this is, so no email is collected first.
+   */
+  const handlePasskey = async () => {
+    setError('')
+    setPasskeyBusy(true)
+
+    const supabase = createClient()
+    const { error } = await supabase.auth.signInWithPasskey()
+
+    if (error) {
+      // null means the user dismissed the OS prompt — not worth a red banner.
+      const message = passkeyErrorMessage(error)
+      if (message) setError(message)
+      setPasskeyBusy(false)
       return
     }
 
@@ -72,6 +100,27 @@ function LoginForm() {
             {loading ? 'Signing in…' : 'Sign In'}
           </button>
         </form>
+
+        {canUsePasskey && (
+          <>
+            <div className="my-5 flex items-center gap-3">
+              <span className="h-px flex-1 bg-gray-200" />
+              <span className="text-[11px] font-medium uppercase tracking-wide text-gray-400">or</span>
+              <span className="h-px flex-1 bg-gray-200" />
+            </div>
+            <button
+              type="button"
+              onClick={handlePasskey}
+              disabled={passkeyBusy}
+              className="w-full rounded-lg border border-gray-300 py-2.5 text-sm font-semibold text-gray-800 transition hover:bg-gray-50 disabled:opacity-50"
+            >
+              {passkeyBusy ? 'Waiting for your device…' : 'Sign in with a passkey'}
+            </button>
+            <p className="mt-3 text-center text-xs text-gray-400">
+              Add a passkey from HQ → Settings after signing in.
+            </p>
+          </>
+        )}
       </div>
     </div>
   )

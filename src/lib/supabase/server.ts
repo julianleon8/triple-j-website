@@ -8,6 +8,11 @@ export async function createClient() {
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
+      // Matches the browser client. Needed so server components can read the
+      // signed-in user's passkeys; without it every auth.passkey.* call throws.
+      auth: {
+        experimental: { passkey: true },
+      },
       cookies: {
         getAll() {
           return cookieStore.getAll()

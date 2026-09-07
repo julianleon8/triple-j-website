@@ -19,7 +19,7 @@
     "@react-pdf/renderer": "^4.5.1",
     "@serwist/next": "^9.5.7",
     "@supabase/ssr": "^0.10.2",
-    "@supabase/supabase-js": "^2.103.0",
+    "@supabase/supabase-js": "^2.115.0",
     "@vercel/analytics": "^2.0.1",
     "@vercel/speed-insights": "^2.0.0",
     "framer-motion": "^12.38.0",
