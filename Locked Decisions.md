@@ -77,6 +77,12 @@ Do not copy anything from this file into `AGENTS.md`. That duplication is what p
 - **An unset `OWNER_EMAIL` deliberately admits any authenticated user.** A missing env var must not lock
   the owner out of a live business tool; disabled signups and RLS are the real control. `owner.test.ts`
   pins this — if it fails, the trade-off changed. (2026-09-07)
+- **A background and a text colour are set together, or neither is set.** `globals.css` opts the document
+  into `color-scheme: light dark`, so a bare `bg-white` with no `text-*` renders near-white-on-white in OS
+  dark mode — that is exactly how `/login` and `/setup` became unusable. Outside `(marketing)` (which locks
+  `colorScheme: "light"`) every surface pairs `--surface-*` with `--text-*`. `src/app/(auth)/layout.tsx`
+  owns that pairing for the auth pages; put new auth screens inside that group rather than restyling them.
+  (2026-09-07)
 - **Public endpoints carry no session check and must not gain one:** `POST /api/leads` and
   `POST /api/partner-inquiries` (hCaptcha + rate limit), `POST /api/quotes/[id]/accept` (bearer is the
   `accept_token`), `GET /api/gallery`, `/api/setup` (`SETUP_KEY`), and both webhooks (HMAC). (2026-09-07)
