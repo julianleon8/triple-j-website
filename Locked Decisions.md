@@ -10,7 +10,7 @@ Do not copy anything from this file into `AGENTS.md`. That duplication is what p
 
 ## Product
 
-- **Timeline:** "**same-week**", never "48-hour build". 48 hrs = materials arrival, not build time. Saying otherwise is misleading. (2026-04-15)
+- **Timeline:** "**same-week**", never say "48-hour build". 48 hrs = materials arrival, not build time. Saying otherwise is misleading. (2026-04-15)
 - **Frame:** "**welded or bolted**" everywhere. Triple J does both. Never "custom welded" alone. (2026-04-15)
 - **Concrete spec:** **3,000 PSI is standard. 4,000 PSI is on request only** — never promised as the default. (2026-05-01 — **REVERSES** the 2026-04-15 lock that made 4,000 PSI a headline differentiator)
 - **Services** include lean-to patios and house additions alongside carports, garages, barns, RV/boat covers, equipment covers, metal porches, ranch structures, barndominiums.
@@ -50,7 +50,7 @@ Do not copy anything from this file into `AGENTS.md`. That duplication is what p
 - **Stripe — descoped.** Listed as "phase 4" since 2026-04-13 but never had a dependency, an env var, or a line of code. QuickBooks is the money rail. Revisit only if customer card payment is actually requested. (2026-09-06)
 - **ClickUp CRM** — on hold; revisit after live leads validate volume.
 - **Native iOS app** — deferred; invest in PWA performance instead. (2026-04-25)
-- **Migrations 014–020** from the data-model audit — proposed, **not applied**. (2026-04-25)
+- ~~Migrations 014–020 proposed, not applied~~ — **wrong, corrected 2026-09-06.** All 24 migrations are applied. Verified against `supabase_migrations.schema_migrations`, which is the authoritative record; the vault never was. Run `node scripts/check-migrations.mjs` rather than trusting any file, including this one.
 - **CSS-only `SwipeActions`** — deferred. (2026-04-25)
 
 ---

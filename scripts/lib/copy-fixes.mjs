@@ -45,8 +45,14 @@ export const FIXES = [
 
 // A line that names a retired claim in order to ban it is not a violation, and
 // rewriting it would destroy the rule. Same guard check-vault.mjs uses.
+//
+// `\bnever\b` is deliberately broad. The narrower "never say|never use" missed
+// `never "48-hour build"` in Locked Decisions.md and the fixer rewrote the rule
+// into `never "same-week build"` -- it banned the correct phrase. A false
+// negative here costs one uncorrected string; a false positive corrupts the
+// rule that governs everything else. Bias hard toward skipping.
 export const DEFINES =
-  /retired|never say|never use|do not use|not the promised|instead of|reversed|banned/i
+  /\bnever\b|\bnot\b\s+["'“]|retired|do not use|instead of|reversed|banned|deliberately/i
 
 export function applyFixes(text) {
   const changes = []

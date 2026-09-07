@@ -32,7 +32,14 @@ const rel = path.relative(root, file)
 
 // Ledgers record what was true at the time; the archive is history. Neither is
 // live copy, so neither gets rewritten.
-const EXEMPT = /^(Decisions\.md|Session Notes\.md|archive\/|scripts\/lib\/copy-fixes\.mjs$|scripts\/check-vault\.mjs$)/
+//
+// Locked Decisions.md and AGENTS.md are exempt for a different reason: they are
+// the rule files. A rule must be able to name the phrase it bans, and on
+// 2026-09-06 this hook rewrote `never "48-hour build"` in Locked Decisions.md
+// into `never "same-week build"` -- it destroyed the rule it enforces. A file
+// that defines the vocabulary can never be edited by a tool that reads it.
+const EXEMPT =
+  /^(Decisions\.md|Session Notes\.md|Locked Decisions\.md|AGENTS\.md|archive\/|scripts\/lib\/copy-fixes\.mjs$|scripts\/check-vault\.mjs$)/
 if (EXEMPT.test(rel) || rel.startsWith('..')) process.exit(0)
 if (!/\.(md|ts|tsx|txt)$/.test(rel)) process.exit(0)
 

@@ -35,13 +35,33 @@ Env var values live in `.env` (gitignored) and in Vercel's project settings. `.e
 
 Recorded so no future session rediscovers them.
 
-### Supabase MCP requires interactive OAuth
-`.mcp.json` declares one HTTP server (`mcp.supabase.com/mcp?project_ref=idrbgxlvvnqduvbqtaei`). It is **unauthenticated**, and a non-interactive session cannot complete the OAuth flow. Do not attempt it, and never ask the user for tokens or callback URLs.
+### Supabase MCP — authorized (verified 2026-09-06)
+`.mcp.json` declares one HTTP server (`mcp.supabase.com/mcp?project_ref=idrbgxlvvnqduvbqtaei`). It **is** authorized and both `execute_sql` and `apply_migration` work. An earlier note here claimed it was unauthenticated — that was wrong, and it caused a session to plan around a capability it actually had.
 
-Fallback chain, in order:
+If a session ever finds it unauthorized, the fallback chain is:
 1. Use the bundled `supabase` skill for guidance.
 2. Write SQL to `supabase/migrations/` and ask the user to apply it in the Supabase SQL editor.
-3. Ask the user to run `/mcp` in an interactive session to authorize.
+3. Ask the user to run `/mcp` in an interactive session to re-authorize.
+
+### Migration applied-state — the database is the record
+`supabase_migrations.schema_migrations` is the authoritative list of what has been applied. **No file in this repo duplicates it**, deliberately — a second copy would go stale exactly the way the vault did (it asserted migrations 014–020 were unapplied for four months while they were live).
+
+That table sits outside the `public` schema, so PostgREST does not expose it and a service-role key cannot read it. Fetch it through MCP:
+
+```sql
+select version, name from supabase_migrations.schema_migrations order by version;
+```
+
+Then check for drift in both directions — files never applied, and rows with no file:
+
+```
+node scripts/check-migrations.mjs --sql            # prints the query
+node scripts/check-migrations.mjs --stdin < applied.json
+```
+
+Not in CI: GitHub Actions has no database access. Run it after any schema change.
+
+**Known historical gap:** migration 007 never existed. `gallery_photos` was created out-of-band and had no file in the repo until it was reconstructed from the live schema as `008_gallery_photos.sql` on 2026-09-06 and backfilled into the ledger. That is the class of problem this checker exists to catch.
 
 ### NotebookLM is manual — no skill installed
 Notebook `f4aaf762-3ede-45b9-a1ad-b9d8a6319207`. `~/.claude/skills/` does not exist on this machine; the skill referenced by older docs was pinned to a `/Users/julianleon/…` path that no longer resolves. **Status: MANUAL.** When a source-grounded answer would genuinely help, say so and let the user run the query on their authenticated machine and paste the result back. Never attempt to authenticate from here.
