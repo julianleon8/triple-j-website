@@ -54,6 +54,12 @@ Do not copy anything from this file into `AGENTS.md`. That duplication is what p
 - **Competitor lead times are 2–8 weeks**, not "4–16". Verified Sept 2026: Get Carports 4–8, Dayton 4–8, Mayberry 4–6, Cardinal 2–4. Same-week still wins; use the defensible number. (2026-09-06)
 - **Canonical competitor roster:** `research/competitors/roster-2026-09.md`. `src/lib/competitors.ts` is the publishable subset, not a second source of truth. (2026-09-06)
 
+## Lead Engine
+
+- **`bell_county` is the only enabled permit source** (2026-09-07). `temple` (JS-hydrated Revize accordion) and `harker_heights` (Cloudflare 403) both need headless/Firecrawl and are off. Re-enable them with the deferred CivicPlus/Granicus work, not before.
+- **One shared `PDF_HREF_PATTERN`** in `src/lib/permit-sources.ts`. Never inline a per-source copy again — seven copies of a subtly wrong regex is how the scraper yielded zero from day one. It tolerates whitespace around `href=` and strips a trailing query string. (2026-09-07)
+- **The scraper returning HTTP 200 does not mean it worked.** Zero-yield with a clean status is its normal failure mode. Check `cron_runs.yield`, not the status code. (2026-09-07)
+
 ## HQ automation
 
 - **Scheduled jobs record every run** to `public.cron_runs` via `withCronRun()` in `src/lib/cron.ts`. That ledger is the only source of "when did this last run / has it gone quiet". Job registry and schedules: `Connectors.md`. (2026-09-07)
