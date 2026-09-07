@@ -60,7 +60,7 @@ export function Footer() {
 
             {/* Family signature — short, non-flashy trust line */}
             <p className="mt-3 text-sm text-white/55 max-w-md">
-              Family-owned · Founded {SITE.established} · {SITE.stats.projects}+
+              Family-owned · Founded {SITE.established} · {SITE.stats.projects}{" "}
               jobs across Central Texas
             </p>
 

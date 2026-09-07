@@ -413,6 +413,28 @@ function StepContact({
         </div>
       </div>
 
+      {/* Military / first responder discount.
+          /military, /services/[slug] and the PCS copy all tell visitors to
+          "check the box on the quote form" — until now there was no box, and
+          is_military could only ever be set by the initialMilitary prop. */}
+      <div>
+        <FieldLabel optional>Discount</FieldLabel>
+        <label className="flex cursor-pointer items-start gap-3 rounded-xl border border-white/15 bg-white/5 px-4 py-3 transition hover:border-white/30">
+          <input
+            type="checkbox"
+            checked={form.is_military}
+            onChange={(e) => update("is_military", e.target.checked)}
+            className="mt-0.5 h-4 w-4 shrink-0 accent-[color:var(--color-brand-600)]"
+          />
+          <span className="text-sm text-white/80">
+            Active military, veteran, or first responder
+            <span className="block text-xs text-white/50">
+              We&apos;ll apply the discount to your quote. ID checked at the estimate.
+            </span>
+          </span>
+        </label>
+      </div>
+
       {/* Notes */}
       <div>
         <FieldLabel optional>Anything Else</FieldLabel>

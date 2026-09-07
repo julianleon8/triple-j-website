@@ -46,6 +46,10 @@
   /* Accents */
   --color-accent-amber: #f5a524;
   --color-accent-steel: #5f7a95;
+  /* Urgency accent — Fort Cavazos / PCS-deadline eyebrows on /military. Was
+     referenced there before it was ever defined, so those labels rendered with
+     an invalid color. Tuned to stay legible on the dark military hero. */
+  --color-accent-red:   #e5484d;
   --color-success:      #15803d;
   --color-danger:       #dc2626;
 
@@ -214,6 +218,16 @@ p { line-height: 1.6; }
   background:
     radial-gradient(60% 60% at 20% 30%, rgba(30,107,214,0.35), transparent 60%),
     radial-gradient(50% 50% at 85% 70%, rgba(30,107,214,0.25), transparent 70%);
+}
+
+/* Decorative brand wash behind the dark interior-page heroes. Referenced on 15
+   pages (contact, about, blog, gallery, locations, services, military…) but
+   never defined, so every one of them rendered an empty div. Deliberately
+   softer than .quote-glow — it sits behind headline text, not a form. */
+.hero-glow {
+  background:
+    radial-gradient(55% 65% at 15% 20%, rgba(30,107,214,0.22), transparent 65%),
+    radial-gradient(45% 55% at 88% 80%, rgba(30,107,214,0.14), transparent 72%);
 }
 
 /* Testimonials auto-scroll marquee */
