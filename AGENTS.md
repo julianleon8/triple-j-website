@@ -4,76 +4,84 @@
 This version has breaking changes — APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` before writing any code. Heed deprecation notices.
 <!-- END:nextjs-agent-rules -->
 
-## Project Memory
+# Agent Operating Contract
 
-This repo doubles as an Obsidian vault. The `.md` files at the root are the working source of truth. Read the relevant one before changes that touch its domain.
+## Read order
+1. **This file** — how to work here.
+2. **`Locked Decisions.md`** — what is currently true about the product. Authoritative for any copy or product question.
+3. **`Next Session Primer.md`** — where the last session stopped.
+4. The vault file for your domain (index below).
 
-### Business
-- **Triple J Metal** (canonical public brand) · **Triple J Metal LLC** (legal/registered name, used only in footer ©, schema.org `legalName`, terms, privacy, and contractual copy). Historical/internal aliases — "Triple JJJ Metal Buildings", "Triple J Metal Buildings LLC" — are retired; do not use them in new copy.
-- **Name:** "Triple J" = **Juan** (father, investor) + **Julian** (son, 19, tech/ops) + **Jose Alfredo "Freddy"** (foreman, the hands and the skills — cuts, welds, math, runs the crew)
-- **Address:** 3319 Tem-Bel Ln, Temple, TX 76502 · **Phone:** 254-346-7764
-- Founded 2025 · 150+ projects · 50+ clients
-- Central Texas (Temple base; serves Belton, Killeen, Harker Heights, Copperas Cove, Waco, Salado, Georgetown, Round Rock, Lampasas, Holland, Taylor, Troy, Nolanville)
-- Suppliers: regional Texas steel — multi-source by design (do NOT name specific suppliers in vault, customer copy, or AI-facing files; see Decisions.md 2026-04-23 supplier-agnostic positioning)
-- Services: welded **or** bolted carports, garages, barns, RV/boat covers, equipment covers, metal porches, lean-to patios, house additions, ranch structures, barndominiums
+Read `Decisions.md` only when you need the *history* of a decision — why it was made, or what it replaced. It is a 135-row append-only ledger; do not load it for orientation.
 
-### Stack
-- Next.js 16.2.3 (App Router) + React 19.2.4 + TypeScript + Tailwind v4
-- Supabase (Auth + Postgres + RLS) via `@supabase/ssr`
-- Resend (lead/customer email)
-- Stripe (future, phase 4)
-- Vercel (**live** — GitHub integration auto-deploys on every push to `main`; env vars already configured)
-- MCP server: Supabase only (`.mcp.json`)
-- Repo: `julianleon8/triple-j-website` — push directly to `main` (authorized)
+## Sources of truth — never duplicate these
 
-### Key source files (single sources of truth)
-- `src/lib/site.ts` — NAP, nav, services, cities. **Edit here first** for site-wide constants.
-- `src/lib/services.ts` — service-page data (6 niche pages)
-- `src/lib/locations.ts` — location-page data (14 cities, military fields on Killeen + Harker Heights)
-- `src/app/globals.css` — design tokens (brand `#1e6bd6` steel blue, ink neutrals, fluid type, no dark mode)
-- `src/components/site/{Header,Footer,MobileCallBar}.tsx` — public chrome (only inside `(marketing)` route group)
-- `src/components/sections/QuoteForm.tsx` — multi-step lead form → POST `/api/leads`
-- `src/app/api/leads/route.ts` — Zod validation, ZIP→city lookup, Supabase insert, Resend emails
-- `src/app/dashboard/` — owner dashboard (Supabase Auth protected); built by Sonnet — customers, jobs, gallery, quotes, leads
-- `src/app/(marketing)/` — public site route group (isolated from dashboard/login/api)
+Every fact has exactly one owner. Restating an owned fact anywhere else creates a second copy that silently goes stale. **This file points; it never restates.**
 
-### Locked product decisions (from `Decisions.md`)
-- **"Same-week"**, never "48-hour build" — 48 hrs = materials arrival, not build time. Misleading.
-- **"Welded or bolted"** everywhere — Triple J does both. Never say only "custom welded".
-- Services include **Lean-to Patios + House Additions** (real offerings; were missing).
-- **Testimonials = auto-scroll marquee** (CSS `@keyframes`, pause-on-hover) — `'use client'`.
-- **Multi-step lead form**: ZIP → service+type+dimensions → concrete+timeline+military.
-- **Tagline (locked):** "Built right, built fast, built by Triple J."
-- **Fonts:** Barlow Condensed (headlines) + Inter (body). Geist removed.
-- **TrustBar stats:** Zero Subcontractors / Welded or Bolted / Same-Week / Temple TX.
-- **4,000 PSI concrete** (not standard 3,000 PSI) — technical authority callout on service/location pages.
-- **Design:** WolfSteel-inspired, no dark mode.
-- **ClickUp CRM:** on hold — revisit after live leads validate volume.
-- **Dashboard auth flow:** not built yet — on hold (Vercel is live; revisit when needed).
+| Fact | Owner |
+|---|---|
+| NAP, nav, services, cities | `src/lib/site.ts` |
+| Service-page data | `src/lib/services.ts` |
+| Location-page data | `src/lib/locations.ts` |
+| Design tokens | `src/app/globals.css` |
+| Current product + pricing rules | `Locked Decisions.md` |
+| Decision history | `Decisions.md` (append-only) |
+| Connectors, env vars, deploy | `Connectors.md` |
+| Prices | `dev/sales-pack-2026-04-30.md` — **never improvise a price** |
 
-### External memory systems
-- **Obsidian vault** = repo root (this file + the 8 vault `.md` files below). Working memory. Update in same turn when decisions are made.
-- **NotebookLM notebook**: `https://notebooklm.google.com/notebook/f4aaf762-3ede-45b9-a1ad-b9d8a6319207` (notebook id `f4aaf762-3ede-45b9-a1ad-b9d8a6319207`). Use the `notebooklm` skill (installed at `~/.claude/skills/notebooklm/`) for source-grounded answers.
+## Naming — the only business fact that lives here
 
-### Vault index (read before editing the noted domain)
+- **Triple J Metal** is the public brand. **Triple J Metal LLC** is the legal name — use it only in the footer ©, schema.org `legalName`, terms, privacy, and contractual copy.
+- Retired, never use in new copy: "Triple JJJ Metal Buildings", "Triple J Metal Buildings LLC".
+- Triple J = **Juan** (father, investor) + **Julian** (son, tech/ops, sales) + **Jose Alfredo "Freddy"** (foreman — cuts, welds, math, runs the crew).
+- Never name a specific steel supplier in the vault, in customer copy, or in AI-facing files.
+
+## Rules
+
+- **Vault sync.** A decision made or reversed in conversation is logged in the *same turn*: append a row to `Decisions.md` **and** overwrite the affected line in `Locked Decisions.md`. Both, or the memory is wrong. A `Stop` hook warns when the product surface changed and neither ledger was written.
+- **Wait for the plan.** Do not touch `src/` until the user has laid out the larger picture. They prefer to spend tokens on execution, not on planning you did unasked.
+- **Ask before scraping or deep research.** Never run a scrape skill or a multi-step research pass without explicit per-run approval. Token cost is high.
+- **Secrets.** Never write a real credential into any tracked file. `.env.example` documents key names with placeholder values only. `.githooks/pre-commit` and a `PreToolUse` hook both block this; do not reach for `--no-verify`.
+- **Git.** Push directly to `main` (authorized). Vercel auto-deploys every push, so **`main` is production** — a bad push is live in about a minute. Repo: `julianleon8/triple-j-website`.
+- **Before committing:** `npm run typecheck && npm run lint && npm run test`.
+- **Memory location.** The git-tracked vault below is the only memory store. Do not write project facts to `~/.claude/.../memory/` — it is machine-local, invisible in Obsidian, and unreadable by the other agent tools used on this repo.
+
+## Where each kind of fact gets written
+
+| You learned… | Write to | When |
+|---|---|---|
+| A decision made or reversed | `Decisions.md` (append) **+** `Locked Decisions.md` (overwrite) | same turn |
+| Work shipped | `Session Notes.md` (new entry at top) | end of session |
+| Handoff for the next session | `Next Session Primer.md` (replace top block) | end of session |
+| A business or ops fact | `Business Profile.md` / `Operational Notes.md` | same turn |
+| A copy rule | `Website Copy & Messaging.md` | same turn |
+| A new service or env var | `Connectors.md` | same turn as the code |
+| A price change | `dev/sales-pack-2026-04-30.md` + `Locked Decisions.md` | same turn |
+| NAP, a service, or a city | `src/lib/site.ts` — **only** | — |
+
+## Vault index
+
 | File | Read before… |
-|------|--------------|
-| `Project Context.md` | Anything strategic; gives current site status + stack + key files |
-| `Business Profile.md` | Changing services, equipment, suppliers, contact info, capabilities |
-| `Market Strategy.md` | SEO keyword choices, target market changes, pricing copy, competitor framing, military targeting |
-| `Operational Notes.md` | Promising timelines (BBB complaints noted), permit-handling claims, hiring/CDL claims, revenue-gap features (e.g. dump trailer load board) |
-| `Website Copy & Messaging.md` | Editing landing-page copy, headlines, taglines, ad angles, niche page priorities |
-| `Decisions.md` | Reverting anything; checking whether a phrase/feature is locked |
-| `Session Notes.md` | Picking up where a previous session left off |
-| `testimonials.md` | Swapping placeholder Testimonials cards for real Google reviews |
+|---|---|
+| `Locked Decisions.md` | **anything product-facing** — what is currently true |
+| `Next Session Primer.md` | picking up work — where the last session stopped |
+| `Connectors.md` | anything touching an external service, env var, or deploy |
+| `Project Context.md` | strategic work; current site status |
+| `Business Profile.md` | services, equipment, suppliers, contact info, capabilities |
+| `Market Strategy.md` | SEO keywords, target markets, competitor framing, military targeting |
+| `Website Copy & Messaging.md` | landing copy, headlines, taglines, ad angles |
+| `Operational Notes.md` | timeline promises, permits, hiring/CDL claims |
+| `Decisions.md` | needing the *history* of a decision |
+| `Session Notes.md` | reading what shipped, session by session |
+| `testimonials.md` | swapping placeholder testimonials for real reviews |
+| `Link Building Tracker.md` | citation and backlink outreach |
+| `Stock Images Needed.md` | sourcing photography |
+| `dev/sales-pack-2026-04-30.md` | **any price or ad copy** — canonical price sheet |
+| `docs/`, `seo/`, `research/` | deep dives; not read by default |
+| `archive/` | never — historical only, not authoritative |
 
-**Note:** `Project Context.md`'s "Key differentiators" section still lists "48-hour build time" — that's stale. The locked decision (2026-04-15) is "same-week". Treat `Decisions.md` as authoritative when the two conflict.
+## Setup (once per machine)
 
-## Operating Rules
-
-- **Firecrawl / scrape skills** — never run a `firecrawl-search` (or any scrape skill) without explicit per-run user approval. Token cost is high. Always ask first, even if `.claude/settings.local.json` permits the call.
-- **NotebookLM** — the `notebooklm` skill is installed at `~/.claude/skills/notebooklm/` but **not authenticated in this sandbox** (no display for Google login). Workflow: when a task would benefit from a NotebookLM query (deep research, source-grounded citations, anything where hallucination risk is real), **tell the user first** and let them run the query on their authenticated Mac and paste the answer back. Do not attempt to authenticate or query NotebookLM from this sandbox.
-- **Deep research / citations** — same rule: ask before spending tokens on multi-step research. The user prefers to spend tokens on execution, not planning.
-- **Code changes** — wait for the user's larger plan before touching `src/`. The user prefers to lay out the bigger picture first.
-- **Vault discipline** — when a decision is made or reversed in conversation, log it to `Decisions.md` in the same turn. Memory must stay in sync with reality.
-- **Git push** — push directly to `main`. Vercel auto-deploys via GitHub integration on every merge to main.
+```
+git config core.hooksPath .githooks
+```

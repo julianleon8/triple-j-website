@@ -128,7 +128,7 @@ This document is the condensed context any new Claude session needs to skip the 
 
 ## Who you're working with
 
-**Julian Leon Alvarez, 18 years old**, son of Juan (owner of Triple J Metal LLC). Tech lead, sales closer, welder, English speaker. Moves at AI-native pace — long-form Claude sessions, executes fast, doesn't need hand-holding on 10-week plans. Compress timelines.
+**Julian Leon Alvarez**, son of Juan (owner of Triple J Metal LLC). Tech lead, sales closer, welder, English speaker. Moves at AI-native pace — long-form Claude sessions, executes fast, doesn't need hand-holding on 10-week plans. Compress timelines.
 
 Juan (father, 40% equity) — investor/relationships, no jobsite labor, Spanish-primary, funds family businesses.
 
@@ -276,7 +276,7 @@ Julian moves fast. Compressed from 10 weeks to 2 long-form Claude sessions.
 - Tagline locked: "Built right, built fast, built by Triple J."
 - "Same-week" messaging (not 48-hour — 48hr = materials arrival time)
 - "Welded OR bolted" (never "only welded")
-- 4,000 PSI concrete (above 3,000 PSI standard)
+- Concrete: 3,000 PSI standard, 4,000 PSI on request only (reversed 2026-05-01)
 - Financing: Hearth primary + Enhancify fallback when ready (Phase 3, not yet)
 - 3D Builder: deferred indefinitely
 - `/hq` route (renamed from `/dashboard`) with Supabase Auth
@@ -316,4 +316,4 @@ Julian moves fast. Compressed from 10 weeks to 2 long-form Claude sessions.
 
 ## One-line summary
 
-_Triple J is a margin-rich, lean-overhead, family-owned Central TX metal-buildings contractor with a freshly-built permit-lead scraper, a 10-week window before restaurant cash refocuses on it, an 18-year-old tech-native closer with 20% equity, and a realistic path to $10-20M personal net worth by age 28 if execution stays disciplined. Next move: deploy + GBP + reviews manually → Phase 2 automation → Phase 3 financing._
+_Triple J is a margin-rich, lean-overhead, family-owned Central TX metal-buildings contractor with a freshly-built permit-lead scraper, a 10-week window before restaurant cash refocuses on it, a tech-native closer with 20% equity, and a realistic path to $10-20M personal net worth by age 28 if execution stays disciplined. Next move: deploy + GBP + reviews manually → Phase 2 automation → Phase 3 financing._

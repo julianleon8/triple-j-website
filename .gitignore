@@ -85,3 +85,13 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# large source media — keep locally, host on a CDN if ever needed
+public/images/*.mp4
+public/images/*.mov
+
+# Machine-local Claude Code overrides (durable rules live in .claude/settings.json)
+.claude/settings.local.json
+
+# Obsidian rewrites this on every open — pure diff noise
+.obsidian/workspace.json

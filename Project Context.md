@@ -7,14 +7,14 @@ A lead-generation website + owner dashboard for Triple J Metal (legal: Triple J 
 - Notebook URL: https://notebooklm.google.com/notebook/f4aaf762-3ede-45b9-a1ad-b9d8a6319207
 - Use for: source-grounded answers from uploaded project documents
 
-_Last updated: 2026-04-21 (evening)_
+_Last updated: 2026-09-06_
 
 ---
 
 ## Business Details
 **Company:** Triple J Metal (canonical public brand) — legal/registered: **Triple J Metal LLC**. Retired aliases: "Triple JJJ Metal Buildings", "Triple J Metal Buildings LLC".
 **Ownership:** Juan 40% / Freddy 40% / Julian 20% (per LegalZoom formation — paperwork verification pending)
-**Team:** Juan (investor/co-owner) + Julian Leon Alvarez (son, **18**, sales lead + tech + welder) + Jose Alfredo "Freddy" (foreman/co-owner — welder + all jobsite skills)
+**Team:** Juan (investor/co-owner) + Julian Leon Alvarez (son — sales lead + tech + welder) + Jose Alfredo "Freddy" (foreman/co-owner — welder + all jobsite skills)
 **Address:** 3319 Tem-Bel Ln, Temple, TX 76502
 **Phone:** 254-346-7764
 **Domain:** triplejmetaltx.com (migrated from Wix — **DONE**, professional)
@@ -37,11 +37,11 @@ _Last updated: 2026-04-21 (evening)_
 **Parallel family business:** Mexicano Grill (812 East Central Ave, Belton TX) — under rebuild, target reopen **mid-July 2026**. Juan-funded; Julian contributes welding labor (drive-through framework). Currently absorbing Triple J's cash + Juan's attention.
 
 **Key differentiators (current / locked per Decisions.md):**
-- **Same-week** turnaround (not 48-hour build — 48 hrs = materials arrival)
+- **Same-week** turnaround — never say "48-hour build"; 48 hrs is materials arrival, not build time
 - **Welded OR bolted** (both capabilities; never "only welded")
 - **Zero subcontractors** (owner-operated welders only)
-- **4,000 PSI concrete** (above 3,000 PSI standard)
-- **Turnkey** — site prep + concrete pad included
+- **Concrete:** 3,000 PSI standard; 4,000 PSI on request only — never promised as the default (reversed 2026-05-01)
+- **Turnkey available** — site prep + concrete on one contract, but never attached to a sheet price; sheet prices are steel + install only (2026-05-02)
 - **Paid-off equipment** = lean overhead = competitive pricing with 60% margins
 - **Bilingual team** (Juan + Freddy Spanish; Julian English) — division of labor, not weakness
 

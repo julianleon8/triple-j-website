@@ -15,7 +15,7 @@ _Last updated: 2026-04-15_
 2. **Single-Contract Turnkey** — We handle site prep, concrete pad pouring, and installation. One company, one contract. No coordinating multiple trades.
 3. **Welded OR Bolted** — Customer's choice. Welded red-iron = permanent real estate improvement, doesn't rattle in Texas storms. Bolted = budget-friendly, still our crew, still on-site.
 4. **Local & Personal** — Temple-based family company. Not a national broker. We show up.
-5. **4,000 PSI Concrete** — We use 4,000 PSI concrete (not standard 3,000 PSI) to handle Central Texas soil shifts. Mention this on service/location pages for technical authority.
+5. **Concrete spec** — 3,000 PSI is standard. 4,000 PSI is available **on request** and must never be promised as the default (reversed 2026-05-01). Mention this on service/location pages for technical authority.
 
 ## Trust / Credibility Section Copy
 'Since our establishment in 2025, we have successfully delivered over 150 completed projects for more than 50 satisfied clients across Central Texas.'

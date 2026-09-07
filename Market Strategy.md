@@ -16,17 +16,17 @@
 - Opportunity: Builders only build the primary residence — Triple J owns the secondary structure market (RV covers, premium porches, garages)
 - Key angle: HOA-compliant architectural panels (Board & Batten, Standing Seam)
 - Key angle: Turnkey concrete — wealthy buyers do NOT want to manage multiple contractors
-- Key angle: 48-hr builds = low disruption to neighborhood
+- Key angle: same-week builds = low disruption to neighborhood
 
 ### 2. Fort Cavazos Military Families
 - Location: 10 minutes from Heritage Oaks
 - Demographic: Transient — PCSing in, need immediate vehicle/property protection
-- Key angle: 48-hour turnaround (can't wait 12 weeks like competitors)
+- Key angle: same-week turnaround (can't wait 12 weeks like competitors)
 - Key angle: Military discount + military language (PCS, BAH, VA Loans)
 - Marketing: Facebook geofence ads to Killeen-Temple-Belton corridor
 
 ## Key Competitive Advantages
-1. **48-hour build time** — East Texas Carports takes 4–16 weeks
+1. **Same-week turnaround** — East Texas Carports takes 4–16 weeks
 2. **Turnkey concrete + site prep** — no competitor includes this
 3. **Welded not bolted** — permanent real estate improvement, doesn't rattle in storms
 4. **Local** — Temple-based, same-week scheduling

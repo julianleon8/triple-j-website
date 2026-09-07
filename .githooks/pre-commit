@@ -1,0 +1,7 @@
+#!/bin/sh
+# Blocks commits containing credential-shaped strings.
+# Enabled with: git config core.hooksPath .githooks
+#
+# Catches hand commits as well as agent commits — the Claude Code hooks only
+# cover the latter. Bypassing this with --no-verify is a deliberate act.
+exec node "$(git rev-parse --show-toplevel)/scripts/check-secrets.mjs" --staged

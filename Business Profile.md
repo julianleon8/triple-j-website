@@ -27,8 +27,8 @@
 ## Core Capabilities
 - Custom welded red iron steel structures
 - Bolted metal structures
-- **48-hour build time** — biggest competitive differentiator
-- **Single-contract turnkey** — site prep + concrete pad pouring (no competitor offers this)
+- **Same-week turnaround** — biggest competitive differentiator (48 hrs is materials arrival, NOT build time — never say "48-hour build")
+- **Turnkey available** — site prep + concrete pad on a single contract. Real offering, but sheet prices are steel + install only; concrete is always a separately-priced add-on (see `Locked Decisions.md`)
 - No CDL required for F350/Ram 2500 with gooseneck — easier crew hiring
 - Skid-steer reaches 40ft — capable of barndominiums and larger structures
 

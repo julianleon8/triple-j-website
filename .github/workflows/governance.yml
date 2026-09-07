@@ -1,0 +1,33 @@
+name: Governance
+
+# Separate from ci.yml (typecheck/lint/test) on purpose: these checks are
+# dependency-free, so they finish in ~20s without an npm install.
+#
+# Note: pushes go direct to main and Vercel deploys on push, so this workflow
+# is a detector, not a gate. The blocking layer is .githooks/pre-commit.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  secrets:
+    name: Secret scan
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: node scripts/check-secrets.mjs --all
+
+  vault:
+    name: Vault integrity
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: node scripts/check-vault.mjs
