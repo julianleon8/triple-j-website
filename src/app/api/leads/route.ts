@@ -1,3 +1,5 @@
+import { referenceNotes } from "@/lib/project-reference"
+import { getSiteUrl } from "@/lib/site-url"
 import { NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod'
 import { requireOwner } from '@/lib/auth'
@@ -47,6 +49,7 @@ const leadSchema = z.object({
   referrer_url:     z.string().max(2000).optional(),
   // hCaptcha token (validated by verifyHCaptchaToken before insert).
   // Optional in dev when HCAPTCHA_SECRET_KEY is unset.
+  reference_project_id: z.string().uuid().optional(),
   captcha_token:    z.string().optional(),
 })
 
@@ -119,6 +122,24 @@ export async function POST(request: NextRequest) {
       estimated_budget_min: data.estimated_budget_min ?? null,
     })
 
+    let projectNotes: string | undefined
+    if (data.reference_project_id) {
+      const { data: project, error: referenceError } = await getAdminClient()
+        .from('gallery_items')
+        .select('id,title,city,type,panel_color,panel_color_line,trim_color,trim_color_line')
+        .eq('id', data.reference_project_id)
+        .eq('is_active', true)
+        .maybeSingle()
+      if (referenceError) {
+        return NextResponse.json({ error: 'Could not load your project reference. Please try again.' }, { status: 503 })
+      }
+      if (project) projectNotes = referenceNotes({
+        ...project, city: project.city || 'Central Texas',
+        panelColor: project.panel_color, panelColorLine: project.panel_color_line,
+        trimColor: project.trim_color, trimColorLine: project.trim_color_line,
+      }, getSiteUrl())
+    }
+
     // Persist to Supabase
     const { data: lead, error } = await getAdminClient()
       .from('leads')
@@ -134,7 +155,7 @@ export async function POST(request: NextRequest) {
         current_surface: data.current_surface || null,
         timeline:        data.timeline || null,
         is_military:     data.is_military,
-        message:         [sizeLine, data.message?.trim()].filter(Boolean).join('\n\n') || null,
+        message:         [sizeLine, projectNotes, projectNotes && data.message?.trim() ? `Customer notes:\n${data.message.trim()}` : data.message?.trim()].filter(Boolean).join('\n\n') || null,
         source:          'website_form',
         utm_source:      data.utm_source || null,
         utm_medium:      data.utm_medium || null,

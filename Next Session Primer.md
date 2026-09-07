@@ -1,5 +1,10 @@
 # Next Session Primer — Read This First
 
+## Project inquiry feature — local implementation, 2026-09-07
+
+Built the approved next feature: project-page CTA targets its own form; removable inspiration card; building-type-only prefill; optional reference_project_id validated and resolved server-side into lead notes. Owner email already consumes those notes. RelatedProjects shows up to three photographed type/tag matches on service pages, while the existing hybrid gallery moves directly below its hero. No schema changes, no real lead submissions, no customer messages. Typecheck, lint, and 76 tests passed; production build validation reported in the task. Local preview: http://127.0.0.1:3210/gallery/162e4b86-b8d7-4bbb-b828-bc23f90d256d#quote . This feature has not been committed or published.
+
+
 ## Website design pass — 2026-09-07, approved for publication
 
 Owner explicitly requested commit and push to main. First pass includes simplified homepage hero, portfolio immediately below it, shared team introduction on homepage/About, compact gallery header and category filters, service quote shortcuts, and earlier trust/form/attribution cleanup. Integrated newer main changes without reverting SEO, contact-data, database, or scheduled-job fixes. Production deployment follows the push through the existing Vercel integration.

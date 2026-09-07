@@ -1,5 +1,10 @@
 # Session Notes
 
+## 2026-09-07 — Project-to-inquiry feature (local)
+
+Implemented approved project-reference handoff and related service builds. Reference validates against active gallery data; deleted references do not block the inquiry, lookup failures are retryable, and customer edits survive removal. Added mocked lead-route tests and owner-email text verification without sending real messages. Related query verified with public gallery access: one garage project with photos. Typecheck, lint, 76 tests pass. No deployment; use the local preview for review.
+
+
 ## 2026-09-07 — Design publication
 
 Owner requested committing and pushing the previewed pages to main. Integrated seven newer upstream commits, preserving the SEO and business-data corrections. The design publication also includes the earlier trust cleanup, form shortcuts, and first-touch attribution changes visible in the preview. Deployment status is reported in the task after pushing.

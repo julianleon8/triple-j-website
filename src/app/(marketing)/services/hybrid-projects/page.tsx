@@ -87,76 +87,6 @@ export default async function HybridProjectsPage() {
         </Container>
       </section>
 
-      {/* ── What counts as a hybrid project ── */}
-      <section className="py-14 md:py-20 bg-white">
-        <Container>
-          <div className="max-w-3xl">
-            <span className="text-xs font-semibold uppercase tracking-[0.15em] text-brand-600">
-              What we mean by &quot;Hybrid&quot;
-            </span>
-            <h2 className="mt-3 text-ink-900">Anything that isn&apos;t a standard kit.</h2>
-            <p className="mt-4 text-ink-700 leading-relaxed">
-              Most of what we build fits a clean category — a 30×40 carport, a barn, an RV cover,
-              a metal garage. But a real chunk of our work is custom: a horse stall layout the owner
-              sketched on a napkin, an all-black warehouse for a body shop, a deck-and-cover combo
-              behind a ranch house, a workshop that needs both a slab and a loft.
-            </p>
-            <p className="mt-3 text-ink-700 leading-relaxed">
-              We don&apos;t subcontract these. The same welder-owners who build the standard projects
-              are the ones engineering and erecting the hybrids — Freddy on the iron, Julian as the
-              second welder, Juan on the supply chain.
-            </p>
-          </div>
-
-          <div className="mt-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            {[
-              { title: 'Horse Stalls', desc: 'Custom stall layouts, hybrid stables, run-in shelters with tack rooms.' },
-              { title: 'Commercial Warehouses', desc: 'All-black exteriors, roll-ups, lean-tos for shop/storage hybrids.' },
-              { title: 'Decks & Patios', desc: 'Metal-framed decks, patio covers tied into existing roofs, custom porches.' },
-              { title: 'One-Off Custom', desc: 'Whatever you sketched. We engineer it, weld it, bolt it, hand it over.' },
-            ].map((item) => (
-              <div
-                key={item.title}
-                className="rounded-xl border border-ink-100 bg-ink-50 p-5"
-              >
-                <h3 className="text-base font-bold text-ink-900">{item.title}</h3>
-                <p className="mt-2 text-sm text-ink-600 leading-relaxed">{item.desc}</p>
-              </div>
-            ))}
-          </div>
-        </Container>
-      </section>
-
-      {/* ── Why Triple J — the engineering reality ── */}
-      <section className="py-14 md:py-20 bg-ink-50 border-y border-ink-100">
-        <Container>
-          <div className="max-w-3xl">
-            <span className="text-xs font-semibold uppercase tracking-[0.15em] text-brand-600">
-              How we actually build
-            </span>
-            <h2 className="mt-3 text-ink-900">
-              Every welded structure is reinforced with permanent bolts.
-            </h2>
-            <p className="mt-4 text-ink-700 leading-relaxed">
-              Most contractors will tell you it&apos;s welded <em>or</em> bolted. The reality at Triple J
-              is more honest: every welded build is welded <em>and</em> bolted. To weld red iron
-              on-site, the crew first bolts everything together so it&apos;s sturdy and held in the
-              correct position — then the welds happen. The bolts stay in (rubber gaskets keep
-              the connections sealed) so what you get is a structure with both the rigid permanence
-              of welded connections and the redundancy of mechanical fasteners.
-            </p>
-            <p className="mt-3 text-ink-700 leading-relaxed">
-              That matters most on hybrid projects, because the geometry is rarely off-the-shelf.
-              Custom horse stalls have non-standard spans. Commercial warehouses might combine
-              clear-span trusses with offset purlin patterns. A deck-and-cover combo ties a new
-              metal frame into an existing structure. The bolt-then-weld sequence lets us hold
-              the geometry exactly while the welds set, and leaves you with both anchoring methods
-              when we&apos;re done.
-            </p>
-          </div>
-        </Container>
-      </section>
-
       {/* ── Project grid (auto-pulled from /hq/gallery type=Hybrid) ── */}
       <section className="py-14 md:py-20 bg-white">
         <Container size="wide">
@@ -246,8 +176,80 @@ export default async function HybridProjectsPage() {
         </Container>
       </section>
 
+
+      {/* ── What counts as a hybrid project ── */}
+      <section className="py-14 md:py-20 bg-white">
+        <Container>
+          <div className="max-w-3xl">
+            <span className="text-xs font-semibold uppercase tracking-[0.15em] text-brand-600">
+              What we mean by &quot;Hybrid&quot;
+            </span>
+            <h2 className="mt-3 text-ink-900">Anything that isn&apos;t a standard kit.</h2>
+            <p className="mt-4 text-ink-700 leading-relaxed">
+              Most of what we build fits a clean category — a 30×40 carport, a barn, an RV cover,
+              a metal garage. But a real chunk of our work is custom: a horse stall layout the owner
+              sketched on a napkin, an all-black warehouse for a body shop, a deck-and-cover combo
+              behind a ranch house, a workshop that needs both a slab and a loft.
+            </p>
+            <p className="mt-3 text-ink-700 leading-relaxed">
+              We don&apos;t subcontract these. The same welder-owners who build the standard projects
+              are the ones engineering and erecting the hybrids — Freddy on the iron, Julian as the
+              second welder, Juan on the supply chain.
+            </p>
+          </div>
+
+          <div className="mt-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            {[
+              { title: 'Horse Stalls', desc: 'Custom stall layouts, hybrid stables, run-in shelters with tack rooms.' },
+              { title: 'Commercial Warehouses', desc: 'All-black exteriors, roll-ups, lean-tos for shop/storage hybrids.' },
+              { title: 'Decks & Patios', desc: 'Metal-framed decks, patio covers tied into existing roofs, custom porches.' },
+              { title: 'One-Off Custom', desc: 'Whatever you sketched. We engineer it, weld it, bolt it, hand it over.' },
+            ].map((item) => (
+              <div
+                key={item.title}
+                className="rounded-xl border border-ink-100 bg-ink-50 p-5"
+              >
+                <h3 className="text-base font-bold text-ink-900">{item.title}</h3>
+                <p className="mt-2 text-sm text-ink-600 leading-relaxed">{item.desc}</p>
+              </div>
+            ))}
+          </div>
+        </Container>
+      </section>
+
+      {/* ── Why Triple J — the engineering reality ── */}
+      <section className="py-14 md:py-20 bg-ink-50 border-y border-ink-100">
+        <Container>
+          <div className="max-w-3xl">
+            <span className="text-xs font-semibold uppercase tracking-[0.15em] text-brand-600">
+              How we actually build
+            </span>
+            <h2 className="mt-3 text-ink-900">
+              Every welded structure is reinforced with permanent bolts.
+            </h2>
+            <p className="mt-4 text-ink-700 leading-relaxed">
+              Most contractors will tell you it&apos;s welded <em>or</em> bolted. The reality at Triple J
+              is more honest: every welded build is welded <em>and</em> bolted. To weld red iron
+              on-site, the crew first bolts everything together so it&apos;s sturdy and held in the
+              correct position — then the welds happen. The bolts stay in (rubber gaskets keep
+              the connections sealed) so what you get is a structure with both the rigid permanence
+              of welded connections and the redundancy of mechanical fasteners.
+            </p>
+            <p className="mt-3 text-ink-700 leading-relaxed">
+              That matters most on hybrid projects, because the geometry is rarely off-the-shelf.
+              Custom horse stalls have non-standard spans. Commercial warehouses might combine
+              clear-span trusses with offset purlin patterns. A deck-and-cover combo ties a new
+              metal frame into an existing structure. The bolt-then-weld sequence lets us hold
+              the geometry exactly while the welds set, and leaves you with both anchoring methods
+              when we&apos;re done.
+            </p>
+          </div>
+        </Container>
+      </section>
+
+
       {/* ── CTA / Quote form ── */}
-      <section id="quote" className="py-16 md:py-24 bg-ink-900 text-white">
+      <section className="py-16 md:py-24 bg-ink-900 text-white">
         <Container size="narrow">
           <div className="text-center mb-8">
             <h2 className="text-white">Got something unusual? Let&apos;s talk.</h2>

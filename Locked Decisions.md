@@ -34,6 +34,11 @@ Do not copy anything from this file into `AGENTS.md`. That duplication is what p
 - **No `AggregateRating` or `Review` JSON-LD anywhere** — and none may be added while the GBP is unverified.
   Google treats reviews an entity controls about itself as ineligible regardless. (2026-09-07)
 
+## Project inquiries
+
+- **Project handoff:** use the existing project-page quote form, prefill building type only, and show a removable project-reference card. Reference removal preserves user edits. Resolve submitted reference IDs server-side against active projects, and append canonical reference details to existing lead notes for HQ and owner email; no migration. (2026-09-07)
+- **Related projects:** show up to three active photographed matches on standard service pages, featured first. Turnkey requires Carport + Turnkey tag. HOA has no matching section without verified metadata. The existing Hybrid gallery moves above descriptive content. Approved for publication before property-photo work. (2026-09-07)
+
 ## Pricing
 
 - **Public pricing is ALLOWED** on the website, ads, blog, `llms.txt`, and email. (2026-04-30 — **REVERSES** the earlier no-public-pricing rule)

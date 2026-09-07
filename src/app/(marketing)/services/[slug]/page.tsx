@@ -1,3 +1,4 @@
+import { RelatedProjects } from "@/components/sections/RelatedProjects"
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { ButtonLink } from '@/components/ui/Button'
@@ -133,6 +134,8 @@ export default async function ServicePage(
           <p className="text-center font-semibold text-lg">{svc.mainBenefit}</p>
         </Container>
       </section>
+
+      <RelatedProjects service={slug} />
 
       {/* ── Features grid ── */}
       <section className="py-16 md:py-24 bg-white">

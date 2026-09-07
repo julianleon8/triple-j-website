@@ -146,7 +146,7 @@ export default async function GalleryDetailPage(
               <h1 className="mt-3 text-white">{item.title}</h1>
               <p className="mt-4 text-lg text-white/75">{item.city}</p>
               <div className="mt-8 flex flex-wrap gap-4">
-                <ButtonLink href="/#quote" variant="primary" size="lg">
+                <ButtonLink href="#quote" variant="primary" size="lg">
                   Build one like this
                 </ButtonLink>
                 <TrackedPhoneLink
@@ -267,7 +267,7 @@ export default async function GalleryDetailPage(
         </Container>
       </section>
 
-      <QuoteForm />
+      <QuoteForm key={item.id} projectReference={{ id: item.id, title: item.title, city: item.city || "Central Texas", type: item.type, image: cover.image_url }} />
     </>
   )
 }

@@ -9,6 +9,7 @@ import type HCaptcha from "@hcaptcha/react-hcaptcha";
 import { Button } from "@/components/ui/Button";
 import { Container } from "@/components/ui/Container";
 import { ArrowRightIcon } from "@/components/ui/icons";
+import { projectService, type ProjectReference } from "@/lib/project-reference";
 import { captureAttribution } from "@/lib/marketing-attribution";
 
 // Lazy-load hCaptcha — its 20 KB chunk only fetches when step 2 first
@@ -460,12 +461,14 @@ type QuoteFormProps = {
   /** Pre-check the "Active military or first responder" box on step 2.
    *  Used by /military so PCS visitors don't have to remember the discount toggle. */
   initialMilitary?: boolean;
+  projectReference?: ProjectReference;
 };
 
-export function QuoteForm({ initialMilitary = false }: QuoteFormProps = {}) {
+export function QuoteForm({ initialMilitary = false, projectReference }: QuoteFormProps = {}) {
   const router = useRouter();
+  const [reference, setReference] = useState(projectReference);
   const [step, setStep] = useState<1 | 2>(1);
-  const [form, setForm] = useState<FormState>({ ...INITIAL, is_military: initialMilitary });
+  const [form, setForm] = useState<FormState>({ ...INITIAL, is_military: initialMilitary, service_type: projectReference ? projectService(projectReference.type) : "" });
   const [status, setStatus] = useState<"idle" | "submitting" | "err">("idle");
   const [captchaToken, setCaptchaToken] = useState<string | null>(null);
   const captchaRef = useRef<HCaptcha | null>(null);
@@ -535,6 +538,7 @@ export function QuoteForm({ initialMilitary = false }: QuoteFormProps = {}) {
       is_military:     form.is_military,
       message:         [form.service_type === "lean_to" ? "Requested build: Lean-To / Patio" : "", form.message.trim()].filter(Boolean).join("\n\n") || undefined,
       captcha_token:   captchaToken ?? undefined,
+      reference_project_id: reference?.id,
       ...captureAttribution(),
     };
 
@@ -593,7 +597,7 @@ export function QuoteForm({ initialMilitary = false }: QuoteFormProps = {}) {
     <section
       id="quote"
       aria-labelledby="quote-heading"
-      className="relative overflow-hidden bg-black text-white py-20 md:py-28"
+      className="scroll-mt-24 relative overflow-hidden bg-black text-white py-20 md:py-28"
     >
       {/* Full-bleed photo backdrop with heavy dark gradient */}
       <div className="absolute inset-0">
@@ -612,6 +616,19 @@ export function QuoteForm({ initialMilitary = false }: QuoteFormProps = {}) {
 
       <Container size="wide" className="relative">
         <div className="mx-auto max-w-xl">
+          {reference && (
+            <div className="mb-7 flex items-start gap-4 rounded-lg border border-white/20 bg-black/50 p-4">
+              <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-md">
+                <Image src={reference.image} alt="" fill sizes="80px" className="object-cover" />
+              </div>
+              <div className="min-w-0 flex-1">
+                <p className="text-xs uppercase tracking-wider text-brand-300">Inspired by this project</p>
+                <p className="mt-1 text-base font-semibold">{reference.title}</p>
+                <p className="text-sm text-white/70">{reference.city}</p>
+                <button type="button" onClick={() => setReference(undefined)} className="mt-1 min-h-11 text-sm text-white/80 underline underline-offset-4">Remove reference</button>
+              </div>
+            </div>
+          )}
           {/* Discount + trust eyebrow trio above the form */}
           <div className="mb-6 flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-[11px] font-bold uppercase tracking-[0.15em] text-white/65">
             <span className="inline-flex items-center gap-1.5">
