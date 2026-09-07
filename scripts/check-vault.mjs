@@ -169,6 +169,51 @@ const rootMd = readdirSync(ROOT).filter((f) => f.endsWith('.md')).sort()
   }
 }
 
+// ---------------------------------------------------------------- rule 7
+// Next Session Primer.md holds ONE session's handoff.
+//
+// AGENTS.md has always said "replace top block" and nothing ever checked it.
+// By 2026-09-07 the primer held 25 blocks reaching back to 2026-04-21 -- four
+// "what shipped" entries, a two-night execution plan, a revenue thesis, a
+// competitive snapshot -- 36 KB that read as an archive, while the file's whole
+// job is answering "where did the last session stop". It is read order #3, so
+// every session paid for the drift. Session history belongs in Session Notes.md;
+// superseded handoffs belong in archive/.
+//
+// Date-based, not count-based: a session legitimately ends with several open
+// threads (2026-09-07 ended with six), so capping the block count would fight
+// normal work and get switched off. And deliberately NOT "younger than N days":
+// that reddens on its own with nobody editing anything, and a gate that turns
+// red while you sleep is one you learn to scroll past -- the same failure mode
+// the standing exception list in rule 5 warns about.
+{
+  const REL = 'Next Session Primer.md'
+  if (has(REL)) {
+    const heads = []
+    read(REL).split('\n').forEach((l, i) => {
+      if (/^## /.test(l)) heads.push({ line: i + 1, text: l.slice(3).trim() })
+    })
+
+    for (const h of heads) {
+      const m = h.text.match(/\d{4}-\d{2}-\d{2}/)
+      if (m) h.date = m[0]
+      else fail(REL, h.line, `"${h.text}" carries no date - every handoff block names its YYYY-MM-DD`)
+    }
+
+    const dated = heads.filter((h) => h.date)
+    const newest = dated.reduce((acc, h) => (h.date > acc ? h.date : acc), '')
+    for (const h of dated) {
+      if (h.date === newest) continue
+      fail(
+        REL,
+        h.line,
+        `"${h.text}" is dated ${h.date}, older than the current handoff (${newest}) - ` +
+          'the primer carries one session; move it to Session Notes.md or archive/'
+      )
+    }
+  }
+}
+
 // ---------------------------------------------------------------------------
 if (fixed.length) {
   console.error(`\nAuto-fixed ${fixed.length} retired phrase(s):\n`)

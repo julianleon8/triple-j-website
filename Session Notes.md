@@ -1,5 +1,21 @@
 # Session Notes
 
+## 2026-09-07 — Primer drift: the "one block" rule finally has a check
+
+Audited this vault against the Mesa/Mexicno repo's memory system and found the one live defect on this side:
+`Next Session Primer.md` had drifted to **25 blocks / 36 KB** going back to 2026-04-21 while AGENTS.md said
+"replace top block". The rule existed; nothing enforced it. `check-vault.mjs` checked `Session Notes.md`
+ordering but never looked at the primer.
+
+- **Rule 7 in `scripts/check-vault.mjs`** — every primer block is dated, and all blocks share the newest date.
+  Verified both failure modes fire with actionable messages, and the clean tree passes.
+- **Primer pruned to the current session**: six 2026-09-07 blocks, 8.4 KB. 2026-09-06 and April moved verbatim
+  to `archive/Next Session Primer — through 2026-09-06.md` — 351 lines, nothing deleted.
+- **AGENTS.md** handoff row and vault index updated to state the enforced rule.
+
+Not changed: `Locked Decisions.md` — this is a memory-protocol decision, not a product fact, so no line there
+was affected. The ledger row in `Decisions.md` carries the history.
+
 ## 2026-09-07 — Permit scraper rebuilt on Temple's weekly report
 
 Julian asked to redesign or recycle the permit scraper, which had never produced a lead. Diagnosed from live evidence rather than the code's comments: `permit_leads` had zero rows ever, and both of today's runs failed — the second, after the morning's regex fix, on a doubled URL path. Six stacked defects, each hidden by the one before: the regex; `<base href>` ignored by the resolver; Bell County agendas are scanned images with no text layer (and the page stopped in April); `unpdf` needs `Promise.try`, absent on Node 22 (local only — Vercel runs 24); Temple filenames carry no parseable date and the report filter tested the filename, not the folder; the dedup index was partial, which PostgREST cannot use for `ON CONFLICT`. The "JS-hydrated" note that had disabled Temple was wrong: the page is static and lists about 110 weekly per-permit reports back to March 2024 — 187 permits in the Aug 21-27 report, each with owner, address, applicant and general contractor.

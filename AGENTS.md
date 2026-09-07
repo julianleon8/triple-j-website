@@ -53,7 +53,7 @@ Every fact has exactly one owner. Restating an owned fact anywhere else creates 
 |---|---|---|
 | A decision made or reversed | `Decisions.md` (append) **+** `Locked Decisions.md` (overwrite) | same turn |
 | Work shipped | `Session Notes.md` (new entry at top) | end of session |
-| Handoff for the next session | `Next Session Primer.md` (replace top block) | end of session |
+| Handoff for the next session | `Next Session Primer.md` — **one session only**; move the previous blocks to `archive/` | end of session |
 | A business or ops fact | `Business Profile.md` / `Operational Notes.md` | same turn |
 | A copy rule | `Website Copy & Messaging.md` | same turn |
 | A new service or env var | `Connectors.md` | same turn as the code |
@@ -65,7 +65,7 @@ Every fact has exactly one owner. Restating an owned fact anywhere else creates 
 | File | Read before… |
 |---|---|
 | `Locked Decisions.md` | **anything product-facing** — what is currently true |
-| `Next Session Primer.md` | picking up work — where the last session stopped |
+| `Next Session Primer.md` | picking up work — where the last session stopped (current session only) |
 | `Connectors.md` | anything touching an external service, env var, or deploy |
 | `Project Context.md` | strategic work; current site status |
 | `Business Profile.md` | services, equipment, suppliers, contact info, capabilities |
