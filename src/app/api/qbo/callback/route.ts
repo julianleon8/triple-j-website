@@ -9,7 +9,7 @@ export async function GET(request: NextRequest) {
   if (missing.length > 0) {
     return NextResponse.redirect(
       new URL(
-        `/dashboard/settings/quickbooks?error=missing_config&missing=${encodeURIComponent(
+        `/hq/settings/quickbooks?error=missing_config&missing=${encodeURIComponent(
           missing.join(',')
         )}`,
         request.url
@@ -29,13 +29,13 @@ export async function GET(request: NextRequest) {
 
   if (error) {
     return NextResponse.redirect(
-      new URL(`/dashboard/settings/quickbooks?error=${encodeURIComponent(error)}`, request.url)
+      new URL(`/hq/settings/quickbooks?error=${encodeURIComponent(error)}`, request.url)
     )
   }
 
   if (!code || !realmId) {
     return NextResponse.redirect(
-      new URL('/dashboard/settings/quickbooks?error=missing_params', request.url)
+      new URL('/hq/settings/quickbooks?error=missing_params', request.url)
     )
   }
 
@@ -43,7 +43,7 @@ export async function GET(request: NextRequest) {
   const storedState = request.cookies.get('qbo_oauth_state')?.value
   if (!storedState || storedState !== state) {
     return NextResponse.redirect(
-      new URL('/dashboard/settings/quickbooks?error=invalid_state', request.url)
+      new URL('/hq/settings/quickbooks?error=invalid_state', request.url)
     )
   }
 
@@ -69,7 +69,7 @@ export async function GET(request: NextRequest) {
     const text = await tokenRes.text()
     console.error('[QBO callback] token exchange failed:', text)
     return NextResponse.redirect(
-      new URL('/dashboard/settings/quickbooks?error=token_exchange_failed', request.url)
+      new URL('/hq/settings/quickbooks?error=token_exchange_failed', request.url)
     )
   }
 
@@ -83,7 +83,7 @@ export async function GET(request: NextRequest) {
   })
 
   const response = NextResponse.redirect(
-    new URL('/dashboard/settings/quickbooks?connected=1', request.url)
+    new URL('/hq/settings/quickbooks?connected=1', request.url)
   )
   // Clear the state cookie
   response.cookies.delete('qbo_oauth_state')
