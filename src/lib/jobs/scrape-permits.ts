@@ -296,6 +296,36 @@ export function hasBudget(startedAt: number, now: number, budget = REPORT_TIME_B
   return now - startedAt < budget
 }
 
+// ── Run status for the HQ page ──────────────────────────────────────────────
+
+/** The cron_runs columns the /hq page reads. */
+export type ScrapeRunRow = {
+  started_at: string
+  finished_at: string | null
+  ok: boolean | null
+  yield: number
+  notified: number
+  error: string | null
+  detail: unknown
+}
+
+export type RunState = 'running' | 'cut_off' | 'ok' | 'failed'
+
+/**
+ * An open row older than maxDuration (300s) plus grace was killed by the
+ * platform and will never close — the 2026-09-07 18:49 UTC row. Inside that
+ * window an open row is a run in flight, and the page keeps polling.
+ */
+export const RUN_CUTOFF_MS = 330_000
+
+export function runState(row: ScrapeRunRow | null, now: Date): RunState | null {
+  if (!row) return null
+  if (row.finished_at === null || row.ok === null) {
+    return now.getTime() - new Date(row.started_at).getTime() < RUN_CUTOFF_MS ? 'running' : 'cut_off'
+  }
+  return row.ok ? 'ok' : 'failed'
+}
+
 // ── Stall detection ─────────────────────────────────────────────────────────
 
 /**

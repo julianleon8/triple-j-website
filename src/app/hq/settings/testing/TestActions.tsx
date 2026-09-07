@@ -130,11 +130,13 @@ export function TestActions() {
 
       <ActionCard
         title="Run permit scraper"
-        description="Scrapes every enabled jurisdiction now (normally runs daily at 14:00 UTC)."
+        description="Starts a scrape on the server (normally runs daily at 14:00 UTC). The result shows on the Permits page."
         primaryLabel="Run scrape"
         onPrimary={async () => {
           const res = await fetch('/api/cron/scrape-permits', { method: 'POST' })
           const data = await res.json().catch(() => ({}))
+          if (res.status === 202) return 'Started on the server — the Permits page shows the result in a few minutes'
+          if (res.status === 409) return 'A scrape is already running — see the Permits page'
           if (!res.ok) throw new Error(data.error ?? `Failed (${res.status})`)
           // The per-jurisdiction breakdown lives under `detail` since the
           // route adopted the shared cron envelope.

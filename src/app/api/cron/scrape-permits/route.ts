@@ -1,6 +1,7 @@
-import type { NextRequest } from 'next/server';
+import { NextResponse, after, type NextRequest } from 'next/server';
 import type { SupabaseClient } from '@supabase/supabase-js';
-import { cronRoute, type CronContext, type CronResult } from '@/lib/cron';
+import { cronRoute, cronAuth, withCronRun, type CronContext, type CronResult } from '@/lib/cron';
+import { getAdminClient } from '@/lib/supabase/admin';
 import { getEnabledSources, type PermitSource } from '@/lib/permit-sources';
 import {
   pdfToText,
@@ -12,6 +13,8 @@ import {
   listReports,
   pickUnseen,
   clampMaxReports,
+  DEFAULT_MAX_REPORTS,
+  RUN_CUTOFF_MS,
   splitPermitRows,
   preFilter,
   leadClassHint,
@@ -82,14 +85,9 @@ type JurisdictionSummary = {
   candidatesConsidered?: string[];
 };
 
-async function readMaxReports(request?: NextRequest): Promise<number> {
-  if (!request || request.method !== 'POST') return clampMaxReports(undefined);
-  const body = (await request.json().catch(() => null)) as { maxReports?: unknown } | null;
-  return clampMaxReports(body?.maxReports);
-}
+const JOB = 'scrape-permits';
 
-async function runScrape(ctx: CronContext, request?: NextRequest): Promise<CronResult> {
-  const maxReports = await readMaxReports(request);
+async function runScrape(ctx: CronContext, maxReports: number): Promise<CronResult> {
   const startedAt = Date.now();
   const now = new Date(startedAt);
   const summary: Record<string, JurisdictionSummary> = {};
@@ -113,10 +111,43 @@ async function runScrape(ctx: CronContext, request?: NextRequest): Promise<CronR
   };
 }
 
-export const GET = cronRoute('scrape-permits', runScrape);
-// The /hq "Run Scrape Now" button POSTs; same handler, same auth. A POST body
-// may carry `{ maxReports }` to drain the backlog faster than the cron default.
-export const POST = GET;
+/** Vercel Cron: synchronous, default batch, result in the response body. */
+export const GET = cronRoute(JOB, (ctx) => runScrape(ctx, DEFAULT_MAX_REPORTS));
+
+/**
+ * Manual trigger from /hq. Answers 202 at once and does the work after the
+ * response has gone out.
+ *
+ * A five-minute request dies the moment the owner leaves the tab — on
+ * 2026-09-07 that read as "cancelled" twice while the job ran to completion on
+ * the server. So the browser is never what keeps a run alive: the page reads
+ * progress and the result from cron_runs (see ./status/route.ts). The body may
+ * carry `{ maxReports }` to drain the backlog faster than the cron default.
+ * 409 while a run is already open, so two clicks cannot race each other.
+ */
+export async function POST(request: NextRequest) {
+  const who = await cronAuth(request);
+  if (!who) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+
+  const body = (await request.json().catch(() => null)) as { maxReports?: unknown } | null;
+  const maxReports = clampMaxReports(body?.maxReports);
+
+  const { data: open } = await getAdminClient()
+    .from('cron_runs')
+    .select('started_at')
+    .eq('job', JOB)
+    .is('finished_at', null)
+    .gt('started_at', new Date(Date.now() - RUN_CUTOFF_MS).toISOString())
+    .order('started_at', { ascending: false })
+    .limit(1)
+    .maybeSingle();
+  if (open) {
+    return NextResponse.json({ running: true, startedAt: open.started_at }, { status: 409 });
+  }
+
+  after(() => withCronRun(JOB, (ctx) => runScrape(ctx, maxReports)));
+  return NextResponse.json({ started: true, job: JOB, maxReports }, { status: 202 });
+}
 
 function shortName(source: PermitSource): string {
   return source.label.split(' — ')[0];

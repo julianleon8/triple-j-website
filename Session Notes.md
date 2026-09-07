@@ -8,7 +8,9 @@ Shipped: source registry rebuilt (`temple` on, `bell_county` off, `pathFilter`/`
 
 First live run (18:49 UTC, from the HQ button) found the last two defects. Claude wrapped its answer in a ```json fence and the 40-row batches overran the 8k output cap, so every array was truncated and unparseable; both reports were recorded in `permit_reports` with zero leads. Then the run outlived the 300s `maxDuration` and was killed with its `cron_runs` row open. Julian saw only "cancelled" — the browser dropped the fetch when he left the tab, but the job had kept running on the server, which is what the timestamps showed. Fixed in a follow-up commit: extraction is now a forced tool call (unfenceable), batches are 15 rows against a 16k cap with automatic halving on `stop_reason: max_tokens`, a text-parse fallback tolerates fences and preambles, the route stops starting reports after 240s and reports the remainder as deferred, and the button copy says the job survives leaving the tab. The two zero-lead `permit_reports` rows are deleted once the fix deploys so those reports are re-read.
 
-Validation: typecheck, lint, 260 tests across 21 files pass.
+The second live run (19:04 UTC) worked — 79 permits stored from two reports, one deferred by the budget, four pushes sent — but Julian again saw only a dropped request, because a five-minute fetch dies when the tab is left. Third commit: the manual POST now answers 202 and runs the job in `after()`, 409 while one is open; a new owner-only status route returns the latest `cron_runs` row; the page renders that row as a "last run" card and polls it every five seconds while a run is open, so the result is on the page whether or not the tab survived. Claude batches within a report now run concurrently, so a report takes about a third of the time.
+
+Validation: typecheck, lint, all tests pass.
 
 
 ## 2026-09-07 — `/quote` landing page

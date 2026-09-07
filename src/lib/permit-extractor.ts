@@ -175,11 +175,13 @@ export async function extractLeadsFromRows(
   if (!apiKey) throw new Error('ANTHROPIC_API_KEY is not set');
   const anthropic = new Anthropic({ apiKey });
 
-  const out: ExtractedLead[] = [];
-  for (const batch of chunk(rows, ROWS_PER_CALL)) {
-    out.push(...(await extractBatch(anthropic, batch, source, 0)));
-  }
-  return out;
+  // Batches run concurrently: a 40-row report is three calls of ~40s each,
+  // and serially that was ~2 minutes a report against a 240s run budget.
+  // Promise.all preserves batch order.
+  const batches = await Promise.all(
+    chunk(rows, ROWS_PER_CALL).map((batch) => extractBatch(anthropic, batch, source, 0)),
+  );
+  return batches.flat();
 }
 
 async function extractBatch(

@@ -22,6 +22,9 @@ import {
   hasBudget,
   REPORT_TIME_BUDGET_MS,
   ROWS_PER_CALL,
+  runState,
+  RUN_CUTOFF_MS,
+  type ScrapeRunRow,
   reportStalled,
   stallPushDue,
   digestBody,
@@ -273,6 +276,38 @@ describe('time budget and batch size', () => {
   it('keeps batches small enough that a full batch cannot reach the output cap', () => {
     // ~250 output tokens a row; the cap is 16k. 15 rows is ~4k.
     expect(ROWS_PER_CALL).toBeLessThanOrEqual(15)
+  })
+})
+
+describe('runState', () => {
+  const row = (over: Partial<ScrapeRunRow>): ScrapeRunRow => ({
+    started_at: '2026-09-07T19:04:20.093Z',
+    finished_at: null,
+    ok: null,
+    yield: 0,
+    notified: 0,
+    error: null,
+    detail: null,
+    ...over,
+  })
+
+  it('is null with no run recorded', () => {
+    expect(runState(null, new Date())).toBeNull()
+  })
+
+  it('treats a fresh open row as running and a stale one as cut off', () => {
+    const start = new Date('2026-09-07T19:04:20.093Z').getTime()
+    expect(runState(row({}), new Date(start + 60_000))).toBe('running')
+    expect(runState(row({}), new Date(start + RUN_CUTOFF_MS - 1))).toBe('running')
+    expect(runState(row({}), new Date(start + RUN_CUTOFF_MS))).toBe('cut_off')
+    // The 18:49 UTC first live run, hours later: never closed, not running.
+    expect(runState(row({ started_at: '2026-09-07T18:49:47.693Z' }), new Date('2026-09-08T00:00:00Z'))).toBe('cut_off')
+  })
+
+  it('reads ok and failed from a closed row', () => {
+    const closed = { finished_at: '2026-09-07T19:09:06.016Z' }
+    expect(runState(row({ ...closed, ok: true, yield: 79 }), new Date())).toBe('ok')
+    expect(runState(row({ ...closed, ok: false, error: 'PDF fetch failed: 404' }), new Date())).toBe('failed')
   })
 })
 

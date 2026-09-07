@@ -4,6 +4,7 @@ import { getAdminClient } from '@/lib/supabase/admin';
 import { ChartContainer } from '@/components/hq/ChartContainer';
 import { JurisdictionStack } from '@/components/hq/JurisdictionStack';
 import PermitLeadsTable from './components/PermitLeadsTable';
+import type { ScrapeRunRow } from '@/lib/jobs/scrape-permits';
 
 type SearchParams = Promise<{ status?: string; class?: string }>;
 
@@ -48,12 +49,21 @@ export default async function PermitLeadsPage({
   if (leadClass !== 'all') listQuery = listQuery.eq('lead_class', leadClass);
   const filtered = listQuery;
 
-  const [{ data: leads }, { data: forChart }] = await Promise.all([
+  const [{ data: leads }, { data: forChart }, { data: lastRun }] = await Promise.all([
     filtered,
     db
       .from('permit_leads')
       .select('jurisdiction, status')
       .in('status', ['new', 'called', 'qualified']),
+    // The latest run, so the page can say what happened without a tab having
+    // waited on the request.
+    db
+      .from('cron_runs')
+      .select('started_at, finished_at, ok, yield, notified, error, detail')
+      .eq('job', 'scrape-permits')
+      .order('started_at', { ascending: false })
+      .limit(1)
+      .maybeSingle(),
   ]);
 
   const chartData = aggregateByJurisdiction((forChart ?? []) as CountRow[]);
@@ -83,6 +93,7 @@ export default async function PermitLeadsPage({
         initialLeads={leads ?? []}
         activeStatus={status ?? 'new'}
         activeClass={leadClass}
+        lastRun={(lastRun ?? null) as ScrapeRunRow | null}
       />
     </div>
   );
