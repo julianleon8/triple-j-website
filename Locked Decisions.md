@@ -18,11 +18,20 @@ Do not copy anything from this file into `AGENTS.md`. That duplication is what p
 - **Fonts:** Barlow Condensed (headlines) + Inter (body). Geist removed. Barlow is scoped to marketing only — not HQ. (2026-04-24)
 - **Design:** WolfSteel-inspired. No dark mode on the public site.
 - **TrustBar stats:** Zero Subcontractors · Welded or Bolted · Same-Week · Temple TX.
-- **Testimonials:** auto-scroll marquee, CSS `@keyframes`, pause-on-hover, `'use client'`.
+- **Testimonials:** auto-scroll marquee, CSS `@keyframes`, pause-on-hover, `'use client'`. **`REVIEWS` is empty and the section renders nothing** — the six invented "Verified Project" quotes were removed 2026-09-07. Real reviews only: fill `testimonials.md`, paste them in, and the section returns on its own. Never re-add a `rating` without a real review behind it.
 - **Lead form:** multi-step — ZIP → service + type + dimensions → concrete + timeline + military.
 - **Interactive brand token in HQ** is `--brand-fg`; Lucide `strokeWidth={2}` is the HQ default. (2026-04-24)
 - **Steel color names:** no vendor-specific color names in customer copy. (2026-04-26)
 - **`/service-areas` is dead** — 301 → `/locations`. (2026-04-26)
+- **County location pages are dead** — all eight 301 → their strongest member city, or `/locations` where
+  there is none. Removed from `LOCATIONS`, so they are out of the sitemap and the routing table.
+  `/locations` lists counties as plain text derived from `LOCATIONS[slug].county`. (2026-09-07)
+- **No `FAQPage` markup** — Google retired the FAQ rich result 2026-05-07. Visible Q&A stays; the JSON-LD
+  does not. (2026-09-07)
+- **Every route family renders its own OG card** via `src/lib/og-card.tsx` + `opengraph-image.tsx`.
+  `/og-default.jpg` is the fallback, not the default. (2026-09-07)
+- **No `AggregateRating` or `Review` JSON-LD anywhere** — and none may be added while the GBP is unverified.
+  Google treats reviews an entity controls about itself as ineligible regardless. (2026-09-07)
 
 ## Pricing
 
@@ -72,9 +81,11 @@ reports these on every run. Delete an entry the moment it is closed.
   Polo's Carports & Metal Buildings serves Temple/Belton/Killeen with a full Spanish site. This is a public
   claim about named competitors. **Highest-priority correction in this list.**
 
-- **The homepage proof strip shows `★★★★★` labelled "Local on Google"** while the Google Business Profile is
-  unverified and `SITE.social.google` is empty (found 2026-09-06). A five-star rating is displayed with no
-  rating behind it. **Needs a decision** — copy call for the owner, not a mechanical fix.
+- **The fourteen thin location pages** (found 2026-09-07). Six cities carry landmarks, callouts and
+  `topServices`; `salado`, `lampasas`, `holland`, `taylor`, `troy` and `nolanville` carry 28–36 lines of data
+  and none of the three, and every city page still shares the same 6-photo gallery strip. The eight county
+  pages in the same tier were 301'd away on 2026-09-07; **these six were kept and still need filling.**
+  Needs real local knowledge from Julian — landmarks and neighborhoods must not be invented.
 
 - **`Temple Steel Buildings` in `src/lib/competitors.ts` cannot be verified** (found 2026-09-06). No website,
   listing, or trace of the operator or of "Brice Evans" was found. It renders on

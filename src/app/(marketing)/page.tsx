@@ -51,10 +51,15 @@ type ProofStat = {
   small?: boolean;
 };
 
+// Every stat here must be verifiable from src/lib/site.ts or a real record.
+// The "★★★★★ / Local on Google" stat was removed 2026-09-06: the Google
+// Business Profile is unverified and SITE.social.google is still empty, so it
+// displayed a rating with nothing behind it. Restore a rating stat only once
+// the GBP is verified and real reviews exist to back the number.
 const PROOF_STATS: ProofStat[] = [
   { big: SITE.stats.projects, label: "Central TX\nbuilds" },
   { big: "24h", label: "Quote\nreply" },
-  { big: "★★★★★", label: "Local on\nGoogle", amber: true },
+  { big: "Mon–Sat", label: "8am–6pm\nTemple, TX", small: true },
   { big: "In-house", label: "Welders &\ninstallers", small: true },
 ];
 

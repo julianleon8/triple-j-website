@@ -30,6 +30,15 @@ const STATIC_PATHS = [
 // Google's sitemap fetches to pick those up without a redeploy.
 export const dynamic = "force-dynamic";
 
+// `lastModified` must NOT be `new Date()` for the non-gallery entries. Because
+// this route is force-dynamic, `now` is re-evaluated on every Googlebot fetch,
+// so every static/service/location/alternatives URL would claim it changed
+// seconds ago, every time. Google detects perpetually-fresh lastmod and stops
+// trusting the signal site-wide — including for the gallery rows, where it is
+// real. Bump this when the corresponding page copy actually changes; the
+// gallery rows below keep their true per-row timestamps from Supabase.
+const CONTENT_REVISED = new Date("2026-09-06T00:00:00.000Z");
+
 type GalleryItemRow = {
   id: string;
   updated_at: string | null;
@@ -45,7 +54,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   for (const path of STATIC_PATHS) {
     entries.push({
       url: `${base}${path}`,
-      lastModified: now,
+      lastModified: CONTENT_REVISED,
       changeFrequency: path === "/" ? "weekly" : "monthly",
       priority:
         path === "/"
@@ -59,7 +68,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   for (const slug of SERVICE_SLUGS) {
     entries.push({
       url: `${base}/services/${slug}`,
-      lastModified: now,
+      lastModified: CONTENT_REVISED,
       changeFrequency: "monthly",
       priority: 0.85,
     });
@@ -68,7 +77,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   for (const slug of Object.keys(LOCATIONS)) {
     entries.push({
       url: `${base}/locations/${slug}`,
-      lastModified: now,
+      lastModified: CONTENT_REVISED,
       changeFrequency: "monthly",
       priority: 0.8,
     });
@@ -77,7 +86,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   for (const slug of ALTERNATIVES_SLUGS) {
     entries.push({
       url: `${base}/alternatives/${slug}`,
-      lastModified: now,
+      lastModified: CONTENT_REVISED,
       changeFrequency: "monthly",
       priority: 0.7,
     });

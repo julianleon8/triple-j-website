@@ -114,11 +114,11 @@ export default async function AlternativesPage(
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, '\\u003c') }}
       />
+      {/* No `/alternatives` hub page exists, so that crumb used to resolve to a
+          404 and Google drops a BreadcrumbList containing a dead URL. Trail is
+          Home → comparison until a real hub is built. */}
       <BreadcrumbJsonLd
-        items={[
-          { name: 'Alternatives', path: '/alternatives' },
-          { name: content.h1, path: `/alternatives/${slug}` },
-        ]}
+        items={[{ name: content.h1, path: `/alternatives/${slug}` }]}
       />
 
       {/* ── Hero ─────────────────────────────────────────────────────── */}

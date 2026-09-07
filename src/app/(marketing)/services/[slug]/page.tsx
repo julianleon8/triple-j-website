@@ -53,10 +53,12 @@ export default async function ServicePage(
   const pageUrl = `${baseUrl}/services/${slug}`
 
   // Per-service @graph: a Service node referencing the canonical
-  // LocalBusiness via @id, and (when present) a FAQPage as a sibling
-  // node — not nested inside the Service. Google parses both forms but
-  // the sibling form scores cleaner in the Rich Results test and lets
-  // each node carry its own @id. See docs/SCHEMA-AUDIT.md.
+  // LocalBusiness via @id, plus a WebPage node. See docs/SCHEMA-AUDIT.md.
+  //
+  // The FAQPage sibling node was removed 2026-09-06: Google retired the FAQ
+  // rich result on 2026-05-07, so the markup no longer earns anything in
+  // Search. The visible Q&A below stays — it is useful to readers and is read
+  // as ordinary page text by AI Overviews.
   const jsonLd = {
     '@context': 'https://schema.org',
     '@graph': [
@@ -80,19 +82,6 @@ export default async function ServicePage(
         about: { '@id': `${pageUrl}#service` },
         inLanguage: 'en-US',
       },
-      ...(svc.faqs.length > 0
-        ? [
-            {
-              '@type': 'FAQPage',
-              '@id': `${pageUrl}#faq`,
-              mainEntity: svc.faqs.map((f) => ({
-                '@type': 'Question',
-                name: f.q,
-                acceptedAnswer: { '@type': 'Answer', text: f.a },
-              })),
-            },
-          ]
-        : []),
     ],
   }
 

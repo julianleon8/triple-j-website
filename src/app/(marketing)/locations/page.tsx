@@ -32,8 +32,10 @@ export const metadata: Metadata = {
  */
 export default function LocationsPage() {
   // Split LOCATIONS into city slugs (no '-county' suffix) and county slugs.
-  const citySlugs = LOCATION_SLUGS.filter((s) => !s.endsWith('-county'))
-  const countySlugs = LOCATION_SLUGS.filter((s) => s.endsWith('-county'))
+  const citySlugs = LOCATION_SLUGS
+  // Distinct counties, derived from the cities themselves so this can never
+  // drift from LOCATIONS the way a hand-kept county list would.
+  const countiesServed = [...new Set(LOCATION_SLUGS.map((s) => LOCATIONS[s].county))].sort()
 
   const jsonLd = {
     '@context': 'https://schema.org',
@@ -93,7 +95,7 @@ export default function LocationsPage() {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
             {[
               { stat: String(citySlugs.length), label: 'Cities Served' },
-              { stat: String(countySlugs.length), label: 'Counties Covered' },
+              { stat: String(countiesServed.length), label: 'Counties Covered' },
               { stat: 'Same-Week', label: 'On-Site After Approval' },
               { stat: 'Zero', label: 'Subcontractors — Ever' },
             ].map(({ stat, label }) => (
@@ -164,48 +166,31 @@ export default function LocationsPage() {
         </Container>
       </section>
 
-      {/* ── Counties grid ── */}
+      {/* ── Counties served ──
+          Was a grid of eight linked county pages. Those pages were 28-36 lines
+          of data each with no landmarks, callouts or city-filtered photos, and
+          they cannibalised the city pages that sit inside them (/locations/
+          lampasas vs /locations/lampasas-county). They 301 to their strongest
+          member city as of 2026-09-06 — see next.config.ts. The coverage claim
+          is still worth stating, so it is derived from the cities we do have
+          rather than from eight thin pages. */}
       <section className="py-16 md:py-24 bg-ink-50 border-y border-ink-100">
         <Container>
           <h2 className="mb-4">Counties We Serve</h2>
-          <p className="text-ink-500 text-lg mb-10 max-w-2xl">
-            County-wide pages with the local context for every property in the county — including
-            cities, towns, and rural ag properties not listed individually above.
+          <p className="text-ink-500 text-lg mb-8 max-w-2xl">
+            Our Temple-based crew covers these counties in full — including
+            towns and rural ag properties not listed individually above.
           </p>
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-            {countySlugs.map((slug) => {
-              const loc = LOCATIONS[slug]
-              return (
-                <Link
-                  key={slug}
-                  href={`/locations/${slug}`}
-                  className="group flex flex-col rounded-xl border border-ink-100 bg-white p-5 hover:shadow-lg hover:-translate-y-0.5 hover:border-(--color-brand-300) hover:bg-brand-50 transition-all"
-                >
-                  <div className="flex items-start justify-between mb-3">
-                    <svg
-                      className="w-4 h-4 text-(--color-brand-600) shrink-0 mt-0.5"
-                      fill="currentColor"
-                      viewBox="0 0 20 20"
-                      aria-hidden="true"
-                    >
-                      <path
-                        fillRule="evenodd"
-                        d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z"
-                        clipRule="evenodd"
-                      />
-                    </svg>
-                  </div>
-                  <div className="font-bold text-ink-900 text-base leading-tight">{loc.name}</div>
-                  <div className="text-xs text-ink-500 mt-2 font-medium line-clamp-3">
-                    {loc.heroHeadline}
-                  </div>
-                  <div className="mt-4 text-xs font-semibold text-(--color-brand-600) group-hover:underline">
-                    View county page →
-                  </div>
-                </Link>
-              )
-            })}
-          </div>
+          <ul className="flex flex-wrap gap-3">
+            {countiesServed.map((county) => (
+              <li
+                key={county}
+                className="rounded-full border border-ink-200 bg-white px-4 py-2 text-sm font-semibold text-ink-700"
+              >
+                {county}
+              </li>
+            ))}
+          </ul>
         </Container>
       </section>
 

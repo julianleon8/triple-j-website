@@ -36,6 +36,58 @@ const nextConfig: NextConfig = {
         destination: "/locations",
         permanent: true,
       },
+
+      // ── County pages folded into their strongest member city, 2026-09-06 ──
+      // All eight carried 28-36 lines of data with no landmarks, callouts or
+      // topServices, wrapped in the same chrome as the city pages and sharing
+      // the identical 6-photo gallery strip — Google's "substantially similar
+      // pages" test. They also cannibalised the cities inside them
+      // (/locations/lampasas vs /locations/lampasas-county). Removed from
+      // LOCATIONS in src/lib/locations.ts, so they leave the sitemap too.
+      // Counties with a strong member city land there; the four with no city
+      // page of their own land on the hub.
+      {
+        source: "/locations/bell-county",
+        destination: "/locations/temple",
+        permanent: true,
+      },
+      {
+        source: "/locations/mclennan-county",
+        destination: "/locations/waco",
+        permanent: true,
+      },
+      {
+        source: "/locations/williamson-county",
+        destination: "/locations/georgetown",
+        permanent: true,
+      },
+      {
+        source: "/locations/coryell-county",
+        destination: "/locations/copperas-cove",
+        permanent: true,
+      },
+      {
+        source: "/locations/lampasas-county",
+        destination: "/locations/lampasas",
+        permanent: true,
+      },
+      // Falls, Milam and Burnet have no city page of their own — the hub is
+      // the closest genuinely equivalent destination.
+      {
+        source: "/locations/falls-county",
+        destination: "/locations",
+        permanent: true,
+      },
+      {
+        source: "/locations/milam-county",
+        destination: "/locations",
+        permanent: true,
+      },
+      {
+        source: "/locations/burnet-county",
+        destination: "/locations",
+        permanent: true,
+      },
     ];
   },
   async headers() {

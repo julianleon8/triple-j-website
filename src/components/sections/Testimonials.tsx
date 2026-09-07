@@ -8,11 +8,19 @@ import { Reveal } from "@/components/ui/Reveal";
  * Pause-on-hover is preserved (locked behavior — see Decisions.md
  * 2026-04-15 marquee decision).
  *
- * Placeholder-mode policy: while we're waiting on real Google reviews,
- * cards present as anonymous-by-attribution (project + city) rather
- * than "Placeholder Customer" — keeps the section credible. Swap the
- * REVIEWS array (and add a `name` field per row) once real reviews
- * land. See testimonials.md in the project root for the template.
+ * REVIEWS IS EMPTY ON PURPOSE, and the section renders nothing while it is.
+ *
+ * The previous placeholder-mode policy shipped six invented quotes, each
+ * badged "Verified Project", on the homepage. Anonymous-by-attribution does
+ * not make an invented review honest — "Verified" is an affirmative claim
+ * about a customer who does not exist, and it is exactly what Google's
+ * 2026-07-24 fake-and-incentivized-reviews guideline targets. Removed
+ * 2026-09-06.
+ *
+ * To bring the section back: fill in testimonials.md with real reviews, then
+ * paste them here as REVIEWS rows. The moment the array is non-empty the
+ * section renders again — no other wiring needed. Do not re-add a `rating`
+ * you cannot point at a real review for.
  */
 
 type Review = {
@@ -23,42 +31,7 @@ type Review = {
 };
 
 const REVIEWS: readonly Review[] = [
-  {
-    quote:
-      "Welded perfect, looks great two years in, hasn't budged in any storm. Concrete was set the same week. The crew kept us updated start to finish.",
-    attribution: "Welded carport · Temple, TX",
-    rating: 5,
-  },
-  {
-    quote:
-      "Juan and his son showed up when they said they would, built exactly what I asked for, and the price was a third of what the national guys quoted me.",
-    attribution: "Double carport · Harker Heights, TX",
-    rating: 5,
-  },
-  {
-    quote:
-      "PCSed to Fort Cavazos in July. Needed cover for my truck before the heat destroyed the paint. Juan came out himself for the walk-through and had us scheduled the same week.",
-    attribution: "PCS truck cover · Killeen, TX",
-    rating: 5,
-  },
-  {
-    quote:
-      "Every other company wanted to ship me a kit and let me figure it out. Triple J sent a real crew. They poured the slab, built the structure, and cleaned up after themselves.",
-    attribution: "Turnkey garage · Belton, TX",
-    rating: 5,
-  },
-  {
-    quote:
-      "Our HOA has strict rules on finishes. Triple J walked us through the standing seam options, matched our roof color exactly, and passed inspection first try.",
-    attribution: "HOA-compliant cover · Round Rock, TX",
-    rating: 5,
-  },
-  {
-    quote:
-      "Best investment on my ranch property in years. Welded red iron barn — no rattle, no flex, nothing. That thing will outlast the house.",
-    attribution: "Welded ranch barn · Salado, TX",
-    rating: 5,
-  },
+  // Intentionally empty — see the note above. Real reviews only.
 ] as const;
 
 function Stars({ n }: { n: number }) {
@@ -89,6 +62,9 @@ function Stars({ n }: { n: number }) {
 const LOOPED = [...REVIEWS, ...REVIEWS];
 
 export function Testimonials() {
+  // No real reviews yet — render nothing rather than inventing social proof.
+  if (REVIEWS.length === 0) return null;
+
   return (
     <section
       aria-labelledby="reviews-heading"
@@ -120,8 +96,7 @@ export function Testimonials() {
             <span className="text-[color:var(--color-brand-400)]">by Central Texans.</span>
           </h2>
           <p className="mt-6 text-lg sm:text-xl leading-relaxed text-white/70 max-w-2xl">
-            Six years on the road, hundreds of welds, one number to call.
-            What follows is what people tell us when the job&rsquo;s done.
+            What people tell us when the job&rsquo;s done.
           </p>
         </Reveal>
       </Container>
@@ -153,10 +128,7 @@ export function Testimonials() {
                   &ldquo;{r.quote}&rdquo;
                 </blockquote>
                 <figcaption className="mt-5 pt-5 border-t border-white/10">
-                  <div className="text-[11px] font-bold uppercase tracking-[0.15em] text-[color:var(--color-brand-400)]">
-                    Verified Project
-                  </div>
-                  <div className="mt-1 text-sm text-white/70 font-medium">
+                  <div className="text-sm text-white/70 font-medium">
                     {r.attribution}
                   </div>
                 </figcaption>

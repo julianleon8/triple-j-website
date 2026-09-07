@@ -2,6 +2,10 @@ export const dynamic = 'force-static'
 
 export const metadata = {
   title: 'Offline — Triple J HQ',
+  // Service-worker fallback shell, not a real destination. It sits outside the
+  // robots.ts disallow list (which covers /hq, /api, /login, /setup, /quotes),
+  // so without this it is crawlable and can be indexed as a junk result.
+  robots: { index: false, follow: false },
 }
 
 export default function OfflinePage() {

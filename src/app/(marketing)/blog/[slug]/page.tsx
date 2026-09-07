@@ -73,6 +73,12 @@ export default async function BlogPostPage({ params }: Props) {
     author: { '@id': `${baseUrl}/#organization` },
     publisher: { '@id': `${baseUrl}/#organization` },
     url: postUrl,
+    // Stays the static default on purpose. The per-post card added 2026-09-06
+    // (./opengraph-image.tsx) is served from a content-hashed URL Next.js
+    // generates at build time — `/blog/<slug>/opengraph-image-1m3o9y?<hash>` —
+    // which page code cannot reference, and the unhashed path 404s. The card
+    // still reaches Google and every social scraper through the og:image meta
+    // tag, which is what the preferred-image guidance actually reads.
     image: `${baseUrl}/og-default.jpg`,
     mainEntityOfPage: { '@type': 'WebPage', '@id': postUrl },
     articleSection: post.category,

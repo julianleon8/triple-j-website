@@ -3,6 +3,7 @@ import { Container } from '@/components/ui/Container'
 import { ButtonLink } from '@/components/ui/Button'
 import { QuoteForm } from '@/components/sections/QuoteForm'
 import { TrackedPhoneLink } from '@/components/site/TrackedPhone'
+import { getSiteUrl } from '@/lib/site-url'
 
 export const metadata: Metadata = {
   title: 'PBR vs PBU Roofing Panels — Which to Pick',
@@ -16,35 +17,23 @@ export const metadata: Metadata = {
   },
 }
 
+// The FAQPage node here was removed 2026-09-06 — Google retired the FAQ rich
+// result on 2026-05-07, so it earned nothing. The visible Q&A comparison below
+// is unchanged. A WebPage node replaces it so the page still joins the sitewide
+// @graph rather than shipping no structured data at all.
+const pageUrl = `${getSiteUrl()}/services/pbr-vs-pbu-panels`
+
 const jsonLd = {
   '@context': 'https://schema.org',
-  '@type': 'FAQPage',
-  mainEntity: [
-    {
-      '@type': 'Question',
-      name: 'What is a PBR panel?',
-      acceptedAnswer: {
-        '@type': 'Answer',
-        text: 'PBR (Purlin Bearing Rib) is an exposed-fastener metal roofing panel. It uses screws through the panel face into the purlin below. It is the most common and cost-effective commercial roofing panel used in Texas for carports, barns, and garages.',
-      },
-    },
-    {
-      '@type': 'Question',
-      name: 'What is a PBU panel?',
-      acceptedAnswer: {
-        '@type': 'Answer',
-        text: 'PBU (Panel Base Under) is a hidden-fastener variant of the standard R-panel profile. The fastener is concealed under the overlapping rib, giving a cleaner visual profile and improved water resistance at the fastener point.',
-      },
-    },
-    {
-      '@type': 'Question',
-      name: 'Which panel should I choose for my carport or garage?',
-      acceptedAnswer: {
-        '@type': 'Answer',
-        text: 'For most residential carports, barns, and garages in Central Texas, PBR panels are the practical choice — cost-effective, widely available, and proven in Texas weather. PBU panels are recommended when aesthetics matter more (HOA neighborhoods, high-end residential) or when you want reduced long-term fastener maintenance.',
-      },
-    },
-  ],
+  '@type': 'WebPage',
+  '@id': pageUrl,
+  url: pageUrl,
+  name: 'PBR vs PBU Roofing Panels — Which to Pick',
+  description:
+    'PBR vs PBU metal roofing panels: when to use each, and which fits your carport, garage, or barn in Central Texas.',
+  isPartOf: { '@id': `${getSiteUrl()}/#website` },
+  about: { '@id': `${getSiteUrl()}/#localbusiness` },
+  inLanguage: 'en-US',
 }
 
 const COMPARISON_ROWS = [
