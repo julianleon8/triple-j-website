@@ -1,6 +1,14 @@
 {
   "crons": [
     {
+      "path": "/api/cron/receipt-push",
+      "schedule": "0 2 * * *"
+    },
+    {
+      "path": "/api/cron/qbo-keepalive",
+      "schedule": "0 16 * * 0"
+    },
+    {
       "path": "/api/cron/stale-leads",
       "schedule": "0 13-23/2 * * *"
     },

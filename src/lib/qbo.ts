@@ -316,12 +316,61 @@ export type ExpenseInput = {
   lines?: Array<{ description: string; amount: number }>
   /** Free-form note attached to the Purchase. */
   memo?: string | null
+  /**
+   * Stable per-receipt identifier written to Purchase.DocNumber.
+   *
+   * This is the idempotency key. Creating a Purchase and marking the receipt
+   * pushed are two calls to two systems with no transaction around them — if
+   * the process dies in between (timeout, cold-start eviction), the receipt
+   * stays qbo_pushed_at NULL and the next run would post the expense a second
+   * time. Callers pass this and check findPurchaseByDocNumber() first.
+   *
+   * QBO caps DocNumber at 21 characters, so it cannot simply be a UUID.
+   */
+  docNumber?: string | null
 }
 
 /**
  * Create a QuickBooks Online Purchase (cash expense). Returns the
  * created Purchase Id.
  */
+/**
+ * Deterministic Purchase.DocNumber for a receipt.
+ *
+ * QBO caps DocNumber at 21 characters, so the full UUID does not fit. Twelve
+ * hex characters is ~2.8e14 values — far beyond any plausible receipt volume
+ * here, and a collision would only mean one receipt being skipped as already
+ * pushed, which the /hq pending list would surface.
+ *
+ * Pure and stable: the same receipt always yields the same DocNumber, which
+ * is the whole point — it is what makes a retry recognisable.
+ */
+export function receiptDocNumber(receiptId: string): string {
+  return `R-${receiptId.replace(/-/g, '').slice(0, 12).toUpperCase()}`
+}
+
+/**
+ * Looks for an already-posted Purchase carrying this DocNumber.
+ *
+ * Returns the Purchase Id when found, null when not. Throws only on a
+ * transport failure — a caller must not treat "the lookup broke" as "no
+ * duplicate exists", or it would post the expense twice.
+ */
+export async function findPurchaseByDocNumber(docNumber: string): Promise<string | null> {
+  const { access_token, realm_id } = await getValidAccessToken()
+  const query = encodeURIComponent(
+    `SELECT Id FROM Purchase WHERE DocNumber = '${docNumber.replace(/'/g, "\\'")}'`,
+  )
+  const res = await fetch(`${QBO_BASE_URL}/v3/company/${realm_id}/query?query=${query}`, {
+    headers: { Authorization: `Bearer ${access_token}`, Accept: 'application/json' },
+  })
+  if (!res.ok) {
+    throw new Error(`QBO duplicate check failed: ${res.status} ${await res.text()}`)
+  }
+  const data = await res.json()
+  return data?.QueryResponse?.Purchase?.[0]?.Id ?? null
+}
+
 export async function createExpense(input: ExpenseInput): Promise<{ id: string }> {
   const { access_token, realm_id } = await getValidAccessToken()
 
@@ -361,6 +410,7 @@ export async function createExpense(input: ExpenseInput): Promise<{ id: string }
     ...(input.date ? { TxnDate: input.date.slice(0, 10) } : {}),
     ...(entityRef ? { EntityRef: entityRef } : {}),
     ...(input.memo ? { PrivateNote: input.memo } : {}),
+    ...(input.docNumber ? { DocNumber: input.docNumber } : {}),
   }
 
   const res = await fetch(`${QBO_BASE_URL}/v3/company/${realm_id}/purchase`, {

@@ -12,7 +12,7 @@ Env var values live in `.env` (gitignored) and in Vercel's project settings. `.e
 |---|---|---|---|
 | **Supabase** | `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY` | `src/lib/supabase/{client,server,admin}.ts`, `src/middleware.ts` | Everything — auth, leads, HQ dashboard |
 | **Resend** | `RESEND_API_KEY`, `RESEND_WEBHOOK_SECRET`, `OWNER_EMAIL` | `src/lib/lead-notifications.ts`, `src/app/api/quotes/[id]/{send,accept}/route.ts`, `src/app/api/partner-inquiries/route.ts`, `src/app/api/webhooks/resend/route.ts` | Lead + quote email. The lead still persists to Postgres |
-| **QuickBooks** | `QBO_CLIENT_ID`, `QBO_CLIENT_SECRET`, `QBO_REDIRECT_URI`, `QBO_ENVIRONMENT` | `src/lib/qbo.ts`, `src/app/api/qbo/{connect,callback}/route.ts` | Receipt → expense push. Save-local + retry, so no data loss |
+| **QuickBooks** | `QBO_CLIENT_ID`, `QBO_CLIENT_SECRET`, `QBO_REDIRECT_URI`, `QBO_ENVIRONMENT` | `src/lib/qbo.ts`, `src/lib/jobs/receipt-push.ts`, `src/app/api/qbo/{connect,callback}/route.ts` | Receipt → expense push. Save-local + retry, so no data loss. **Refresh token lives ~101 days and rotates only on use** — the `qbo-keepalive` cron is what stops an idle connection dying |
 | **Anthropic** | `ANTHROPIC_API_KEY` | `src/lib/{voice-lead-extractor,receipt-extractor,permit-extractor}.ts` | Voice→lead, receipt OCR, permit extraction |
 | **OpenAI** | `OPENAI_API_KEY` | `src/lib/openai.ts` | Whisper transcription in the voice-memo pipeline |
 | **Twilio** | `TWILIO_ACCOUNT_SID`, `TWILIO_AUTH_TOKEN`, `TWILIO_FROM_NUMBER` | `src/lib/twilio.ts` | Quote SMS |
@@ -24,6 +24,7 @@ Env var values live in `.env` (gitignored) and in Vercel's project settings. `.e
 | **Vercel cron** | `CRON_SECRET` | `src/lib/cron.ts` (auth + run recording), every route under `src/app/api/cron/` | The crons in `vercel.json` stop firing. See "Scheduled jobs" below |
 | **Vercel build** | `VERCEL_GIT_COMMIT_SHA`, `VERCEL_DEPLOYMENT_CREATED_AT` | `src/app/hq/settings/page.tsx` | Build stamp display only |
 | **Setup route** | `SETUP_KEY` | `src/app/api/setup/route.ts` | One-time bootstrap gate |
+| **U.S. Census (ZIP data)** | none — public domain, no key | `scripts/build-zip-data.mjs` → `src/lib/data/zip-geo.json`, read by `src/lib/zip.ts` | Nothing at runtime. Build-time only: the JSON is committed, so census.gov being down affects only regeneration |
 
 ## Scheduled jobs
 
@@ -39,6 +40,8 @@ Schedules live in `vercel.json`; times are **UTC** (Central is UTC−5/−6). Ve
 | `review-followups` | `30 14 * * *` | Customers whose `review_followup_due_at` passed with no review |
 | `quote-sweep` | `45 14 * * *` | Expires past-due sent quotes; nudges once on quotes silent >`QUOTE_STALL_HOURS` |
 | `bounce-watch` | `0 */6 * * *` | New `email.bounced` / `email.complained` since last success. **Push-first** |
+| `receipt-push` | `0 2 * * *` | Pending `job_receipts` → QuickBooks Purchases, max 25/run. Notifies only on failure |
+| `qbo-keepalive` | `0 16 * * 0` | Exercises the QBO refresh token; warns under 14 days left |
 
 Routes live at `src/app/api/cron/<slug>/route.ts`. Each job's pure decision logic sits in
 `src/lib/jobs/<slug>.ts` — **not** in the route: Next 16 rejects any export from a `route.ts`

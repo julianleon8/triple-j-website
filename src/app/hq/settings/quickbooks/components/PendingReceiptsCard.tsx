@@ -33,6 +33,8 @@ export function PendingReceiptsCard({
       const data = (await res.json().catch(() => ({}))) as {
         attempted?: number
         succeeded?: number
+        /** Already present in QuickBooks and reconciled without re-posting. */
+        reconciled?: number
         failures?: Array<{ id: string; vendor: string | null; error: string }>
         error?: string
       }
@@ -41,13 +43,18 @@ export function PendingReceiptsCard({
         return
       }
       const succeeded = data.succeeded ?? 0
+      const reconciled = data.reconciled ?? 0
       const failures = data.failures ?? []
-      if (succeeded === 0 && failures.length === 0) {
+      // Reconciled receipts were found already posted in QuickBooks — an
+      // earlier run created the Purchase but died before marking the row.
+      // Saying "nothing to push" there would hide real work.
+      const reconciledNote = reconciled > 0 ? ` ${reconciled} already in QuickBooks, now reconciled.` : ''
+      if (succeeded === 0 && reconciled === 0 && failures.length === 0) {
         setResult({ kind: 'success', text: 'Nothing to push.' })
       } else if (failures.length === 0) {
         setResult({
           kind: 'success',
-          text: `Pushed ${succeeded} receipt${succeeded === 1 ? '' : 's'} to QuickBooks.`,
+          text: `Pushed ${succeeded} receipt${succeeded === 1 ? '' : 's'} to QuickBooks.${reconciledNote}`,
         })
       } else {
         setResult({
