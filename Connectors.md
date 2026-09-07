@@ -79,6 +79,41 @@ from cron_runs order by started_at desc limit 20;
 
 ---
 
+## Owner accounts
+
+Two things must agree for an account to be an admin, and they are in different places:
+
+1. **`OWNER_EMAIL`** (Vercel env, comma-separated) — what `isOwnerEmail()` in `src/lib/owner.ts`
+   actually checks. Gates `/hq` via the proxy and every `/api` route via `requireOwner()`.
+   It doubles as the alert recipient list, so every address on it receives lead and cron mail.
+   **Changing it needs a redeploy** to reach running functions.
+2. **`public.app_owners`** — read by the `is_owner()` SQL function for RLS only (migration 024).
+
+An account missing from `OWNER_EMAIL` signs in fine and then gets 403 everywhere. An unset
+`OWNER_EMAIL` falls back to "any authenticated user" — see the docstring in `owner.ts`.
+
+Accounts as of 2026-09-07: `juanleon1905@gmail.com`, `julianleon0724@yahoo.com`.
+
+### Creating an owner by SQL — the NULL-token trap
+
+`/api/setup` only works while **zero** users exist; it 409s afterwards, so it is not the tool for
+adding a second owner. The Supabase Dashboard (Authentication → Users → Add user) is the safe
+route. If you insert into `auth.users` directly instead, you must also:
+
+- insert a matching **`auth.identities`** row (`provider: 'email'`, `provider_id` = the user id as
+  text, `identity_data` carrying `sub` and `email`) — without it, email sign-in fails;
+- set the token columns to **`''`, never NULL**: `confirmation_token`, `recovery_token`,
+  `email_change`, `email_change_token_new`, `email_change_token_current`, `phone_change`,
+  `phone_change_token`, `reauthentication_token`.
+
+GoTrue scans those into non-nullable Go strings. Leave one NULL and sign-in fails with the
+misleading **"Database error querying schema"** — which reads like a permissions or migration
+problem and is neither. Verify with:
+
+```sql
+select (encrypted_password = crypt('<pw>', encrypted_password)) as ok from auth.users where email = '...';
+```
+
 ## Known-broken / non-obvious states
 
 Recorded so no future session rediscovers them.
