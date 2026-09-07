@@ -124,18 +124,25 @@ export async function POST(request: NextRequest) {
       submittedAt,
     }
 
-    await resend().emails.send({
-      from: 'Triple J Metal <leads@triplejmetaltx.com>',
-      to: process.env.OWNER_EMAIL!.split(','),
-      replyTo: data.email,
-      subject: `🤝 Partner inquiry — ${data.company_name.trim()} (${companyTypeLabel})`,
-      react: PartnerInquiryOwnerAlert(ownerProps),
-      text: partnerInquiryOwnerAlertText(ownerProps),
-      tags: [
-        { name: 'inquiry_id', value: inquiry.id },
-        { name: 'email_type', value: 'partner_inquiry_owner_alert' },
-      ],
-    })
+    // The inquiry row is already committed at this point, so a missing
+    // OWNER_EMAIL must not 500 the request. It previously threw on
+    // `undefined!.split`.
+    if (process.env.OWNER_EMAIL) {
+      await resend().emails.send({
+        from: 'Triple J Metal <leads@triplejmetaltx.com>',
+        to: process.env.OWNER_EMAIL.split(','),
+        replyTo: data.email,
+        subject: `🤝 Partner inquiry — ${data.company_name.trim()} (${companyTypeLabel})`,
+        react: PartnerInquiryOwnerAlert(ownerProps),
+        text: partnerInquiryOwnerAlertText(ownerProps),
+        tags: [
+          { name: 'inquiry_id', value: inquiry.id },
+          { name: 'email_type', value: 'partner_inquiry_owner_alert' },
+        ],
+      })
+    } else {
+      console.error('[partner-inquiries] OWNER_EMAIL is not set — no owner alert sent for', inquiry.id)
+    }
 
     const confirmProps = {
       contactName: data.contact_name.trim(),

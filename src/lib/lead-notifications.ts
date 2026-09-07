@@ -97,20 +97,28 @@ export async function notifyNewLead({ lead, sizeLine = null }: NotifyNewLeadInpu
 
   const subject = `${sourcePrefix}: ${lead.name} — ${city} — ${serviceType}${lead.is_military ? ' ⭐' : ''}${lead.timeline === 'asap' ? ' ⚡' : ''}`
 
-  const ownerResult = await resend().emails.send({
-    from: 'Triple J Metal <leads@triplejmetaltx.com>',
-    to: process.env.OWNER_EMAIL!.split(','),
-    replyTo: lead.email || undefined,
-    subject,
-    react: LeadOwnerAlert(ownerAlertProps),
-    text: leadOwnerAlertText(ownerAlertProps),
-    tags: [
-      { name: 'lead_id', value: lead.id },
-      { name: 'email_type', value: 'lead_owner_alert' },
-    ],
-  })
-  if (ownerResult.error) {
-    console.error('[notifyNewLead] owner alert Resend error:', ownerResult.error)
+  // OWNER_EMAIL unset used to throw here (`undefined!.split`), taking down every
+  // lead notification with a TypeError rather than a legible error. Guarded the
+  // same way as src/app/api/quotes/[id]/accept/route.ts. The lead is already
+  // persisted by this point, so a missing recipient must not fail the request.
+  if (process.env.OWNER_EMAIL) {
+    const ownerResult = await resend().emails.send({
+      from: 'Triple J Metal <leads@triplejmetaltx.com>',
+      to: process.env.OWNER_EMAIL.split(','),
+      replyTo: lead.email || undefined,
+      subject,
+      react: LeadOwnerAlert(ownerAlertProps),
+      text: leadOwnerAlertText(ownerAlertProps),
+      tags: [
+        { name: 'lead_id', value: lead.id },
+        { name: 'email_type', value: 'lead_owner_alert' },
+      ],
+    })
+    if (ownerResult.error) {
+      console.error('[notifyNewLead] owner alert Resend error:', ownerResult.error)
+    }
+  } else {
+    console.error('[notifyNewLead] OWNER_EMAIL is not set — no owner alert sent for lead', lead.id)
   }
 
   if (lead.email) {
