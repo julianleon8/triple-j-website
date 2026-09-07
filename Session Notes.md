@@ -162,6 +162,21 @@ that premise; logged as a CORRECTION row since `Decisions.md` is append-only.
 **PR 8 is deliberately partial** — see the primer for exactly what is and is not done.
 
 
+## 2026-09-07 — The secret scan failed open on non-ASCII filenames
+
+Surfaced by committing the primer archive: the pre-commit hook printed `fatal: ambiguous argument` and let the
+commit through. `scripts/check-secrets.mjs` walked git without `-z`, so `core.quotepath` handed it a quoted,
+octal-escaped path, `git show :<path>` failed, and `catch { continue }` skipped the file silently.
+
+- **Proved first**: a Stripe-shaped key in `café — probe.md` passed `--staged` with exit 0. Then fixed with `-z`
+  + NUL split on both git calls, and re-ran the same probe — now caught. `--all` clean on the real tree.
+- **Blast radius**: `--staged` (pre-commit + the Claude Code Bash guard) and `--all` (CI Governance), plus
+  `.secretsignore` globs, which were being matched against the quoted name.
+- Since `governance.yml` is explicitly "a detector, not a gate", any file with an accent or em-dash in its name
+  had no secret gate at all.
+- **Merged 2026-09-30, fix only.** The primer archive and its one-session check stayed on branch
+  `claude/memory-systems-repo-rules-t9dzyb`: that check fails today's primer 25 times, so adopting it is the owner's call.
+
 ## 2026-09-07 — HQ capture-first redesign, Tracks 1 and 2
 
 Julian pointed at the HQ redesign plan and said start. Scope taken: PRs 1–5 of the twelve — the "Shop floor"

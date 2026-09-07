@@ -109,9 +109,16 @@ function scan(rel, text) {
   })
 }
 
+// -z, always. Without it git applies core.quotepath and hands back a path with
+// any non-ASCII byte octal-escaped AND wrapped in double quotes --
+// "archive/Next Session Primer \342\200\224 through 2026-09-06.md". `git show :<that>`
+// then fails, and the catch below treats a failed read as nothing to scan, so
+// the file is skipped in silence. A Stripe key in a file named "café — probe.md"
+// passed this scanner with exit 0 on 2026-09-07. NUL-delimited output is never
+// quoted or escaped, so the name that comes out is the name on disk.
 function gitFiles(args) {
-  return execFileSync('git', args, { encoding: 'utf8', maxBuffer: 64 * 1024 * 1024 })
-    .split('\n')
+  return execFileSync('git', [...args, '-z'], { encoding: 'utf8', maxBuffer: 64 * 1024 * 1024 })
+    .split('\0')
     .filter(Boolean)
 }
 
