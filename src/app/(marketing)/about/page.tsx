@@ -1,3 +1,4 @@
+import { Crew } from "@/components/sections/Crew"
 import type { Metadata } from 'next'
 import Image from 'next/image'
 import { Container } from '@/components/ui/Container'
@@ -86,31 +87,7 @@ export default function AboutPage() {
         </Container>
       </section>
 
-      {/* ── Our story ── */}
-      <section className="py-16 md:py-24 bg-white">
-        <Container size="narrow">
-          <h2 className="mb-6">A Temple Family Business</h2>
-          <div className="space-y-5 text-ink-600 text-lg leading-relaxed">
-            <p>
-              Triple J Metal was started by Juan Luis Leon — a long-time member of the Temple,
-              TX community — and his son Julian Leon Alvarez, who handles day-to-day operations and
-              the technology side of the business. Together, they built Triple J Metal from the ground up
-              starting in 2025, and have since completed over 150 projects across Central Texas.
-            </p>
-            <p>
-              We started Triple J because we saw what the big national companies were doing to local
-              homeowners: shipping a boxed kit, leaving instructions, and calling it &ldquo;installation.&rdquo;
-              That&rsquo;s not a building company — that&rsquo;s a parts supplier with a landing page.
-              We do it differently. Our crew shows up, builds it, and stands behind the work.
-            </p>
-            <p>
-              Fifty-plus satisfied clients later, our model is proving itself. We&rsquo;re growing entirely
-              on referrals and reputation — because when you show up on time, build it right, and
-              include the concrete pad in the same contract, people notice.
-            </p>
-          </div>
-        </Container>
-      </section>
+      <Crew />
 
       {/* ── What makes us different ── */}
       <section className="py-16 md:py-20 bg-ink-50">

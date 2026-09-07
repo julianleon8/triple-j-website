@@ -1,3 +1,4 @@
+import { QuoteShortcut } from "@/components/site/QuoteShortcut";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -78,7 +79,7 @@ export function Services() {
       <Container size="wide" className="relative">
         {/* Section header — mirrors the hero's red pill + Barlow huge */}
         <Reveal className="max-w-3xl">
-          <span className="inline-flex items-center rounded-full bg-red-600 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.18em] text-white shadow-sm">
+          <span className="inline-flex items-center rounded-full bg-ink-900 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.18em] text-white shadow-sm">
             What We Build
           </span>
           <h2
@@ -157,6 +158,19 @@ export function Services() {
             See every service we offer
             <ArrowRightIcon className="h-4 w-4" />
           </Link>
+        </div>
+        <div className="mt-8 flex flex-wrap items-center gap-3 border-t border-ink-200 pt-6">
+          <span className="mr-2 text-sm text-ink-600">Already know what you need?</span>
+          {[
+            { label: "Carport", service: "carport" },
+            { label: "Garage", service: "garage" },
+            { label: "Barn", service: "barn" },
+            { label: "Lean-To / Patio", service: "lean_to" },
+          ].map((item) => (
+            <QuoteShortcut key={item.service} service={item.service} className="inline-flex min-h-11 items-center rounded-md border border-ink-200 bg-white px-4 text-sm font-semibold text-brand-700 hover:border-brand-600">
+              {item.label} <span aria-hidden="true" className="ml-2">→</span>
+            </QuoteShortcut>
+          ))}
         </div>
       </Container>
     </section>

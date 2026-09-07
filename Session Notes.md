@@ -1,5 +1,17 @@
 # Session Notes
 
+## 2026-09-07 — Design publication
+
+Owner requested committing and pushing the previewed pages to main. Integrated seven newer upstream commits, preserving the SEO and business-data corrections. The design publication also includes the earlier trust cleanup, form shortcuts, and first-touch attribution changes visible in the preview. Deployment status is reported in the task after pushing.
+
+
+## 2026-09-07 — Website design first pass (local, not published)
+
+Simplified homepage hero; moved real projects directly below it; changed project cards to consistent photos with visible captions; replaced homepage competitor comparison with a shared Juan/Julian/Freddy team introduction, also used on About. Gallery now opens with compact framing and category filters based on existing project types. Service quote shortcuts preserve the earlier form-selection fix. No database schema or project records changed. Existing uncommitted attribution/trust/form work preserved.
+
+Validation: typecheck, lint, 35 tests, and production build pass. Public routes preview at http://127.0.0.1:3210 using the existing anon key in process-only environment settings; no real credentials written to tracked files. No production deployment or commit. Crew portrait still needed; current section uses an actual construction image without presenting it as a portrait.
+
+
 End-of-session summaries written by Claude Code. **Most recent at top.**
 
 Append a new `## YYYY-MM-DD — title` block directly below this header at the end of any

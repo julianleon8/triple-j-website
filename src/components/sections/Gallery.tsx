@@ -40,19 +40,19 @@ export async function Gallery() {
     <section
       id="gallery"
       aria-labelledby="gallery-heading"
-      className="py-20 md:py-28 bg-paper-2 border-t border-ink-100"
+      className="scroll-mt-20 py-14 md:py-20 bg-paper-2 border-t border-ink-100"
     >
       <Container size="wide">
-        <Reveal className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 max-w-4xl">
+        <Reveal className="flex flex-col md:flex-row md:items-end md:justify-between gap-6">
           <div>
             <span className="text-xs font-semibold uppercase tracking-[0.15em] text-brand-700">
-              Recent Builds
+              Built by Triple J
             </span>
             <h2
               id="gallery-heading"
-              className="mt-3 text-ink-900"
+              className="mt-3 max-w-2xl text-4xl sm:text-5xl uppercase leading-none text-ink-900"
             >
-              Real Central Texas jobs. Same-week builds, not month-long wait lists.
+              A few places we’ve left our mark.
             </h2>
           </div>
           <Link
@@ -64,41 +64,25 @@ export async function Gallery() {
           </Link>
         </Reveal>
 
-        {/* Asymmetric grid — first cell spans 2 columns on desktop.
-            is_featured-sorted first from the query so the hero cell
-            picks up the featured item naturally. */}
-        <div className="mt-12 grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 auto-rows-[180px] md:auto-rows-[220px]">
-          {(photos ?? []).map((p, idx) => {
+        <div className="mt-9 grid grid-cols-1 gap-7 sm:grid-cols-2 lg:grid-cols-3">
+          {(photos ?? []).map((p) => {
             const cover = pickCover(p.gallery_photos as GalleryPhoto[] | null);
             if (!cover) return null;
             return (
-              <Link
-                key={p.id}
-                href={`/gallery/${p.id}`}
-                className={`group relative overflow-hidden rounded-xl bg-ink-200 ${
-                  idx === 0 ? "col-span-2 row-span-2" : ""
-                }`}
-              >
-                <Image
-                  src={cover.url}
-                  alt={cover.alt || p.title}
-                  fill
-                  sizes={
-                    idx === 0
-                      ? "(max-width: 768px) 100vw, 50vw"
-                      : "(max-width: 768px) 50vw, 25vw"
-                  }
-                  className="object-cover transition-transform duration-500 group-hover:scale-105"
-                  unoptimized={cover.url.startsWith("/")}
-                />
-                <div className="absolute inset-0 bg-linear-to-t from-black/70 via-black/10 to-transparent opacity-80 group-hover:opacity-100 transition-opacity" />
-                <div className="absolute bottom-3 left-3 right-3 text-white">
-                  <div className="text-[11px] uppercase tracking-wider text-white/70 font-semibold">
-                    {p.city}
+              <Link key={p.id} href={`/gallery/${p.id}`} className="group block focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand-600">
+                <div className="relative aspect-[4/3] overflow-hidden rounded-lg bg-ink-200">
+                  <Image src={cover.url} alt={cover.alt || p.title} fill
+                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                    className="object-cover transition-transform duration-500 motion-safe:group-hover:scale-105"
+                    unoptimized={cover.url.startsWith("/")}
+                  />
+                </div>
+                <div className="mt-4 flex items-start justify-between gap-4">
+                  <div>
+                    <p className="text-xs uppercase tracking-wider text-ink-500">{p.city}</p>
+                    <h3 className="mt-1 text-xl font-bold leading-tight text-ink-900">{p.title}</h3>
                   </div>
-                  <div className="font-bold text-sm md:text-base leading-tight">
-                    {p.title}
-                  </div>
+                  <ArrowRightIcon className="mt-1 h-5 w-5 shrink-0 text-brand-700" />
                 </div>
               </Link>
             );
