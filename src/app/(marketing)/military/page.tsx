@@ -9,7 +9,6 @@ import { QuoteForm } from '@/components/sections/QuoteForm'
 import { TrustBar } from '@/components/sections/TrustBar'
 import { BreadcrumbJsonLd } from '@/components/seo/BreadcrumbJsonLd'
 import { TrackedPhoneButtonLink } from '@/components/site/TrackedPhone'
-import { SITE } from '@/lib/site'
 import { getSiteUrl } from '@/lib/site-url'
 
 /**

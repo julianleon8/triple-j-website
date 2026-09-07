@@ -109,7 +109,7 @@ function EmptyState() {
       aria-label="Next action"
       className="rounded-3xl border border-(--border-subtle) bg-(--surface-2) p-5 text-center"
     >
-      <p className="text-[17px] font-semibold text-(--text-primary)">You're caught up.</p>
+      <p className="text-[17px] font-semibold text-(--text-primary)">You&apos;re caught up.</p>
       <p className="mt-1 text-[13px] text-(--text-secondary)">
         Nothing urgent right now. New activity will show up here.
       </p>

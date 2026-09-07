@@ -4,7 +4,6 @@ import { Container } from '@/components/ui/Container'
 import { ButtonLink } from '@/components/ui/Button'
 import { TrackedPhoneLink } from '@/components/site/TrackedPhone'
 import { BLOG_POSTS, type BlogCategory } from '@/lib/blog'
-import { SITE } from '@/lib/site'
 
 export const metadata: Metadata = {
   title: 'Blog | Central Texas Metal Building Guides',

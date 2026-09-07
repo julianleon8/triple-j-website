@@ -15,7 +15,6 @@ import {
   View,
   Text,
   StyleSheet,
-  Font,
 } from '@react-pdf/renderer'
 
 export type QuoteLineItem = {

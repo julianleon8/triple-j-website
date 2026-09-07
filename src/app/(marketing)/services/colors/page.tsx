@@ -4,7 +4,6 @@ import { Container } from '@/components/ui/Container'
 import { ButtonLink } from '@/components/ui/Button'
 import { QuoteForm } from '@/components/sections/QuoteForm'
 import { TrackedPhoneLink } from '@/components/site/TrackedPhone'
-import { SITE } from '@/lib/site'
 import {
   TURNIUM_COLORS,
   SHEFFIELD_COLORS,
@@ -80,7 +79,7 @@ export default function ColorsPage() {
             <h1 className="mt-3 text-white">Metal Panel Colors & Finishes</h1>
             <p className="mt-5 text-lg text-white/75 leading-relaxed max-w-2xl">
               Triple J Metal sources painted Galvalume® steel from leading regional Texas suppliers,
-              spec'd for high-UV, high-heat Central Texas conditions. Available in 26 and 29 gauge,
+              spec&apos;d for high-UV, high-heat Central Texas conditions. Available in 26 and 29 gauge,
               39 colors across two product lines.
             </p>
             <div className="mt-8 flex flex-wrap gap-4">

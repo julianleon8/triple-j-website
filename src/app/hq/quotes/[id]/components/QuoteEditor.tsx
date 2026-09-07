@@ -22,14 +22,7 @@ interface Props {
   customers: Customer[]
 }
 
-const STATUS_STYLES: Record<string, string> = {
-  draft: 'bg-gray-100 text-gray-700',
-  sent: 'bg-blue-100 text-blue-700',
-  accepted: 'bg-green-100 text-green-700',
-  declined: 'bg-red-100 text-red-700',
-}
-
-export default function QuoteEditor({ quote, customers }: Props) {
+export default function QuoteEditor({ quote }: Props) {
   const router = useRouter()
   const [lineItems, setLineItems] = useState<LineItem[]>(
     quote.quote_line_items.sort((a, b) => a.sort_order - b.sort_order)

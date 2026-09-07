@@ -7,7 +7,6 @@ import { Container } from "@/components/ui/Container";
 import { ArrowRightIcon, PhoneIcon } from "@/components/ui/icons";
 import { GoogleAdsConversion } from "@/components/seo/GoogleAdsConversion";
 import { TrackedPhoneLink, TrackedPhoneNumber } from "@/components/site/TrackedPhone";
-import { SITE } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: "Thanks — we'll call you back within 24 hours",

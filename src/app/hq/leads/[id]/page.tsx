@@ -69,6 +69,10 @@ export default async function LeadDetailPage({ params }: { params: Promise<{ id:
   if (!leadRaw) notFound()
   const lead = leadRaw as LeadRecord
 
+  // Async Server Component with force-dynamic: this renders once per request on
+  // the server, so reading the clock here is correct. The purity rule is aimed
+  // at client re-renders and doesn't distinguish the two.
+  // eslint-disable-next-line react-hooks/purity
   const ageH = Math.max(0, (Date.now() - new Date(lead.created_at).getTime()) / 3_600_000)
   const cold = lead.status === 'new' && ageH > COLD_THRESHOLD_HOURS
   const statusClass = LEAD_STATUS_CLASS[lead.status] ?? 'bg-gray-100 text-gray-600'

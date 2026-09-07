@@ -5,7 +5,6 @@ import { Container } from '@/components/ui/Container'
 import { ButtonLink } from '@/components/ui/Button'
 import { QuoteForm } from '@/components/sections/QuoteForm'
 import { TrackedPhoneLink } from '@/components/site/TrackedPhone'
-import { SITE } from '@/lib/site'
 import { getAdminClient } from '@/lib/supabase/admin'
 import { describeGalleryColors } from '@/lib/gallery-colors'
 
@@ -70,7 +69,7 @@ export default async function HybridProjectsPage() {
             <h1 className="mt-3 text-white">Hybrid Projects — Beyond the Standard Catalog</h1>
             <p className="mt-5 text-lg text-white/75 leading-relaxed max-w-2xl">
               Horse stalls, all-black warehouses, decks, hybrid stables, custom commercial. The builds
-              that don't fit a clean carport or garage spec — but that we engineer, weld, bolt, and
+              that don&apos;t fit a clean carport or garage spec — but that we engineer, weld, bolt, and
               hand over complete just the same. Same Temple crew. Same on-site construction.
             </p>
             <div className="mt-8 flex flex-wrap gap-4">
@@ -93,9 +92,9 @@ export default async function HybridProjectsPage() {
         <Container>
           <div className="max-w-3xl">
             <span className="text-xs font-semibold uppercase tracking-[0.15em] text-brand-600">
-              What we mean by "Hybrid"
+              What we mean by &quot;Hybrid&quot;
             </span>
-            <h2 className="mt-3 text-ink-900">Anything that isn't a standard kit.</h2>
+            <h2 className="mt-3 text-ink-900">Anything that isn&apos;t a standard kit.</h2>
             <p className="mt-4 text-ink-700 leading-relaxed">
               Most of what we build fits a clean category — a 30×40 carport, a barn, an RV cover,
               a metal garage. But a real chunk of our work is custom: a horse stall layout the owner
@@ -103,7 +102,7 @@ export default async function HybridProjectsPage() {
               behind a ranch house, a workshop that needs both a slab and a loft.
             </p>
             <p className="mt-3 text-ink-700 leading-relaxed">
-              We don't subcontract these. The same welder-owners who build the standard projects
+              We don&apos;t subcontract these. The same welder-owners who build the standard projects
               are the ones engineering and erecting the hybrids — Freddy on the iron, Julian as the
               second welder, Juan on the supply chain.
             </p>
@@ -139,9 +138,9 @@ export default async function HybridProjectsPage() {
               Every welded structure is reinforced with permanent bolts.
             </h2>
             <p className="mt-4 text-ink-700 leading-relaxed">
-              Most contractors will tell you it's welded <em>or</em> bolted. The reality at Triple J
+              Most contractors will tell you it&apos;s welded <em>or</em> bolted. The reality at Triple J
               is more honest: every welded build is welded <em>and</em> bolted. To weld red iron
-              on-site, the crew first bolts everything together so it's sturdy and held in the
+              on-site, the crew first bolts everything together so it&apos;s sturdy and held in the
               correct position — then the welds happen. The bolts stay in (rubber gaskets keep
               the connections sealed) so what you get is a structure with both the rigid permanence
               of welded connections and the redundancy of mechanical fasteners.
@@ -152,7 +151,7 @@ export default async function HybridProjectsPage() {
               clear-span trusses with offset purlin patterns. A deck-and-cover combo ties a new
               metal frame into an existing structure. The bolt-then-weld sequence lets us hold
               the geometry exactly while the welds set, and leaves you with both anchoring methods
-              when we're done.
+              when we&apos;re done.
             </p>
           </div>
         </Container>
@@ -177,7 +176,7 @@ export default async function HybridProjectsPage() {
                 Hybrid project photos coming soon.
               </p>
               <p className="mt-2 text-sm text-ink-500 max-w-md mx-auto">
-                We're prepping a fresh set of horse stalls, warehouses, and custom builds for this
+                We&apos;re prepping a fresh set of horse stalls, warehouses, and custom builds for this
                 page. Call us in the meantime — we can walk you through past hybrid jobs over the
                 phone or show photos from a recent build.
               </p>
@@ -251,9 +250,9 @@ export default async function HybridProjectsPage() {
       <section id="quote" className="py-16 md:py-24 bg-ink-900 text-white">
         <Container size="narrow">
           <div className="text-center mb-8">
-            <h2 className="text-white">Got something unusual? Let's talk.</h2>
+            <h2 className="text-white">Got something unusual? Let&apos;s talk.</h2>
             <p className="mt-3 text-white/75 text-base max-w-xl mx-auto">
-              Tell us what you're picturing. We'll come out, take measurements, and send you a fixed
+              Tell us what you&apos;re picturing. We&apos;ll come out, take measurements, and send you a fixed
               quote — no kit upcharges, no subcontractor markups.
             </p>
           </div>

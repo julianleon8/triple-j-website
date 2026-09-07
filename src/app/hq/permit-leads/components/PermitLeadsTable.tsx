@@ -269,7 +269,7 @@ export default function PermitLeadsTable({
                   No permit leads yet. Run the cron to populate:
                   <br />
                   <code className="text-xs bg-gray-100 px-2 py-0.5 rounded">
-                    curl -H "Authorization: Bearer $CRON_SECRET" http://localhost:3000/api/cron/scrape-permits
+                    curl -H &quot;Authorization: Bearer $CRON_SECRET&quot; http://localhost:3000/api/cron/scrape-permits
                   </code>
                 </td>
               </tr>

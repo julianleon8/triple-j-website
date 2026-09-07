@@ -70,8 +70,8 @@ export default async function PartnersPage() {
               Looking for a Central Texas installation partner?
             </h1>
             <p className="mt-5 text-lg text-white/75 leading-relaxed max-w-2xl">
-              Suppliers, manufacturers, dealers, GCs — when your customer's in Bell, McLennan,
-              Coryell, or Williamson County, we're the named in-house crew that welds, bolts, and
+              Suppliers, manufacturers, dealers, GCs — when your customer&apos;s in Bell, McLennan,
+              Coryell, or Williamson County, we&apos;re the named in-house crew that welds, bolts, and
               hands the building over complete. No kits left in driveways. No subcontractor
               roulette. Your reputation rides on the install — we treat it that way.
             </p>
@@ -119,10 +119,10 @@ export default async function PartnersPage() {
               What we offer partners
             </span>
             <h2 className="mt-3 text-ink-900">
-              The install crew you'd build if you could.
+              The install crew you&apos;d build if you could.
             </h2>
             <p className="mt-4 text-ink-700 leading-relaxed">
-              We've built Triple J around the things suppliers and GCs ask for and rarely get from
+              We&apos;ve built Triple J around the things suppliers and GCs ask for and rarely get from
               install subs. No black-box scheduling. No phantom subcontractors. No phone calls
               dodged when something goes sideways.
             </p>

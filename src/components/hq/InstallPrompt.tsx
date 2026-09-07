@@ -33,14 +33,17 @@ function isInstalled(): boolean {
  * later once Android users actually exist.
  */
 export function InstallPrompt() {
-  const [show, setShow] = useState(false)
-  const [platform, setPlatform] = useState<Platform>('unknown')
+  // One piece of state instead of two. `platform` was only ever read to decide
+  // whether to render, and it was set unconditionally on mount — an extra
+  // render plus a setState-in-effect that React flags. Storing "which platform
+  // are we prompting for, if any" collapses both into a single conditional set.
+  const [showFor, setShowFor] = useState<Extract<Platform, 'ios' | 'android'> | null>(null)
 
   useEffect(() => {
-    const p = detectPlatform()
-    setPlatform(p)
-
     if (isInstalled()) return
+
+    const p = detectPlatform()
+    if (p !== 'ios' && p !== 'android') return
 
     // Dismissed within the last 7 days?
     const dismissed = Number(localStorage.getItem(STORAGE_KEY) ?? '0')
@@ -51,16 +54,17 @@ export function InstallPrompt() {
     localStorage.setItem(VISIT_KEY, String(count))
 
     // Show on 3rd+ visit (iOS) or 2nd+ visit (Android)
-    if (p === 'ios' && count >= 3) setShow(true)
-    if (p === 'android' && count >= 2) setShow(true)
+    if (p === 'ios' && count >= 3) setShowFor('ios')
+    if (p === 'android' && count >= 2) setShowFor('android')
   }, [])
 
   function dismiss() {
     localStorage.setItem(STORAGE_KEY, String(Date.now()))
-    setShow(false)
+    setShowFor(null)
   }
 
-  if (!show || platform === 'desktop' || platform === 'unknown') return null
+  if (!showFor) return null
+  const platform = showFor
 
   return (
     <div

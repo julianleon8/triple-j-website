@@ -4,9 +4,7 @@ import { useMemo } from 'react'
 import { AlertTriangle, Info, Plus, Trash2 } from 'lucide-react'
 import { Input } from '@/components/hq/ui/Input'
 import {
-  calculate,
   defaultInputs,
-  displayBuildingType,
   displayColumnTier,
   suggestColumnTier,
   type BuildingType,

@@ -3,7 +3,6 @@ import { Container } from '@/components/ui/Container'
 import { ButtonLink } from '@/components/ui/Button'
 import { QuoteForm } from '@/components/sections/QuoteForm'
 import { TrackedPhoneLink } from '@/components/site/TrackedPhone'
-import { SITE } from '@/lib/site'
 
 export const metadata: Metadata = {
   title: 'PBR vs PBU Roofing Panels — Which to Pick',

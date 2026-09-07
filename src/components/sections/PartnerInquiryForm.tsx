@@ -116,7 +116,7 @@ export function PartnerInquiryForm() {
         <div className="text-3xl">🤝</div>
         <h3 className="mt-3 text-xl font-bold text-emerald-900">We got it.</h3>
         <p className="mt-2 text-sm text-emerald-800 max-w-md mx-auto">
-          Julian will be in touch within one business day. If it's urgent, call{' '}
+          Julian will be in touch within one business day. If it&apos;s urgent, call{' '}
           <TrackedPhoneLink surface="partners_inquiry_success" className="font-bold underline" /> directly.
         </p>
         <button
