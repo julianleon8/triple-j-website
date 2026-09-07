@@ -1,13 +1,7 @@
-import { Resend } from 'resend'
 import LeadOwnerAlert, { leadOwnerAlertText } from '@/emails/LeadOwnerAlert'
 import LeadCustomerConfirmation, { leadCustomerConfirmationText } from '@/emails/LeadCustomerConfirmation'
 import { sendPushBackground } from '@/lib/push'
-
-let _resend: Resend | null = null
-function resend(): Resend {
-  if (!_resend) _resend = new Resend(process.env.RESEND_API_KEY)
-  return _resend
-}
+import { getResend } from '@/lib/resend'
 
 const CONCRETE_LABELS: Record<string, string> = {
   yes: 'Yes — include concrete pad',
@@ -102,7 +96,7 @@ export async function notifyNewLead({ lead, sizeLine = null }: NotifyNewLeadInpu
   // same way as src/app/api/quotes/[id]/accept/route.ts. The lead is already
   // persisted by this point, so a missing recipient must not fail the request.
   if (process.env.OWNER_EMAIL) {
-    const ownerResult = await resend().emails.send({
+    const ownerResult = await getResend().emails.send({
       from: 'Triple J Metal <leads@triplejmetaltx.com>',
       to: process.env.OWNER_EMAIL.split(','),
       replyTo: lead.email || undefined,
@@ -130,7 +124,7 @@ export async function notifyNewLead({ lead, sizeLine = null }: NotifyNewLeadInpu
       isMilitary: !!lead.is_military,
       timeline: lead.timeline,
     }
-    const customerResult = await resend().emails.send({
+    const customerResult = await getResend().emails.send({
       from: 'Triple J Metal <no-reply@triplejmetaltx.com>',
       replyTo: 'julianleon@triplejmetaltx.com',
       to: lead.email,

@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { ArrowLeft } from 'lucide-react'
 import { getAdminClient } from '@/lib/supabase/admin'
 import { fmtUSD } from '@/lib/format'
+import { COLD_THRESHOLD_HOURS } from '@/lib/pipeline'
 import { KPICard } from '@/components/hq/KPICard'
 import { ChartContainer } from '@/components/hq/ChartContainer'
 import { Sparkline, Funnel } from '@/components/hq/LazyCharts'
@@ -219,7 +220,7 @@ export default async function StatsPage() {
   const staleLeads = L.filter(l => {
     if (l.status !== 'new') return false
     const ageH = (_now - new Date(l.created_at).getTime()) / 3_600_000
-    return ageH > 12
+    return ageH > COLD_THRESHOLD_HOURS
   }).length
 
   // Sparklines
@@ -332,7 +333,7 @@ export default async function StatsPage() {
         <KPICard label="Jobs this week" value={String(jobsThisWeek)} sub="Scheduled" accent="amber" />
         <KPICard label="In progress" value={String(jobsInProgress)} sub="Active now" accent="brand" />
         <KPICard label="Hot leads" value={String(hotLeads)} sub="ASAP + new" accent="red" />
-        <KPICard label="Stale leads" value={String(staleLeads)} sub=">12h untouched" accent="red" />
+        <KPICard label="Stale leads" value={String(staleLeads)} sub={`>${COLD_THRESHOLD_HOURS}h untouched`} accent="red" />
       </StatsGroup>
 
       <StatsGroup title="Attribution">

@@ -1,17 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { getAdminClient } from '@/lib/supabase/admin'
-import { Resend } from 'resend'
+import { getResend } from '@/lib/resend'
 import QuoteEmail, { quoteEmailText } from '@/emails/QuoteEmail'
 
 export const dynamic = 'force-dynamic'
 export const maxDuration = 30
-
-let _resend: Resend | null = null
-function resend(): Resend {
-  if (!_resend) _resend = new Resend(process.env.RESEND_API_KEY)
-  return _resend
-}
 
 export async function POST(
   _request: NextRequest,
@@ -60,7 +54,7 @@ export async function POST(
   }
 
   try {
-    const { data: sendData, error: sendError } = await resend().emails.send({
+    const { data: sendData, error: sendError } = await getResend().emails.send({
       from: 'Triple J Metal <quotes@triplejmetaltx.com>',
       replyTo: 'julianleon@triplejmetaltx.com',
       to: quote.customers.email,

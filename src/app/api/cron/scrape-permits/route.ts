@@ -1,6 +1,5 @@
-import { NextRequest, NextResponse } from 'next/server';
 import { getAdminClient } from '@/lib/supabase/admin';
-import { createClient } from '@/lib/supabase/server';
+import { cronRoute, type CronResult } from '@/lib/cron';
 import { getEnabledSources, type PermitSource } from '@/lib/permit-sources';
 import {
   fetchLatestPdfUrl,
@@ -24,7 +23,7 @@ type JurisdictionSummary = {
   candidatesConsidered?: string[];
 };
 
-async function runScrape() {
+async function runScrape(): Promise<CronResult> {
   const sources = getEnabledSources();
   const summary: Record<string, JurisdictionSummary> = {};
 
@@ -32,33 +31,25 @@ async function runScrape() {
     summary[source.jurisdiction] = await scrapeOne(source);
   }
 
+  const jurisdictions = Object.values(summary);
+  const inserted = jurisdictions.reduce((n, s) => n + s.inserted, 0);
+  const errors = jurisdictions.flatMap((s) => s.errors);
+
+  // yield is the permit count, which is what the scrape-watch alarm reads: a
+  // run that reaches every index page cleanly but extracts nothing is exactly
+  // the silent rot we care about, so it must record yield 0 with ok: true.
   return {
-    ok: true,
-    ranAt: new Date().toISOString(),
-    model: EXTRACTION_MODEL,
-    summary,
+    // Every jurisdiction failing is a real failure; some failing is normal.
+    ok: errors.length < jurisdictions.length || jurisdictions.length === 0,
+    yield: inserted,
+    error: errors.length > 0 ? errors.join('; ') : undefined,
+    detail: { model: EXTRACTION_MODEL, summary },
   };
 }
 
-export async function GET(request: NextRequest) {
-  // Dual auth: Vercel Cron uses Bearer CRON_SECRET; /hq UI uses Supabase cookie.
-  const auth = request.headers.get('authorization');
-  if (auth && auth === `Bearer ${process.env.CRON_SECRET}`) {
-    return NextResponse.json(await runScrape());
-  }
-
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-  }
-
-  return NextResponse.json(await runScrape());
-}
-
-export async function POST(request: NextRequest) {
-  return GET(request);
-}
+export const GET = cronRoute('scrape-permits', runScrape);
+// The /hq "Run Scrape Now" button POSTs; same handler, same auth.
+export const POST = GET;
 
 async function scrapeOne(source: PermitSource): Promise<JurisdictionSummary> {
   const s: JurisdictionSummary = { inserted: 0, skipped: 0, errors: [] };

@@ -1,5 +1,5 @@
 import { getAdminClient } from '@/lib/supabase/admin'
-import { buildPipeline, urgencyScore, type PipelineRow } from '@/lib/pipeline'
+import { buildPipeline, urgencyScore, reasonFor, type PipelineRow } from '@/lib/pipeline'
 import { NextActionCardClient, type NextActionPayload } from './NextActionCardClient'
 
 export async function NextActionCard() {
@@ -22,7 +22,7 @@ export async function NextActionCard() {
       .order('created_at', { ascending: false })
       .limit(50),
     db.from('quotes')
-      .select('id, created_at, quote_number, status, total, valid_until, customers(name)')
+      .select('id, created_at, quote_number, status, total, valid_until, sent_at, customers(name)')
       .in('status', ['sent'])
       .order('created_at', { ascending: false })
       .limit(50),
@@ -69,22 +69,3 @@ function callHrefFor(row: PipelineRow, leads: LeadRecord[]): string | null {
   return `tel:${lead.phone.replace(/[^\d+]/g, '')}`
 }
 
-function reasonFor(row: PipelineRow): string {
-  switch (row.kind) {
-    case 'lead': {
-      if (row.badges?.some((b) => b.tone === 'asap')) return 'ASAP lead'
-      if (row.badges?.some((b) => b.tone === 'mil')) return 'Military lead'
-      return 'New lead'
-    }
-    case 'permit':
-      return 'Hot permit'
-    case 'quote': {
-      if (row.badges?.some((b) => b.tone === 'warn')) return 'Quote expiring'
-      return 'Quote silent'
-    }
-    case 'job':
-      return 'Job today'
-    default:
-      return 'Needs attention'
-  }
-}

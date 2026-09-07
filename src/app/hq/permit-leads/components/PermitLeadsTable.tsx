@@ -104,7 +104,9 @@ export default function PermitLeadsTable({
       if (!res.ok) {
         setScrapeResult(`Error: ${data.error ?? 'Scrape failed'}`);
       } else {
-        const summary = data.summary as Record<string, ScrapeJurisdictionResult>;
+        // The per-jurisdiction breakdown moved under `detail` when this route
+        // adopted the shared cron envelope (cron_runs records `detail` as-is).
+        const summary = (data.detail?.summary ?? {}) as Record<string, ScrapeJurisdictionResult>;
         const total = Object.values(summary).reduce((sum, s) => sum + s.inserted, 0);
         const sources = Object.keys(summary).length;
         const errors = Object.entries(summary).filter(([, s]) => s.errors.length > 0);

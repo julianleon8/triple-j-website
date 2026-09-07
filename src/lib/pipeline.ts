@@ -30,11 +30,18 @@ export type PipelineRow = {
   badges?: PipelineBadge[]
   created_at: string
   /** Non-visual hints carried alongside the row (phone for swipe-to-call, etc.). */
-  meta?: { phone?: string | null }
+  meta?: { phone?: string | null; sentAt?: string | null }
 }
 
 /** Leads past this age with no contact are "cold" — surfaced with a red banner/bar. */
 export const COLD_THRESHOLD_HOURS = 12
+
+/**
+ * A sent quote with no answer after this long is stalled — worth a call.
+ * Measured from sent_at, not created_at: a quote can sit in draft for weeks
+ * before it goes out, and the clock only starts when the customer sees it.
+ */
+export const QUOTE_STALL_HOURS = 72
 
 /** True when the row is a still-new lead older than COLD_THRESHOLD_HOURS. */
 export function isCold(row: PipelineRow): boolean {
@@ -89,6 +96,8 @@ export type QuoteForRow = {
   status: string
   total: number | null
   valid_until: string | null
+  /** Set only when the quote actually went out (email or SMS). Null while draft. */
+  sent_at?: string | null
   customers?: { name: string | null } | null
 }
 
@@ -259,6 +268,7 @@ export function quoteToRow(quote: QuoteForRow): PipelineRow {
     },
     badges,
     created_at: quote.created_at,
+    meta: { sentAt: quote.sent_at ?? null },
   }
 }
 
@@ -306,6 +316,50 @@ export function jobToRow(job: JobForRow): PipelineRow {
  *   Job scheduled today:     65
  *   + recency boost:         +min(10, hours since creation capped at 10)
  */
+/**
+ * Hours since a quote was sent.
+ *
+ * Returns 0 — never stale — when sent_at is unknown, rather than falling back
+ * to created_at. That fallback is exactly the bug this replaces: the old code
+ * measured silence from quote *creation*, so a quote drafted in March and
+ * emailed yesterday already scored as ignored for months.
+ *
+ * Callers must select sent_at (see quoteToRow). A caller that forgets it loses
+ * stall detection, which is the safe direction to fail: no false alarms.
+ */
+function hoursSinceSent(row: PipelineRow): number {
+  const stamp = row.meta?.sentAt
+  if (!stamp) return 0
+  return Math.max(0, (Date.now() - new Date(stamp).getTime()) / 3_600_000)
+}
+
+/**
+ * Short human label for *why* a row needs attention.
+ *
+ * Lives here rather than in NextActionCard so the cron nudges say the same
+ * words the dashboard does — a push reading "Quote silent" should land the
+ * reader on a card reading "Quote silent".
+ */
+export function reasonFor(row: PipelineRow): string {
+  switch (row.kind) {
+    case 'lead': {
+      if (row.badges?.some((b) => b.tone === 'asap')) return 'ASAP lead'
+      if (row.badges?.some((b) => b.tone === 'mil')) return 'Military lead'
+      return 'New lead'
+    }
+    case 'permit':
+      return 'Hot permit'
+    case 'quote': {
+      if (row.badges?.some((b) => b.tone === 'warn')) return 'Quote expiring'
+      return 'Quote silent'
+    }
+    case 'job':
+      return 'Job today'
+    default:
+      return 'Needs attention'
+  }
+}
+
 export function urgencyScore(row: PipelineRow): number {
   let score = 0
 
@@ -337,7 +391,7 @@ export function urgencyScore(row: PipelineRow): number {
         const expiringSoon = row.badges?.some((b) => b.tone === 'warn')
         if (expiringSoon) {
           score = 75
-        } else if (hoursSinceCreated >= 72) {
+        } else if (hoursSinceSent(row) >= QUOTE_STALL_HOURS) {
           score = 55
         }
       }

@@ -1,7 +1,5 @@
-import { NextRequest, NextResponse } from 'next/server'
-import { getAdminClient } from '@/lib/supabase/admin'
-import { createClient } from '@/lib/supabase/server'
 import { sendPush } from '@/lib/push'
+import { cronRoute, type CronContext, type CronResult } from '@/lib/cron'
 
 export const dynamic = 'force-dynamic'
 export const maxDuration = 30
@@ -14,11 +12,10 @@ export const maxDuration = 30
  * so this push is best-effort nudge — not a hard requirement.
  *
  * Vercel Cron schedules this at 14:30 UTC daily (vercel.json). Manual
- * trigger via the /hq UI uses Supabase auth, same dual-auth pattern as
- * the permit scraper.
+ * trigger via the /hq UI uses Supabase auth; both paths go through
+ * cronRoute, which also records the run in cron_runs.
  */
-async function runFollowups() {
-  const db = getAdminClient()
+async function runFollowups({ db }: CronContext): Promise<CronResult> {
   const nowIso = new Date().toISOString()
 
   const { data: due, error } = await db
@@ -28,14 +25,10 @@ async function runFollowups() {
     .is('review_left_at', null)
     .order('review_followup_due_at', { ascending: true })
 
-  if (error) {
-    return { ok: false, error: 'query failed' }
-  }
+  if (error) return { ok: false, error: `query failed: ${error.message}` }
 
-  const rows = due ?? []
-  if (rows.length === 0) {
-    return { ok: true, dueCount: 0, pushed: false }
-  }
+  const rows = (due ?? []) as { id: string; name: string }[]
+  if (rows.length === 0) return { ok: true, yield: 0, notified: 0 }
 
   const names = rows.slice(0, 3).map((r) => r.name)
   const more = rows.length > 3 ? ` +${rows.length - 3} more` : ''
@@ -50,20 +43,7 @@ async function runFollowups() {
     tag: 'review-followups',
   })
 
-  return { ok: true, dueCount: rows.length, pushed: result.sent > 0, sent: result.sent }
+  return { ok: true, yield: rows.length, notified: result.sent }
 }
 
-export async function GET(request: NextRequest) {
-  // Dual auth: Vercel Cron uses Bearer CRON_SECRET; manual trigger from
-  // /hq uses Supabase session cookie.
-  const auth = request.headers.get('authorization')
-  if (auth && auth === `Bearer ${process.env.CRON_SECRET}`) {
-    return NextResponse.json(await runFollowups())
-  }
-
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-
-  return NextResponse.json(await runFollowups())
-}
+export const GET = cronRoute('review-followups', runFollowups)

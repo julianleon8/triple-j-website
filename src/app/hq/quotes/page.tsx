@@ -7,7 +7,7 @@ import { QuotesList } from './components/QuotesList'
 export default async function QuotesPage() {
   const { data } = await getAdminClient()
     .from('quotes')
-    .select('id, created_at, quote_number, status, total, valid_until, customers(name)')
+    .select('id, created_at, quote_number, status, total, valid_until, sent_at, customers(name)')
     .order('created_at', { ascending: false })
     .limit(500)
 

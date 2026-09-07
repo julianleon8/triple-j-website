@@ -45,6 +45,12 @@ Do not copy anything from this file into `AGENTS.md`. That duplication is what p
 - **Competitor lead times are 2–8 weeks**, not "4–16". Verified Sept 2026: Get Carports 4–8, Dayton 4–8, Mayberry 4–6, Cardinal 2–4. Same-week still wins; use the defensible number. (2026-09-06)
 - **Canonical competitor roster:** `research/competitors/roster-2026-09.md`. `src/lib/competitors.ts` is the publishable subset, not a second source of truth. (2026-09-06)
 
+## HQ automation
+
+- **Scheduled jobs record every run** to `public.cron_runs` via `withCronRun()` in `src/lib/cron.ts`. That ledger is the only source of "when did this last run / has it gone quiet". Job registry and schedules: `Connectors.md`. (2026-09-07)
+- **Nudge cadence: at most ONE push per entity, ever** — `leads.nudged_at`, `quotes.stall_nudged_at`. The push says "you haven't seen this yet"; `NeedsAttentionFeed` stays the durable list. Do not add a re-nag interval. (2026-09-07)
+- **Quote staleness is measured from `sent_at`**, never `created_at`. `QUOTE_STALL_HOURS = 72`, beside `COLD_THRESHOLD_HOURS = 12`. Unknown `sent_at` means never stale. (2026-09-07)
+
 ## On hold / descoped
 
 - **Stripe — descoped.** Listed as "phase 4" since 2026-04-13 but never had a dependency, an env var, or a line of code. QuickBooks is the money rail. Revisit only if customer card payment is actually requested. (2026-09-06)

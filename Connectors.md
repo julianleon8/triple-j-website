@@ -21,9 +21,45 @@ Env var values live in `.env` (gitignored) and in Vercel's project settings. `.e
 | **Web Push (VAPID)** | `NEXT_PUBLIC_VAPID_PUBLIC_KEY`, `VAPID_PRIVATE_KEY`, `VAPID_SUBJECT` | `src/lib/push.ts` | HQ push notifications on new leads / hot permits |
 | **Google Maps Static** | `GOOGLE_MAPS_STATIC_KEY` | `src/app/hq/jobs/[id]/components/JobMapHero.tsx` | Job map hero image |
 | **Google Ads** | `NEXT_PUBLIC_GOOGLE_ADS_ID`, `NEXT_PUBLIC_GOOGLE_ADS_CONVERSION_LABEL` | `src/components/seo/` | Conversion tracking only — no user-facing impact |
-| **Vercel cron** | `CRON_SECRET` | `src/app/api/cron/{scrape-permits,review-followups}/route.ts` | Two crons in `vercel.json` (14:00 and 14:30 UTC) stop firing |
+| **Vercel cron** | `CRON_SECRET` | `src/lib/cron.ts` (auth + run recording), every route under `src/app/api/cron/` | The crons in `vercel.json` stop firing. See "Scheduled jobs" below |
 | **Vercel build** | `VERCEL_GIT_COMMIT_SHA`, `VERCEL_DEPLOYMENT_CREATED_AT` | `src/app/hq/settings/page.tsx` | Build stamp display only |
 | **Setup route** | `SETUP_KEY` | `src/app/api/setup/route.ts` | One-time bootstrap gate |
+
+## Scheduled jobs
+
+Every cron route goes through `cronRoute()` / `withCronRun()` in `src/lib/cron.ts`, which
+handles auth and writes one row per invocation to `public.cron_runs` (migration 026).
+Schedules live in `vercel.json`; times are **UTC** (Central is UTC−5/−6). Vercel plan is
+**Pro**, so the ceiling is 40 cron jobs at any frequency.
+
+| Job slug | Schedule (UTC) | Route |
+|---|---|---|
+| `scrape-permits` | `0 14 * * *` | `src/app/api/cron/scrape-permits/route.ts` |
+| `review-followups` | `30 14 * * *` | `src/app/api/cron/review-followups/route.ts` |
+
+**Why `cron_runs` exists.** Nothing recorded that a cron had run — both routes built a
+result object, returned it as the HTTP response and discarded it. That made three ordinary
+questions unanswerable: what changed since the last run, has this returned zero N times
+running, and is this job failing. `/hq/activity` looks like a log but is a *derived* feed
+over business-table timestamps and writes nothing.
+
+**Auth.** `cronAuth()` accepts `Bearer $CRON_SECRET` (Vercel Cron) or a Supabase session
+cookie (manual `/hq` trigger). It guards that `CRON_SECRET` is *set* before comparing —
+the original inline check would authenticate a literal `Bearer undefined` header in any
+environment where the var was missing.
+
+**Checking a job by hand:**
+
+```
+curl -H "Authorization: Bearer $CRON_SECRET" https://triplejmetaltx.com/api/cron/<slug>
+```
+
+or read the ledger:
+
+```sql
+select job, started_at, ok, yield, notified, error
+from cron_runs order by started_at desc limit 20;
+```
 
 ## Deploy
 

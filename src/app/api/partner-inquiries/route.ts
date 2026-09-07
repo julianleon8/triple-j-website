@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod'
 import { createClient } from '@/lib/supabase/server'
 import { getAdminClient } from '@/lib/supabase/admin'
-import { Resend } from 'resend'
+import { getResend } from '@/lib/resend'
 import PartnerInquiryOwnerAlert, { partnerInquiryOwnerAlertText } from '@/emails/PartnerInquiryOwnerAlert'
 import PartnerInquiryConfirmation, { partnerInquiryConfirmationText } from '@/emails/PartnerInquiryConfirmation'
 import { sendPushBackground } from '@/lib/push'
@@ -11,12 +11,6 @@ import { checkRateLimit, getClientIp } from '@/lib/rate-limit'
 import { SITE } from '@/lib/site'
 
 export const dynamic = 'force-dynamic'
-
-let _resend: Resend | null = null
-function resend(): Resend {
-  if (!_resend) _resend = new Resend(process.env.RESEND_API_KEY)
-  return _resend
-}
 
 const COMPANY_TYPE_LABELS: Record<string, string> = {
   manufacturer: 'Manufacturer',
@@ -128,7 +122,7 @@ export async function POST(request: NextRequest) {
     // OWNER_EMAIL must not 500 the request. It previously threw on
     // `undefined!.split`.
     if (process.env.OWNER_EMAIL) {
-      await resend().emails.send({
+      await getResend().emails.send({
         from: 'Triple J Metal <leads@triplejmetaltx.com>',
         to: process.env.OWNER_EMAIL.split(','),
         replyTo: data.email,
@@ -148,7 +142,7 @@ export async function POST(request: NextRequest) {
       contactName: data.contact_name.trim(),
       companyName: data.company_name.trim(),
     }
-    await resend().emails.send({
+    await getResend().emails.send({
       from: 'Triple J Metal <no-reply@triplejmetaltx.com>',
       replyTo: 'julianleon@triplejmetaltx.com',
       to: data.email,

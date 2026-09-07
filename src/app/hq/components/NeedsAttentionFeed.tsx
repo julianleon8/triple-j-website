@@ -22,7 +22,7 @@ export async function NeedsAttentionFeed() {
       .order('created_at', { ascending: false })
       .limit(100),
     db.from('quotes')
-      .select('id, created_at, quote_number, status, total, valid_until, customers(name)')
+      .select('id, created_at, quote_number, status, total, valid_until, sent_at, customers(name)')
       .in('status', ['sent'])
       .order('created_at', { ascending: false })
       .limit(100),
