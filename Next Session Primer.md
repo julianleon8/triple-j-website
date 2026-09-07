@@ -1,5 +1,15 @@
 # Next Session Primer — Read This First
 
+## Website design pass — 2026-09-07, approved for publication
+
+Owner explicitly requested commit and push to main. First pass includes simplified homepage hero, portfolio immediately below it, shared team introduction on homepage/About, compact gallery header and category filters, service quote shortcuts, and earlier trust/form/attribution cleanup. Integrated newer main changes without reverting SEO, contact-data, database, or scheduled-job fixes. Production deployment follows the push through the existing Vercel integration.
+
+Next requested work is still planning only: project-to-inquiry handoff and related projects on service pages. Owner chose the existing form on the project page and prefilling building type only. No implementation of that next feature yet.
+
+## Earlier marketing changes — included in the design publication
+
+Owner requested trust-content cleanup, quote handoff repairs, and attribution persistence; business-fact copy is excluded. Homepage placeholder reviews and Google stars are removed from rendering. Quote shortcuts select the build; Lean-To/Patio and Other/Custom are supported without a database migration. Marketing layout captures first-touch attribution for the tab session. Owner is collecting customer intelligence. These changes are included in the approved design publication.
+
 _Created: 2026-04-21 evening · **Last updated 2026-09-06** · For any Claude session picking up after 2026-09-06_
 
 > **Everything below the next block is from April and is kept for history only.**

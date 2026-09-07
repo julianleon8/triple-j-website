@@ -16,10 +16,11 @@ Do not copy anything from this file into `AGENTS.md`. That duplication is what p
 - **Services** include lean-to patios and house additions alongside carports, garages, barns, RV/boat covers, equipment covers, metal porches, ranch structures, barndominiums.
 - **Tagline:** "Built right, built fast, built by Triple J." (2026-04-15)
 - **Fonts:** Barlow Condensed (headlines) + Inter (body). Geist removed. Barlow is scoped to marketing only — not HQ. (2026-04-24)
-- **Design:** WolfSteel-inspired. No dark mode on the public site.
+- **Design:** Industrial charcoal/white/steel-blue identity; public site stays light. First design pass brings the portfolio directly after a simplified hero, adds a shared Juan/Julian/Freddy introduction, and shortens the gallery header with URL-based building filters. Use actual jobsite imagery until a real crew portrait is supplied. Implementation approved for publication to main. (2026-09-07)
 - **TrustBar stats:** Zero Subcontractors · Welded or Bolted · Same-Week · Temple TX.
 - **Testimonials:** auto-scroll marquee, CSS `@keyframes`, pause-on-hover, `'use client'`. **`REVIEWS` is empty and the section renders nothing** — the six invented "Verified Project" quotes were removed 2026-09-07. Real reviews only: fill `testimonials.md`, paste them in, and the section returns on its own. Never re-add a `rating` without a real review behind it.
-- **Lead form:** multi-step — ZIP → service + type + dimensions → concrete + timeline + military.
+- **Lead form:** two steps: project + ZIP, then contact + details. Offer Lean-To / Patio and Other / Custom; homepage shortcuts preselect the build. Lean-To maps to the existing `other` lead category with its label preserved in notes. Implemented; approved for publication 2026-09-07.
+- **Campaign attribution:** preserve the first marketing landing and campaign parameters for the browser-tab session across navigation and reloads; use memory if session storage is blocked. (2026-09-06)
 - **Interactive brand token in HQ** is `--brand-fg`; Lucide `strokeWidth={2}` is the HQ default. (2026-04-24)
 - **Steel color names:** no vendor-specific color names in customer copy. (2026-04-26)
 - **`/service-areas` is dead** — 301 → `/locations`. (2026-04-26)

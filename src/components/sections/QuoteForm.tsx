@@ -9,6 +9,7 @@ import type HCaptcha from "@hcaptcha/react-hcaptcha";
 import { Button } from "@/components/ui/Button";
 import { Container } from "@/components/ui/Container";
 import { ArrowRightIcon } from "@/components/ui/icons";
+import { captureAttribution } from "@/lib/marketing-attribution";
 
 // Lazy-load hCaptcha — its 20 KB chunk only fetches when step 2 first
 // renders. Most homepage visitors never advance past step 1, so this
@@ -31,7 +32,7 @@ const HCAPTCHA_SITE_KEY = process.env.NEXT_PUBLIC_HCAPTCHA_SITE_KEY;
    from 2026-04-15 was revised in 2026-04-23 to a 2-step structure that
    opens with a visual service-chip selector — see Decisions.md. */
 
-type ServiceType = "carport" | "garage" | "barn" | "rv_cover";
+type ServiceType = "carport" | "garage" | "barn" | "rv_cover" | "lean_to" | "other";
 type StructureType = "welded" | "bolted" | "unsure";
 type NeedsConcrete = "yes" | "already_have" | "unsure";
 type Surface = "dirt" | "gravel" | "asphalt" | "concrete";
@@ -107,6 +108,8 @@ const inputCls =
 type ServiceChip = { value: ServiceType; label: string; sublabel: string; image: string };
 
 const SERVICE_CHIPS: readonly ServiceChip[] = [
+  { value: "lean_to", label: "Lean-To / Patio", sublabel: "Attached or freestanding", image: "/images/porch-cover-lean-to.jpg" },
+  { value: "other", label: "Other / Custom", sublabel: "Tell us what you need", image: "/images/red-iron-frame-hero.jpg" },
   { value: "carport",  label: "Carport",     sublabel: "Welded or bolted",  image: "/images/carport-gable-residential.jpg" },
   { value: "garage",   label: "Metal Garage", sublabel: "Fully enclosed",   image: "/images/metal-garage-green.jpg" },
   // Real Triple J ranch build (Temple) and RV cover (Copperas Cove) from /hq/gallery —
@@ -459,18 +462,6 @@ type QuoteFormProps = {
   initialMilitary?: boolean;
 };
 
-type Attribution = {
-  utm_source?: string;
-  utm_medium?: string;
-  utm_campaign?: string;
-  utm_term?: string;
-  utm_content?: string;
-  gclid?: string;
-  fbclid?: string;
-  landing_url?: string;
-  referrer_url?: string;
-};
-
 export function QuoteForm({ initialMilitary = false }: QuoteFormProps = {}) {
   const router = useRouter();
   const [step, setStep] = useState<1 | 2>(1);
@@ -480,28 +471,18 @@ export function QuoteForm({ initialMilitary = false }: QuoteFormProps = {}) {
   const captchaRef = useRef<HCaptcha | null>(null);
   const [errMsg, setErrMsg] = useState("");
 
-  // Capture attribution from URL params + landing/referrer once on mount.
-  // Stored in a ref so it doesn't trigger re-renders. Posted with the
-  // form on submit. Powers the leads.utm_* / gclid / fbclid columns
-  // (migration 014). Only fields with values are sent — server treats
-  // missing keys as null.
-  const attrRef = useRef<Attribution>({});
+  // Also capture here for isolated form renders; marketing layout captures
+  // on pages without a form, such as the blog and partner page.
   useEffect(() => {
-    if (typeof window === "undefined") return;
-    const url = new URL(window.location.href);
-    const sp = url.searchParams;
-    const get = (k: string) => sp.get(k) || undefined;
-    attrRef.current = {
-      utm_source: get("utm_source"),
-      utm_medium: get("utm_medium"),
-      utm_campaign: get("utm_campaign"),
-      utm_term: get("utm_term"),
-      utm_content: get("utm_content"),
-      gclid: get("gclid"),
-      fbclid: get("fbclid"),
-      landing_url: window.location.href.slice(0, 2000),
-      referrer_url: document.referrer ? document.referrer.slice(0, 2000) : undefined,
-    };
+    captureAttribution();
+    function selectService(event: Event) {
+      const service = (event as CustomEvent).detail;
+      if (!SERVICE_CHIPS.some((chip) => chip.value === service)) return;
+      setForm((current) => ({ ...current, service_type: service }));
+      setStep(1);
+    }
+    window.addEventListener('triplej:quote-service', selectService);
+    return () => window.removeEventListener('triplej:quote-service', selectService);
   }, []);
 
   function update<K extends keyof FormState>(key: K, value: FormState[K]) {
@@ -541,7 +522,7 @@ export function QuoteForm({ initialMilitary = false }: QuoteFormProps = {}) {
       phone:           form.phone.trim(),
       email:           form.email.trim() || undefined,
       zip:             form.zip.trim() || undefined,
-      service_type:    form.service_type || undefined,
+      service_type:    form.service_type === "lean_to" ? "other" : form.service_type || undefined,
       structure_type:  form.structure_type,
       width:           form.width || undefined,
       length:          form.length || undefined,
@@ -552,9 +533,9 @@ export function QuoteForm({ initialMilitary = false }: QuoteFormProps = {}) {
       estimated_budget_min: budgetBand?.min,
       estimated_budget_max: budgetBand?.max ?? undefined,
       is_military:     form.is_military,
-      message:         form.message.trim() || undefined,
+      message:         [form.service_type === "lean_to" ? "Requested build: Lean-To / Patio" : "", form.message.trim()].filter(Boolean).join("\n\n") || undefined,
       captcha_token:   captchaToken ?? undefined,
-      ...attrRef.current,
+      ...captureAttribution(),
     };
 
     try {

@@ -4,10 +4,10 @@ import Link from 'next/link'
 import { Container } from '@/components/ui/Container'
 import { ButtonLink } from '@/components/ui/Button'
 import { QuoteForm } from '@/components/sections/QuoteForm'
-import { TrackedPhoneLink } from '@/components/site/TrackedPhone'
 import { getSiteUrl } from '@/lib/site-url'
 import { getAdminClient } from '@/lib/supabase/admin'
 import { describeGalleryColors } from '@/lib/gallery-colors'
+import { GALLERY_FILTERS, resolveGalleryFilter } from '@/lib/gallery-filters'
 
 type GalleryPhoto = {
   id: string
@@ -44,7 +44,10 @@ const TAG_COLORS: Record<string, string> = {
   Turnkey: 'bg-amber-100 text-amber-800',
 }
 
-export default async function GalleryPage() {
+export default async function GalleryPage({ searchParams }: {
+  searchParams: Promise<{ type?: string | string[] }>
+}) {
+  const filter = resolveGalleryFilter((await searchParams).type)
   const { data: projects } = await getAdminClient()
     .from('gallery_items')
     .select(
@@ -56,6 +59,11 @@ export default async function GalleryPage() {
     .eq('is_active', true)
     .order('is_featured', { ascending: false })
     .order('sort_order', { ascending: true })
+
+  const visibleProjects = (projects ?? []).filter((project) =>
+    pickCover(project.gallery_photos as GalleryPhoto[] | null) &&
+    (filter.types === null || filter.types.includes(project.type))
+  )
 
   // Index-level ImageGallery schema — feeds Google Image Search with the
   // cover photos of every active project. Detail pages emit per-project
@@ -94,58 +102,40 @@ export default async function GalleryPage() {
         }}
       />
 
-      {/* ── Hero ── */}
-      <section className="relative bg-ink-900 text-white py-20 md:py-28 overflow-hidden">
-        <div className="hero-glow absolute inset-0 pointer-events-none" aria-hidden="true" />
-        <Container className="relative">
-          <div className="max-w-3xl">
-            <span className="text-xs font-semibold uppercase tracking-[0.15em] text-brand-400">
-              Our Work
-            </span>
-            <h1 className="mt-3 text-white">150+ Completed Projects in Central Texas</h1>
-            <p className="mt-5 text-lg text-white/75 leading-relaxed max-w-2xl">
-              Every structure you see below was built by our local Temple crew — welded or bolted on-site,
-              concrete poured when needed, handed over complete. No kits shipped. No subcontractors.
-            </p>
-            <div className="mt-8 flex flex-wrap gap-4">
-              <ButtonLink href="#quote" variant="primary" size="lg">
-                Start Your Free Quote
-              </ButtonLink>
-              <TrackedPhoneLink
-                surface="gallery_hero"
-                className="inline-flex items-center gap-2 h-12 px-6 rounded-lg border-2 border-white/30 text-white font-semibold hover:border-white/60 transition-colors text-sm"
-              >
-                Call&nbsp;
-              </TrackedPhoneLink>
-            </div>
-          </div>
-        </Container>
-      </section>
-
-      {/* ── Stats strip ── */}
-      <section className="bg-(--color-brand-600) text-white py-5">
-        <Container>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
-            {[
-              { stat: '150+',      label: 'Projects Completed' },
-              { stat: 'Same-Week', label: 'On-Site After Approval' },
-              { stat: '1',         label: 'Contract for Everything' },
-              { stat: 'Temple TX', label: 'Local Family Business' },
-            ].map(({ stat, label }) => (
-              <div key={label}>
-                <div className="text-xl font-extrabold">{stat}</div>
-                <div className="text-xs text-white/75 mt-0.5 uppercase tracking-wide">{label}</div>
-              </div>
-            ))}
-          </div>
-        </Container>
-      </section>
-
-      {/* ── Project grid ── */}
-      <section className="py-16 md:py-24 bg-white">
+      <section className="bg-ink-900 py-10 text-white md:py-14">
         <Container size="wide">
+          <div className="flex flex-col justify-between gap-6 md:flex-row md:items-end">
+            <div>
+              <p className="text-sm font-semibold uppercase tracking-[0.15em] text-brand-300">The Triple J portfolio</p>
+              <h1 className="mt-3 text-5xl font-extrabold uppercase leading-none text-white sm:text-6xl">Built here. Built for you.</h1>
+              <p className="mt-4 max-w-xl text-base leading-relaxed text-white/75">Explore our Central Texas projects, from backyard patios to garages and ranch structures.</p>
+            </div>
+            <ButtonLink href="#quote" size="lg">Plan Your Build</ButtonLink>
+          </div>
+        </Container>
+      </section>
+
+      <section id="projects" aria-label="Project portfolio" className="scroll-mt-24 bg-paper-2 py-8 md:py-10">
+        <Container size="wide">
+          <nav aria-label="Filter projects by building type" className="mb-8 flex flex-wrap gap-2">
+            {GALLERY_FILTERS.map((option) => (
+              <Link key={option.slug}
+                href={option.slug === 'all' ? '/gallery#projects' : `/gallery?type=${option.slug}#projects`}
+                aria-current={filter.slug === option.slug ? 'page' : undefined}
+                className={`inline-flex min-h-11 items-center rounded-md border px-4 py-2 text-sm font-semibold transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600 ${filter.slug === option.slug ? 'border-ink-900 bg-ink-900 text-white' : 'border-ink-200 bg-white text-ink-600 hover:border-ink-900 hover:text-ink-900'}`}
+              >{option.label}</Link>
+            ))}
+          </nav>
+          <p className="mb-5 text-sm text-ink-500">{visibleProjects.length} {visibleProjects.length === 1 ? 'project' : 'projects'} · {filter.label}</p>
+          {visibleProjects.length === 0 && (
+            <div className="rounded-lg border border-ink-200 bg-white px-6 py-12 text-center">
+              <h2 className="text-2xl text-ink-900">More builds to explore</h2>
+              <p className="mt-3 text-base text-ink-600">No project photos in this category yet. Browse all projects or tell us what you have in mind.</p>
+              <Link href="/gallery#projects" className="mt-5 inline-flex min-h-11 items-center font-semibold text-brand-700 underline underline-offset-4">View all projects</Link>
+            </div>
+          )}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {(projects ?? []).map((project) => {
+            {visibleProjects.map((project) => {
               const cover = pickCover(project.gallery_photos as GalleryPhoto[] | null)
               if (!cover) return null
               const colorLine = describeGalleryColors({
@@ -158,7 +148,7 @@ export default async function GalleryPage() {
                 <Link
                   key={project.id}
                   href={`/gallery/${project.id}`}
-                  className="group block rounded-2xl overflow-hidden border border-ink-100 bg-ink-50 hover:shadow-lg hover:-translate-y-0.5 transition-all"
+                  className="group block rounded-lg overflow-hidden border border-ink-100 bg-white hover:shadow-md transition-shadow focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand-600"
                 >
                   <article>
                     <div className="relative aspect-4/3 overflow-hidden bg-ink-200">
@@ -170,14 +160,14 @@ export default async function GalleryPage() {
                         className="object-cover transition-transform duration-500 group-hover:scale-105"
                         unoptimized={cover.url.startsWith('/')}
                       />
-                      {project.is_featured && (
+                      {/in progress/i.test(project.title) && (
                         <span className="absolute top-3 left-3 bg-brand-600 text-white text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded-full shadow">
-                          Featured
+                          In progress
                         </span>
                       )}
                     </div>
                     <div className="p-5">
-                      <div className="flex items-center justify-between mb-2">
+                      <div className="flex flex-wrap items-center justify-between gap-2 mb-2">
                         <span className="text-xs font-semibold text-ink-400 uppercase tracking-wide">
                           {project.type} · {project.city}
                         </span>
@@ -185,7 +175,7 @@ export default async function GalleryPage() {
                           {project.tag}
                         </span>
                       </div>
-                      <h2 className="text-base font-bold text-ink-900 leading-snug">
+                      <h2 className="text-2xl font-bold text-ink-900 leading-snug">
                         {project.title}
                       </h2>
                       {colorLine && (
@@ -202,39 +192,12 @@ export default async function GalleryPage() {
 
           <div className="mt-12 text-center">
             <p className="text-ink-500 text-sm mb-6">
-              Showing {projects?.length ?? 0} of 150+ completed jobs. New photos added as projects finish.
+              New photos added as our projects take shape.
             </p>
             <ButtonLink href="#quote" variant="primary" size="lg">
               Get a Free Quote for Your Project
             </ButtonLink>
           </div>
-        </Container>
-      </section>
-
-      {/* ── Why Triple J section ── */}
-      <section className="py-16 md:py-20 bg-ink-50">
-        <Container size="narrow">
-          <h2 className="mb-6">Every Build Backed by a Local Crew</h2>
-          <p className="text-ink-600 text-lg leading-relaxed mb-8">
-            When you see a project photo on this page, it was built by Triple J Metal — a
-            Temple, TX family company. Not a national brand. Not a franchise. Not a dealer shipping
-            a kit. Our crew shows up, welds it, pours the concrete if needed, and hands you the keys
-            on the same contract.
-          </p>
-          <ul className="space-y-3">
-            {[
-              'Welded red iron steel — permanent structure, not a bolt-together kit',
-              'Concrete pad pouring included in the same contract',
-              'Same-week scheduling — no 4–16 week wait lists',
-              'Custom dimensions — any width, length, or height configuration',
-              'Licensed and insured, Temple TX family business',
-            ].map((point) => (
-              <li key={point} className="flex items-start gap-3 text-sm text-ink-700">
-                <span className="text-(--color-brand-600) mt-0.5 font-bold shrink-0">✓</span>
-                {point}
-              </li>
-            ))}
-          </ul>
         </Container>
       </section>
 
