@@ -1248,3 +1248,136 @@ export const LOCATIONS: Record<string, LocationData> = {
 }
 
 export const LOCATION_SLUGS = Object.keys(LOCATIONS)
+
+/* ────────────────────────────────────────────────────────────────────────────
+   ZIP → city resolution
+
+   One owner for "which city is this ZIP". Before this, two hand-maintained
+   copies of the map lived in the API routes (/api/leads and /api/hq/voice-lead)
+   and neither derived from LOCATIONS. They drifted: 78664 — Round Rock, a city
+   with its own landing page — was missing from both, so a Round Rock lead came
+   in labelled `78664`. That raw ZIP was then stored in `leads.city` and
+   interpolated straight into the owner alert subject, which arrived reading
+   "New Lead: <name> — 78664 — garage" and looked like junk.
+
+   `LOCATIONS[].zip` is the primary ZIP we publish per city; the maps below add
+   the rest of each city's ZIPs plus the nearby towns we serve that don't have a
+   landing page of their own.
+   ──────────────────────────────────────────────────────────────────────────── */
+
+/**
+ * Secondary ZIPs for cities that already have a LOCATIONS entry. Keyed by slug
+ * so a typo fails loudly in the build below rather than silently adding a city.
+ * The primary ZIP comes from `LOCATIONS[slug].zip` and must not be repeated.
+ */
+const EXTRA_CITY_ZIPS: Record<string, readonly string[]> = {
+  temple:          ['76502', '76503', '76504', '76505', '76508'],
+  killeen:         ['76540', '76542', '76543', '76544', '76545', '76546', '76547', '76549'],
+  waco:            ['76702', '76703', '76704', '76705', '76706', '76707', '76708', '76710', '76711', '76712'],
+  georgetown:      ['78627', '78628', '78633'],
+  'round-rock':    ['78665', '78680', '78681', '78683'],
+  belton:          ['76597', '76598'],
+}
+
+/**
+ * Towns inside the service area that don't have their own landing page. Carried
+ * over from the previous hand-maintained maps — this list is a business fact,
+ * so add to it only when Julian confirms we cover a town, never by inference.
+ *
+ * Note: the old maps had `76578: Taylor`. 76578 is Thrall; Taylor is 76574,
+ * which is what LOCATIONS has always said. Corrected here.
+ */
+const NEARBY_TOWN_ZIPS: Record<string, string> = {
+  '76511': 'Bartlett',
+  '76527': 'Florence',
+  '76554': 'Little River-Academy',
+  '76557': 'Moody',
+  '76578': 'Thrall',
+}
+
+/** Every ZIP we can name a city for. Built once at module load. */
+export const ZIP_TO_CITY: Readonly<Record<string, string>> = (() => {
+  const map: Record<string, string> = {}
+
+  for (const loc of Object.values(LOCATIONS)) {
+    // County surfaces (name === county) are SEO groupings, not places a lead
+    // lives — Bell County carries zip 76513, which is Belton's. Mapping a ZIP
+    // to "Bell County" would put a non-city into leads.city, the exact class of
+    // corruption this module exists to prevent.
+    if (loc.name === loc.county) continue
+
+    const claimed = map[loc.zip]
+    if (claimed && claimed !== loc.name) {
+      throw new Error(
+        `ZIP ${loc.zip} is claimed by both "${claimed}" and "${loc.name}" in LOCATIONS. ` +
+        `A ZIP resolves to exactly one city — give one of them a different primary ZIP.`,
+      )
+    }
+    map[loc.zip] = loc.name
+  }
+
+  for (const [slug, zips] of Object.entries(EXTRA_CITY_ZIPS)) {
+    const loc = LOCATIONS[slug]
+    if (!loc) {
+      throw new Error(
+        `EXTRA_CITY_ZIPS references unknown location slug "${slug}". ` +
+        `Add it to LOCATIONS or fix the key.`,
+      )
+    }
+    for (const zip of zips) {
+      const claimed = map[zip]
+      if (claimed && claimed !== loc.name) {
+        throw new Error(
+          `EXTRA_CITY_ZIPS gives ${zip} to "${loc.name}", but it is already "${claimed}".`,
+        )
+      }
+      map[zip] = loc.name
+    }
+  }
+
+  for (const [zip, name] of Object.entries(NEARBY_TOWN_ZIPS)) {
+    const claimed = map[zip]
+    if (claimed && claimed !== name) {
+      throw new Error(
+        `NEARBY_TOWN_ZIPS gives ${zip} to "${name}", but a LOCATIONS city already claims it as "${claimed}".`,
+      )
+    }
+    map[zip] = name
+  }
+
+  return Object.freeze(map)
+})()
+
+/**
+ * The city for a ZIP, or `null` when we don't recognise it.
+ *
+ * Returns null rather than echoing the ZIP back: callers persist this into
+ * `leads.city`, and a ZIP stored in a city column poisons every city-level
+ * report downstream. Use `formatCityOrZip` for display.
+ */
+export function cityFromZip(zip: string | null | undefined): string | null {
+  const key = zip?.trim()
+  if (!key) return null
+  return ZIP_TO_CITY[key] ?? null
+}
+
+/** True when the ZIP is one we have a named city for. */
+export function isServedZip(zip: string | null | undefined): boolean {
+  return cityFromZip(zip) !== null
+}
+
+/**
+ * Human label for a lead's location, for alert subjects and HQ rows.
+ * Falls back to `ZIP 76577` — still identifiable, but obviously a ZIP rather
+ * than a bare number that reads like spam.
+ */
+export function formatCityOrZip(
+  city: string | null | undefined,
+  zip: string | null | undefined,
+): string {
+  const c = city?.trim()
+  if (c) return c
+  const z = zip?.trim()
+  if (z) return `ZIP ${z}`
+  return 'Unknown'
+}

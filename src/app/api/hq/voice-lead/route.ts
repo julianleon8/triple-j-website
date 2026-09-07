@@ -7,32 +7,13 @@ import {
   VoiceExtractionError,
 } from '@/lib/voice-lead-extractor'
 import { notifyNewLead } from '@/lib/lead-notifications'
+import { cityFromZip } from '@/lib/locations'
 
 export const dynamic = 'force-dynamic'
 // 30s covers Whisper (~2s for 30s of audio) + Claude (~3s) + DB insert (~200ms)
 // + a generous buffer. Vercel's serverless function max on Hobby is 10s but we
 // deploy to Pro with 30s default; this matches.
 export const maxDuration = 30
-
-// Duplicated intentionally from /api/leads/route.ts — avoid touching the
-// customer-facing route in this commit. Consolidate into a shared util in a
-// follow-up if we grow a third caller. See Phase 4 notes.
-const ZIP_CITIES: Record<string, string> = {
-  '76501': 'Temple', '76502': 'Temple', '76503': 'Temple', '76504': 'Temple',
-  '76508': 'Temple', '76511': 'Bartlett',
-  '76513': 'Belton',
-  '76522': 'Copperas Cove',
-  '76527': 'Florence',
-  '76534': 'Holland',
-  '76541': 'Killeen', '76542': 'Killeen', '76543': 'Killeen', '76544': 'Killeen',
-  '76548': 'Harker Heights',
-  '76549': 'Killeen',
-  '76554': 'Little River-Academy',
-  '76557': 'Moody',
-  '76571': 'Salado',
-  '76578': 'Taylor',
-  '76579': 'Troy',
-}
 
 // Reasonable caps — Whisper's own ceiling is 25 MB but a 30s voice memo at
 // AAC 64 kbps is ~240 KB. A 5 MB cap lets even a 2-minute memo through without
@@ -49,7 +30,7 @@ function buildInsertRow(
   transcript: string,
 ) {
   const zip = ext.zip?.trim() || null
-  const city = ext.city?.trim() || (zip ? ZIP_CITIES[zip] ?? null : null)
+  const city = ext.city?.trim() || cityFromZip(zip)
 
   // Size line included before the transcript for parity with the form route.
   const sizeLine =

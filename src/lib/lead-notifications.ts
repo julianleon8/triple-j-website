@@ -2,6 +2,7 @@ import LeadOwnerAlert, { leadOwnerAlertText } from '@/emails/LeadOwnerAlert'
 import LeadCustomerConfirmation, { leadCustomerConfirmationText } from '@/emails/LeadCustomerConfirmation'
 import { sendPushBackground } from '@/lib/push'
 import { getResend } from '@/lib/resend'
+import { formatCityOrZip } from '@/lib/locations'
 
 const CONCRETE_LABELS: Record<string, string> = {
   yes: 'Yes — include concrete pad',
@@ -66,7 +67,10 @@ export async function notifyNewLead({ lead, sizeLine = null }: NotifyNewLeadInpu
     lead.source === 'facebook_messenger' ? '💬 FB DM' :
     '🔔 New Lead'
 
-  const city = lead.city ?? 'Unknown'
+  // formatCityOrZip keeps an unrecognised ZIP legible as "ZIP 76577" rather
+  // than a bare number — the subject line is the only thing Julian sees
+  // before deciding whether a lead is real.
+  const city = formatCityOrZip(lead.city, lead.zip)
   const serviceType = lead.service_type ?? 'inquiry'
   const submittedAt = `${new Date(lead.created_at ?? Date.now()).toLocaleString('en-US', { timeZone: 'America/Chicago' })} CST`
 

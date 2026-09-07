@@ -7,30 +7,9 @@ import { verifyHCaptchaToken } from '@/lib/captcha'
 import { checkRateLimit, getClientIp } from '@/lib/rate-limit'
 import { inferIntentStage } from '@/lib/intent-stage'
 import { SITE } from '@/lib/site'
+import { cityFromZip } from '@/lib/locations'
 
 export const dynamic = 'force-dynamic'
-
-// Simple ZIP → city lookup for Bell / Coryell counties
-const ZIP_CITIES: Record<string, string> = {
-  '76501': 'Temple', '76502': 'Temple', '76503': 'Temple', '76504': 'Temple',
-  '76508': 'Temple', '76511': 'Bartlett',
-  '76513': 'Belton',
-  '76522': 'Copperas Cove',
-  '76527': 'Florence',
-  '76534': 'Holland',
-  '76541': 'Killeen', '76542': 'Killeen', '76543': 'Killeen', '76544': 'Killeen',
-  '76548': 'Harker Heights',
-  '76549': 'Killeen',
-  '76554': 'Little River-Academy',
-  '76557': 'Moody',
-  '76571': 'Salado',
-  '76578': 'Taylor',
-  '76579': 'Troy',
-}
-
-function cityFromZip(zip: string): string {
-  return ZIP_CITIES[zip?.trim()] ?? zip ?? 'Not provided'
-}
 
 const leadSchema = z.object({
   // Step 1 — contact
@@ -126,7 +105,9 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    const city = cityFromZip(data.zip ?? '')
+    // null (not the raw ZIP) when unrecognised — a ZIP stored in the city
+    // column poisons every city-level report. Display handles the fallback.
+    const city = cityFromZip(data.zip)
     const sizeLine = data.width && data.length
       ? `${data.width}W × ${data.length}L${data.height ? ` × ${data.height}H` : ''} ft`
       : null

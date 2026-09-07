@@ -50,6 +50,7 @@ Do not copy anything from this file into `AGENTS.md`. That duplication is what p
 - **Scheduled jobs record every run** to `public.cron_runs` via `withCronRun()` in `src/lib/cron.ts`. That ledger is the only source of "when did this last run / has it gone quiet". Job registry and schedules: `Connectors.md`. (2026-09-07)
 - **Nudge cadence: at most ONE push per entity, ever** — `leads.nudged_at`, `quotes.stall_nudged_at`. The push says "you haven't seen this yet"; `NeedsAttentionFeed` stays the durable list. Do not add a re-nag interval. (2026-09-07)
 - **Quote staleness is measured from `sent_at`**, never `created_at`. `QUOTE_STALL_HOURS = 72`, beside `COLD_THRESHOLD_HOURS = 12`. Unknown `sent_at` means never stale. (2026-09-07)
+- **ZIP -> city has one owner:** `ZIP_TO_CITY` / `cityFromZip()` in `src/lib/locations.ts`, built from `LOCATIONS`. Never hand-maintain a second map in a route. An unrecognised ZIP resolves to **NULL**, never to the ZIP itself -- `leads.city` is a city name or NULL. Display uses `formatCityOrZip()` ("ZIP 76577"). County surfaces (`name === county`) are excluded from the map -- they carry a city's ZIP (`bell-county` holds Belton's 76513), so including them files Belton leads under "Bell County". Any remaining duplicate ZIP throws at module load. (2026-09-07)
 
 ## On hold / descoped
 

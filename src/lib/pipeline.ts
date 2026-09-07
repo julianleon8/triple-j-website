@@ -5,6 +5,8 @@
  * Used by the Funnel tab (all entities) and the Now tab (filtered slices).
  */
 
+import { formatCityOrZip } from '@/lib/locations'
+
 export type PipelineKind = 'lead' | 'permit' | 'customer' | 'quote' | 'job'
 
 export type PipelineBadgeTone = 'hot' | 'asap' | 'mil' | 'today' | 'new' | 'featured' | 'warn'
@@ -178,7 +180,12 @@ export function leadToRow(lead: LeadForRow): PipelineRow {
   if (lead.timeline === 'asap' && lead.status === 'new') badges.push({ text: 'ASAP', tone: 'asap' })
   if (lead.is_military) badges.push({ text: 'MIL', tone: 'mil' })
 
-  const locationBits = [lead.city, lead.zip].filter(Boolean).join(' · ')
+  // When the ZIP resolved, city and zip are both meaningful and both show.
+  // When it didn't, city is null and formatCityOrZip renders "ZIP 76577"
+  // once — not the old "76577 · 76577".
+  const locationBits = lead.city
+    ? [lead.city, lead.zip].filter(Boolean).join(' · ')
+    : formatCityOrZip(null, lead.zip)
   const serviceBits = [readableService(lead.service_type), lead.structure_type].filter(Boolean).join(' · ')
   const secondary = [locationBits, serviceBits].filter(Boolean).join(' — ')
 
