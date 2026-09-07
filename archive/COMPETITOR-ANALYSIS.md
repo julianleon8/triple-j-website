@@ -1,3 +1,6 @@
+> **SUPERSEDED 2026-09-06** by `research/competitors/roster-2026-09.md`.
+> Archived, not authoritative. Was undated, which is part of why the competitor picture drifted.
+
 # Competitor Analysis — Triple J Metal LLC
 
 ## Local Competitors (Temple / Killeen Area) — Highest Priority

@@ -1,10 +1,51 @@
 # Next Session Primer — Read This First
 
-_Created: 2026-04-21 evening · Last updated 2026-04-24 · For any Claude session picking up after 2026-04-24_
+_Created: 2026-04-21 evening · **Last updated 2026-09-06** · For any Claude session picking up after 2026-09-06_
+
+> **Everything below the next block is from April and is kept for history only.**
+> For what is currently true, read `Locked Decisions.md` — it supersedes this file on any conflict.
 
 ---
 
-## What shipped 2026-04-24 (latest) — HQ Phase 4.2: receipt OCR → QBO
+## Where the last session stopped — 2026-09-06 (competitive analysis refresh)
+
+Competitor intelligence was reconciled into one canonical roster:
+**`research/competitors/roster-2026-09.md`** (asOf 2026-09-06). Read that before any competitor,
+positioning, or local-SEO work. `src/lib/competitors.ts` is now explicitly a *publishable subset* of it,
+not a second source of truth.
+
+**Four things are waiting on a decision from Julian.** All are in the "Outstanding" section of
+`Locked Decisions.md`, in priority order:
+
+1. **A live comparison row is factually wrong.** `LOCAL_ROUNDUP_COMPARISON_ROWS` in `src/lib/competitors.ts`
+   marks "Hablamos Español" as something only Triple J offers. Polo's Carports serves Temple/Belton/Killeen
+   with a full Spanish site. Fix by stating the Triple J strength, not a competitor deficiency.
+2. **The homepage proof strip shows five stars labelled "Local on Google"** while the Google Business Profile
+   is unverified and has no reviews behind it. Copy call for the owner.
+3. **`Temple Steel Buildings` in the live competitor set cannot be verified at all** — no site, no listing,
+   no trace of the named operator. Remove or re-source.
+4. **The Google Business Profile is still unverified** (`SITE.social.google` is empty). Nothing in local
+   search moves until this is done — it blocks the 3-pack, which is the one surface national kit dealers
+   cannot occupy.
+
+**Copy corrections that are safe to make without a decision:** competitor lead times are **2–8 weeks**,
+not "4–16"; and "welded or bolted" should be framed against *national kit dealers*, not against local
+operators, four of whom weld.
+
+**Do not redo:** the roster is fresh. Do not re-scrape competitors, and do not reopen the turnkey question —
+it was settled 2026-05-02 and the September evidence supports it.
+
+**Explicitly deferred to its own session:** a Facebook Marketplace intel refresh. It is the best source of
+real local pricing and cannot be fetched programmatically — it needs Julian to pull current listings for
+Temple/Belton/Killeen. The April ProStructures figures in the roster are carried forward marked stale.
+
+**Also open:** whether to publish competitor pricing. It was researched but deliberately not shipped this
+session; the `TODO(hearth)` gate is untouched even though the no-public-pricing rule it references was
+reversed on 2026-04-30.
+
+---
+
+## What shipped 2026-04-24 — HQ Phase 4.2: receipt OCR → QBO
 
 Final Phase 4 piece. Tap **Receipt** on `/hq/jobs/[id]` → iOS native camera sheet → Claude Sonnet 4.6 vision extracts vendor/date/totals/line items + confidence → editable confirmation sheet (auto-opens) → Post to QuickBooks → Purchase posted to the configured expense account + image attached as an Attachable.
 

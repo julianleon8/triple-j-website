@@ -1,3 +1,7 @@
+> **SUPERSEDED 2026-09-06** by `research/competitors/roster-2026-09.md`.
+> Archived, not authoritative. Its seven regional/national profiles (Mueller, Safeguard, Alan's,
+> East Texas, Peak, Leland's, Texas Metal CTX) are carried into the roster's Tier B.
+
 # Competitor Analysis — Triple J Metal LLC
 *Last updated: 2026-04-15 via NotebookLM*
 

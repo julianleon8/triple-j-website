@@ -1,3 +1,10 @@
+> **ARCHIVED 2026-09-06.** Not authoritative — do not follow.
+> Two reasons: it names specific steel suppliers as a recommended trust signal, which the
+> 2026-04-23 supplier-agnostic lock forbids in any AI-facing file; and its competitor and keyword
+> assumptions predate `research/competitors/roster-2026-09.md`, which found that city-modified
+> organic search is owned by national kit dealers running programmatic location pages.
+> Rebuild SEO strategy from the roster's findings rather than from this file.
+
 # Triple J Metal LLC — SEO Strategy
 
 ## Business Overview

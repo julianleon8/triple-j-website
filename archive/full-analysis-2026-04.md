@@ -1,3 +1,7 @@
+> **SUPERSEDED 2026-09-06** by `research/competitors/roster-2026-09.md`.
+> Archived, not authoritative. Its competitor set was one of three that did not reconcile with each other
+> or with `src/lib/competitors.ts`. Retained for the April battle map and the original Firecrawl findings.
+
 # Competitor Intelligence Report — April 2026
 # Triple J Metal LLC vs. The 10 Companies Taking Your Jobs
 

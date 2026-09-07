@@ -7,6 +7,49 @@ session that shipped work. `scripts/check-vault.mjs` enforces the ordering.
 
 ---
 
+## 2026-09-06 - Competitive analysis refresh: one roster, four archivals, two false claims found
+
+**Context:** Four competitor analyses existed and none reconciled — an April Firecrawl report, a NotebookLM
+set, an undated SEO file, and `src/lib/competitors.ts`, the only one customers actually see. All were 4–5
+months stale. Scoped with the owner across 25 questions before any research ran.
+
+**Shipped:**
+- `research/competitors/roster-2026-09.md` — canonical internal roster. 48 names, tiered (8 deep profiles,
+  rest one-line), each row carrying which of the old lists it came from, so the reconciliation is auditable.
+- Filled both empty stubs. `l-and-e.md` → **L&E METAL LLC**, Temple, est. 2018, sells carports **and concrete**.
+  `central-texas-builders.md` → resolved a **three-way name collision** (Central Texas Metal Buildings /
+  Texas Metal Buildings LLC / ProStructures) and found the Belton operator's GC licence expired in 2021.
+- Archived four superseded files with SUPERSEDED headers. `archive/SEO-STRATEGY.md` went too — it named steel
+  suppliers as a trust signal, violating the 2026-04-23 supplier-agnostic lock.
+
+**Two live claims found to be wrong:**
+1. **"Hablamos Español" is false as published.** Polo's Carports (Waco) runs a full English/Español site and
+   serves Temple, Belton, Killeen. The live comparison row marks it Triple J-only.
+2. **"Welded or bolted" only holds against national kits.** Four local operators weld, including Hill Country
+   Mobile Welding, which sells on "Welded, not bolted" and covers Georgetown and Round Rock.
+
+Also: competitor lead times are **2–8 weeks**, not the "4–16" the site claims. Same-week still wins, but with
+a defensible number. Turnkey was *not* re-litigated — already settled 2026-05-02, and the evidence strengthens
+it (only L&E also sells concrete).
+
+**Biggest strategic finding:** Triple J appears in **no** top organic result for any of the six priority
+cities, in April or September. City-modified search is owned by national kit dealers running programmatic
+location pages. The one query where the site surfaced — welded + turnkey long-tail — it ranked **second**.
+The GBP is still unverified (`SITE.social.google` is empty), which blocks the local 3-pack entirely.
+
+**Method honesty:** ~30 live fetches, owner-authorized. Three limits recorded in the roster rather than
+glossed: the local 3-pack was not measurable with available tooling, Google review counts were not
+retrievable for most local operators, and April vs September SERPs came from different engines so **no
+rank-movement claim is made**.
+
+**Closed incidentally:** `triplejmetal.com` and `triplejjjmetal.com` both now 404 — the April duplicate-site
+finding is resolved.
+
+**Not done, deliberately:** no `src/` file touched, no competitor pricing published, `TODO(hearth)` untouched,
+Facebook Marketplace intel deferred to its own session.
+
+---
+
 ## 2026-09-06 - Agent governance: contract rewrite, memory-system split, connector registry, enforcement
 
 **Context:** The vault had gone four months without an entry (last commit 2026-05-02) while code kept

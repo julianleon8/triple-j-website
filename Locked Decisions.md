@@ -40,7 +40,10 @@ Do not copy anything from this file into `AGENTS.md`. That duplication is what p
 
 - **Supplier-agnostic.** Never name a specific steel supplier in the vault, in customer copy, or in AI-facing files. Multi-source by design; purchase orders and invoices are the system of record. (2026-04-23)
 - **Zero subcontractors** — owner-operated welders only.
-- **Bilingual team** — Juan and Freddy in Spanish, Julian in English. Spanish-language listing variants are live in the sales pack.
+- **Bilingual team** — Juan and Freddy in Spanish, Julian in English. Spanish-language listing variants are live in the sales pack. **Not an uncontested differentiator:** Polo's Carports (Waco) runs a full English/Español site and serves Temple, Belton, and Killeen. State it as a Triple J strength, never as something competitors lack. (2026-09-06)
+- **Welded or bolted** is a differentiator **against national kit dealers only.** At least four local operators weld — Central Texas Metal Buildings, Polo's, Laneways, and Hill Country Mobile Welding (which covers Georgetown and Round Rock). Do not claim local competitors cannot weld. (2026-09-06)
+- **Competitor lead times are 2–8 weeks**, not "4–16". Verified Sept 2026: Get Carports 4–8, Dayton 4–8, Mayberry 4–6, Cardinal 2–4. Same-week still wins; use the defensible number. (2026-09-06)
+- **Canonical competitor roster:** `research/competitors/roster-2026-09.md`. `src/lib/competitors.ts` is the publishable subset, not a second source of truth. (2026-09-06)
 
 ## On hold / descoped
 
@@ -63,3 +66,21 @@ reports these on every run. Delete an entry the moment it is closed.
   but the customer-facing copy was never updated — it is live on the public site today.
   Rewriting it is a copy decision for the owner, not a mechanical find-and-replace, because several
   of these tie the spec to specific soil claims. **Needs a decision.**
+
+- **The bilingual comparison row on the live site is factually wrong** (found 2026-09-06).
+  `LOCAL_ROUNDUP_COMPARISON_ROWS` in `src/lib/competitors.ts` marks "Hablamos Español" as a Triple J-only `yes`.
+  Polo's Carports & Metal Buildings serves Temple/Belton/Killeen with a full Spanish site. This is a public
+  claim about named competitors. **Highest-priority correction in this list.**
+
+- **The homepage proof strip shows `★★★★★` labelled "Local on Google"** while the Google Business Profile is
+  unverified and `SITE.social.google` is empty (found 2026-09-06). A five-star rating is displayed with no
+  rating behind it. **Needs a decision** — copy call for the owner, not a mechanical fix.
+
+- **`Temple Steel Buildings` in `src/lib/competitors.ts` cannot be verified** (found 2026-09-06). No website,
+  listing, or trace of the operator or of "Brice Evans" was found. It renders on
+  `/best-metal-carport-builders-temple-tx`, whose credibility rests on every competitor claim being publicly
+  verifiable. **Remove or re-source.**
+
+- **Google Business Profile is not verified** (found 2026-09-06). `SITE.social.google` is `""`. This blocks the
+  local 3-pack — the one search surface national kit dealers cannot occupy without a local address — and blocks
+  the review-count gap from ever closing. Highest-leverage unfinished item in local SEO.
