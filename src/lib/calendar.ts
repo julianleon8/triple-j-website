@@ -99,6 +99,31 @@ export function toIsoDate(d: Date): string {
   return `${y}-${m}-${day}`
 }
 
+/** The business timezone. Triple J operates out of Temple, TX. */
+export const BUSINESS_TZ = 'America/Chicago'
+
+/**
+ * Today's date in the business timezone, as YYYY-MM-DD.
+ *
+ * toIsoDate() above reads the *server's* local clock, which on Vercel is UTC.
+ * That is tolerable across a 7-day calendar window but wrong for anything
+ * that asks "what is today" — between 18:00 and 24:00 Central, UTC has
+ * already rolled over, so a cron would expire quotes a day early and a daily
+ * digest would list tomorrow's jobs.
+ *
+ * 'en-CA' formats as YYYY-MM-DD, and Intl handles DST, so this needs no
+ * dependency. There is no timezone library in this project and this is the
+ * reason there does not need to be one.
+ */
+export function todayInCentral(now: Date = new Date()): string {
+  return new Intl.DateTimeFormat('en-CA', {
+    timeZone: BUSINESS_TZ,
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+  }).format(now)
+}
+
 /** Add `days` (signed) to `iso` and return the new ISO date. */
 export function addDaysIso(iso: string, days: number): string {
   const d = new Date(`${iso}T00:00:00`)

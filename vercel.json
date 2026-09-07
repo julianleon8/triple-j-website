@@ -1,12 +1,24 @@
 {
   "crons": [
     {
+      "path": "/api/cron/stale-leads",
+      "schedule": "0 13-23/2 * * *"
+    },
+    {
       "path": "/api/cron/scrape-permits",
       "schedule": "0 14 * * *"
     },
     {
       "path": "/api/cron/review-followups",
       "schedule": "30 14 * * *"
+    },
+    {
+      "path": "/api/cron/quote-sweep",
+      "schedule": "45 14 * * *"
+    },
+    {
+      "path": "/api/cron/bounce-watch",
+      "schedule": "0 */6 * * *"
     }
   ]
 }

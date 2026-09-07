@@ -32,10 +32,19 @@ handles auth and writes one row per invocation to `public.cron_runs` (migration 
 Schedules live in `vercel.json`; times are **UTC** (Central is UTC−5/−6). Vercel plan is
 **Pro**, so the ceiling is 40 cron jobs at any frequency.
 
-| Job slug | Schedule (UTC) | Route |
+| Job slug | Schedule (UTC) | What it does |
 |---|---|---|
-| `scrape-permits` | `0 14 * * *` | `src/app/api/cron/scrape-permits/route.ts` |
-| `review-followups` | `30 14 * * *` | `src/app/api/cron/review-followups/route.ts` |
+| `stale-leads` | `0 13-23/2 * * *` | Leads still `new` past `COLD_THRESHOLD_HOURS`. Nudges once per lead (`leads.nudged_at`) |
+| `scrape-permits` | `0 14 * * *` | Permit PDF scrape → `permit_leads` |
+| `review-followups` | `30 14 * * *` | Customers whose `review_followup_due_at` passed with no review |
+| `quote-sweep` | `45 14 * * *` | Expires past-due sent quotes; nudges once on quotes silent >`QUOTE_STALL_HOURS` |
+| `bounce-watch` | `0 */6 * * *` | New `email.bounced` / `email.complained` since last success. **Push-first** |
+
+Routes live at `src/app/api/cron/<slug>/route.ts`. Each job's pure decision logic sits in
+`src/lib/jobs/<slug>.ts` — **not** in the route: Next 16 rejects any export from a `route.ts`
+that is not a route field (`GET`, `POST`, `dynamic`, `maxDuration`…), so a helper exported
+from a route fails the build with *"X is not a valid Route export field"*. That split is
+also what makes the logic unit-testable without a database.
 
 **Why `cron_runs` exists.** Nothing recorded that a cron had run — both routes built a
 result object, returned it as the HTTP response and discarded it. That made three ordinary
