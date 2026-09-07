@@ -245,7 +245,7 @@ export function CalculatorStep({ inputs, onChange, result }: Props) {
       {/* ── Concrete pad ──────────────────────────────────────────── */}
       <ToggleRow
         label="Concrete pad"
-        sub="4,000 PSI — sized to the structure unless customized"
+        sub="3,000 PSI standard — sized to the structure unless customized"
         value={inputs.concretePad !== null}
         onChange={(v) =>
           set('concretePad', v ? { width: inputs.width, length: inputs.length, thicknessInches: 4 } : null)

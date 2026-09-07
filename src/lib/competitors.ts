@@ -214,7 +214,7 @@ export const NATIONAL_KIT_COMPARISON_ROWS = (
     description: 'One company pours your slab — no separate concrete contractor.',
     cells: {
       [competitorSlug]: { status: 'no', note: 'Customer arranges' },
-      'triple-j-metal': { status: 'yes', note: '4,000 PSI' },
+      'triple-j-metal': { status: 'yes', note: '3,000 PSI std · 4,000 on request' },
     },
   },
   {
@@ -288,7 +288,7 @@ export const LOCAL_ROUNDUP_COMPARISON_ROWS: ComparisonRow[] = [
   {
     label: 'Concrete pad in same contract',
     cells: {
-      'triple-j-metal': { status: 'yes', note: '4,000 PSI' },
+      'triple-j-metal': { status: 'yes', note: '3,000 PSI std · 4,000 on request' },
       'rough-country-carports': 'unknown',
       'le-metal': 'unknown',
       'texas-custom-carports': 'unknown',
@@ -415,7 +415,7 @@ export const ALTERNATIVES_CONTENT: Record<AlternativesSlug, AlternativesPageCont
       {
         heading: 'Concrete pad — separate contractor vs. one contract',
         body:
-          'When customers buy through Eagle, the slab (if needed) is usually a separate purchase from a different concrete contractor — the customer manages the schedule between concrete cure and steel install. Triple J Metal handles both in the same contract: we pour 4,000 PSI concrete (Central Texas\' Blackland Prairie clay needs the higher PSI) and our crew is on-site to install once it cures. One company, one phone call, one invoice.',
+          'When customers buy through Eagle, the slab (if needed) is usually a separate purchase from a different concrete contractor — the customer manages the schedule between concrete cure and steel install. Triple J Metal handles both in the same contract: we pour the slab ourselves, engineered for Central Texas\' Blackland Prairie clay and our crew is on-site to install once it cures. One company, one phone call, one invoice.',
       },
       {
         heading: 'Same-week scheduling vs. 4–16 weeks',
@@ -460,7 +460,7 @@ export const ALTERNATIVES_CONTENT: Record<AlternativesSlug, AlternativesPageCont
       {
         heading: 'Concrete pad — your contractor vs. ours',
         body:
-          "When you order through Get Carports, the slab is your job — you arrange a local concrete contractor, manage the schedule between cure and install, and handle that invoice separately. With Triple J, both the concrete pad (4,000 PSI for Central Texas' clay soil) and the steel structure are in the same contract. You make one decision, write one check, and one company answers when you call.",
+          "When you order through Get Carports, the slab is your job — you arrange a local concrete contractor, manage the schedule between cure and install, and handle that invoice separately. With Triple J, both the concrete pad, engineered for Central Texas' clay soil, and the steel structure are in the same contract. You make one decision, write one check, and one company answers when you call.",
       },
       {
         heading: 'Lead time',
@@ -505,7 +505,7 @@ export const ALTERNATIVES_CONTENT: Record<AlternativesSlug, AlternativesPageCont
       {
         heading: 'Concrete pad in the same contract',
         body:
-          "Through Carport Central, the slab is the customer's responsibility — you arrange a separate concrete contractor and manage scheduling between concrete cure and the installer arriving. Triple J pours the 4,000 PSI slab AND installs the structure under one contract. Central Texas's expansive Blackland Prairie clay needs the higher PSI; we engineer for it.",
+          "Through Carport Central, the slab is the customer's responsibility — you arrange a separate concrete contractor and manage scheduling between concrete cure and the installer arriving. Triple J pours the slab AND installs the structure under one contract. Central Texas's expansive Blackland Prairie clay needs the higher PSI; we engineer for it.",
       },
       {
         heading: 'Same-week vs. multi-week lead time',
@@ -545,7 +545,7 @@ export const ALTERNATIVES_CONTENT: Record<AlternativesSlug, AlternativesPageCont
       {
         heading: 'How Triple J Metal works',
         body:
-          "Triple J Metal is a Temple, TX family-owned contractor — Juan Luis Leon (founder), Julian Leon Alvarez (operations), and Jose Alfredo 'Freddy' (foreman). When a customer signs with us, our crew handles every step: site visit, concrete pour (4,000 PSI for Central Texas clay), structure fabrication and installation, cleanup. One contract, one phone number, one team that finishes what they start.",
+          "Triple J Metal is a Temple, TX family-owned contractor — Juan Luis Leon (founder), Julian Leon Alvarez (operations), and Jose Alfredo 'Freddy' (foreman). When a customer signs with us, our crew handles every step: site visit, concrete pour engineered for Central Texas clay, structure fabrication and installation, cleanup. One contract, one phone number, one team that finishes what they start.",
       },
       {
         heading: 'Welded vs. bolted (the real differentiator)',
@@ -555,7 +555,7 @@ export const ALTERNATIVES_CONTENT: Record<AlternativesSlug, AlternativesPageCont
       {
         heading: 'Concrete is not optional in Central Texas',
         body:
-          "Central Texas sits on Blackland Prairie clay — soil that expands when wet and contracts when dry, putting stress on any structure anchored to it. The right concrete pad uses 4,000 PSI mix (not the industry-default 3,000) and is engineered to move with the soil rather than crack. Triple J pours that pad in the same contract as the structure install. National kit dealers leave the pad to a separate concrete contractor, which adds a coordination problem and (often) a less-engineered slab.",
+          "Central Texas sits on Blackland Prairie clay — soil that expands when wet and contracts when dry, putting stress on any structure anchored to it. The right concrete pad is engineered to move with the soil rather than crack — correct thickness, reinforcement and anchor depth for the ground under it, with a 4,000 PSI mix available on request. Triple J pours that pad in the same contract as the structure install. National kit dealers leave the pad to a separate concrete contractor, which adds a coordination problem and (often) a less-engineered slab.",
       },
       {
         heading: 'Lead time and accountability',

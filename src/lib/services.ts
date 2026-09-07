@@ -92,7 +92,7 @@ export const SERVICES: Record<string, ServiceData> = {
       },
     ],
     technicalAuthority:
-      'All Triple J carports are engineered for Central Texas conditions: 90 mph wind rating, 4,000 PSI concrete footings for Bell County\'s expansive clay soils, and painted-Galvalume® panels backed by a 40-year paint warranty that resist UV degradation and hail impact. We\'re familiar with Bell County and Coryell County setback requirements and can advise on permit needs before we break ground.',
+      'All Triple J carports are engineered for Central Texas conditions: 90 mph wind rating, concrete footings engineered for Bell County\'s expansive clay soils, and painted-Galvalume® panels backed by a 40-year paint warranty that resist UV degradation and hail impact. We\'re familiar with Bell County and Coryell County setback requirements and can advise on permit needs before we break ground.',
     competitorRows: [
       { them: 'Ships a kit — you arrange installation', us: 'We deliver, weld, and install everything' },
       { them: '4–16 week lead times (East Texas Carports)', us: 'Most builds scheduled within the week' },
@@ -145,7 +145,7 @@ export const SERVICES: Record<string, ServiceData> = {
       {
         title: 'Concrete Pad Pouring',
         description:
-          '4,000 PSI concrete poured on-site, properly reinforced, and cured to meet Bell County soil requirements. Sized to your structure dimensions.',
+          'Concrete poured on-site at 3,000 PSI standard (4,000 PSI on request), properly reinforced, and cured to meet Bell County soil requirements. Sized to your structure dimensions.',
       },
       {
         title: 'Steel Structure Installation',
@@ -169,7 +169,7 @@ export const SERVICES: Record<string, ServiceData> = {
       },
     ],
     technicalAuthority:
-      'Central Texas\'s expansive clay soils — especially in Bell and Coryell counties — require proper base preparation before any concrete is poured. We use 4,000 PSI concrete with appropriate reinforcement, grade the site to ensure positive drainage away from the structure, and allow full cure time before anchoring the frame. This is why national companies exclude concrete: the liability of getting it wrong is high. Our crew does it daily.',
+      'Central Texas\'s expansive clay soils — especially in Bell and Coryell counties — require proper base preparation before any concrete is poured. We pour 3,000 PSI concrete as standard — 4,000 PSI on request — with appropriate reinforcement, grade the site to ensure positive drainage away from the structure, and allow full cure time before anchoring the frame. This is why national companies exclude concrete: the liability of getting it wrong is high. Our crew does it daily.',
     competitorRows: [
       { them: 'Site prep: "not included, customer\'s responsibility"', us: 'Site grading and leveling included' },
       { them: 'Concrete: "you\'ll need to hire a separate contractor"', us: 'Concrete pad poured by us, same contract' },
@@ -321,7 +321,7 @@ export const SERVICES: Record<string, ServiceData> = {
       },
     ],
     technicalAuthority:
-      'Bell County ranch properties often have caliche and clay soil that requires proper grading and drainage planning before a barn slab is poured. We\'ve built across the Temple–Belton–Killeen–Copperas Cove corridor and know the soil conditions, flood zone considerations, and county permit requirements for agricultural structures. We use 4,000 PSI concrete for slabs and ensure proper anchor bolt placement for the local wind load requirements.',
+      'Bell County ranch properties often have caliche and clay soil that requires proper grading and drainage planning before a barn slab is poured. We\'ve built across the Temple–Belton–Killeen–Copperas Cove corridor and know the soil conditions, flood zone considerations, and county permit requirements for agricultural structures. We pour 3,000 PSI concrete as standard for slabs, 4,000 PSI on request, and ensure proper anchor bolt placement for the local wind load requirements.',
     competitorRows: [
       { them: 'Bolted kit barns — connections loosen over time', us: 'Welded red iron — permanently fused steel' },
       { them: 'National dealer, no local crew', us: 'Temple-based crew, same-week scheduling' },
@@ -393,7 +393,7 @@ export const SERVICES: Record<string, ServiceData> = {
       },
     ],
     technicalAuthority:
-      'Central Texas averages some of the highest hail frequency in the nation — Bell County alone sees multiple significant hail events per year. A standard Class A RV is 13–13.5 feet tall; we build clearance frames to 14–16 feet to ensure full roof clearance with room to maneuver. All structures are anchored into 4,000 PSI concrete or direct-buried posts engineered for 90 mph wind loads.',
+      'Central Texas averages some of the highest hail frequency in the nation — Bell County alone sees multiple significant hail events per year. A standard Class A RV is 13–13.5 feet tall; we build clearance frames to 14–16 feet to ensure full roof clearance with room to maneuver. All structures are anchored into engineered concrete or direct-buried posts engineered for 90 mph wind loads.',
     competitorRows: [
       { them: '4–16 week lead times (East Texas Carports)', us: 'On-site within days — same-week scheduling' },
       { them: 'Standard kit heights may not clear your RV', us: 'Built to your RV\'s exact height requirements' },

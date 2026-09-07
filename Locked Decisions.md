@@ -12,7 +12,7 @@ Do not copy anything from this file into `AGENTS.md`. That duplication is what p
 
 - **Timeline:** "**same-week**", never say "48-hour build". 48 hrs = materials arrival, not build time. Saying otherwise is misleading. (2026-04-15)
 - **Frame:** "**welded or bolted**" everywhere. Triple J does both. Never "custom welded" alone. (2026-04-15)
-- **Concrete spec:** **3,000 PSI is standard. 4,000 PSI is on request only** — never promised as the default. (2026-05-01 — **REVERSES** the 2026-04-15 lock that made 4,000 PSI a headline differentiator)
+- **Concrete spec:** **3,000 PSI is standard. 4,000 PSI is on request only** — never promised as the default. (2026-05-01 — **REVERSES** the 2026-04-15 lock that made 4,000 PSI a headline differentiator.) Confirmed by Julian 2026-09-06 and now true of the shipped site: all 22 occurrences rewritten, and `scripts/check-vault.mjs` enforces it with no exceptions.
 - **Services** include lean-to patios and house additions alongside carports, garages, barns, RV/boat covers, equipment covers, metal porches, ranch structures, barndominiums.
 - **Tagline:** "Built right, built fast, built by Triple J." (2026-04-15)
 - **Fonts:** Barlow Condensed (headlines) + Inter (body). Geist removed. Barlow is scoped to marketing only — not HQ. (2026-04-24)
@@ -59,13 +59,6 @@ Do not copy anything from this file into `AGENTS.md`. That duplication is what p
 
 Known gaps between what is locked above and what is actually shipped. `scripts/check-vault.mjs`
 reports these on every run. Delete an entry the moment it is closed.
-
-- **13 live pages still promise 4,000 PSI concrete as the default** (found 2026-09-06).
-  `src/lib/locations.ts` (7 occurrences), `src/lib/services.ts` (5), `src/lib/competitors.ts` (1),
-  plus the Blackland Prairie soil blog post. The 2026-05-01 reversal made 4,000 PSI on-request only,
-  but the customer-facing copy was never updated — it is live on the public site today.
-  Rewriting it is a copy decision for the owner, not a mechanical find-and-replace, because several
-  of these tie the spec to specific soil claims. **Needs a decision.**
 
 - **The bilingual comparison row on the live site is factually wrong** (found 2026-09-06).
   `LOCAL_ROUNDUP_COMPARISON_ROWS` in `src/lib/competitors.ts` marks "Hablamos Español" as a Triple J-only `yes`.

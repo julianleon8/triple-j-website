@@ -21,8 +21,6 @@ const fixed = []
 const findings = []
 const fail = (file, line, msg) => findings.push({ file, line, msg })
 
-const warnings = []
-const warn = (file, line, msg) => warnings.push({ file, line, msg })
 
 const rootMd = readdirSync(ROOT).filter((f) => f.endsWith('.md')).sort()
 
@@ -144,20 +142,15 @@ const rootMd = readdirSync(ROOT).filter((f) => f.endsWith('.md')).sort()
   const srcFiles = execFileSync('git', ['ls-files', 'src'], { encoding: 'utf8' })
     .split('\n')
     .filter((f) => /\.(ts|tsx)$/.test(f))
-  // Pre-existing drift in shipped copy, found 2026-09-06. Reported on every run
-  // but not failing, because removing "4,000 PSI" from live location and service
-  // pages is a copy/pricing decision for the owner, not a mechanical fix.
-  // Delete a path from this list the moment its copy is corrected.
-  const KNOWN_DRIFT = new Set([
-    'src/lib/locations.ts',
-    'src/lib/services.ts',
-    'src/lib/competitors.ts',
-    'src/app/(marketing)/blog/[slug]/posts/blackland-prairie-soil-metal-building-foundation.tsx',
-  ])
+  // The 4,000 PSI drift found on 2026-09-06 was carried here as a non-failing
+  // warning while the copy decision was outstanding. It was resolved the same
+  // day -- all 22 occurrences rewritten to "3,000 PSI standard, 4,000 on
+  // request" -- so this rule now enforces with no exceptions. Keep it that way:
+  // a standing exception list is how the drift survived four months.
   for (const rel of srcFiles) {
     if (!has(rel)) continue
     if (FIX) autofix(rel)
-    scanText(rel, read(rel), KNOWN_DRIFT.has(rel) ? warn : fail)
+    scanText(rel, read(rel), fail)
   }
 }
 
@@ -181,12 +174,6 @@ if (fixed.length) {
   console.error(`\nAuto-fixed ${fixed.length} retired phrase(s):\n`)
   for (const f of fixed) console.error(`  ${f.file}:${f.line} -> "${f.to}"`)
   console.error('')
-}
-
-if (warnings.length) {
-  console.error(`\n! Known drift (${warnings.length}) - tracked, not failing:\n`)
-  for (const w of warnings) console.error(`  ${w.file}:${w.line} - ${w.msg}`)
-  console.error('\n  These are live customer-facing copy. See "Outstanding" in Locked Decisions.md.\n')
 }
 
 if (findings.length) {

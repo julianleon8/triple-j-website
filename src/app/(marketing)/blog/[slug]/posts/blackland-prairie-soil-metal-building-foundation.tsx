@@ -35,10 +35,13 @@ export default function BlacklandPrairiePost() {
 
       <h2>How Soil Type Affects Concrete Specification</h2>
       <p>
-        Standard concrete mix for a residential slab is 3,000 PSI. For Central Texas expansive soil
-        conditions, <strong>Triple J specifies 4,000 PSI concrete</strong> as our default for carport and garage slabs.
-        The higher strength rating means the slab is more resistant to cracking under differential
-        movement &#8212; the scenario where one edge of your slab moves up while the other stays flat.
+        Standard concrete mix for a residential slab is 3,000 PSI, and that is what{' '}
+        <strong>Triple J pours as standard</strong> for carport and garage slabs. What matters more
+        than the number on the mix ticket is what sits under and around it: correct thickness,
+        reinforcement, a perimeter beam, and anchor depth set for the soil actually on your lot. For
+        the most reactive clay sites we can pour a <strong>4,000 PSI mix on request</strong> &#8212;
+        the higher strength rating makes the slab more resistant to cracking under differential
+        movement, the scenario where one edge of your slab moves up while the other stays flat.
       </p>
       <p>
         Beyond mix strength, slab thickness matters. Our standard slab for a carport or garage pad is
@@ -97,7 +100,7 @@ export default function BlacklandPrairiePost() {
       <ul>
         <li>Site graded for positive drainage away from slab perimeter</li>
         <li>6-inch compacted base course (crushed limestone or caliche) below slab</li>
-        <li>4-inch slab, 4,000 PSI mix, with 6-inch perimeter beam</li>
+        <li>4-inch slab, 3,000 PSI mix standard (4,000 on request), with 6-inch perimeter beam</li>
         <li>#4 rebar on 18-inch grid</li>
         <li>Anchor bolts placed in wet concrete at engineered locations before cure</li>
         <li>2% grade toward drainage direction across slab surface</li>

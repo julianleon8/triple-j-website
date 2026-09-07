@@ -184,7 +184,15 @@ const WINDOW_PRICE = 350
 /** Wall: per linear foot, height-multiplied. TODO_PRICING. */
 const WALL_PER_LINEAR_FT = 18  // dollars per foot of wall length, per foot of height
 
-/** Concrete pad: per square foot at standard 4" thickness. TODO_PRICING. */
+/**
+ * Concrete pad: per square foot at standard 4" thickness. TODO_PRICING.
+ *
+ * The standard spec is 3,000 PSI (4,000 PSI on request — see Locked
+ * Decisions.md, reversed 2026-05-01). This rate was set while the quote label
+ * still read 4,000 PSI, so it may be priced for the upgraded mix. Confirm the
+ * 3,000 PSI rate with Julian before this is treated as accurate, and add a
+ * separate line item if 4,000 PSI is ever quoted as an option.
+ */
 const CONCRETE_PER_SQFT_4IN = 8
 
 /** Tier-suggestion thresholds (max clear span in feet). */
@@ -349,7 +357,7 @@ export function calculate(inputs: CalculatorInputs): CalculatorResult {
     derivedLineItems.push(addLine({
       description:
         `${inputs.concretePad.width}'×${inputs.concretePad.length}' concrete pad ` +
-        `(${thickness}" thick, 4,000 PSI)`,
+        `(${thickness}" thick, 3,000 PSI)`,
       quantity: 1,
       base_unit_price: padTotal,
       category: 'concrete',

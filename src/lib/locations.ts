@@ -223,7 +223,7 @@ export const LOCATIONS: Record<string, LocationData> = {
     whyLocalBullets: [
       '25 minutes from Temple HQ — a real local crew, not a national kit shipped from out of state',
       "Welded OR bolted red-iron — your choice for Texas wind, hail, and Fort Cavazos timelines",
-      "4,000 PSI concrete poured for Bell County's expansive clay soils — in the same contract",
+      "Concrete poured and engineered for Bell County's expansive clay soils — in the same contract",
       'Same-week scheduling — built around PCS arrivals and hail-season urgency, not a 12-week wait list',
     ],
     callouts: [
@@ -376,7 +376,7 @@ export const LOCATIONS: Record<string, LocationData> = {
     whyLocalBullets: [
       'Our shop, our yard, our crew — all on Tem-Bel Ln in Temple. No driving in from out of state, no kit in a box.',
       "Welded OR bolted red-iron — your choice for Texas wind, hail, and Lake Belton shoreline gusts.",
-      "4,000 PSI concrete poured for Bell County's expansive clay soils — in the same contract.",
+      "Concrete poured and engineered for Bell County's expansive clay soils — in the same contract.",
       'Same-week scheduling — most calls become a build before the weekend.',
     ],
     callouts: [
@@ -480,7 +480,7 @@ export const LOCATIONS: Record<string, LocationData> = {
     whyLocalBullets: [
       "We know the Bell County permit office by first name — pulling permits in Belton is part of our regular week.",
       "15 min from our Temple shop — fastest install in Bell County, no national-dealer dispatch lag.",
-      "4,000 PSI concrete poured for Bell County's expansive clay soils — same contract.",
+      "Concrete poured and engineered for Bell County's expansive clay soils — same contract.",
       "Welded OR bolted red-iron — your choice for Texas wind, hail, and the long haul.",
     ],
     callouts: [
@@ -704,7 +704,7 @@ export const LOCATIONS: Record<string, LocationData> = {
       {
         name: 'San Gabriel River',
         blurb:
-          "The river runs through downtown and along the north edge of town — and the riparian properties near it need erosion-conscious foundations. We pour 4,000 PSI concrete with anchor depth set for the actual flood-pulse zone, not a generic spec.",
+          "The river runs through downtown and along the north edge of town — and the riparian properties near it need erosion-conscious foundations. We set the concrete spec and anchor depth for the actual flood-pulse zone, not a generic spec.",
       },
       {
         name: 'Sun City',
@@ -728,7 +728,7 @@ export const LOCATIONS: Record<string, LocationData> = {
     whyLocalBullets: [
       'Same-week scheduling — most Georgetown contractors are quoting 4–6 weeks. Triple J builds before they call you back.',
       'Sun City RV covers and golf-cart enclosures — extra-tall clearance, HOA-grade aesthetic, sized for the rigs retirees actually drive.',
-      'San Gabriel River-adjacent foundations — 4,000 PSI concrete and anchor depth engineered for flood-pulse properties and seasonal water tables.',
+      'San Gabriel River-adjacent foundations — concrete spec and anchor depth engineered for flood-pulse properties and seasonal water tables.',
       "Liberty Hill ranch country — welded red-iron barns, equipment sheds, and lean-tos for Williamson County's growing rural property base.",
     ],
     callouts: [
@@ -824,7 +824,7 @@ export const LOCATIONS: Record<string, LocationData> = {
     topServices: ['hoa-compliant-structures', 'carports', 'turnkey-carports-with-concrete'],
     whyLocalBullets: [
       'HOA-compliant red-iron — concealed-fastener standing-seam, color-matched siding, builds that read residential for Brushy Creek, Forest Creek, and Teravista architectural review boards.',
-      "Edwards Plateau caliche or Blackland Prairie clay — we engineer 4,000 PSI concrete and anchor depth for the soil actually under your slab, not a national average.",
+      "Edwards Plateau caliche or Blackland Prairie clay — we engineer the concrete spec and anchor depth for the soil actually under your slab, not a national average.",
       "Bilingual install crew — Juan and Freddy run the build in Spanish or English for Round Rock's growing Hispanic homeowner market.",
       'Same-week scheduling for Fort Cavazos PCS retirees taking Dell, Apple, and Tesla jobs — vehicles under cover before the moving truck unloads.',
     ],
@@ -1234,7 +1234,7 @@ export const LOCATIONS: Record<string, LocationData> = {
     areaContext:
       "We serve all of Burnet County, including Burnet (county seat), Marble Falls (Highland Lakes resort area), Bertram, Granite Shoals, and rural ranch properties throughout the Hill Country. Lakefront RV covers, hilltop carports, and ranch equipment barns are routine work for us here.",
     whyLocal:
-      "Burnet County's Hill Country terrain — caliche, granite, and rocky soil — requires real grading and proper anchor placement. Most national kit-shippers have no answer for it. Triple J brings the right anchor specs, the right concrete depth (4,000 PSI for expansive ground conditions), and our own crew to install on terrain other contractors won't touch.",
+      "Burnet County's Hill Country terrain — caliche, granite, and rocky soil — requires real grading and proper anchor placement. Most national kit-shippers have no answer for it. Triple J brings the right anchor specs, the right concrete depth and mix for expansive ground conditions, and our own crew to install on terrain other contractors won't touch.",
     services: [
       'Welded or bolted red iron carports',
       'Metal garages',

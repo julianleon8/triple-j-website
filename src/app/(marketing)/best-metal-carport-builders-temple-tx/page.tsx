@@ -282,7 +282,7 @@ export default function BestBuildersRoundupPage() {
               </li>
               <li className="flex items-start gap-3">
                 <span className="text-(--color-brand-600) font-bold shrink-0 mt-0.5">✓</span>
-                You want the concrete pad (4,000 PSI for Bell County clay) poured in the same
+                You want the concrete pad, engineered for Bell County clay, poured in the same
                 contract as the structure install.
               </li>
               <li className="flex items-start gap-3">
