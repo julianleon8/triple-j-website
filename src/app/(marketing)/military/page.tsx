@@ -10,6 +10,7 @@ import { TrustBar } from '@/components/sections/TrustBar'
 import { BreadcrumbJsonLd } from '@/components/seo/BreadcrumbJsonLd'
 import { TrackedPhoneButtonLink } from '@/components/site/TrackedPhone'
 import { getSiteUrl } from '@/lib/site-url'
+import { SITE } from '@/lib/site'
 
 /**
  * /military — Fort Cavazos PCS-season landing page.
@@ -60,7 +61,7 @@ const TIMELINE_STEPS = [
   {
     n: '1',
     title: 'Same-day callback',
-    body: 'Call 254-346-7764 or send a quote request. Juan or Julian gets back to you the same day — usually within an hour during business hours.',
+    body: `Call ${SITE.phone} or send a quote request. Juan or Julian gets back to you the same day — usually within an hour during business hours.`,
   },
   {
     n: '2',

@@ -11,6 +11,7 @@ import {
   Text,
 } from '@react-email/components'
 import type { ReactNode } from 'react'
+import { SITE } from '@/lib/site'
 
 const LOGO_URL = 'https://www.triplejmetaltx.com/images/logo-lion.png'
 const BRAND_COLOR = '#1e6bd6'
@@ -56,8 +57,8 @@ export default function BrandLayout({ preview, children }: BrandLayoutProps) {
                   <Text style={brandWordmarkBottom}>METAL</Text>
                 </td>
                 <td style={{ textAlign: 'right', verticalAlign: 'middle' }}>
-                  <Link href="tel:+12543467764" style={headerPhone}>
-                    254-346-7764
+                  <Link href={SITE.phoneHref} style={headerPhone}>
+                    {SITE.phone}
                   </Link>
                   <Text style={headerHours}>Mon–Sat · 8a–6p</Text>
                 </td>
@@ -84,9 +85,9 @@ export default function BrandLayout({ preview, children }: BrandLayoutProps) {
               BUILT RIGHT · BUILT FAST · BUILT BY TRIPLE J
             </Text>
             <Text style={footerNap}>
-              3319 Tem-Bel Ln, Temple, TX 76502 ·{' '}
-              <Link href="tel:+12543467764" style={footerLink}>
-                254-346-7764
+              {SITE.addressOneLine} ·{' '}
+              <Link href={SITE.phoneHref} style={footerLink}>
+                {SITE.phone}
               </Link>
               {' '}·{' '}
               <Link href="https://www.triplejmetaltx.com" style={footerLink}>
@@ -103,8 +104,8 @@ export default function BrandLayout({ preview, children }: BrandLayoutProps) {
 export const TEXT_FOOTER = `
 —
 Triple J Metal — Juan, Julian & Freddy
-3319 Tem-Bel Ln, Temple, TX 76502
-254-346-7764 · triplejmetaltx.com
+${SITE.addressOneLine}
+${SITE.phone} · triplejmetaltx.com
 Built right, built fast, built by Triple J.
 `.trim()
 

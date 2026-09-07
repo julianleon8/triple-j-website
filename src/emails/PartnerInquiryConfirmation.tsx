@@ -1,5 +1,7 @@
 import { Heading, Text } from '@react-email/components'
 import BrandLayout from './BrandLayout'
+import { napSignature } from './nap'
+import { SITE } from '@/lib/site'
 
 interface PartnerInquiryConfirmationProps {
   contactName: string
@@ -27,7 +29,7 @@ export default function PartnerInquiryConfirmation(props: PartnerInquiryConfirma
 
       <Text style={{ margin: '0 0 20px' }}>
         If you want to skip the wait, you can reach Julian directly at{' '}
-        <a href="tel:+12543467764" style={{ color: '#1e6bd6', fontWeight: 700 }}>254-346-7764</a>{' '}
+        <a href={SITE.phoneHref} style={{ color: '#1e6bd6', fontWeight: 700 }}>{SITE.phone}</a>{' '}
         or{' '}
         <a href="mailto:julianleon@triplejmetaltx.com" style={{ color: '#1e6bd6', fontWeight: 700 }}>julianleon@triplejmetaltx.com</a>.
       </Text>
@@ -47,11 +49,11 @@ export function partnerInquiryConfirmationText(props: PartnerInquiryConfirmation
     ``,
     `Julian will reach out personally within one business day to talk through how a partnership could work — what kind of jobs you typically refer, where in Central Texas they tend to land, and what your customers care about most. No sales script.`,
     ``,
-    `If you want to skip the wait, you can reach Julian directly at 254-346-7764 or julianleon@triplejmetaltx.com.`,
+    `If you want to skip the wait, you can reach Julian directly at ${SITE.phone} or ${SITE.email}.`,
     ``,
     `— Julian, Triple J Metal`,
     ``,
     `—`,
-    `Triple J Metal · 3319 Tem-Bel Ln, Temple, TX 76502 · 254-346-7764`,
+    napSignature(),
   ].join('\n')
 }

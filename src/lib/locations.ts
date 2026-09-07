@@ -1,3 +1,5 @@
+import { SITE } from '@/lib/site'
+
 export type MilitarySection = {
   headline: string
   copy: string
@@ -887,7 +889,7 @@ export const LOCATIONS: Record<string, LocationData> = {
     lng: -97.4091,
     metaTitle: 'Metal Carports Holland TX | Bell County',
     metaDescription:
-      'Triple J Metal builds metal carports and barns in Holland, TX — welded or bolted red iron, concrete available. Local Bell County crew. Call 254-346-7764.',
+      `${SITE.name} builds metal carports and barns in Holland, TX — welded or bolted red iron, concrete available. Local Bell County crew. Call ${SITE.phone}.`,
     heroHeadline: 'Metal Carports & Barns in Holland, TX — Local Bell County Crew',
     heroCopy:
       "Holland is rural Bell County — and rural properties here need structures that are built right, not shipped in a box. Triple J Metal builds welded and bolted carports, barns, and garages in Holland with same-week scheduling and concrete pad options included in one contract.",
@@ -977,7 +979,7 @@ export const LOCATIONS: Record<string, LocationData> = {
     lng: -97.6024,
     metaTitle: 'Metal Carports Nolanville TX | Bell County',
     metaDescription:
-      'Triple J Metal installs metal carports and garages in Nolanville, TX — 15 min from Temple, welded or bolted red iron, concrete included. Call 254-346-7764.',
+      `${SITE.name} installs metal carports and garages in Nolanville, TX — 15 min from Temple, welded or bolted red iron, concrete included. Call ${SITE.phone}.`,
     heroHeadline: 'Metal Carports & Garages in Nolanville, TX — 15 Minutes from Temple',
     heroCopy:
       "Nolanville sits between Temple and Killeen on the Bell County corridor — prime Triple J Metal territory. We're 15 minutes from Nolanville and build welded or bolted carports, garages, and RV covers with concrete pads included in the same contract. Same-week scheduling, local crew.",

@@ -19,6 +19,8 @@
  *   // Hearth integrates so the comparison table can render an
  *   // "Affordable monthly payments — as low as $X/mo" row.
  */
+import { SITE } from '@/lib/site'
+
 
 export type CompetitorSlug =
   | 'eagle-carports'
@@ -244,7 +246,7 @@ export const NATIONAL_KIT_COMPARISON_ROWS = (
     description: 'Texas phone, Texas crew — not a national 800 number.',
     cells: {
       [competitorSlug]: { status: 'no', note: 'National support line' },
-      'triple-j-metal': { status: 'yes', note: '254-346-7764' },
+      'triple-j-metal': { status: 'yes', note: SITE.phone },
     },
   },
   {

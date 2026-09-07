@@ -38,6 +38,53 @@ const eslintConfig = defineConfig([
     ],
     rules: { "react-hooks/set-state-in-effect": "off" },
   },
+  {
+    // NAP (name, address, phone) has exactly one owner: src/lib/site.ts.
+    //
+    // It had drifted into 48 hardcoded copies across email templates, metadata
+    // descriptions, data files and the quote PDF — so changing the phone number
+    // meant editing 20+ files, and local-SEO NAP consistency is a ranking
+    // factor. This rule keeps it at zero.
+    //
+    // Deliberately narrow: it bans the phone number in any form and the fully
+    // composed one-line address. Bare prose mentions of the street ("our shop
+    // sits on Tem-Bel Ln") are allowed — those are sentences, not addresses,
+    // and interpolating a constant into them reads badly.
+    // Tests are exempt: pinning the literal expected value is the whole point
+    // of asserting on it. A test that only compares SITE to SITE would pass
+    // even if SITE itself were wrong.
+    files: ["src/**/*.ts", "src/**/*.tsx"],
+    ignores: ["src/lib/site.ts", "src/**/*.test.ts", "src/**/*.test.tsx"],
+    rules: {
+      "no-restricted-syntax": [
+        "error",
+        {
+          selector: "Literal[value=/254-?346-?7764/]",
+          message: "Hardcoded phone number. Use SITE.phone / SITE.phoneHref from @/lib/site.",
+        },
+        {
+          selector: "TemplateElement[value.raw=/254-?346-?7764/]",
+          message: "Hardcoded phone number. Use ${SITE.phone} from @/lib/site.",
+        },
+        {
+          selector: "JSXText[value=/254-?346-?7764/]",
+          message: "Hardcoded phone number. Use {SITE.phone} from @/lib/site.",
+        },
+        {
+          selector: "Literal[value=/3319 Tem-Bel Ln,\\s*Temple/]",
+          message: "Hardcoded address. Use SITE.addressOneLine from @/lib/site.",
+        },
+        {
+          selector: "TemplateElement[value.raw=/3319 Tem-Bel Ln,\\s*Temple/]",
+          message: "Hardcoded address. Use ${SITE.addressOneLine} from @/lib/site.",
+        },
+        {
+          selector: "JSXText[value=/3319 Tem-Bel Ln,\\s*Temple/]",
+          message: "Hardcoded address. Use {SITE.addressOneLine} from @/lib/site.",
+        },
+      ],
+    },
+  },
   // Override default ignores of eslint-config-next.
   globalIgnores([
     // Default ignores of eslint-config-next:

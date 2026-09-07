@@ -6,11 +6,12 @@ import { Container } from "@/components/ui/Container";
 import { Reveal } from "@/components/ui/Reveal";
 import { ArrowRightIcon } from "@/components/ui/icons";
 import { SERVICES, SERVICE_SLUGS } from "@/lib/services";
+import { SITE } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: "Metal Building Services — Carports, Garages & More",
   description:
-    "Triple J Metal builds custom metal carports, garages, barns, RV covers, and HOA-compliant structures across Central Texas. Welded or bolted, concrete included. Call 254-346-7764.",
+    `${SITE.name} builds custom metal carports, garages, barns, RV covers, and HOA-compliant structures across Central Texas. Welded or bolted, concrete included. Call ${SITE.phone}.`,
   alternates: { canonical: "/services" },
 };
 

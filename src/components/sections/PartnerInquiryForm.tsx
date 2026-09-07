@@ -4,6 +4,7 @@ import { useRef, useState } from 'react'
 import dynamic from 'next/dynamic'
 import type HCaptcha from '@hcaptcha/react-hcaptcha'
 import { TrackedPhoneLink } from '@/components/site/TrackedPhone'
+import { SITE } from '@/lib/site'
 
 // Lazy-load hCaptcha — splits the 20 KB widget into its own chunk that
 // only fetches when this form mounts (i.e. the user is on /partners).
@@ -91,7 +92,7 @@ export function PartnerInquiryForm() {
       })
       if (!res.ok) {
         const data = await res.json().catch(() => ({}))
-        const message = typeof data?.error === 'string' ? data.error : 'Submission failed. Please try again or call 254-346-7764.'
+        const message = typeof data?.error === 'string' ? data.error : `Submission failed. Please try again or call ${SITE.phone}.`
         setErrorMsg(message)
         setStatus('err')
         setCaptchaToken(null)
@@ -103,7 +104,7 @@ export function PartnerInquiryForm() {
       setCaptchaToken(null)
       captchaRef.current?.resetCaptcha()
     } catch {
-      setErrorMsg('Network error. Please try again or call 254-346-7764.')
+      setErrorMsg(`Network error. Please try again or call ${SITE.phone}.`)
       setStatus('err')
       setCaptchaToken(null)
       captchaRef.current?.resetCaptcha()

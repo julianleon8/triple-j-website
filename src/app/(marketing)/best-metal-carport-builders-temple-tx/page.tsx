@@ -295,7 +295,7 @@ export default function BestBuildersRoundupPage() {
               </li>
               <li className="flex items-start gap-3">
                 <span className="text-(--color-brand-600) font-bold shrink-0 mt-0.5">✓</span>
-                You want a local Texas phone number (254-346-7764) that goes to the actual
+                You want a local Texas phone number ({SITE.phone}) that goes to the actual
                 family running the company.
               </li>
             </ul>

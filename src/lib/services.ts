@@ -5,6 +5,8 @@
  * research: turnkey+concrete (Gap 1), welded quality (Gap 2),
  * speed/military (Gap 3), HOA luxury (Gap 4).
  */
+import { SITE } from '@/lib/site'
+
 
 export type ServiceFeature = {
   title: string
@@ -109,7 +111,7 @@ export const SERVICES: Record<string, ServiceData> = {
       },
       {
         q: 'How much does a custom carport cost?',
-        a: 'A Triple J welded 20×20 carport typically runs $4,500–$7,500 depending on gauge, panel style, and whether concrete is included. Bolted configurations start lower. We quote every job individually — call 254-346-7764 or fill out our quote form.',
+        a: `A Triple J welded 20×20 carport typically runs $4,500–$7,500 depending on gauge, panel style, and whether concrete is included. Bolted configurations start lower. We quote every job individually — call ${SITE.phone} or fill out our quote form.`,
       },
       {
         q: 'Do you install on existing concrete?',
@@ -257,7 +259,7 @@ export const SERVICES: Record<string, ServiceData> = {
     faqs: [
       {
         q: 'How much does a metal garage cost?',
-        a: 'A basic 20×20 single-bay enclosed garage starts around $6,000–$9,000 depending on gauge, panel style, and door configuration. Multi-bay and larger structures are quoted individually. Call 254-346-7764 or submit a quote request.',
+        a: `A basic 20×20 single-bay enclosed garage starts around $6,000–$9,000 depending on gauge, panel style, and door configuration. Multi-bay and larger structures are quoted individually. Call ${SITE.phone} or submit a quote request.`,
       },
       {
         q: 'Can you add windows and side doors?',
@@ -413,7 +415,7 @@ export const SERVICES: Record<string, ServiceData> = {
       },
       {
         q: 'How quickly can you start?',
-        a: 'Most jobs are scheduled within 2–5 business days of quote acceptance, weather permitting. Call 254-346-7764 for current availability.',
+        a: `Most jobs are scheduled within 2–5 business days of quote acceptance, weather permitting. Call ${SITE.phone} for current availability.`,
       },
     ],
     militaryAngle: true,

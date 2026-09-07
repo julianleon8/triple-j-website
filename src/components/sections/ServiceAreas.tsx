@@ -3,6 +3,7 @@ import Link from "next/link";
 import { Container } from "@/components/ui/Container";
 import { Reveal } from "@/components/ui/Reveal";
 import { ArrowRightIcon, PinIcon } from "@/components/ui/icons";
+import { SITE } from "@/lib/site";
 
 /**
  * Service areas — magazine-style city card grid on a light section.
@@ -167,7 +168,7 @@ export function ServiceAreas() {
                   }`}
                 >
                   {area.distance === "HQ"
-                    ? "Triple J Metal · 3319 Tem-Bel Ln"
+                    ? `${SITE.name} · ${SITE.address.street}`
                     : area.distance + " of Temple"}
                 </div>
 

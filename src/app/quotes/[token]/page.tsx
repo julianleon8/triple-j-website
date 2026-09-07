@@ -1,5 +1,6 @@
 import { getAdminClient } from '@/lib/supabase/admin'
 import QuoteAcceptView from './components/QuoteAcceptView'
+import { SITE } from '@/lib/site'
 
 export default async function QuotePublicPage({
   params,
@@ -28,7 +29,7 @@ export default async function QuotePublicPage({
           <h1 className="text-2xl font-bold text-gray-900 mb-2">Quote Not Found</h1>
           <p className="text-gray-500 text-sm">This quote link is invalid or has expired.</p>
           <p className="text-gray-400 text-xs mt-4">
-            Need help? Call <a href="tel:+12543467764" className="underline">254-346-7764</a>
+            Need help? Call <a href={SITE.phoneHref} className="underline">{SITE.phone}</a>
           </p>
         </div>
       </div>

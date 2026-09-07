@@ -45,7 +45,7 @@ export const metadata: Metadata = {
     canonical: "/",
   },
   description:
-    "Triple J Metal builds welded or bolted metal carports, garages, and barns across Central Texas. Turnkey concrete included, same-week scheduling. Serving Temple, Belton, Killeen & more. Call 254-346-7764.",
+    `${SITE.name} builds welded or bolted metal carports, garages, and barns across Central Texas. Turnkey concrete included, same-week scheduling. Serving Temple, Belton, Killeen & more. Call ${SITE.phone}.`,
   keywords: [
     "metal carports central texas",
     "carport builders temple tx",

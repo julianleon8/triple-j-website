@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { SITE } from '@/lib/site'
 
 type LineItem = {
   id: string
@@ -59,7 +60,7 @@ export default function QuoteAcceptView({ quote, token }: Props) {
         {/* Header */}
         <div className="bg-yellow-500 rounded-t-2xl px-8 py-6">
           <h1 className="text-2xl font-bold text-black">Triple J Metal LLC</h1>
-          <p className="text-black/70 text-sm mt-1">Temple, TX · 254-346-7764</p>
+          <p className="text-black/70 text-sm mt-1">{SITE.address.city}, {SITE.address.state} · {SITE.phone}</p>
         </div>
 
         <div className="bg-white rounded-b-2xl shadow-sm border border-gray-200 border-t-0 px-8 py-8">
@@ -79,13 +80,13 @@ export default function QuoteAcceptView({ quote, token }: Props) {
           {status === 'accepted' && (
             <div className="mb-6 bg-green-50 border border-green-200 rounded-xl px-6 py-4">
               <p className="text-green-800 font-semibold">You have accepted this quote.</p>
-              <p className="text-green-700 text-sm mt-1">We&apos;ll be in touch soon to schedule your installation. Call us anytime at 254-346-7764.</p>
+              <p className="text-green-700 text-sm mt-1">We&apos;ll be in touch soon to schedule your installation. Call us anytime at {SITE.phone}.</p>
             </div>
           )}
           {status === 'declined' && (
             <div className="mb-6 bg-red-50 border border-red-200 rounded-xl px-6 py-4">
               <p className="text-red-800 font-semibold">You have declined this quote.</p>
-              <p className="text-red-700 text-sm mt-1">If you change your mind or have questions, call us at 254-346-7764.</p>
+              <p className="text-red-700 text-sm mt-1">If you change your mind or have questions, call us at {SITE.phone}.</p>
             </div>
           )}
 
@@ -149,7 +150,7 @@ export default function QuoteAcceptView({ quote, token }: Props) {
           {error && <p className="text-red-500 text-sm mt-3">{error}</p>}
 
           <p className="text-center text-xs text-gray-400 mt-8">
-            Questions? Call or text <a href="tel:+12543467764" className="underline">254-346-7764</a>
+            Questions? Call or text <a href={SITE.phoneHref} className="underline">{SITE.phone}</a>
           </p>
         </div>
       </div>

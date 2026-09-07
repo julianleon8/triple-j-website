@@ -1,4 +1,5 @@
 import { ImageResponse } from 'next/og'
+import { SITE } from '@/lib/site'
 
 /**
  * Per-page Open Graph + Twitter card image for /military.
@@ -113,7 +114,7 @@ export default async function MilitaryOpenGraphImage() {
           }}
         >
           <div>triplejmetaltx.com / military</div>
-          <div style={{ fontWeight: 700, color: 'white' }}>254-346-7764</div>
+          <div style={{ fontWeight: 700, color: 'white' }}>{SITE.phone}</div>
         </div>
       </div>
     ),

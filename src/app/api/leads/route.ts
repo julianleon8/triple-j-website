@@ -6,6 +6,7 @@ import { notifyNewLead } from '@/lib/lead-notifications'
 import { verifyHCaptchaToken } from '@/lib/captcha'
 import { checkRateLimit, getClientIp } from '@/lib/rate-limit'
 import { inferIntentStage } from '@/lib/intent-stage'
+import { SITE } from '@/lib/site'
 
 export const dynamic = 'force-dynamic'
 
@@ -108,7 +109,7 @@ export async function POST(request: NextRequest) {
     const rl = checkRateLimit(ip, 'leads', 5, 60 * 60 * 1000)
     if (!rl.allowed) {
       return NextResponse.json(
-        { error: 'Too many submissions from your IP. Please wait an hour or call 254-346-7764.' },
+        { error: `Too many submissions from your IP. Please wait an hour or call ${SITE.phone}.` },
         { status: 429, headers: { 'Retry-After': String(rl.retryAfterSec ?? 3600) } },
       )
     }

@@ -1,5 +1,7 @@
 import { Heading, Text, Section, Link } from '@react-email/components'
 import BrandLayout, { BRAND_COLOR, INK_900 } from './BrandLayout'
+import { napSignature } from './nap'
+import { SITE } from '@/lib/site'
 
 interface LeadCustomerConfirmationProps {
   name: string
@@ -59,8 +61,8 @@ export default function LeadCustomerConfirmation(props: LeadCustomerConfirmation
         <Text style={callNowText}>
           Can&rsquo;t wait? Call us directly:
         </Text>
-        <Link href="tel:+12543467764" style={callNowButton}>
-          📞 254-346-7764
+        <Link href={SITE.phoneHref} style={callNowButton}>
+          📞 {SITE.phone}
         </Link>
       </Section>
 
@@ -95,13 +97,13 @@ export function leadCustomerConfirmationText(props: LeadCustomerConfirmationProp
     lines.push(`⚡ ASAP request flagged. Your callback is moving to the top of the list.`)
   }
   lines.push(``)
-  lines.push(`Can't wait? Call us directly: 254-346-7764`)
+  lines.push(`Can't wait? Call us directly: ${SITE.phone}`)
   lines.push(``)
   lines.push(`— Juan, Julian & Freddy`)
   lines.push(`The Triple J crew · Temple, TX`)
   lines.push(``)
   lines.push(`—`)
-  lines.push(`Triple J Metal · 3319 Tem-Bel Ln, Temple, TX 76502 · 254-346-7764`)
+  lines.push(napSignature())
   lines.push(`Built right, built fast, built by Triple J.`)
   return lines.join('\n')
 }

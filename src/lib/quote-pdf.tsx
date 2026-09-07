@@ -17,6 +17,8 @@ import {
   StyleSheet,
 } from '@react-pdf/renderer'
 
+import { SITE } from '@/lib/site'
+
 export type QuoteLineItem = {
   description: string
   quantity: number
@@ -202,8 +204,8 @@ export function QuotePdfDocument(props: QuotePdfProps) {
             <Text style={styles.brandTitle}>
               TRIPLE J <Text style={styles.brandAccent}>METAL</Text>
             </Text>
-            <Text style={styles.brandSub}>3319 Tem-Bel Ln · Temple, TX 76502</Text>
-            <Text style={styles.brandSub}>254-346-7764 · triplejmetaltx.com</Text>
+            <Text style={styles.brandSub}>{SITE.addressOneLine}</Text>
+            <Text style={styles.brandSub}>{SITE.phone} · triplejmetaltx.com</Text>
           </View>
           <View style={styles.quoteMeta}>
             <Text style={styles.quoteNumber}>Quote #{quoteNumber}</Text>

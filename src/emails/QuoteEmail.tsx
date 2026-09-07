@@ -7,6 +7,7 @@ import {
   Button,
 } from '@react-email/components'
 import BrandLayout, { BRAND_COLOR } from './BrandLayout'
+import { napSignature } from './nap'
 
 interface LineItem {
   description: string
@@ -152,6 +153,6 @@ export function quoteEmailText(props: QuoteEmailProps): string {
   }
   lines.push(``)
   lines.push(`—`)
-  lines.push(`Triple J Metal LLC · 3319 Tem-Bel Ln, Temple, TX 76502 · 254-346-7764`)
+  lines.push(napSignature({ legal: true }))
   return lines.join('\n')
 }

@@ -21,12 +21,20 @@ export const SITE = {
   phone: "254-346-7764",
   phoneHref: "tel:+12543467764",
   email: "julianleon@triplejmetaltx.com",
+  emailHref: "mailto:julianleon@triplejmetaltx.com",
   address: {
     street: "3319 Tem-Bel Ln",
     city: "Temple",
     state: "TX",
     zip: "76502",
   },
+  /**
+   * The full address on one line. Prefer this over re-composing from
+   * `address.*` at the call site — that concatenation was previously
+   * hand-written in a dozen places and had already drifted into two
+   * different formats.
+   */
+  addressOneLine: "3319 Tem-Bel Ln, Temple, TX 76502",
   hours: "Mon–Sat · 8am–6pm",
   established: 2025,
   stats: {

@@ -1,5 +1,6 @@
 import { Heading, Text, Section, Row, Column, Link } from '@react-email/components'
 import BrandLayout, { BRAND_COLOR } from './BrandLayout'
+import { napSignature } from './nap'
 
 interface QuoteAcceptedOwnerAlertProps {
   quoteNumber: string
@@ -97,6 +98,6 @@ export function quoteAcceptedOwnerAlertText(props: QuoteAcceptedOwnerAlertProps)
   }
   lines.push(``)
   lines.push(`—`)
-  lines.push(`Triple J Metal · 3319 Tem-Bel Ln, Temple, TX 76502 · 254-346-7764`)
+  lines.push(napSignature())
   return lines.join('\n')
 }

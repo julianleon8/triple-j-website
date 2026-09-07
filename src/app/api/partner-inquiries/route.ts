@@ -8,6 +8,7 @@ import PartnerInquiryConfirmation, { partnerInquiryConfirmationText } from '@/em
 import { sendPushBackground } from '@/lib/push'
 import { verifyHCaptchaToken } from '@/lib/captcha'
 import { checkRateLimit, getClientIp } from '@/lib/rate-limit'
+import { SITE } from '@/lib/site'
 
 export const dynamic = 'force-dynamic'
 
@@ -71,7 +72,7 @@ export async function POST(request: NextRequest) {
     const rl = checkRateLimit(ip, 'partner-inquiries', 3, 60 * 60 * 1000)
     if (!rl.allowed) {
       return NextResponse.json(
-        { error: 'Too many submissions from your IP. Please wait an hour or call 254-346-7764.' },
+        { error: `Too many submissions from your IP. Please wait an hour or call ${SITE.phone}.` },
         { status: 429, headers: { 'Retry-After': String(rl.retryAfterSec ?? 3600) } },
       )
     }

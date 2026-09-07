@@ -112,7 +112,9 @@ The schema-graph emitted by [src/components/seo/OrganizationJsonLd.tsx](../src/c
 - Google verifies the LocalBusiness `telephone` against the GBP / Google Maps record. If schema returns a different number than GBP, the LocalBusiness entity becomes ambiguous and the Knowledge Panel suffers.
 - A tracking number rotated out of CallRail later would orphan stale schema cached in Google's index.
 
-The `<TrackedPhone*>` components are intentionally NOT used inside any JSON-LD. Schema, email templates, and metadata descriptions all reference `SITE.phone` directly. This is a hard rule — verified by grep at audit time.
+The `<TrackedPhone*>` components are intentionally NOT used inside any JSON-LD. Schema, email templates, and metadata descriptions all reference `SITE.phone` directly.
+
+This is a hard rule, and as of 2026-09-06 it is **enforced rather than asserted**. It was previously described here as "verified by grep at audit time," which was not true: only schema actually held. Email templates and metadata descriptions hardcoded the number, along with 34 other call sites. All of them now derive from `SITE`, and an ESLint `no-restricted-syntax` rule in `eslint.config.mjs` fails the build on any new hardcoded phone or composed address anywhere under `src/` (with `src/lib/site.ts` the sole exemption). `npm run lint` runs with `--max-warnings 0` in CI.
 
 ---
 
