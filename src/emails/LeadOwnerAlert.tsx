@@ -8,6 +8,10 @@ interface LeadOwnerAlertProps {
   email?: string | null
   city: string
   zip?: string | null
+  /** Two-letter state resolved from the ZIP. Defaults to TX when unknown. */
+  state?: string | null
+  /** e.g. "9.9 mi from shop" or "344 mi from shop · out of area". */
+  distanceLine?: string | null
   serviceType: string
   structureType?: string | null
   sizeLine?: string | null
@@ -28,6 +32,8 @@ export default function LeadOwnerAlert(props: LeadOwnerAlertProps) {
     email,
     city,
     zip,
+    state,
+    distanceLine,
     serviceType,
     structureType,
     sizeLine,
@@ -55,7 +61,12 @@ export default function LeadOwnerAlert(props: LeadOwnerAlertProps) {
     ['Phone', <Link key="p" href={`tel:${phone}`} style={dataLink}>{phone}</Link>],
   ]
   if (email) rows.push(['Email', <Link key="e" href={`mailto:${email}`} style={dataLink}>{email}</Link>])
-  rows.push(['Location', `${city}${zip ? ` (${zip})` : ''}`])
+  // Distance is the first thing Julian wants off a new lead — it decides
+  // whether the job is worth the truck before anything else on this card does.
+  rows.push([
+    'Location',
+    `${city}${zip ? ` (${zip})` : ''}${distanceLine ? ` · ${distanceLine}` : ''}`,
+  ])
   rows.push(['Service', serviceType.replace(/_/g, ' ')])
   if (structureType) rows.push(['Steel type', structureType])
   if (sizeLine) rows.push(['Size', sizeLine])
@@ -75,7 +86,7 @@ export default function LeadOwnerAlert(props: LeadOwnerAlertProps) {
         {name}
       </Heading>
       <Text style={subhead}>
-        {city}{zip ? `, TX ${zip}` : ', TX'} · {serviceType.replace(/_/g, ' ')}
+        {city}{zip ? `, ${state ?? 'TX'} ${zip}` : `, ${state ?? 'TX'}`} · {serviceType.replace(/_/g, ' ')}
         {sizeLine ? ` · ${sizeLine}` : ''}
       </Text>
 
@@ -141,7 +152,7 @@ export function leadOwnerAlertText(props: LeadOwnerAlertProps): string {
   const isHot = props.timeline === 'asap'
   const lines = [
     `${isHot ? '⚡ HOT LEAD' : 'NEW LEAD'} — ${props.name}`,
-    `${props.city}${props.zip ? `, TX ${props.zip}` : ', TX'} · ${props.serviceType.replace(/_/g, ' ')}`,
+    `${props.city}${props.zip ? `, ${props.state ?? 'TX'} ${props.zip}` : `, ${props.state ?? 'TX'}`} · ${props.serviceType.replace(/_/g, ' ')}`,
     ``,
     `📞 ${props.phone}`,
   ]

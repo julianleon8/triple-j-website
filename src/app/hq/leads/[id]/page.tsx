@@ -12,6 +12,7 @@ import { LeadStatusButtons } from './components/LeadStatusButtons'
 import { AttributionCard } from './components/AttributionCard'
 import { ReferrerPicker } from './components/ReferrerPicker'
 import { IntentStagePicker } from './components/IntentStagePicker'
+import { zipInfo, formatDistance, formatLeadLocation, BAND_LABELS } from '@/lib/zip'
 
 type LeadRecord = {
   id: string
@@ -76,6 +77,8 @@ export default async function LeadDetailPage({ params }: { params: Promise<{ id:
   const ageH = Math.max(0, (Date.now() - new Date(lead.created_at).getTime()) / 3_600_000)
   const cold = lead.status === 'new' && ageH > COLD_THRESHOLD_HOURS
   const statusClass = LEAD_STATUS_CLASS[lead.status] ?? 'bg-gray-100 text-gray-600'
+  // Server component — safe to pull in the 280 KB ZIP dataset. See src/lib/zip.ts.
+  const geo = zipInfo(lead.zip)
 
   return (
     <div className="space-y-4">
@@ -95,7 +98,7 @@ export default async function LeadDetailPage({ params }: { params: Promise<{ id:
           <div className="min-w-0">
             <h1 className="text-[26px] font-bold leading-tight text-(--text-primary)">{lead.name}</h1>
             <p className="mt-0.5 text-[14px] text-(--text-secondary)">
-              {[readable(lead.service_type), lead.structure_type, lead.city].filter(Boolean).join(' · ') || 'Lead'}
+              {[readable(lead.service_type), lead.structure_type, formatLeadLocation(lead.city, lead.zip)].filter(Boolean).join(' · ') || 'Lead'}
             </p>
           </div>
           <span className={`shrink-0 rounded-full px-2.5 py-1 text-[11px] font-semibold capitalize ${statusClass}`}>
@@ -133,6 +136,14 @@ export default async function LeadDetailPage({ params }: { params: Promise<{ id:
           <Field label="Concrete" value={readable(lead.needs_concrete)} />
           <Field label="Surface" value={readable(lead.current_surface)} />
           <Field label="City / ZIP" value={[lead.city, lead.zip].filter(Boolean).join(' · ') || null} />
+          <Field label="Distance" value={geo ? [
+            formatDistance(geo) ? `${formatDistance(geo)} from shop` : 'In Temple',
+            BAND_LABELS[geo.band],
+          ].join(' · ') : null} />
+          <Field label="County" value={geo ? `${geo.county} County, ${geo.state}` : null} />
+          {/* A ZIP is an area, not a point — 76513 spans five towns. Worth
+              showing when the crew is working out where the job actually is. */}
+          <Field label="Also in ZIP" value={geo && geo.cities.length > 1 ? geo.cities.slice(1).join(', ') : null} />
           <Field label="Military" value={lead.is_military ? 'Yes' : 'No'} />
           <Field label="Source" value={readable(lead.source)} />
         </dl>

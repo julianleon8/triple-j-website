@@ -7,6 +7,34 @@ _Created: 2026-04-21 evening · **Last updated 2026-09-06** · For any Claude se
 
 ---
 
+## Where the last session stopped — 2026-09-07 (ZIP geography)
+
+`src/lib/zip.ts` now answers "where is this ZIP and how far is it" for 4,188 ZIPs across TX and the four
+states bordering it, backed by `src/lib/data/zip-geo.json` (U.S. Census, public domain, regenerate with
+`node scripts/build-zip-data.mjs`). Read the `Locked Decisions.md` line before touching it — the key
+constraint is that it is a layer *under* `locations.ts`, not a replacement: **`cityFromZip()` is still the
+only thing allowed to populate `leads.city`.**
+
+Distance is **straight-line, not drive time.** `driveMinutes` is a reserved field, null everywhere. Wire a
+routing provider into that seam rather than changing `miles`. Note a Google Maps key already exists in the
+project (`GOOGLE_MAPS_STATIC_KEY`, used by the job map hero), so Distance Matrix would not need a new
+billing relationship — just a new key scope.
+
+**Two things waiting on Julian:**
+1. **A wrong distance in live marketing copy.** `LOCATIONS.georgetown.distanceFromTemple` reads "70 mi
+   south" and `round-rock` reads "60 mi", but Georgetown is *closer* than Round Rock (34.5 vs 44.8 mi
+   straight-line). The same numbers are duplicated by hand in `src/components/sections/ServiceAreas.tsx`.
+   Deriving both from `lat`/`lng` fixes the error and the duplication together — but it changes public copy,
+   so it needs his call.
+2. **An exact shop coordinate.** `SHOP_ORIGIN` is currently Temple's city point, not the yard at
+   3319 Tem-Bel Ln. Distance barely moves, but compass bearings are wrong often enough that they are
+   computed and deliberately not displayed. One lat/lng unlocks them.
+
+**Optional hardening:** `npm i server-only` + the import at the top of `src/lib/zip.ts`, so importing the
+280 KB dataset from a `'use client'` component becomes a build error instead of a silent bundle bloat.
+
+---
+
 ## Where the last session stopped — 2026-09-06 (competitive analysis refresh)
 
 Competitor intelligence was reconciled into one canonical roster:

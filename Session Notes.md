@@ -7,6 +7,55 @@ session that shipped work. `scripts/check-vault.mjs` enforces the ordering.
 
 ---
 
+## 2026-09-07 - ZIP geography: any ZIP now resolves to a place and a distance from the shop
+
+**Context:** Julian asked for the repo to be "ZIP code aware" — given a ZIP, know where it is, how far it
+is, and which cities sit inside it, so a push notification says how far a job is before he opens it.
+`ZIP_TO_CITY` only answered for the ~45 curated service-area ZIPs; everything else fell to NULL and the
+push read `ZIP 79101`. Scoped with three questions before any code: coverage (TX + border states),
+distance metric (straight-line now, drive-time seam for later), and whether `leads.city` semantics change
+(they do not).
+
+**Shipped:**
+- `scripts/build-zip-data.mjs` — generates the dataset from three U.S. Census public-domain files
+  (2023 ZCTA Gazetteer + 2020 ZCTA-County and ZCTA-Place relationship files). No API key, no licence to
+  carry, fully regenerable. Emits one row per line so the file is reviewable in a diff.
+- `src/lib/data/zip-geo.json` — 4,188 ZIPs across TX/OK/LA/NM/AR, 280 KB.
+- `src/lib/zip.ts` — `zipInfo()`, `milesFromShop()`, `bandForMiles()`, `formatDistance()`,
+  `formatLeadLocation()`. Sits *under* the service-area map; `cityFromZip()` is still the only thing that
+  may populate `leads.city`, so the 2026-09-07 NULL lock is untouched.
+- `src/lib/zip.test.ts` — 30 tests.
+- Wired into the owner-alert email (a Distance row + the subject line), the push body, and the HQ lead
+  page (distance, county, and the other towns inside the ZIP). The **customer** confirmation deliberately
+  keeps the plain city name — distance and "out of area" are internal triage, not customer-facing.
+
+**The census independently confirmed the curated map.** All 45 served ZIPs resolve to exactly the city
+`locations.ts` names, including the `76578 → Thrall` correction made earlier the same day. A test asserts
+this permanently, so census data can never rename a place Julian has named.
+
+**Three judgement calls, each of which changed the output:**
+- **"Out of area" is a claim about distance, not about the curated list.** Thorndale (76577) is 35 mi out
+  and just isn't on the served-towns list; the first version labelled it out-of-area, which would have
+  talked Julian out of a job well inside the range he already drives. Only the `outside` band (>60 mi)
+  earns the label now.
+- **Bearings are computed but not displayed.** `SHOP_ORIGIN` is Temple's city point, not the yard on
+  Tem-Bel Ln. That offset swings a nearby town a whole compass point (Belton reads 'W' where anyone local
+  says south) while barely moving distance (9.9 mi vs a published 10). Distance shipped; bearing waits.
+- **Sub-mile distances print nothing.** Temple's PO-box ZIPs fall back to Temple's point, which *is* the
+  origin, so they rendered "~0.0 mi" — reads like a broken field. Under a mile, the city name is the answer.
+
+**Found, not fixed (needs Julian):** `LOCATIONS.georgetown.distanceFromTemple` says **70 mi** while
+`round-rock` says 60 — but Georgetown is *nearer* than Round Rock (34.5 mi straight-line vs 44.8). One of
+the two hand-typed strings is wrong, and the same distances are duplicated in
+`src/components/sections/ServiceAreas.tsx`. Public marketing copy, so it needs an owner decision rather
+than a silent rewrite. Deriving both from lat/lng would kill the duplication for good.
+
+**Recommended next:** `npm i server-only` and add the import to `src/lib/zip.ts` — it turns "don't import
+the 280 KB dataset from a client component" from a comment into a build error. Not installed here because
+it adds a dependency that wasn't asked for.
+
+---
+
 ## 2026-09-06 - Competitive analysis refresh: one roster, four archivals, two false claims found
 
 **Context:** Four competitor analyses existed and none reconciled — an April Firecrawl report, a NotebookLM

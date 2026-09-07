@@ -3,6 +3,7 @@ import LeadCustomerConfirmation, { leadCustomerConfirmationText } from '@/emails
 import { sendPushBackground } from '@/lib/push'
 import { getResend } from '@/lib/resend'
 import { formatCityOrZip } from '@/lib/locations'
+import { zipInfo, formatDistance, formatLeadLocation } from '@/lib/zip'
 
 const CONCRETE_LABELS: Record<string, string> = {
   yes: 'Yes — include concrete pad',
@@ -72,6 +73,22 @@ export async function notifyNewLead({ lead, sizeLine = null }: NotifyNewLeadInpu
   // before deciding whether a lead is real.
   const city = formatCityOrZip(lead.city, lead.zip)
   const serviceType = lead.service_type ?? 'inquiry'
+
+  // Geography for the ZIP, when we have it. Owner-facing surfaces only — the
+  // customer confirmation below deliberately keeps the plain city, because
+  // "your carport request for Belton · 9.9 mi · out of area" is an internal
+  // triage note, not something a customer should ever read about themselves.
+  const geo = zipInfo(lead.zip)
+  const distance = geo ? formatDistance(geo) : null
+  const distanceLine = distance
+    ? `${distance} from shop${geo!.band === 'outside' ? ' · out of area' : ''}`
+    : null
+  // "Amarillo · 344 mi · out of area", not "ZIP 79101". An out-of-area lead
+  // stores a null city by design (locked 2026-09-07), so `city` above falls
+  // back to the bare ZIP for exactly the leads where naming the place matters
+  // most. formatLeadLocation fills that name in from the ZIP without touching
+  // what gets persisted.
+  const locationLine = formatLeadLocation(lead.city, lead.zip)
   const submittedAt = `${new Date(lead.created_at ?? Date.now()).toLocaleString('en-US', { timeZone: 'America/Chicago' })} CST`
 
   const ownerAlertProps = {
@@ -81,6 +98,8 @@ export async function notifyNewLead({ lead, sizeLine = null }: NotifyNewLeadInpu
     email: lead.email,
     city,
     zip: lead.zip,
+    state: geo?.state ?? null,
+    distanceLine,
     serviceType,
     structureType: lead.structure_type,
     sizeLine,
@@ -93,7 +112,7 @@ export async function notifyNewLead({ lead, sizeLine = null }: NotifyNewLeadInpu
     submittedAt,
   }
 
-  const subject = `${sourcePrefix}: ${lead.name} — ${city} — ${serviceType}${lead.is_military ? ' ⭐' : ''}${lead.timeline === 'asap' ? ' ⚡' : ''}`
+  const subject = `${sourcePrefix}: ${lead.name} — ${locationLine} — ${serviceType}${lead.is_military ? ' ⭐' : ''}${lead.timeline === 'asap' ? ' ⚡' : ''}`
 
   // OWNER_EMAIL unset used to throw here (`undefined!.split`), taking down every
   // lead notification with a TypeError rather than a legible error. Guarded the
@@ -152,7 +171,7 @@ export async function notifyNewLead({ lead, sizeLine = null }: NotifyNewLeadInpu
     (isHot ? '⚡' : '🔔')
   sendPushBackground({
     title: `${pushIcon} ${isHot ? 'HOT lead' : 'New lead'}: ${lead.name}`,
-    body: [city, serviceType.replace('_', ' '), sizeLine].filter(Boolean).join(' · '),
+    body: [locationLine, serviceType.replace('_', ' '), sizeLine].filter(Boolean).join(' · '),
     url: '/hq',
     tag: `lead-${lead.id}`,
   })
