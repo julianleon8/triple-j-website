@@ -1,5 +1,40 @@
 # Session Notes
 
+## 2026-09-08 — HQ redesign Tracks 3 + 4, and six contrast bugs
+
+Five pushes, all live: `5d35082` contrast hotfix, `36f4243` CalculatorStep move, `ba7f744` quotes
+read-only, `14cb71a` Today reshaped, `c02b238` lead detail, `aa16c7c` PR 8 partial + a correction.
+Gate green at every push; tests 353 → 369.
+
+**The contrast hotfix came first because PR 1's sweep had a hole.** It grepped `bg-(--brand-fg)`
+and `text-white` on the same line, so `PipelineList` — gold pill on line 124, `text-white/70` count
+on line 130 — passed a check it should have failed. Two files shipped white-on-gold at ~1.25:1.
+Also fixed: both Recharts components (near-black labels and a default-white tooltip on a dark card,
+so the tooltip was white-on-white), Gallery's nine `<select>`s (fine closed, unreadable open on
+desktop Chrome), the permit notes textarea, eight white-on-amber badges, and two unpaired reds.
+Root cause of most of them is one line of Tailwind preflight: `color: inherit;
+background-color: transparent` on form controls, against HqChrome's near-white ink.
+
+**Quotes went read-only, which deleted a bug rather than restyling one.** `QuoteEditor` was a
+`bg-white` card with five bare inputs holding real values that looked blank. Moving `CalculatorStep`
+out first, as its own commit, was load-bearing — `/hq/calculator` is live and was the only thing
+outside the wizard directory reaching into it. Five links pointed at the dead route, including
+`LeadsInbox.sendQuote`, whose `?leadId=` param **nothing has ever read**.
+
+**Today's plan was half wrong on contact with the code.** `/hq/more/stats` already existed at 514
+lines with three of the four KPI tiles already on it, so the strip was deleted, not moved — and the
+drafts row was extracted first, because it is the only route back to an unfinished capture.
+`NeedsAttentionFeed` ran a near-duplicate of `NextActionCard`'s query with a different limit, so the
+two could disagree about what was most urgent; cutting it took Today from 12 queries to 3.
+
+**I got something wrong and corrected it.** I claimed `bg-(--hq-sky)/15` emits no CSS, and acted on
+it. It does emit. My check script's regex mishandled Tailwind's `\/` escapes. That is the second
+verifier bug in this project to produce a confident false conclusion. Reverted the changes made on
+that premise; logged as a CORRECTION row since `Decisions.md` is append-only.
+
+**PR 8 is deliberately partial** — see the primer for exactly what is and is not done.
+
+
 ## 2026-09-07 — HQ capture-first redesign, Tracks 1 and 2
 
 Julian pointed at the HQ redesign plan and said start. Scope taken: PRs 1–5 of the twelve — the "Shop floor"

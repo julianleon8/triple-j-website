@@ -1,39 +1,36 @@
 # Next Session Primer — Read This First
 
-## HQ capture-first redesign — Tracks 1 and 2 shipped, 2026-09-07
+## HQ redesign — Tracks 3 and 4 shipped, 2026-09-08
 
-Read the HQ sections of `Locked Decisions.md` before touching `src/app/hq`. What is true now: HQ is
-**forced dark** via `.hq-ui`; `dark:` means "inside HQ", not "the OS is dark"; `--brand-fg` is **gold** and
-`--link-fg` is the blue; radii are 6px by a token override, not by edited classes; navigation has **one**
-owner in `src/app/hq/nav.ts`; and a lead is a draft while `name` or `service_type` is NULL.
+Read the HQ sections of `Locked Decisions.md` before touching `src/app/hq`. What changed today:
+**quote building left HQ** (`/hq/quotes/new` 404s, wizard files kept and still type-checking);
+**Today is four blocks** — Capture a call, Call next, N drafts, Quotes waiting — with "Needs
+attention" cut and the KPI strip deleted rather than moved; **lead detail leads with a one-tap
+`sms:` reply** that marks the lead contacted but never claims a text was sent.
 
-**Check first, on the phone.** Nothing about how this looks has been verified — `/hq` is behind
-`requireOwner()` and there is no `.env` in the build environment, so every visual claim rests on reading
-compiled CSS. Open `/hq`, `/hq/leads`, a lead detail, `/hq/jobs/[id]`, `/hq/more` and `/hq/capture`, and
-look for anything unreadable rather than merely unfamiliar. **The manifest's colours changed, and iOS caches
-the manifest at install time** — remove the PWA from the Home Screen and re-add it, or the status bar stays
-brand blue over a near-black app.
+**Still unverified by human eyes.** Everything since 2026-09-07 rests on reading compiled CSS and
+type-checking — `/hq` is behind `requireOwner()` and there is no `.env.local` in this environment.
+Open `/hq`, a lead detail, `/hq/quotes`, `/hq/quotes/[id]`, `/hq/more/stats` and `/hq/gallery`.
 
-**The one test that matters and has not been run:** start a capture on a real iPhone, type into a field, and
-call the phone mid-keystroke to kill the PWA. Reopen. The exact field and caret position must come back.
-That path is unit-tested against a fake storage backend, which proves the logic and not the platform.
+**The two checks only Julian can run:** capture a lead, call the phone mid-keystroke to kill the
+PWA, reopen, confirm the exact field *and caret* restore. And delete + re-add the Home Screen PWA,
+because iOS caches the manifest at install time and the colours changed.
 
-**Two leftovers, accepted rather than missed.** Today's call-next card is still a hardcoded blue gradient
-(`from-[#1851b5]`) — it never used `--brand-fg`, so the gold flip did not touch it, and 2b redesigns that
-card in PR 6, which was descoped. `/hq/permit-leads` keeps its own light-palette `CLASS_STYLES` /
-`TAG_STYLES` / `STATUS_STYLES` maps, so its chips read as light islands on the dark ground. Both were
-offered and declined in favour of holding scope.
+**PR 8 is deliberately partial.** Landed: one shared badge palette (`src/components/hq/badge-tone.ts`),
+Settings leading with Integrations, 2b type on `JobMarginKPIs` and `CostLedger`. **Not done:** the
+Customers reviews-due card, customer-detail review states and NO/YES permission pills, crew-grouped
+time entries, the jobs-list initials tile and gold TODAY bar, and consolidating `AddCostSheet` /
+`AddTimeEntrySheet` onto the real `Sheet` (~495 lines of hand-rolled overlay chrome). That is the
+obvious next piece of work.
 
-**Next, if continuing the redesign:** PR 6 (Today reshaped — move `CompactKPIStrip` to `/hq/more/stats`, add
-the capture block and the call-next card), PR 7 (lead detail, the one-tap "thanks, quote coming" text), PR 8
-(Jobs/Customers/Settings restyle), PR 9 (quotes read-only — **move `CalculatorStep` out of
-`quotes/new/_components/` first, or `/hq/calculator` breaks**), then Track 5's Google Calendar connector,
-which is blocked until Julian creates a Google Cloud project and OAuth credentials.
+**Two verifier bugs have now produced confident false conclusions in this project** — PR 1's
+single-line contrast grep, and a CSS check whose regex mishandled Tailwind's `\/` escapes (see the
+2026-09-08 CORRECTION row in `Decisions.md`). When checking compiled output, confirm the checker
+finds a known-good control before trusting a negative.
 
-**Do not redo:** the radius sweep (it is a five-line token override, not edited classes — do not "fix" the
-remaining `rounded-xl` class names), the 39-line `text-white` sweep, or the nav module. And do not add a
-second nav list.
-
+**Still blocked:** Track 5 (Google Calendar) needs a Google Cloud project and OAuth credentials
+only Julian can create. `/hq/permit-leads` remains a ~900-line light-mode page — its one unreadable
+textarea is fixed, but the screen still reads as a light island and deserves its own pass.
 
 ## Permit scraper — rebuilt on Temple, 2026-09-07
 
