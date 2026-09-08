@@ -4,7 +4,6 @@ import { useMemo } from 'react'
 import { AlertTriangle, Info, Plus, Trash2 } from 'lucide-react'
 import { Input } from '@/components/hq/ui/Input'
 import {
-  defaultInputs,
   displayColumnTier,
   suggestColumnTier,
   type BuildingType,
@@ -584,5 +583,3 @@ function Row({
   )
 }
 
-/** Re-export for the wizard: a fresh inputs object. */
-export { defaultInputs }

@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from 'react'
 import { calculate, defaultInputs, type CalculatorInputs } from '@/lib/quote-pricing'
-import { CalculatorStep } from '../quotes/new/_components/CalculatorStep'
+import { CalculatorStep } from './CalculatorStep'
 
 /**
  * Standalone client wrapper around CalculatorStep. Owns the inputs

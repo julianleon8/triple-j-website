@@ -5,10 +5,10 @@ import { useRouter } from 'next/navigation'
 import { ArrowLeft, ArrowRight, Send } from 'lucide-react'
 import { useHaptics } from '@/lib/hq/haptics'
 import { CustomerStep } from './CustomerStep'
-import { CalculatorStep, defaultInputs } from './CalculatorStep'
+import { CalculatorStep } from '@/app/hq/calculator/CalculatorStep'
 import { TotalsStep } from './TotalsStep'
 import { ReviewStep } from './ReviewStep'
-import { calculate, type CalculatorInputs } from '@/lib/quote-pricing'
+import { calculate, defaultInputs, type CalculatorInputs } from '@/lib/quote-pricing'
 
 export type WizardCustomer = { id: string; name: string; email: string | null }
 export type WizardLineItem = {
