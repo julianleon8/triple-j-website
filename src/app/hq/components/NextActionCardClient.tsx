@@ -73,8 +73,11 @@ export function NextActionCardClient({ payload }: { payload: NextActionPayload |
       />
 
       <div className="flex items-start justify-between gap-3">
+        {/* "Call next" only when there is actually a number to call.
+            callHrefFor returns a tel: link for leads only, so a permit, quote
+            or job surfacing here is something to do, not someone to ring. */}
         <span className="font-display text-[13px] font-bold uppercase tracking-[0.08em] text-hq-red">
-          Call next
+          {callHref ? 'Call next' : 'Do next'}
           <span className="ml-2 font-mono text-[11px] tracking-[0.04em]">{reason}</span>
         </span>
         <button
@@ -101,12 +104,20 @@ export function NextActionCardClient({ payload }: { payload: NextActionPayload |
             <Phone size={17} strokeWidth={2.2} /> Call
           </a>
         ) : null}
+        {/* Beside a Call button this is the 50x50 arrow tile the direction
+            draws. Alone it must carry the row: a lone unlabelled square is not
+            a usable primary action. */}
         <Link
           href={row.href}
           onClick={tap}
           aria-label={`Open ${row.primary}`}
-          className="inline-flex h-[50px] w-[50px] shrink-0 items-center justify-center rounded-md border border-(--border-strong) text-(--link-fg) tap-solid"
+          className={`inline-flex h-[50px] items-center justify-center gap-2 rounded-md border border-(--border-strong) text-(--link-fg) tap-solid ${
+            callHref
+              ? 'w-[50px] shrink-0'
+              : 'flex-1 text-[17px] font-bold uppercase tracking-[0.04em]'
+          }`}
         >
+          {callHref ? null : 'Open'}
           <ArrowRight size={20} strokeWidth={2.2} />
         </Link>
       </div>

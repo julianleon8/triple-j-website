@@ -53,7 +53,13 @@ export default async function QuoteDetailPage({
   const lineItems = [...(quote.quote_line_items ?? [])].sort(
     (a, b) => a.sort_order - b.sort_order,
   )
-  const subtotal = lineItems.reduce((s, i) => s + i.quantity * i.unit_price, 0)
+  const lineItemSum = lineItems.reduce((s, i) => s + i.quantity * i.unit_price, 0)
+  const storedTotal = Number(quote.total ?? 0)
+  // tax_rate is hardcoded 0 in /api/quotes (metal structures are TX
+  // sales-tax exempt), so these agree for anything this app wrote. They can
+  // still drift on a legacy or hand-edited row, and this page must not print
+  // a number that contradicts the total in its own header.
+  const totalsDisagree = Math.abs(lineItemSum - storedTotal) >= 0.01
 
   return (
     <div className="max-w-3xl mx-auto space-y-4">
@@ -124,9 +130,15 @@ export default async function QuoteDetailPage({
             Total
           </span>
           <span className="text-[20px] font-bold tabular-nums text-(--text-primary)">
-            {formatUSD(subtotal)}
+            {formatUSD(storedTotal)}
           </span>
         </div>
+
+        {totalsDisagree && (
+          <p className="mt-2 font-mono text-[11px] uppercase tracking-[0.04em] text-hq-red">
+            Line items add to {formatUSD(lineItemSum)} — does not match the stored total
+          </p>
+        )}
       </section>
 
       {(quote.valid_until || quote.notes) && (

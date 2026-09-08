@@ -65,6 +65,9 @@ type LeadRecord = {
  * guaranteed within 24 hours" — so this does not invent a new commitment. Uses
  * the public brand "Triple J Metal", never the legal name.
  */
+/** Sources that go through the HQ capture checklist, so blanks are real gaps. */
+const CAPTURE_SOURCES = new Set(['phone', 'voice_memo'])
+
 const THANKS_MESSAGE =
   'Thanks for the call — quote coming today. — Julian, Triple J Metal'
 
@@ -148,7 +151,13 @@ export default async function LeadDetailPage({ params }: { params: Promise<{ id:
         />
       )}
 
-      <MissingFromCapture leadId={lead.id} lead={lead} />
+      {/* Only for leads actually captured in HQ. A website lead has no
+          size_raw by design — the public form folds dimensions into `message`
+          — so this card would have told you Size was missing while it sat in
+          the notes right above. */}
+      {CAPTURE_SOURCES.has(lead.source ?? '') && (
+        <MissingFromCapture leadId={lead.id} lead={lead} />
+      )}
 
       {/* What they said, before the field dump. */}
       {lead.message && (

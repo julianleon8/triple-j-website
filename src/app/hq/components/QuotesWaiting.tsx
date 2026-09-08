@@ -33,16 +33,22 @@ function expiryLabel(validUntil: string | null): { text: string; urgent: boolean
   return { text: `expires in ${days}d`, urgent: days <= 2 }
 }
 
+/** Oldest-sent first; the rest are one tap away on /hq/quotes. */
+const SHOWN = 10
+
 export async function QuotesWaiting() {
-  const { data } = await getAdminClient()
+  // `count: 'exact'` reports every matching row, not just the ten fetched —
+  // the heading must not call ten "the number waiting" when there are more.
+  const { data, count } = await getAdminClient()
     .from('quotes')
-    .select('id, quote_number, total, valid_until, sent_at, customers(name)')
+    .select('id, quote_number, total, valid_until, sent_at, customers(name)', { count: 'exact' })
     .eq('status', 'sent')
     .order('sent_at', { ascending: true, nullsFirst: false })
-    .limit(10)
+    .limit(SHOWN)
 
   const quotes = (data ?? []) as unknown as QuoteRow[]
   if (quotes.length === 0) return null
+  const total = count ?? quotes.length
 
   return (
     <section aria-labelledby="quotes-waiting-heading">
@@ -52,7 +58,7 @@ export async function QuotesWaiting() {
       >
         Quotes waiting on an answer
         <span className="font-mono text-[11px] tracking-[0.04em] text-(--text-tertiary)">
-          {quotes.length}
+          {total}
         </span>
       </h2>
 
@@ -91,6 +97,15 @@ export async function QuotesWaiting() {
           )
         })}
       </ul>
+
+      {total > quotes.length && (
+        <Link
+          href="/hq/quotes"
+          className="mt-2 block font-mono text-[11px] uppercase tracking-[0.04em] text-(--link-fg)"
+        >
+          {total - quotes.length} more waiting
+        </Link>
+      )}
     </section>
   )
 }
