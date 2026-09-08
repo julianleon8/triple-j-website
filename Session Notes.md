@@ -1,5 +1,54 @@
 # Session Notes
 
+## 2026-09-07 — HQ capture-first redesign, Tracks 1 and 2
+
+Julian pointed at the HQ redesign plan and said start. Scope taken: PRs 1–5 of the twelve — the "Shop floor"
+skin and capture — with Google Calendar and the Track 3 screen reshapes left out. Four decisions were his:
+forced dark, Barlow in HQ (reversing the 2026-04-24 lock), Gallery off the tab bar, and hide-not-delete for
+the quote wizard. He asked whether to draw the fourteen undesigned screens first; the answer was no —
+nothing in this scope needs them, they re-skin by token inheritance, and one of them (`/hq/calculator`) has
+no inbound link anywhere in `src/`, so it is unreachable except by typing the URL.
+
+Three things the design handoff did not know, all found by reading the compiled CSS rather than the source.
+**`font-(--font-ios)` had never worked** — Tailwind v4 reads the bare `font-()` shorthand as font-*weight*,
+so it compiled to an invalid declaration and was dropped; HQ had been rendering in Inter since the class was
+written, and so had `/login`. **Hand-written rules in `globals.css` are emitted unlayered**, after
+`@layer utilities`, so they outrank every Tailwind utility — which is why the `.hq-ui` block contains custom
+properties only, with `color-scheme: dark` as the single documented exception, and why a
+`.hq-ui h1,h2,h3` rule was deliberately not written. And **`--brand-fg` could not become gold on its own**:
+it appears on 68 lines, 39 of which also carried `text-white`, so a token flip alone would have shipped 39
+white-on-gold controls at about 1.9:1.
+
+Two bugs were caught in my own work before either shipped. The status chips were first written as
+`bg-(--hq-sky)/15`, and **Tailwind silently drops the alpha modifier on an arbitrary `var()` colour** — it
+compiled to a solid background with same-colour text on it. Registering the tones as real theme colours
+fixed it. And the capture screen's "City or ZIP" row wrote whatever was typed straight into `leads.city`,
+which would have put ZIPs back in the column migration 028 existed to clean out; it is now one field over
+two columns, with the server deriving the city through `cityFromZip()`.
+
+One deliberate deviation from the design: **size is not part of the draft predicate.** The handoff says a
+lead is a draft while name, service or size is missing, but dimensions are optional on the public form, so
+including them would have filed most of the inbound web funnel as a draft. Excluding size is also why
+`POST /api/leads` — the public endpoint with hCaptcha and the rate limit — was not touched at all.
+
+Migration 033 was applied to production and verified against it, not assumed: all 7 existing leads read
+`is_draft = false`, a phone-only insert came back `is_draft = true` with `service_type` null (proving the
+default drop was necessary), finishing it flipped the flag, and the test row was deleted. Ordering mattered —
+the code had to ship *after* the migration, because voice-lead now writes real nulls.
+
+Also closed a long-standing gap: **`private_lead_photos` is no longer orphaned.** Applied out of band on
+2026-09-07 with no file in the repo, it was reconstructed by introspecting the live objects — a private
+`lead-photos` bucket and a *restrictive* storage policy. `check-migrations.mjs` now reports "Migrations in
+sync with the database ledger" for the first time.
+
+Five commits, all pushed to main and deployed. typecheck, lint, 353 tests (up from 274) and check-vault
+pass. **Not verified: how any of it looks.** `/hq` is behind `requireOwner()` and there is no `.env` in this
+environment, so every visual claim rests on compiled CSS, not on a screen.
+
+Known leftovers, both accepted rather than missed: Today's call-next card is still a hardcoded blue gradient
+(2b redesigns it in PR 6, descoped), and `/hq/permit-leads` keeps its own light-palette style maps.
+
+
 ## 2026-09-07 — Permit scraper rebuilt on Temple's weekly report
 
 Julian asked to redesign or recycle the permit scraper, which had never produced a lead. Diagnosed from live evidence rather than the code's comments: `permit_leads` had zero rows ever, and both of today's runs failed — the second, after the morning's regex fix, on a doubled URL path. Six stacked defects, each hidden by the one before: the regex; `<base href>` ignored by the resolver; Bell County agendas are scanned images with no text layer (and the page stopped in April); `unpdf` needs `Promise.try`, absent on Node 22 (local only — Vercel runs 24); Temple filenames carry no parseable date and the report filter tested the filename, not the folder; the dedup index was partial, which PostgREST cannot use for `ON CONFLICT`. The "JS-hydrated" note that had disabled Temple was wrong: the page is static and lists about 110 weekly per-permit reports back to March 2024 — 187 permits in the Aug 21-27 report, each with owner, address, applicant and general contractor.

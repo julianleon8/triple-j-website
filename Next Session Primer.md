@@ -1,5 +1,40 @@
 # Next Session Primer — Read This First
 
+## HQ capture-first redesign — Tracks 1 and 2 shipped, 2026-09-07
+
+Read the HQ sections of `Locked Decisions.md` before touching `src/app/hq`. What is true now: HQ is
+**forced dark** via `.hq-ui`; `dark:` means "inside HQ", not "the OS is dark"; `--brand-fg` is **gold** and
+`--link-fg` is the blue; radii are 6px by a token override, not by edited classes; navigation has **one**
+owner in `src/app/hq/nav.ts`; and a lead is a draft while `name` or `service_type` is NULL.
+
+**Check first, on the phone.** Nothing about how this looks has been verified — `/hq` is behind
+`requireOwner()` and there is no `.env` in the build environment, so every visual claim rests on reading
+compiled CSS. Open `/hq`, `/hq/leads`, a lead detail, `/hq/jobs/[id]`, `/hq/more` and `/hq/capture`, and
+look for anything unreadable rather than merely unfamiliar. **The manifest's colours changed, and iOS caches
+the manifest at install time** — remove the PWA from the Home Screen and re-add it, or the status bar stays
+brand blue over a near-black app.
+
+**The one test that matters and has not been run:** start a capture on a real iPhone, type into a field, and
+call the phone mid-keystroke to kill the PWA. Reopen. The exact field and caret position must come back.
+That path is unit-tested against a fake storage backend, which proves the logic and not the platform.
+
+**Two leftovers, accepted rather than missed.** Today's call-next card is still a hardcoded blue gradient
+(`from-[#1851b5]`) — it never used `--brand-fg`, so the gold flip did not touch it, and 2b redesigns that
+card in PR 6, which was descoped. `/hq/permit-leads` keeps its own light-palette `CLASS_STYLES` /
+`TAG_STYLES` / `STATUS_STYLES` maps, so its chips read as light islands on the dark ground. Both were
+offered and declined in favour of holding scope.
+
+**Next, if continuing the redesign:** PR 6 (Today reshaped — move `CompactKPIStrip` to `/hq/more/stats`, add
+the capture block and the call-next card), PR 7 (lead detail, the one-tap "thanks, quote coming" text), PR 8
+(Jobs/Customers/Settings restyle), PR 9 (quotes read-only — **move `CalculatorStep` out of
+`quotes/new/_components/` first, or `/hq/calculator` breaks**), then Track 5's Google Calendar connector,
+which is blocked until Julian creates a Google Cloud project and OAuth credentials.
+
+**Do not redo:** the radius sweep (it is a five-line token override, not edited classes — do not "fix" the
+remaining `rounded-xl` class names), the 39-line `text-white` sweep, or the nav module. And do not add a
+second nav list.
+
+
 ## Permit scraper — rebuilt on Temple, 2026-09-07
 
 Read the Lead Engine section of `Locked Decisions.md` before touching it. What is true now: `temple` is the only enabled source; `permit_reports` records which PDFs have been processed; permits carry a `lead_class` (accessory / new_home / commercial); Bell County is off for good reasons, not a bug.
@@ -17,7 +52,7 @@ If `permit_reports` is still empty after a run with `ok = true`, suspect the Cla
 
 **Not done, deliberately:** OCR / PDF-vision for Bell County; headless for Harker Heights and the CivicPlus sources; the public `/market-report` (Temple's monthly totals PDFs are aggregate and PII-free — the right input if it is ever built). A local `next dev` scrape throws inside `unpdf` on Node 22; production is on 24.
 
-Still open from earlier today: the `private_lead_photos` migration is applied with no file in the repo.
+~~Open: `private_lead_photos` applied with no file in the repo.~~ **Closed 2026-09-07** — reconstructed from the live objects; `check-migrations.mjs` reports in sync.
 
 
 ## `/quote` landing page — shipped 2026-09-07
@@ -30,7 +65,7 @@ Migrations 029 and 030 are applied and verified in production.
 
 **028 has since been applied** (owner approved, same session). `leads.city` is a city name or NULL across all eight rows — 78664 resolved to Round Rock, and 76877/76566/76577 went NULL with their ZIPs preserved in `leads.zip`. Migrations 028, 029 and 030 are all in the ledger.
 
-**One drift item remains and is worth a decision:** a migration `private_lead_photos` (version 20260907143042) is applied to the database with no corresponding file in `supabase/migrations/`. This is the out-of-band drift `scripts/check-migrations.mjs` exists to catch — the same failure mode that left `gallery_photos` unreproducible. The DDL should be reconstructed into a file so the schema can be rebuilt from the repo.
+~~One drift item remains~~ — **resolved 2026-09-07.** `private_lead_photos` was reconstructed by introspecting the live objects (a private `lead-photos` bucket plus a restrictive storage policy). `check-migrations.mjs` now reports "Migrations in sync with the database ledger".
 
 Unrelated uncommitted work was present in the working tree during this session — a `/login` refactor splitting `LoginForm` into its own file. It was left untouched and not committed.
 
