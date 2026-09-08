@@ -3,6 +3,7 @@ import LeadCustomerConfirmation, { leadCustomerConfirmationText } from '@/emails
 import { sendPushBackground } from '@/lib/push'
 import { getResend } from '@/lib/resend'
 import { formatCityOrZip } from '@/lib/locations'
+import { leadDisplayName } from '@/lib/pipeline'
 import { zipInfo, formatDistance, formatLeadLocation } from '@/lib/zip'
 
 const CONCRETE_LABELS: Record<string, string> = {
@@ -36,10 +37,20 @@ function label(value: string | null | undefined, map: Record<string, string>): s
   return map[value] ?? value
 }
 
+/**
+ * A lead is displayable before it is complete: capture saves from a phone
+ * number alone. The owner alert and push must still say something useful, and
+ * a literal "undefined" in a subject line is how that goes wrong.
+ */
+function displayName(lead: LeadRecord): string {
+  return lead.name?.trim() || leadDisplayName(lead)
+}
+
 export interface LeadRecord {
   id: string
-  name: string
-  phone: string
+  /** Null on a capture draft (migration 033). Coerce at every display site. */
+  name: string | null
+  phone: string | null
   email: string | null
   city: string | null
   zip: string | null
@@ -102,8 +113,8 @@ export async function notifyNewLead({ lead, sizeLine = null }: NotifyNewLeadInpu
 
   const ownerAlertProps = {
     leadId: lead.id,
-    name: lead.name,
-    phone: lead.phone,
+    name: displayName(lead),
+    phone: lead.phone ?? '',
     email: lead.email,
     city,
     zip: lead.zip,
@@ -122,7 +133,7 @@ export async function notifyNewLead({ lead, sizeLine = null }: NotifyNewLeadInpu
     submittedAt,
   }
 
-  const subject = `${sourcePrefix}: ${lead.name} — ${locationLine} — ${serviceType}${lead.is_military ? ' ⭐' : ''}${lead.timeline === 'asap' ? ' ⚡' : ''}`
+  const subject = `${sourcePrefix}: ${displayName(lead)} — ${locationLine} — ${serviceType}${lead.is_military ? ' ⭐' : ''}${lead.timeline === 'asap' ? ' ⚡' : ''}`
 
   // OWNER_EMAIL unset used to throw here (`undefined!.split`), taking down every
   // lead notification with a TypeError rather than a legible error. Guarded the
@@ -150,8 +161,8 @@ export async function notifyNewLead({ lead, sizeLine = null }: NotifyNewLeadInpu
 
   if (lead.email) {
     const customerProps = {
-      name: lead.name,
-      phone: lead.phone,
+      name: displayName(lead),
+      phone: lead.phone ?? '',
       city,
       serviceType,
       isMilitary: !!lead.is_military,
@@ -180,7 +191,7 @@ export async function notifyNewLead({ lead, sizeLine = null }: NotifyNewLeadInpu
     lead.source === 'facebook_messenger' ? '💬' :
     (isHot ? '⚡' : '🔔')
   sendPushBackground({
-    title: `${pushIcon} ${isHot ? 'HOT lead' : 'New lead'}: ${lead.name}`,
+    title: `${pushIcon} ${isHot ? 'HOT lead' : 'New lead'}: ${displayName(lead)}`,
     body: [locationLine, serviceType.replace('_', ' '), sizeLine].filter(Boolean).join(' · '),
     url: '/hq',
     tag: `lead-${lead.id}`,

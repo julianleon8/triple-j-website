@@ -32,6 +32,23 @@ const schema = z.object({
   estimated_budget_min:  z.number().nullable().optional(),
   estimated_budget_max:  z.number().nullable().optional(),
   owner_notes:           z.string().max(5000).nullable().optional(),
+
+  // Capture-screen fields (migration 033). The capture screen autosaves each
+  // checklist row through this route, so contact and project details had to
+  // become editable — before this, there was no way to change a lead's name or
+  // phone through the API at all. Every one is nullable: a draft is a row where
+  // these are still missing, and clearing a field back to null is a legitimate
+  // edit rather than an error.
+  name:                  z.string().max(100).nullable().optional(),
+  phone:                 z.string().max(20).nullable().optional(),
+  email:                 z.string().max(200).nullable().optional(),
+  city:                  z.string().max(100).nullable().optional(),
+  zip:                   z.string().max(10).nullable().optional(),
+  service_type:          z.string().max(50).nullable().optional(),
+  size_raw:              z.string().max(200).nullable().optional(),
+  needs_concrete:        z.string().max(50).nullable().optional(),
+  message:               z.string().max(2000).nullable().optional(),
+  dup_ack:               z.boolean().optional(),
 })
 
 export async function PATCH(
@@ -64,7 +81,21 @@ export async function PATCH(
     .select('id, status')
     .single()
 
-  if (error || !data) {
+  // PGRST116 is PostgREST's "no rows returned for .single()" — the only
+  // condition that is genuinely a 404. Everything else (a CHECK violation, a
+  // bad column, the database being down) used to be reported as "Lead not
+  // found" too, which is actively dangerous now that capture autosaves through
+  // this route: the operator would keep typing into a field that was silently
+  // discarding every keystroke, on the one screen whose promise is that there
+  // is nothing to lose. Surface those as 500 and log the code.
+  if (error) {
+    if (error.code === 'PGRST116') {
+      return NextResponse.json({ error: 'Lead not found' }, { status: 404 })
+    }
+    console.error('[PATCH /api/leads/[id]] update failed', { id, code: error.code, message: error.message })
+    return NextResponse.json({ error: 'Could not save', code: error.code }, { status: 500 })
+  }
+  if (!data) {
     return NextResponse.json({ error: 'Lead not found' }, { status: 404 })
   }
 

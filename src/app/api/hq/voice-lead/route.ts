@@ -49,14 +49,18 @@ function buildInsertRow(
   ].filter(Boolean) as string[]
 
   return {
-    // Name + phone are required in the DB — fall back to placeholders so we
-    // never lose a memo to a missing field. Julian can edit inline.
-    name:            ext.name?.trim() || 'Voice memo (no name)',
-    phone:           ext.phone?.trim() || '',
+    // Migration 033 dropped the NOT NULL on name and phone and the 'carport'
+    // default on service_type, so a memo that did not yield a name no longer
+    // needs a placeholder standing in for one. Writing real nulls makes the row
+    // a draft (generated is_draft), which surfaces it in the Leads inbox with a
+    // FINISH action instead of filing "Voice memo (no name)" in the CRM as if
+    // it were a customer's name.
+    name:            ext.name?.trim() || null,
+    phone:           ext.phone?.trim() || null,
     email:           ext.email?.trim() || null,
     city:            city ?? 'Not provided',
     zip:             zip,
-    service_type:    ext.service_type ?? 'carport',
+    service_type:    ext.service_type ?? null,
     structure_type:  ext.structure_type,
     timeline:        ext.timeline,
     is_military:     ext.is_military,
@@ -136,10 +140,13 @@ export async function POST(request: NextRequest) {
     const { data: fallbackLead, error: insertErr } = await getAdminClient()
       .from('leads')
       .insert({
-        name:         'Voice memo (extraction failed)',
-        phone:        '',
+        // Same reasoning as above: a failed extraction is a draft, not a
+        // lead named "Voice memo (extraction failed)". The transcript below
+        // is still the whole point of the row.
+        name:         null,
+        phone:        null,
         city:         'Not provided',
-        service_type: 'carport',
+        service_type: null,
         is_military:  false,
         message:      `Extraction failed — raw transcript only.\n\n— Transcript —\n${transcript}`,
         source:       'voice_memo',

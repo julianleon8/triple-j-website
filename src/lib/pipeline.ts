@@ -59,11 +59,13 @@ export function isCold(row: PipelineRow): boolean {
 export type LeadForRow = {
   id: string
   created_at: string
-  name: string
-  phone: string
+  /** Null on a capture draft — migration 033 dropped the NOT NULL. */
+  name: string | null
+  phone: string | null
   city: string | null
   zip: string | null
-  service_type: string
+  /** Null on a capture draft; the 'carport' column default was dropped in 033. */
+  service_type: string | null
   structure_type: string | null
   timeline: string | null
   is_military: boolean | null
@@ -190,8 +192,8 @@ function compactUSD(n: number): string {
   return `$${Math.round(n).toLocaleString()}`
 }
 
-function readableService(s: string): string {
-  return s.replace(/_/g, ' ')
+function readableService(s: string | null): string {
+  return s ? s.replace(/_/g, ' ') : ''
 }
 
 function isToday(iso: string): boolean {
@@ -205,6 +207,26 @@ function isToday(iso: string): boolean {
 }
 
 // ── Mappers ────────────────────────────────────────────────────────────────
+
+/**
+ * What to call a lead that may not have a name yet. Capture saves from a phone
+ * number alone, so the number is the identity until someone types one — which
+ * is also how the draft rows in the inbox are drawn.
+ */
+export function leadDisplayName(lead: { name: string | null; phone: string | null }): string {
+  const name = lead.name?.trim()
+  if (name) return name
+  const phone = lead.phone?.trim()
+  if (phone) return formatUsPhone(phone)
+  return 'New lead'
+}
+
+/** (254) 555-0118 for a ten-digit US number; unchanged for anything else. */
+export function formatUsPhone(raw: string): string {
+  const d = raw.replace(/\D/g, '')
+  const ten = d.length === 11 && d.startsWith('1') ? d.slice(1) : d
+  return ten.length === 10 ? `(${ten.slice(0, 3)}) ${ten.slice(3, 6)}-${ten.slice(6)}` : raw
+}
 
 export function leadToRow(lead: LeadForRow): PipelineRow {
   const badges: PipelineBadge[] = []
@@ -224,7 +246,7 @@ export function leadToRow(lead: LeadForRow): PipelineRow {
     kind: 'lead',
     id: lead.id,
     href: `/hq/leads/${lead.id}`,
-    primary: lead.name,
+    primary: leadDisplayName(lead),
     secondary: secondary || 'Recent lead',
     trailing: {
       type: 'status',
