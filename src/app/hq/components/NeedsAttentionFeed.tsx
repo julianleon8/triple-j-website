@@ -50,7 +50,7 @@ export async function NeedsAttentionFeed() {
   return (
     <section aria-label="Needs attention" className="space-y-2">
       <div className="flex items-baseline justify-between px-1">
-        <h2 className="text-[13px] font-semibold uppercase tracking-wider text-(--text-tertiary)">
+        <h2 className="font-display text-[15px] font-semibold uppercase tracking-[0.12em] text-(--text-secondary)">
           Needs attention
         </h2>
         <span className="text-[12px] text-(--text-tertiary)">{needsAttention.length}</span>

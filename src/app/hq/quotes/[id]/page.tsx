@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { ArrowLeft } from 'lucide-react'
 import { getAdminClient } from '@/lib/supabase/admin'
-import { QUOTE_STATUS_CLASS } from '@/lib/pipeline'
+import { QUOTE_STATUS_CLASS, MUTED_STATUS_CLASS } from '@/lib/pipeline'
 import { QuoteDetailActions } from './components/QuoteDetailActions'
 import QuoteEditor from './components/QuoteEditor'
 
@@ -54,7 +54,7 @@ export default async function QuoteDetailPage({
     .select('id, name, email')
     .order('name')
 
-  const statusClass = QUOTE_STATUS_CLASS[quote.status] ?? 'bg-gray-100 text-gray-600'
+  const statusClass = QUOTE_STATUS_CLASS[quote.status] ?? MUTED_STATUS_CLASS
 
   return (
     <div className="max-w-3xl mx-auto space-y-4">
@@ -66,7 +66,7 @@ export default async function QuoteDetailPage({
         <div className="flex items-start justify-between gap-3">
           <div className="min-w-0">
             <p className="text-[12px] font-mono text-(--text-tertiary)">{quote.quote_number}</p>
-            <h1 className="mt-1 text-[24px] font-bold leading-tight text-(--text-primary)">
+            <h1 className="mt-1 font-display text-[28px] font-bold uppercase leading-none tracking-[0.02em] text-(--text-primary)">
               {quote.customers?.name ?? 'Unknown customer'}
             </h1>
             {quote.customers?.email && (

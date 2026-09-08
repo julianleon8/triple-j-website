@@ -81,6 +81,7 @@
   --hq-gold-hover:    #ffb845;
   --hq-on-gold:       #0b0d0f; /* text/icons on gold — never white */
   --hq-sky:           #4d8dff; /* links, back affordances, secondary action */
+  --hq-violet:        #a78bfa; /* permit callbacks, quoted state */
   --hq-red:           #ef4444; /* urgent / cold / destructive */
   --hq-green:         #4ade80; /* healthy margin, connected status */
   --hq-hairline:      #5c666e; /* dashed empty/placeholder outlines */
@@ -188,6 +189,21 @@
 
   --urgent-bg: var(--hq-red);
 
+  /* Geometry: 6px everywhere. Tailwind emits `border-radius: var(--radius-xl)`
+     rather than a literal, so redefining the scale here re-rounds all 283
+     rounded-{md,lg,xl,2xl,3xl} utilities across 70 HQ files with no JSX edits,
+     and reverts by deleting these five lines.
+     --radius-xs (2px) and --radius-sm (4px) are deliberately NOT overridden —
+     they stay available as the 3-4px chip/badge radius the direction calls for.
+     rounded-full is a literal and is unaffected; it survives only on avatars
+     and status dots. Bare `rounded` is also a literal (4px), which already
+     sits in the chip band, so its 13 uses are left alone. */
+  --radius-md:  6px;
+  --radius-lg:  6px;
+  --radius-xl:  6px;
+  --radius-2xl: 6px;
+  --radius-3xl: 6px;
+
   /* THE EXCEPTION. Without it iOS paints light-mode form controls, caret,
      text-selection, autofill and scrollbars inside a dark tree. No HQ file
      uses a scheme-* utility, so nothing is being overridden here. */
@@ -236,6 +252,16 @@ html:has(.hq-ui) {
 
   --color-accent-amber: var(--color-accent-amber);
   --color-accent-steel: var(--color-accent-steel);
+
+  /* HQ status tones, registered as real theme colours so the /alpha modifier
+     works. `bg-(--hq-sky)/15` silently DROPS the alpha — Tailwind will not
+     colour-mix an arbitrary var() — and would have rendered a solid chip with
+     same-colour text on it. `bg-hq-sky/15` emits a proper color-mix. */
+  --color-hq-sky:    var(--hq-sky);
+  --color-hq-gold:   var(--hq-gold);
+  --color-hq-violet: var(--hq-violet);
+  --color-hq-green:  var(--hq-green);
+  --color-hq-red:    var(--hq-red);
 
   /* Semantic tokens — usable as bg-(--surface-1) / text-(--text-primary) etc. */
   --color-surface-1:       var(--surface-1);

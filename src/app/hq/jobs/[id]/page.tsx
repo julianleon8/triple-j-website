@@ -5,7 +5,7 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { ArrowLeft, Phone, FileText } from 'lucide-react'
 import { getAdminClient } from '@/lib/supabase/admin'
-import { JOB_STATUS_CLASS } from '@/lib/pipeline'
+import { JOB_STATUS_CLASS, MUTED_STATUS_CLASS } from '@/lib/pipeline'
 import { JobMapHero } from './components/JobMapHero'
 import { JobPhotoStrip, type JobPhotoStripPhoto } from '@/components/hq/JobPhotoStrip'
 import { JobReceiptStrip, type JobReceipt, type ReceiptLineItem } from '@/components/hq/JobReceiptStrip'
@@ -62,7 +62,7 @@ export default async function JobDetailPage({ params }: { params: Promise<{ id: 
   if (!raw) notFound()
   const job = raw as JobRecord
 
-  const statusClass = JOB_STATUS_CLASS[job.status] ?? 'bg-gray-100 text-gray-600'
+  const statusClass = JOB_STATUS_CLASS[job.status] ?? MUTED_STATUS_CLASS
   const activeIdx = PROGRESS.findIndex((p) => p.key === job.status)
 
   return (
@@ -84,7 +84,7 @@ export default async function JobDetailPage({ params }: { params: Promise<{ id: 
       <header className="rounded-2xl border border-(--border-subtle) bg-(--surface-2) p-5">
         <div className="flex items-start justify-between gap-3">
           <div className="min-w-0">
-            <h1 className="text-[24px] font-bold leading-tight text-(--text-primary)">
+            <h1 className="font-display text-[28px] font-bold uppercase leading-none tracking-[0.02em] text-(--text-primary)">
               #{job.job_number}
             </h1>
             <p className="mt-0.5 text-[14px] text-(--text-secondary)">

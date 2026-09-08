@@ -5,7 +5,7 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { ArrowLeft, Phone, MessageSquare } from 'lucide-react'
 import { getAdminClient } from '@/lib/supabase/admin'
-import { LEAD_STATUS_CLASS, COLD_THRESHOLD_HOURS } from '@/lib/pipeline'
+import { LEAD_STATUS_CLASS, MUTED_STATUS_CLASS, COLD_THRESHOLD_HOURS } from '@/lib/pipeline'
 import { ColdBanner } from '@/components/hq/ColdBanner'
 import { CardSkeleton } from '@/components/hq/Skeleton'
 import { LeadStatusButtons } from './components/LeadStatusButtons'
@@ -77,7 +77,7 @@ export default async function LeadDetailPage({ params }: { params: Promise<{ id:
   // eslint-disable-next-line react-hooks/purity
   const ageH = Math.max(0, (Date.now() - new Date(lead.created_at).getTime()) / 3_600_000)
   const cold = lead.status === 'new' && ageH > COLD_THRESHOLD_HOURS
-  const statusClass = LEAD_STATUS_CLASS[lead.status] ?? 'bg-gray-100 text-gray-600'
+  const statusClass = LEAD_STATUS_CLASS[lead.status] ?? MUTED_STATUS_CLASS
   // Server component — safe to pull in the 280 KB ZIP dataset. See src/lib/zip.ts.
   const geo = zipInfo(lead.zip)
 
@@ -97,7 +97,7 @@ export default async function LeadDetailPage({ params }: { params: Promise<{ id:
       <header className="rounded-2xl border border-(--border-subtle) bg-(--surface-2) p-5">
         <div className="flex items-start justify-between gap-3">
           <div className="min-w-0">
-            <h1 className="text-[26px] font-bold leading-tight text-(--text-primary)">{lead.name}</h1>
+            <h1 className="font-display text-[30px] font-bold uppercase leading-none tracking-[0.02em] text-(--text-primary)">{lead.name}</h1>
             <p className="mt-0.5 text-[14px] text-(--text-secondary)">
               {[readable(lead.service_type), lead.structure_type, formatLeadLocation(lead.city, lead.zip)].filter(Boolean).join(' · ') || 'Lead'}
             </p>

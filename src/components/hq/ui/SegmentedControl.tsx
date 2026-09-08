@@ -37,7 +37,7 @@ export function SegmentedControl({ value, onChange, options, className, ariaLabe
               tap()
               onChange(opt.key)
             }}
-            className={`flex-1 rounded-[10px] px-2 py-1.5 text-[13px] font-semibold transition-colors ${
+            className={`flex-1 rounded-md px-2 py-1.5 text-[13px] font-semibold transition-colors ${
               active
                 ? 'bg-(--surface-1) text-(--text-primary) shadow-sm'
                 : 'text-(--text-secondary)'

@@ -66,7 +66,7 @@ export function NextActionCardClient({ payload }: { payload: NextActionPayload |
       className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-[#1851b5] to-[#0d2f5c] p-5 text-white shadow-lg"
     >
       <div className="flex items-start justify-between gap-3">
-        <span className="rounded-full bg-white/15 px-2.5 py-1 text-[11px] font-bold uppercase tracking-wider text-white/95">
+        <span className="rounded-sm bg-white/15 px-2.5 py-1 text-[11px] font-bold uppercase tracking-wider text-white/95">
           {reason}
         </span>
         <button
@@ -86,7 +86,7 @@ export function NextActionCardClient({ payload }: { payload: NextActionPayload |
           <a
             href={callHref}
             onClick={tap}
-            className="inline-flex flex-1 items-center justify-center gap-2 rounded-full bg-white py-2.5 text-[15px] font-bold text-[#12407a] tap-solid"
+            className="inline-flex flex-1 items-center justify-center gap-2 rounded-md bg-white py-2.5 text-[15px] font-bold text-[#12407a] tap-solid"
           >
             <Phone size={16} strokeWidth={2} /> Call
           </a>
@@ -94,7 +94,7 @@ export function NextActionCardClient({ payload }: { payload: NextActionPayload |
         <Link
           href={row.href}
           onClick={tap}
-          className="inline-flex flex-1 items-center justify-center gap-2 rounded-full bg-white/15 py-2.5 text-[15px] font-bold text-white tap-solid"
+          className="inline-flex flex-1 items-center justify-center gap-2 rounded-md bg-white/15 py-2.5 text-[15px] font-bold text-white tap-solid"
         >
           Open <ArrowRight size={16} strokeWidth={2} />
         </Link>

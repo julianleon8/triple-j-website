@@ -94,7 +94,7 @@ function ActionRow({ action, onSelect }: { action: Action; onSelect: () => void 
   const Icon = action.icon
   const inner = (
     <div className="flex items-center gap-3 px-3 py-2.5">
-      <div className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-white ${action.tone} ${action.disabled ? 'opacity-50' : ''}`}>
+      <div className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-md text-white ${action.tone} ${action.disabled ? 'opacity-50' : ''}`}>
         <Icon size={18} strokeWidth={2} />
       </div>
       <div className="min-w-0 flex-1">
@@ -103,7 +103,7 @@ function ActionRow({ action, onSelect }: { action: Action; onSelect: () => void 
             {action.label}
           </span>
           {action.stub && (
-            <span className="rounded-full bg-(--surface-3) px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-(--text-tertiary)">
+            <span className="rounded-sm bg-(--surface-3) px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-(--text-tertiary)">
               {action.stub}
             </span>
           )}

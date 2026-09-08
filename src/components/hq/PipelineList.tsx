@@ -119,7 +119,7 @@ export function PipelineList({ rows: initialRows, paramKey = 'type', hideFilters
                   key={key}
                   type="button"
                   onClick={() => setFilter(key)}
-                  className={`whitespace-nowrap rounded-full px-3.5 py-1.5 text-[13px] font-semibold transition-colors ${
+                  className={`whitespace-nowrap rounded-sm px-3.5 py-1.5 text-[13px] font-semibold transition-colors ${
                     active
                       ? 'bg-(--brand-fg) text-(--text-on-brand)'
                       : 'bg-(--surface-2) text-(--text-secondary) hover:text-(--text-primary)'
@@ -139,7 +139,7 @@ export function PipelineList({ rows: initialRows, paramKey = 'type', hideFilters
             onClick={handleRefreshClick}
             disabled={refreshing}
             aria-label="Refresh"
-            className="shrink-0 h-9 w-9 inline-flex items-center justify-center rounded-full bg-(--surface-2) text-(--text-secondary) hover:text-(--text-primary) hover:bg-(--surface-3) disabled:opacity-50 transition-colors"
+            className="shrink-0 h-9 w-9 inline-flex items-center justify-center rounded-md bg-(--surface-2) text-(--text-secondary) hover:text-(--text-primary) hover:bg-(--surface-3) disabled:opacity-50 transition-colors"
           >
             <svg
               width="18"

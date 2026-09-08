@@ -27,7 +27,7 @@ export function MessagesRow({ row }: { row: PipelineRow }) {
         {cold && (
           <span aria-hidden="true" className="absolute left-0 top-0 h-full w-1 bg-(--urgent-bg)" />
         )}
-        <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-white text-[14px] font-bold ${avatarBg}`}>
+        <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-md text-white text-[14px] font-bold ${avatarBg}`}>
           {initials}
         </div>
         <div className="min-w-0 flex-1">
@@ -36,7 +36,7 @@ export function MessagesRow({ row }: { row: PipelineRow }) {
               {row.primary}
             </span>
             {row.badges?.map((b, i) => (
-              <span key={i} className={`rounded-full px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wider ${BADGE_TONE[b.tone]}`}>
+              <span key={i} className={`rounded-sm px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wider ${BADGE_TONE[b.tone]}`}>
                 {b.text}
               </span>
             ))}

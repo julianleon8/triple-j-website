@@ -22,7 +22,7 @@ export function GroupedList({ groups, footer, className }: Props) {
       {groups.map((group, gi) => (
         <section key={gi}>
           {group.title && (
-            <h2 className="mb-2 px-4 text-[12px] font-semibold uppercase tracking-wider text-(--text-tertiary)">
+            <h2 className="mb-2 px-4 font-display text-[14px] font-semibold uppercase tracking-[0.1em] text-(--text-secondary)">
               {group.title}
             </h2>
           )}

@@ -60,7 +60,7 @@ export default async function CustomerDetailPage({ params }: { params: Promise<{
       </Link>
 
       <header className="rounded-2xl border border-(--border-subtle) bg-(--surface-2) p-5">
-        <h1 className="text-[26px] font-bold leading-tight text-(--text-primary)">{customer.name}</h1>
+        <h1 className="font-display text-[30px] font-bold uppercase leading-none tracking-[0.02em] text-(--text-primary)">{customer.name}</h1>
         <p className="mt-0.5 text-[14px] text-(--text-secondary)">{location || 'Customer'}</p>
 
         <div className="mt-4 grid grid-cols-2 gap-2">

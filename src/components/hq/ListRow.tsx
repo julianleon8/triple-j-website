@@ -54,7 +54,7 @@ function Avatar({ row }: { row: PipelineRow }) {
   const { bg, fallback } = KIND_STYLE[row.kind]
   const initials = initialsFrom(row.primary, fallback)
   return (
-    <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-white text-[14px] font-bold ${bg}`}>
+    <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-md text-white text-[14px] font-bold ${bg}`}>
       {initials}
     </div>
   )
@@ -85,7 +85,7 @@ const BADGE_TONE: Record<PipelineBadge['tone'], string> = {
 
 function Badge({ badge }: { badge: PipelineBadge }) {
   return (
-    <span className={`rounded-full px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wider ${BADGE_TONE[badge.tone]}`}>
+    <span className={`rounded-sm px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wider ${BADGE_TONE[badge.tone]}`}>
       {badge.text}
     </span>
   )
@@ -103,7 +103,7 @@ function TrailingSlot({ row, unread }: { row: PipelineRow; unread: boolean }) {
       // Drop it for leads; keep for other kinds (permits).
       if (row.kind === 'lead') return <Chevron />
       return (
-        <span className={`shrink-0 rounded-full px-2 py-0.5 text-[11px] font-semibold capitalize ${trailing.statusClass}`}>
+        <span className={`shrink-0 rounded-sm px-2 py-0.5 text-[11px] font-semibold capitalize ${trailing.statusClass}`}>
           {trailing.value}
         </span>
       )
@@ -137,7 +137,7 @@ function ScoreBadge({ score }: { score: number }) {
     score >= 4 ? 'bg-yellow-400 text-black' :
                  'bg-gray-300 text-gray-700 dark:bg-white/10 dark:text-gray-300'
   return (
-    <div className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-[12px] font-bold ${tone}`}>
+    <div className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-md text-[12px] font-bold ${tone}`}>
       {score}
     </div>
   )

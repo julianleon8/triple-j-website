@@ -48,7 +48,7 @@ export function GroupedRow(props: GroupedRowProps) {
     <div className={`flex min-h-14 items-center gap-3 px-4 py-2.5 ${props.disabled ? 'opacity-50' : ''}`}>
       {Icon && (
         <div
-          className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-[8px] ${iconInk} ${iconTone}`}
+          className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-md ${iconInk} ${iconTone}`}
           aria-hidden="true"
         >
           <Icon size={16} strokeWidth={2} />
@@ -61,7 +61,7 @@ export function GroupedRow(props: GroupedRowProps) {
         )}
       </div>
       {props.badge && (
-        <span className={`shrink-0 rounded-full px-2 py-0.5 text-[11px] font-semibold ${BADGE_TONE[props.badge.tone ?? 'default']}`}>
+        <span className={`shrink-0 rounded-sm px-2 py-0.5 text-[11px] font-semibold ${BADGE_TONE[props.badge.tone ?? 'default']}`}>
           {props.badge.text}
         </span>
       )}

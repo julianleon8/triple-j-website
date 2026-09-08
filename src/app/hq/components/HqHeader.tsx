@@ -321,8 +321,8 @@ export function HqHeader() {
             // the bare font-() shorthand here compiled to font-weight, not
             // font-family, so it was fighting font-bold rather than setting a
             // face — it stayed bold only by CSS source order.
-            className={`font-bold text-(--text-primary) tracking-tight transition-all ${
-              scrolled ? 'text-[17px]' : 'text-[28px]'
+            className={`font-display font-bold uppercase text-(--text-primary) tracking-[0.03em] transition-all ${
+              scrolled ? 'text-[19px]' : 'text-[30px]'
             }`}
           >
             {title}
@@ -334,7 +334,7 @@ export function HqHeader() {
             type="button"
             onClick={onRefresh}
             disabled={isRefreshing}
-            className="flex h-9 w-9 items-center justify-center rounded-full text-(--text-primary) bg-(--surface-2) border border-(--border-subtle) tap-solid disabled:opacity-50"
+            className="flex h-9 w-9 items-center justify-center rounded-md text-(--text-primary) bg-(--surface-2) border border-(--border-subtle) tap-solid disabled:opacity-50"
             aria-label="Refresh page"
           >
             <RefreshCw size={17} strokeWidth={2.3} className={isRefreshing ? 'animate-spin' : ''} />
@@ -346,7 +346,7 @@ export function HqHeader() {
             onPointerUp={onPointerUp}
             onPointerCancel={onPointerCancel}
             onContextMenu={(e) => e.preventDefault()}
-            className="flex h-9 w-9 items-center justify-center rounded-full text-(--text-primary) bg-(--surface-2) border border-(--border-subtle) tap-solid select-none"
+            className="flex h-9 w-9 items-center justify-center rounded-md text-(--text-primary) bg-(--surface-2) border border-(--border-subtle) tap-solid select-none"
             aria-haspopup="menu"
             aria-expanded={createOpen}
             aria-label="Create new · hold to record voice memo"
@@ -357,7 +357,7 @@ export function HqHeader() {
           <button
             type="button"
             onClick={() => router.push('/hq/settings')}
-            className="flex h-9 w-9 items-center justify-center rounded-full bg-(--link-fg) text-(--text-on-brand) text-sm font-bold tap-solid"
+            className="flex h-9 w-9 items-center justify-center rounded-md bg-(--link-fg) text-(--text-on-brand) text-sm font-bold tap-solid"
             aria-label="Settings"
           >
             JL

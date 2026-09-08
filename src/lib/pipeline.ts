@@ -117,39 +117,70 @@ export type JobForRow = {
 }
 
 // ── Status pill styles (one source of truth) ───────────────────────────────
+//
+// Direction 2b draws a status as a small squared chip: a 15% tint of the tone,
+// a 40% border of the same, and the tone itself as the text. Five tones cover
+// all 21 states, so the tone is what each map stores and TONE is the only place
+// a colour is written down. The 21 hardcoded Tailwind palette strings this
+// replaced repeated six colours in four near-identical maps.
+//
+// The exported records still hold class STRINGS, so every consumer
+// (ListRow, PipelineList, the three detail pages, calendar.ts) is unchanged.
 
-export const LEAD_STATUS_CLASS: Record<string, string> = {
-  new:       'bg-blue-100 text-blue-700 dark:bg-blue-500/20 dark:text-blue-300',
-  contacted: 'bg-yellow-100 text-yellow-700 dark:bg-yellow-500/20 dark:text-yellow-300',
-  quoted:    'bg-purple-100 text-purple-700 dark:bg-purple-500/20 dark:text-purple-300',
-  won:       'bg-green-100 text-green-700 dark:bg-green-500/20 dark:text-green-300',
-  lost:      'bg-red-100 text-red-700 dark:bg-red-500/20 dark:text-red-300',
+type Tone = 'info' | 'pending' | 'review' | 'good' | 'bad' | 'muted'
+
+const TONE: Record<Tone, string> = {
+  info:    'border border-hq-sky/40 bg-hq-sky/15 text-hq-sky',
+  pending: 'border border-hq-gold/40 bg-hq-gold/15 text-hq-gold',
+  review:  'border border-hq-violet/40 bg-hq-violet/15 text-hq-violet',
+  good:    'border border-hq-green/40 bg-hq-green/15 text-hq-green',
+  bad:     'border border-hq-red/40 bg-hq-red/15 text-hq-red',
+  muted:   'border border-(--border-subtle) bg-(--surface-3) text-(--text-tertiary)',
 }
 
-export const PERMIT_STATUS_CLASS: Record<string, string> = {
-  new:        'bg-blue-100 text-blue-700 dark:bg-blue-500/20 dark:text-blue-300',
-  called:     'bg-yellow-100 text-yellow-700 dark:bg-yellow-500/20 dark:text-yellow-300',
-  qualified:  'bg-green-100 text-green-700 dark:bg-green-500/20 dark:text-green-300',
-  junk:       'bg-gray-100 text-gray-500 dark:bg-white/5 dark:text-gray-400',
-  won:        'bg-green-100 text-green-700 dark:bg-green-500/20 dark:text-green-300',
-  lost:       'bg-red-100 text-red-700 dark:bg-red-500/20 dark:text-red-300',
-}
+/**
+ * The class for a status with no entry in its map. Previously this was written
+ * inline seven times as either 'bg-gray-100 text-gray-600' — which set a light
+ * background with no dark counterpart, so it vanished in dark mode — or as ''
+ * , which rendered an unstyled chip. Both are now a real muted chip.
+ */
+export const MUTED_STATUS_CLASS = TONE.muted
 
-export const QUOTE_STATUS_CLASS: Record<string, string> = {
-  draft:     'bg-gray-100 text-gray-600 dark:bg-white/10 dark:text-gray-300',
-  sent:      'bg-blue-100 text-blue-700 dark:bg-blue-500/20 dark:text-blue-300',
-  accepted:  'bg-green-100 text-green-700 dark:bg-green-500/20 dark:text-green-300',
-  declined:  'bg-red-100 text-red-700 dark:bg-red-500/20 dark:text-red-300',
-  expired:   'bg-gray-100 text-gray-500 dark:bg-white/5 dark:text-gray-400',
-}
+const byTone = (m: Record<string, Tone>): Record<string, string> =>
+  Object.fromEntries(Object.entries(m).map(([k, tone]) => [k, TONE[tone]]))
 
-export const JOB_STATUS_CLASS: Record<string, string> = {
-  scheduled:   'bg-blue-100 text-blue-700 dark:bg-blue-500/20 dark:text-blue-300',
-  in_progress: 'bg-amber-100 text-amber-700 dark:bg-amber-500/20 dark:text-amber-300',
-  completed:   'bg-green-100 text-green-700 dark:bg-green-500/20 dark:text-green-300',
-  on_hold:     'bg-gray-100 text-gray-500 dark:bg-white/5 dark:text-gray-400',
-  cancelled:   'bg-red-100 text-red-700 dark:bg-red-500/20 dark:text-red-300',
-}
+export const LEAD_STATUS_CLASS: Record<string, string> = byTone({
+  new:       'info',
+  contacted: 'pending',
+  quoted:    'review',
+  won:       'good',
+  lost:      'bad',
+})
+
+export const PERMIT_STATUS_CLASS: Record<string, string> = byTone({
+  new:       'info',
+  called:    'pending',
+  qualified: 'good',
+  junk:      'muted',
+  won:       'good',
+  lost:      'bad',
+})
+
+export const QUOTE_STATUS_CLASS: Record<string, string> = byTone({
+  draft:    'muted',
+  sent:     'info',
+  accepted: 'good',
+  declined: 'bad',
+  expired:  'muted',
+})
+
+export const JOB_STATUS_CLASS: Record<string, string> = byTone({
+  scheduled:   'info',
+  in_progress: 'pending',
+  completed:   'good',
+  on_hold:     'muted',
+  cancelled:   'bad',
+})
 
 // ── Formatters ─────────────────────────────────────────────────────────────
 
@@ -198,7 +229,7 @@ export function leadToRow(lead: LeadForRow): PipelineRow {
     trailing: {
       type: 'status',
       value: lead.status,
-      statusClass: LEAD_STATUS_CLASS[lead.status] ?? 'bg-gray-100 text-gray-600',
+      statusClass: LEAD_STATUS_CLASS[lead.status] ?? MUTED_STATUS_CLASS,
     },
     badges,
     created_at: lead.created_at,
@@ -227,7 +258,7 @@ export function permitToRow(permit: PermitForRow): PipelineRow {
       .join(' — '),
     trailing: score
       ? { type: 'score', value: score }
-      : { type: 'status', value: permit.status, statusClass: PERMIT_STATUS_CLASS[permit.status] ?? '' },
+      : { type: 'status', value: permit.status, statusClass: PERMIT_STATUS_CLASS[permit.status] ?? MUTED_STATUS_CLASS },
     badges,
     created_at: permit.created_at,
   }
@@ -271,7 +302,7 @@ export function quoteToRow(quote: QuoteForRow): PipelineRow {
       type: 'amount',
       value: compactUSD(total),
       sub: quote.status,
-      statusClass: QUOTE_STATUS_CLASS[quote.status] ?? '',
+      statusClass: QUOTE_STATUS_CLASS[quote.status] ?? MUTED_STATUS_CLASS,
     },
     badges,
     created_at: quote.created_at,
@@ -301,7 +332,7 @@ export function jobToRow(job: JobForRow): PipelineRow {
       type: 'amount',
       value: compactUSD(balance > 0 ? balance : total),
       sub: job.status.replace('_', ' '),
-      statusClass: JOB_STATUS_CLASS[job.status] ?? '',
+      statusClass: JOB_STATUS_CLASS[job.status] ?? MUTED_STATUS_CLASS,
     },
     badges,
     created_at: job.created_at,
