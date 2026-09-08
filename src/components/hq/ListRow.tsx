@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { BADGE_CLASS, BADGE_TONE } from './badge-tone'
 import type { PipelineBadge, PipelineKind, PipelineRow, PipelineTrailing } from '@/lib/pipeline'
 
 /**
@@ -71,22 +72,11 @@ function initialsFrom(primary: string, fallback: string): string {
   return letters || fallback
 }
 
-// ── Badges (small pills next to primary) ────────────────────────────────────
-
-const BADGE_TONE: Record<PipelineBadge['tone'], string> = {
-  hot:      'bg-red-500 text-white',
-  // White on amber-500 is ~2.1:1. `featured` below already had this right.
-  asap:     'bg-amber-500 text-black',
-  mil:      'bg-blue-500 text-white',
-  today:    'bg-emerald-500 text-white',
-  new:      'bg-sky-500 text-white',
-  featured: 'bg-amber-400 text-black',
-  warn:     'bg-orange-500 text-white',
-}
+// ── Badges (small pills next to primary) — palette in ./badge-tone ─────────
 
 function Badge({ badge }: { badge: PipelineBadge }) {
   return (
-    <span className={`rounded-sm px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wider ${BADGE_TONE[badge.tone]}`}>
+    <span className={`${BADGE_CLASS} ${BADGE_TONE[badge.tone]}`}>
       {badge.text}
     </span>
   )

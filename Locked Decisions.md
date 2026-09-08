@@ -98,6 +98,10 @@ Do not copy anything from this file into `AGENTS.md`. That duplication is what p
   textareas while `HqChrome` sets near-white ink on the whole subtree — a bare control on a light card
   is invisible, and an open `<select>` is invisible even over a dark one. Recharts takes colours as raw
   strings and never sees the theme: chart styling lives in `src/components/hq/chart-theme.ts`.
+  **When verifying compiled CSS, assert on the exact escaped selector and confirm the expected
+  value is present** — a hand-written checker that reports "missing" is unproven until it can find
+  a known-good control. Two confident false conclusions in this project came from the verifier, not
+  the code. Alpha modifiers on arbitrary `var()` colours (`bg-(--brand-fg)/15`) **do** work.
   (2026-09-08)
 
 - **Capture's promise is "nothing to lose", and localStorage is what keeps it** — not the network. Every

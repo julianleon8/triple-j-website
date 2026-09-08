@@ -24,6 +24,19 @@ export default async function SettingsHubPage() {
       <GroupedList
         groups={[
           {
+            title: 'Integrations',
+            rows: [
+              {
+                icon: Link2,
+                iconTone: 'bg-blue-500',
+                label: 'QuickBooks',
+                href: '/hq/settings/quickbooks',
+                trailingValue: qbo,
+                trailingValueTone: qbo === 'Connected' ? 'positive' : 'neutral',
+              },
+            ],
+          },
+          {
             title: 'Device',
             rows: [
               {
@@ -70,19 +83,6 @@ export default async function SettingsHubPage() {
                 label: 'Partner Inquiries',
                 sublabel: 'B2B referrals from suppliers, manufacturers, GCs',
                 href: '/hq/partners',
-              },
-            ],
-          },
-          {
-            title: 'Integrations',
-            rows: [
-              {
-                icon: Link2,
-                iconTone: 'bg-blue-500',
-                label: 'QuickBooks',
-                href: '/hq/settings/quickbooks',
-                trailingValue: qbo,
-                trailingValueTone: qbo === 'Connected' ? 'positive' : 'neutral',
               },
             ],
           },

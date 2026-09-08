@@ -90,13 +90,13 @@ export async function CostLedger({ jobId }: Props) {
               <div key={costType}>
                 <div className="mb-1.5 flex items-center justify-between">
                   <span
-                    className={`rounded-full px-2 py-0.5 text-[11px] font-semibold capitalize ${
+                    className={`rounded-sm px-2 py-0.5 font-mono text-[11px] font-semibold uppercase tracking-[0.04em] ${
                       COST_TYPE_TONE[costType] ?? COST_TYPE_TONE.misc
                     }`}
                   >
                     {COST_TYPE_LABEL[costType] ?? costType}
                   </span>
-                  <span className="text-[12px] tabular-nums text-(--text-secondary)">
+                  <span className="font-mono text-[12px] tabular-nums text-(--text-secondary)">
                     {fmtUSD(g.subtotal)}
                   </span>
                 </div>

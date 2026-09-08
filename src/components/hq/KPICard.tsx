@@ -28,12 +28,7 @@ const ACCENT: Record<NonNullable<KPICardProps['accent']>, string> = {
   emerald:  'bg-emerald-500/15 border-emerald-500/30 text-emerald-400',
   amber:    'bg-amber-500/15 border-amber-500/30 text-amber-400',
   red:      'bg-red-500/15 border-red-500/30 text-red-400',
-  // hq-gold, not (--brand-fg): an alpha modifier on an arbitrary var() colour
-  // is unreliable — compiling globals.css shows bg-(--hq-sky)/15 emits no rule
-  // at all. --color-hq-* are registered theme colours, so the /15 emits a real
-  // color-mix. Same trap as the PR 2 status chips; verified by compiling, not
-  // by eye.
-  brand:    'bg-hq-gold/15 border-hq-gold/30 text-hq-gold',
+  brand:    'bg-(--brand-fg)/15 border-(--brand-fg)/30 text-(--brand-fg)',
 }
 
 export function KPICard({ label, value, sub, accent = 'brand', children }: KPICardProps) {

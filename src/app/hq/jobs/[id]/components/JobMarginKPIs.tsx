@@ -25,44 +25,42 @@ export function JobMarginKPIs({ totalContract, grossProfit, grossMargin }: Props
     grossMargin != null && grossMargin < 0.20 ? 'amber' :
     'green'
 
+  // Both tiles carried this expression verbatim; one copy, so they cannot
+  // disagree about what "healthy" looks like.
+  const cardClass = `rounded-md border p-4 ${
+    profitTone === 'red' ? 'border-red-500/30 bg-red-500/5' :
+    profitTone === 'amber' ? 'border-amber-500/30 bg-amber-500/5' :
+    profitTone === 'green' ? 'border-green-500/30 bg-green-500/5' :
+    'border-(--border-subtle) bg-(--surface-2)'
+  }`
+  const LABEL = 'flex items-center gap-1.5 font-display text-[11px] font-bold uppercase tracking-[0.06em] text-(--text-tertiary)'
+  const VALUE = 'mt-1 text-[24px] font-bold tabular-nums leading-none text-(--text-primary)'
+  const META = 'mt-1 font-mono text-[11px] uppercase tracking-[0.04em] text-(--text-tertiary)'
+
   return (
     <section className="grid grid-cols-2 gap-3">
-      <div
-        className={`rounded-2xl border p-4 ${
-          profitTone === 'red' ? 'border-red-500/30 bg-red-500/5' :
-          profitTone === 'amber' ? 'border-amber-500/30 bg-amber-500/5' :
-          profitTone === 'green' ? 'border-green-500/30 bg-green-500/5' :
-          'border-(--border-subtle) bg-(--surface-2)'
-        }`}
-      >
-        <div className="flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wider text-(--text-tertiary)">
+      <div className={cardClass}>
+        <div className={LABEL}>
           <DollarSign size={12} strokeWidth={2.5} />
           Gross profit
         </div>
-        <div className="mt-1 text-[22px] font-bold tabular-nums text-(--text-primary)">
+        <div className={VALUE}>
           {grossProfit == null ? '—' : fmtSignedUSD(grossProfit)}
         </div>
-        <div className="mt-0.5 text-[11px] text-(--text-tertiary)">
+        <div className={META}>
           Contract {fmtUSD(totalContract)} − costs
         </div>
       </div>
 
-      <div
-        className={`rounded-2xl border p-4 ${
-          profitTone === 'red' ? 'border-red-500/30 bg-red-500/5' :
-          profitTone === 'amber' ? 'border-amber-500/30 bg-amber-500/5' :
-          profitTone === 'green' ? 'border-green-500/30 bg-green-500/5' :
-          'border-(--border-subtle) bg-(--surface-2)'
-        }`}
-      >
-        <div className="flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wider text-(--text-tertiary)">
+      <div className={cardClass}>
+        <div className={LABEL}>
           <TrendingUp size={12} strokeWidth={2.5} />
           Gross margin
         </div>
-        <div className="mt-1 text-[22px] font-bold tabular-nums text-(--text-primary)">
+        <div className={VALUE}>
           {grossMargin == null ? '—' : `${(grossMargin * 100).toFixed(1)}%`}
         </div>
-        <div className="mt-0.5 text-[11px] text-(--text-tertiary)">
+        <div className={META}>
           {profitTone === 'red' ? 'Underwater' :
            profitTone === 'amber' ? 'Below 20%' :
            profitTone === 'green' ? 'Healthy' : 'Awaiting costs'}
