@@ -6,7 +6,7 @@ import { ArrowLeft } from 'lucide-react'
 import { getAdminClient } from '@/lib/supabase/admin'
 import { QUOTE_STATUS_CLASS, MUTED_STATUS_CLASS } from '@/lib/pipeline'
 import { QuoteDetailActions } from './components/QuoteDetailActions'
-import QuoteEditor from './components/QuoteEditor'
+import { QboPushButton } from './components/QboPushButton'
 
 type LineItem = {
   id?: string
@@ -49,12 +49,11 @@ export default async function QuoteDetailPage({
   if (error || !quoteRaw) notFound()
   const quote = quoteRaw as QuoteRow
 
-  const { data: customers } = await db
-    .from('customers')
-    .select('id, name, email')
-    .order('name')
-
   const statusClass = QUOTE_STATUS_CLASS[quote.status] ?? MUTED_STATUS_CLASS
+  const lineItems = [...(quote.quote_line_items ?? [])].sort(
+    (a, b) => a.sort_order - b.sort_order,
+  )
+  const subtotal = lineItems.reduce((s, i) => s + i.quantity * i.unit_price, 0)
 
   return (
     <div className="max-w-3xl mx-auto space-y-4">
@@ -91,20 +90,71 @@ export default async function QuoteDetailPage({
         />
       </header>
 
-      {/* Inline editor / line items — QuoteEditor already handles draft edit + QBO push */}
-      <QuoteEditor
-        quote={{
-          id: quote.id,
-          quote_number: quote.quote_number,
-          status: quote.status,
-          valid_until: quote.valid_until,
-          notes: quote.notes,
-          total: Number(quote.total ?? 0),
-          customers: quote.customers,
-          quote_line_items: quote.quote_line_items,
-        }}
-        customers={customers ?? []}
-      />
+      {/* Read-only line items. Quotes are tracked here, not built here — the
+          pricing math in src/lib/quote-pricing.ts is still full of
+          TODO_PRICING placeholders, so the editor that used to live at this
+          spot was removed rather than restyled. */}
+      <section className="rounded-md border border-(--border-subtle) bg-(--surface-2) p-4">
+        <h2 className="font-display text-[14px] font-bold uppercase tracking-[0.06em] text-(--text-secondary)">
+          Line items
+        </h2>
+
+        {lineItems.length === 0 ? (
+          <p className="mt-3 text-[15px] text-(--text-tertiary)">No line items on this quote.</p>
+        ) : (
+          <ul className="mt-3 divide-y divide-(--border-subtle)">
+            {lineItems.map((item, i) => (
+              <li key={item.id ?? i} className="flex items-baseline justify-between gap-4 py-2.5">
+                <div className="min-w-0">
+                  <p className="text-[15px] text-(--text-primary)">{item.description}</p>
+                  <p className="mt-0.5 font-mono text-[11px] uppercase tracking-[0.04em] text-(--text-tertiary)">
+                    {item.quantity} × {formatUSD(item.unit_price)}
+                  </p>
+                </div>
+                <p className="shrink-0 text-[15px] font-bold tabular-nums text-(--text-primary)">
+                  {formatUSD(item.quantity * item.unit_price)}
+                </p>
+              </li>
+            ))}
+          </ul>
+        )}
+
+        <div className="mt-3 flex items-baseline justify-between border-t border-(--border-subtle) pt-3">
+          <span className="font-mono text-[11px] uppercase tracking-[0.04em] text-(--text-tertiary)">
+            Total
+          </span>
+          <span className="text-[20px] font-bold tabular-nums text-(--text-primary)">
+            {formatUSD(subtotal)}
+          </span>
+        </div>
+      </section>
+
+      {(quote.valid_until || quote.notes) && (
+        <section className="rounded-md border border-(--border-subtle) bg-(--surface-2) p-4">
+          <dl className="space-y-3">
+            {quote.valid_until && (
+              <div>
+                <dt className="font-mono text-[11px] uppercase tracking-[0.04em] text-(--text-tertiary)">
+                  Valid until
+                </dt>
+                <dd className="mt-0.5 text-[15px] text-(--text-primary)">{quote.valid_until}</dd>
+              </div>
+            )}
+            {quote.notes && (
+              <div>
+                <dt className="font-mono text-[11px] uppercase tracking-[0.04em] text-(--text-tertiary)">
+                  Notes
+                </dt>
+                <dd className="mt-0.5 whitespace-pre-wrap text-[15px] text-(--text-primary)">
+                  {quote.notes}
+                </dd>
+              </div>
+            )}
+          </dl>
+        </section>
+      )}
+
+      {quote.status === 'accepted' && <QboPushButton id={quote.id} />}
     </div>
   )
 }

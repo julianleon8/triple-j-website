@@ -62,6 +62,26 @@ Do not copy anything from this file into `AGENTS.md`. That duplication is what p
   **Today · Leads · Capture · Jobs · More**; **Gallery moved into the More hub** to make room for Capture and
   is still in the desktop nav. The tab grid is sized from `HQ_TABS.length` via an inline style, because an
   interpolated `grid-cols-${n}` is a class Tailwind never generates. (2026-09-07)
+- **Quote building is not in HQ.** `/hq/quotes` is a read-only tracking list — segments **Out · Won ·
+  Lost · All**, with `draft` in All only, because a draft is now a legacy row rather than work in
+  progress. `/hq/quotes/new` returns `notFound()`; its wizard components stay on disk and keep
+  type-checking, so this is **hidden, not deleted**. The reason is `src/lib/quote-pricing.ts` and its
+  nine `TODO_PRICING` placeholders: the math is not trusted to produce a number worth sending. The
+  quote detail screen renders line items and totals read-only; the QuickBooks push survives as its own
+  component. `/hq/calculator` keeps the estimator and owns `CalculatorStep` outright — it was the only
+  thing outside the wizard directory reaching into it. Segment membership lives in
+  `src/lib/hq/quote-segments.ts` and nothing may re-derive it. (2026-09-08)
+
+- **Contrast inside HQ is verified by rendered ancestry, never by a single-line grep.** The PR 1 sweep
+  matched `bg-(--brand-fg)` and `text-white` in one string, so two files shipped white-on-gold at
+  ~1.25:1. Two rules follow. **Never white on gold or amber** — `--hq-on-gold` is `#0b0d0f`, and
+  `text-black` is correct on `amber-400/500`. **Every form control sets its own `bg-` and text colour**,
+  because Tailwind preflight puts `color: inherit; background-color: transparent` on inputs, selects and
+  textareas while `HqChrome` sets near-white ink on the whole subtree — a bare control on a light card
+  is invisible, and an open `<select>` is invisible even over a dark one. Recharts takes colours as raw
+  strings and never sees the theme: chart styling lives in `src/components/hq/chart-theme.ts`.
+  (2026-09-08)
+
 - **Capture's promise is "nothing to lose", and localStorage is what keeps it** — not the network. Every
   keystroke writes to `localStorage` **synchronously, before the request**, including the focused field and
   caret offset; iOS gives no `beforeunload` when it tears down a PWA for an incoming call, so

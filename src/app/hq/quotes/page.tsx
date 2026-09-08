@@ -2,6 +2,7 @@ export const dynamic = 'force-dynamic'
 
 import { getAdminClient } from '@/lib/supabase/admin'
 import { quoteToRow, type QuoteForRow } from '@/lib/pipeline'
+import { countSegments } from '@/lib/hq/quote-segments'
 import { QuotesList } from './components/QuotesList'
 
 export default async function QuotesPage() {
@@ -14,12 +15,9 @@ export default async function QuotesPage() {
   const quotes = (data ?? []) as unknown as QuoteForRow[]
   const rows = quotes.map(quoteToRow)
 
-  const counts = {
-    all:      quotes.length,
-    draft:    quotes.filter((q) => q.status === 'draft').length,
-    sent:     quotes.filter((q) => q.status === 'sent').length,
-    accepted: quotes.filter((q) => q.status === 'accepted').length,
-  }
+  // Counted through the same predicate the client filters with, so a segment
+  // can never show a count it cannot then render.
+  const counts = countSegments(quotes.map((q) => q.status))
 
   return (
     <div>

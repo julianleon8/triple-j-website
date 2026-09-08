@@ -1,8 +1,7 @@
 'use client'
 
 import { useState, useMemo } from 'react'
-import { useRouter } from 'next/navigation'
-import { CheckCircle2, ChevronDown, FileText, Trash2 } from 'lucide-react'
+import { CheckCircle2, ChevronDown, Trash2 } from 'lucide-react'
 import type { PipelineRow } from '@/lib/pipeline'
 import { LEAD_STATUS_CLASS, leadToRow, type LeadForRow } from '@/lib/pipeline'
 import { SegmentedControl } from '@/components/hq/ui/SegmentedControl'
@@ -48,7 +47,6 @@ function matchesSegment(row: PipelineRow, seg: Segment): boolean {
 }
 
 export function LeadsInbox({ rows: initialRows, counts, pageSize, totalAll, draftCount }: Props) {
-  const router = useRouter()
   const [rows, setRows] = useState(initialRows)
   const [seg, setSeg] = useState<Segment>('new')
   const [drawerId, setDrawerId] = useState<string | null>(null)
@@ -97,10 +95,6 @@ export function LeadsInbox({ rows: initialRows, counts, pageSize, totalAll, draf
     const res = await fetch(`/api/leads/${id}`, { method: 'DELETE' })
     if (!res.ok) return
     removeRow(id)
-  }
-
-  function sendQuote(id: string) {
-    router.push(`/hq/quotes/new?leadId=${id}`)
   }
 
   async function loadOlder() {
@@ -245,11 +239,6 @@ export function LeadsInbox({ rows: initialRows, counts, pageSize, totalAll, draf
             label: 'Mark Contacted',
             icon: CheckCircle2,
             onPick: async () => { if (drawerId) await markContacted(drawerId) },
-          },
-          {
-            label: 'Send Quote',
-            icon: FileText,
-            onPick: () => { if (drawerId) sendQuote(drawerId) },
           },
           {
             label: 'Delete',

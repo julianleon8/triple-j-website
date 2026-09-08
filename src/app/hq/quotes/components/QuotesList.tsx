@@ -1,19 +1,14 @@
 'use client'
 
-import Link from 'next/link'
 import { useMemo, useState } from 'react'
-import { Plus } from 'lucide-react'
 import type { PipelineRow } from '@/lib/pipeline'
 import { PipelineList } from '@/components/hq/PipelineList'
 import { SegmentedControl } from '@/components/hq/ui/SegmentedControl'
-
-type Segment = 'all' | 'draft' | 'sent' | 'accepted'
-
-type Counts = { all: number; draft: number; sent: number; accepted: number }
+import { inSegment, type QuoteCounts, type QuoteSegment } from '@/lib/hq/quote-segments'
 
 type Props = {
   rows: PipelineRow[]
-  counts: Counts
+  counts: QuoteCounts
 }
 
 function statusOf(row: PipelineRow): string | null {
@@ -24,35 +19,37 @@ function statusOf(row: PipelineRow): string | null {
 }
 
 export function QuotesList({ rows, counts }: Props) {
-  const [seg, setSeg] = useState<Segment>('all')
+  const [seg, setSeg] = useState<QuoteSegment>('all')
 
-  const filtered = useMemo(() => {
-    if (seg === 'all') return rows
-    return rows.filter((r) => statusOf(r) === seg)
-  }, [rows, seg])
+  const filtered = useMemo(
+    () => rows.filter((r) => inSegment(statusOf(r), seg)),
+    [rows, seg],
+  )
 
   return (
     <div className="space-y-3">
-      <div className="flex items-center justify-between gap-2">
-        <SegmentedControl
-          ariaLabel="Filter quotes"
-          value={seg}
-          onChange={(k) => setSeg(k as Segment)}
-          options={[
-            { key: 'all',      label: 'All',      count: counts.all },
-            { key: 'draft',    label: 'Draft',    count: counts.draft },
-            { key: 'sent',     label: 'Sent',     count: counts.sent },
-            { key: 'accepted', label: 'Accepted', count: counts.accepted },
-          ]}
-          className="flex-1"
-        />
-        <Link
-          href="/hq/quotes/new"
-          className="shrink-0 inline-flex items-center gap-1 rounded-full bg-(--brand-fg) px-3 py-1.5 text-[13px] font-semibold text-(--text-on-brand) tap-solid"
-        >
-          <Plus size={14} strokeWidth={2} /> New
-        </Link>
+      {/* Quotes are tracked here, not built here. Stated on the screen rather
+          than left as a missing button, so the absence reads as a decision. */}
+      <div className="rounded-md border border-dashed border-(--border-strong) p-3.5">
+        <p className="font-display text-[14px] font-bold uppercase tracking-[0.06em] text-(--text-secondary)">
+          Tracking only
+        </p>
+        <p className="mt-1 text-[14px] leading-snug text-(--text-tertiary)">
+          Quotes are built outside HQ. This list tracks what went out and what came back.
+        </p>
       </div>
+
+      <SegmentedControl
+        ariaLabel="Filter quotes"
+        value={seg}
+        onChange={(k) => setSeg(k as QuoteSegment)}
+        options={[
+          { key: 'out',  label: 'Out',  count: counts.out },
+          { key: 'won',  label: 'Won',  count: counts.won },
+          { key: 'lost', label: 'Lost', count: counts.lost },
+          { key: 'all',  label: 'All',  count: counts.all },
+        ]}
+      />
 
       <PipelineList rows={filtered} hideFilters />
     </div>
