@@ -7,6 +7,7 @@ import {
   ClipboardList,
   FileText,
   Handshake,
+  Images,
   Settings,
   UserSquare2,
 } from 'lucide-react'
@@ -70,6 +71,15 @@ export default async function MoreHubPage() {
                 label: 'Partners',
                 href: '/hq/partners',
                 badge: newPartnerInquiries ? { text: String(newPartnerInquiries), tone: 'warn' } : undefined,
+              },
+              {
+                // Moved off the bottom tab bar to make room for Capture.
+                // Desktop still has it in the top nav.
+                icon: Images,
+                iconTone: 'bg-violet-500',
+                label: 'Gallery',
+                sublabel: 'Published projects · photos',
+                href: '/hq/gallery',
               },
             ],
           },

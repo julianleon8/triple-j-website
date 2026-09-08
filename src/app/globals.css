@@ -579,7 +579,11 @@ p { line-height: 1.6; }
   body {
     padding-bottom: env(safe-area-inset-bottom);
   }
-  main {
+  /* Reserves room for the marketing site's sticky Call bar. This rule is
+     unlayered, so it OUTRANKS <main>'s pb-24 utility — HQ's main was really
+     72px, not the 96px the class implies. HQ has no call bar and sets its own
+     tab-bar clearance, so exclude it rather than letting the two fight. */
+  body:not(:has(.hq-ui)) main {
     padding-bottom: 4.5rem; /* height of mobile call bar */
   }
 }

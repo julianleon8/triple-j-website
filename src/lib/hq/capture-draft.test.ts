@@ -12,6 +12,7 @@ import {
   loadDraft,
   mergeServerDraft,
   normalizeTenDigits,
+  cityOrZipPayload,
   parseDraft,
   saveDraft,
   serializeDraft,
@@ -197,5 +198,28 @@ describe('test-collection guard', () => {
     }
     walk('src')
     expect(found).toEqual([])
+  })
+})
+
+describe('cityOrZipPayload keeps ZIPs out of leads.city', () => {
+  it('sends a five-digit value as a ZIP, never as a city', () => {
+    expect(cityOrZipPayload('76501')).toEqual({ zip: '76501', city: null })
+    expect(cityOrZipPayload('76501-1234')).toEqual({ zip: '76501-1234', city: null })
+  })
+
+  it('sends a name as a city', () => {
+    expect(cityOrZipPayload('Temple')).toEqual({ city: 'Temple' })
+    expect(cityOrZipPayload('  Round Rock ')).toEqual({ city: 'Round Rock' })
+  })
+
+  it('clears both columns when the row is emptied', () => {
+    expect(cityOrZipPayload('')).toEqual({ city: null, zip: null })
+    expect(cityOrZipPayload('   ')).toEqual({ city: null, zip: null })
+  })
+
+  it('never returns a city that is all digits', () => {
+    for (const v of ['76501', '78664', '00000', '76501-1234']) {
+      expect(cityOrZipPayload(v).city).toBeNull()
+    }
   })
 })

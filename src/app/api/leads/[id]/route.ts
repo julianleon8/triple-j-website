@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod'
 import { requireOwner } from '@/lib/auth'
 import { getAdminClient } from '@/lib/supabase/admin'
+import { cityFromZip } from '@/lib/locations'
 
 export const dynamic = 'force-dynamic'
 
@@ -72,6 +73,16 @@ export async function PATCH(
   const update: Record<string, unknown> = { updated_at: new Date().toISOString() }
   for (const [k, v] of Object.entries(parsed.data)) {
     if (v !== undefined) update[k] = v
+  }
+
+  // leads.city is a city name or NULL, never a ZIP, and cityFromZip() is the
+  // only thing allowed to populate it (locked 2026-09-07 — a ZIP in that column
+  // is what migration 028 had to go back and clean up). The capture screen
+  // sends one "City or ZIP" field, so whenever a zip arrives here the city is
+  // DERIVED, never taken on trust. An unrecognised ZIP resolves to NULL and the
+  // ZIP itself is still preserved in leads.zip.
+  if (parsed.data.zip !== undefined) {
+    update.city = parsed.data.zip ? cityFromZip(parsed.data.zip) : null
   }
 
   const { data, error } = await getAdminClient()

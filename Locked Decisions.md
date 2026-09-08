@@ -56,6 +56,24 @@ Do not copy anything from this file into `AGENTS.md`. That duplication is what p
 
 - **The `leads.source` allowlist is owned by the database CHECK** (`leads_source_check`, migration 029). The public `POST /api/leads` accepts only `website_form | quote_page` from a client, as a closed zod enum — a bad value is a 400, never a constraint violation surfacing as a 500 and a lost lead. Every other source value is set server-side by its own ingest path. (2026-09-07)
 
+- **HQ navigation has exactly one owner:** `src/app/hq/nav.ts` — `HQ_TABS`, `HQ_DESKTOP_NAV` derived from
+  it, and `titleForPath()`. There were three lists with two different active-match rules and a title map that
+  had no entry for calendar, calculator, activity or partners; never add a fourth. Bottom tabs are
+  **Today · Leads · Capture · Jobs · More**; **Gallery moved into the More hub** to make room for Capture and
+  is still in the desktop nav. The tab grid is sized from `HQ_TABS.length` via an inline style, because an
+  interpolated `grid-cols-${n}` is a class Tailwind never generates. (2026-09-07)
+- **Capture's promise is "nothing to lose", and localStorage is what keeps it** — not the network. Every
+  keystroke writes to `localStorage` **synchronously, before the request**, including the focused field and
+  caret offset; iOS gives no `beforeunload` when it tears down a PWA for an incoming call, so
+  `visibilitychange` is not enough. Autosave debounces 400ms and sends the **whole field set, never a
+  delta** — over LTE a dropped PATCH would otherwise strand that value on the server while the phone shows
+  it saved. Feedback is the "Saved Xs ago" line only: no toasts, no spinners, no Save button. The service
+  worker routes every non-GET through `NetworkOnly`, so offline the line reads **"Saved on this phone"**
+  rather than claiming a save that did not happen. (2026-09-07)
+- **Duplicate detection is inline, never a modal.** On ten digits, leads and customers are matched on the
+  last ten digits with both sides normalised in code — stored numbers are not normalised, so the column
+  cannot be trusted. A customer outranks a lead in the list. "New anyway" sets `dup_ack`. A lookup that
+  fails must never block typing. (2026-09-07)
 - **A lead is a draft while `name` or `service_type` is NULL** — nothing else. `leads.is_draft` is a
   generated stored column (migration 033) and `isDraftLead()` in `src/lib/hq/capture-draft.ts` is its
   TypeScript mirror; the test pins the two against one fixture table so they cannot drift. **Size is

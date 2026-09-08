@@ -15,6 +15,7 @@ import {
   type AudioRecorder,
 } from '@/lib/hq/audio-recorder'
 import { useHaptics } from '@/lib/hq/haptics'
+import { titleForPath } from '../nav'
 
 // How long the user must hold the + button before we flip from
 // "short press opens popover" into "long press arms voice memo".
@@ -24,27 +25,6 @@ const LONG_PRESS_MS = 500
 // Guard rail so accidental ~40ms taps don't toggle the popover.
 const MIN_MEANINGFUL_RELEASE_MS = 60
 
-function titleFor(pathname: string, tab: string | null): string {
-  if (pathname === '/hq') return tab === 'funnel' ? 'Funnel' : 'Today'
-  // Detail routes (singular) — checked before list-prefix matches.
-  if (/^\/hq\/leads\/[^/]+$/.test(pathname))     return 'Lead'
-  if (/^\/hq\/jobs\/[^/]+$/.test(pathname))      return 'Job'
-  if (/^\/hq\/customers\/[^/]+$/.test(pathname)) return 'Customer'
-  if (pathname.startsWith('/hq/leads'))                  return 'Leads'
-  if (pathname.startsWith('/hq/permit-leads'))           return 'Permits'
-  if (pathname.startsWith('/hq/customers'))              return 'Customers'
-  if (pathname.startsWith('/hq/quotes'))                 return 'Quotes'
-  if (pathname.startsWith('/hq/jobs'))                   return 'Jobs'
-  if (pathname.startsWith('/hq/gallery'))                return 'Gallery'
-  if (pathname === '/hq/more/stats')                     return 'Stats'
-  if (pathname.startsWith('/hq/more'))                   return 'More'
-  if (pathname.startsWith('/hq/settings/notifications')) return 'Notifications'
-  if (pathname.startsWith('/hq/settings/testing'))       return 'Testing'
-  if (pathname.startsWith('/hq/settings/logs'))          return 'Logs'
-  if (pathname.startsWith('/hq/settings/quickbooks'))    return 'QuickBooks'
-  if (pathname.startsWith('/hq/settings'))               return 'Settings'
-  return 'Triple J'
-}
 
 /**
  * iOS-style large-title header for HQ.
@@ -88,7 +68,7 @@ export function HqHeader() {
   const isRecordingRef = useRef(false)
   const tickRef = useRef<number | null>(null)
 
-  const title = titleFor(pathname, searchParams.get('tab'))
+  const title = titleForPath(pathname)
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 24)

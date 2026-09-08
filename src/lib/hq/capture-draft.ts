@@ -185,3 +185,18 @@ export function normalizeTenDigits(raw: string): string | null {
   const digits = e164.replace(/\D/g, '')
   return digits.length === 11 && digits.startsWith('1') ? digits.slice(1) : null
 }
+
+/**
+ * The "City or ZIP" checklist row is one field on screen and two columns
+ * underneath. `leads.city` must hold a city name or NULL and never a ZIP —
+ * `cityFromZip()` is the only thing allowed to populate it, and a ZIP sitting
+ * in that column is exactly what migration 028 had to go back and clean up.
+ *
+ * So a five-digit value is sent as a ZIP and the server derives the city from
+ * it; anything else is taken as a city name. Clearing the row clears both.
+ */
+export function cityOrZipPayload(value: string): Record<string, unknown> {
+  const v = value.trim()
+  if (v === '') return { city: null, zip: null }
+  return /^\d{5}(-\d{4})?$/.test(v) ? { zip: v, city: null } : { city: v }
+}

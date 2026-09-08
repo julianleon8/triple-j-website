@@ -8,14 +8,8 @@ import { InstallPrompt } from '@/components/hq/InstallPrompt'
 import { SignOutButton } from '@/components/hq/SignOutButton'
 import { BottomTabBar } from './BottomTabBar'
 import { HqHeader } from './HqHeader'
+import { HQ_DESKTOP_NAV } from '../nav'
 
-const NAV = [
-  { href: '/hq',         label: 'Today' },
-  { href: '/hq/leads',   label: 'Leads' },
-  { href: '/hq/jobs',    label: 'Jobs' },
-  { href: '/hq/gallery', label: 'Gallery' },
-  { href: '/hq/more',    label: 'More' },
-] as const
 
 export default function HqChrome({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
@@ -48,8 +42,8 @@ export default function HqChrome({ children }: { children: React.ReactNode }) {
           </Link>
 
           <nav className="flex flex-wrap items-center justify-end gap-x-5 gap-y-1 text-sm font-semibold">
-            {NAV.map(({ href, label }) => {
-              const active = pathname === href || (href !== '/hq' && pathname.startsWith(href))
+            {HQ_DESKTOP_NAV.map(({ href, label, match }) => {
+              const active = match(pathname)
               return (
                 <Link
                   key={href}
@@ -76,7 +70,9 @@ export default function HqChrome({ children }: { children: React.ReactNode }) {
         </div>
       </header>
 
-      {/* Main content — bottom padding on mobile leaves room for BottomTabBar (~64px + safe-area) */}
+      {/* Main content. pb-24 is the tab-bar clearance (57px + safe-area, with
+          room to spare) and it only actually applies now that globals.css' own
+          unlayered `main { padding-bottom }` rule is scoped to non-HQ pages. */}
       <main className="mx-auto max-w-7xl px-4 pt-4 pb-24 sm:px-6 sm:py-6 sm:pb-6">{children}</main>
 
       {/* Mobile bottom tab bar (hidden on sm:+) */}

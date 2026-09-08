@@ -24,7 +24,7 @@ type Action = {
 }
 
 const ACTIONS: Action[] = [
-  { key: 'lead',     label: 'New Lead',     sub: 'Phone call or walk-in',         href: '/hq/leads?new=1',    icon: UserPlus,    tone: 'bg-blue-500'   },
+  { key: 'lead',     label: 'New Lead',     sub: 'Phone call or walk-in',         href: '/hq/capture',    icon: UserPlus,    tone: 'bg-blue-500'   },
   { key: 'customer', label: 'New Customer', sub: 'Add without a lead',            href: '/hq/customers',      icon: UserSquare2, tone: 'bg-green-500'  },
   { key: 'quote',    label: 'New Quote',    sub: 'Build for existing customer',   href: '/hq/quotes/new',     icon: FileText,    tone: 'bg-amber-500'  },
   { key: 'job',      label: 'New Job',      sub: 'Schedule a build',              href: '/hq/jobs?new=1',     icon: Hammer,      tone: 'bg-rose-500'   },
