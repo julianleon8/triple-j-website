@@ -2,9 +2,24 @@
 
 ## 2026-09-08 — HQ redesign Tracks 3 + 4, and six contrast bugs
 
-Five pushes, all live: `5d35082` contrast hotfix, `36f4243` CalculatorStep move, `ba7f744` quotes
-read-only, `14cb71a` Today reshaped, `c02b238` lead detail, `aa16c7c` PR 8 partial + a correction.
-Gate green at every push; tests 353 → 369.
+Seven commits, all live: `5d35082` contrast hotfix, `36f4243` CalculatorStep move, `ba7f744`
+quotes read-only, `14cb71a` Today reshaped, `c02b238` lead detail, `aa16c7c` PR 8 partial + a
+correction, `ec565ea` vault. Gate green at every push; tests 353 → 369.
+
+**In plain terms, for whoever reads this cold.** HQ had gone dark in the previous session and six
+places were left rendering text you simply could not read: filter counts in white on a gold pill,
+both charts drawing near-black labels on a near-black card with a tooltip that was white text on a
+white box, the permit-leads notes field, nine Gallery dropdowns whose option lists went invisible
+the moment you opened them on a desktop browser, eight badges in white on amber, and two error
+messages in a red too dark to see. Then quote building left the app: `/hq/quotes/new` 404s, quote
+detail is read-only, and the old editor was deleted — that editor held the worst bug of the set, a
+white card containing five inputs whose text was also white, so everything you typed vanished on
+screen while still saving to the database. Because the standalone calculator secretly lived inside
+the quote-wizard folder, it moved out first in its own commit so a mistake there would be one clean
+revert. Today was cut to four blocks, which meant deleting the stats strip (three of its four
+numbers already existed on the Stats page in fuller form) and cutting "Needs attention" — taking
+Today from twelve database queries per load to three. Lead detail now opens with a one-tap text
+that hands off to the Messages app. Jobs and Settings got a partial styling pass.
 
 **The contrast hotfix came first because PR 1's sweep had a hole.** It grepped `bg-(--brand-fg)`
 and `text-white` on the same line, so `PipelineList` — gold pill on line 124, `text-white/70` count
