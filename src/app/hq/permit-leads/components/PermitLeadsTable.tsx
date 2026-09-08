@@ -900,7 +900,11 @@ function NotesEditor({
         onChange={e => setVal(e.target.value)}
         rows={3}
         placeholder="Call notes, owner phone, next step…"
-        className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 resize-none"
+        // Explicit bg AND text colour are both load-bearing: Tailwind preflight
+        // sets `background: transparent; color: inherit` on form controls, and
+        // HqChrome sets --text-primary (near-white) on the whole subtree — so a
+        // bare textarea on this light row rendered white-on-white.
+        className="w-full border border-gray-300 bg-white text-gray-900 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 resize-none"
       />
       <button
         type="button"

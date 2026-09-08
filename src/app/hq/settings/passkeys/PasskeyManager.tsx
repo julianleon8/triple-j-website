@@ -98,8 +98,8 @@ export function PasskeyManager({ initial }: { initial: Passkey[] }) {
         {busy ? 'Waiting for your device…' : 'Add a passkey'}
       </button>
 
-      {notice && <p className="text-sm text-green-600">{notice}</p>}
-      {error && <p className="text-sm text-red-600">{error}</p>}
+      {notice && <p className="text-sm text-green-600 dark:text-green-400">{notice}</p>}
+      {error && <p className="text-sm text-red-600 dark:text-red-400">{error}</p>}
 
       {keys.length === 0 ? (
         <p className="text-sm text-(--text-tertiary)">
@@ -120,7 +120,7 @@ export function PasskeyManager({ initial }: { initial: Passkey[] }) {
                 type="button"
                 onClick={() => remove(key)}
                 disabled={busy}
-                className="shrink-0 text-sm font-medium text-red-600 disabled:opacity-50"
+                className="shrink-0 text-sm font-medium text-red-600 dark:text-red-400 disabled:opacity-50"
               >
                 Remove
               </button>

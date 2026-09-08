@@ -39,11 +39,17 @@ const BADGE_TONE: Record<NonNullable<NonNullable<GroupedRowProps['badge']>['tone
  */
 export function GroupedRow(props: GroupedRowProps) {
   const Icon = props.icon
-  // Icon tiles are white-on-saturated (rose/indigo/violet/sky/green/amber…),
-  // which is right for every tone except the brand one: --brand-fg is gold in
-  // HQ, and white on gold is ~1.9:1. Pair that tone with its own ink instead.
+  // Icon tiles are white-on-saturated, which is right for the dark hues
+  // (rose/indigo/violet/sky/blue) and wrong for the light ones: white on gold
+  // is ~1.9:1, on amber-500 ~2.1:1, on green-500 ~2.5:1, on --text-tertiary
+  // ~2.4:1 — all under the 3:1 floor for a non-text glyph. Light tones take
+  // dark ink instead. Keep this list in step with the iconTone call sites in
+  // more/page.tsx and settings/page.tsx.
   const iconTone = props.iconTone ?? 'bg-(--brand-fg)'
-  const iconInk = iconTone.includes('--brand-fg') ? 'text-(--text-on-brand)' : 'text-white'
+  const LIGHT_TONES = ['--brand-fg', '--text-tertiary', 'amber', 'yellow', 'lime', 'green-5']
+  const iconInk = LIGHT_TONES.some((t) => iconTone.includes(t))
+    ? 'text-(--text-on-brand)'
+    : 'text-white'
   const body = (
     <div className={`flex min-h-14 items-center gap-3 px-4 py-2.5 ${props.disabled ? 'opacity-50' : ''}`}>
       {Icon && (

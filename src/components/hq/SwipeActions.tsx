@@ -30,7 +30,7 @@ const TONE_STYLE: Record<SwipeActionTone, string> = {
   positive:    'bg-emerald-500 text-white',
   destructive: 'bg-red-500 text-white',
   neutral:     'bg-blue-500 text-white',
-  warn:        'bg-amber-500 text-white',
+  warn:        'bg-amber-500 text-black',
 }
 
 /**

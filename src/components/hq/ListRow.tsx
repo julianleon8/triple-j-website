@@ -75,7 +75,8 @@ function initialsFrom(primary: string, fallback: string): string {
 
 const BADGE_TONE: Record<PipelineBadge['tone'], string> = {
   hot:      'bg-red-500 text-white',
-  asap:     'bg-amber-500 text-white',
+  // White on amber-500 is ~2.1:1. `featured` below already had this right.
+  asap:     'bg-amber-500 text-black',
   mil:      'bg-blue-500 text-white',
   today:    'bg-emerald-500 text-white',
   new:      'bg-sky-500 text-white',
@@ -133,7 +134,7 @@ function UnreadDot() {
 function ScoreBadge({ score }: { score: number }) {
   const tone =
     score >= 8 ? 'bg-red-500 text-white' :
-    score >= 6 ? 'bg-amber-500 text-white' :
+    score >= 6 ? 'bg-amber-500 text-black' :
     score >= 4 ? 'bg-yellow-400 text-black' :
                  'bg-gray-300 text-gray-700 dark:bg-white/10 dark:text-gray-300'
   return (

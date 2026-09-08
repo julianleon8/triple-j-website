@@ -244,7 +244,7 @@ export function JobPhotoStrip({ jobId, photos: initialPhotos, photoCount }: Prop
                     unoptimized={p.image_url.startsWith('/')}
                   />
                   {p.is_cover && (
-                    <span className="absolute bottom-1 left-1 rounded-full bg-amber-500 px-1.5 text-[9px] font-bold uppercase tracking-wider text-white">
+                    <span className="absolute bottom-1 left-1 rounded-full bg-amber-500 px-1.5 text-[9px] font-bold uppercase tracking-wider text-black">
                       Cover
                     </span>
                   )}

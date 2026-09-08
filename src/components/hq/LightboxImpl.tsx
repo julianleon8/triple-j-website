@@ -114,7 +114,7 @@ export function LightboxImpl({ photos, startIndex = 0, open, onClose, onSetCover
               aria-label={isCurrentCover ? 'Already the cover' : 'Set as cover'}
               className={`absolute left-4 z-10 inline-flex items-center gap-1.5 rounded-full px-3.5 backdrop-blur-sm text-[12px] font-bold uppercase tracking-wider transition-colors ${
                 isCurrentCover
-                  ? 'bg-amber-500/90 text-white cursor-default'
+                  ? 'bg-amber-500/90 text-black cursor-default'
                   : 'bg-white/15 text-white hover:bg-white/30 active:bg-white/40'
               } ${coverPending ? 'opacity-60' : ''}`}
               style={{ top: 'max(env(safe-area-inset-top), 1rem)', height: '36px' }}

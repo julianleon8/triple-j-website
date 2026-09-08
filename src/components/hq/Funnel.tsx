@@ -11,6 +11,12 @@ import {
   XAxis,
   YAxis,
 } from 'recharts'
+import {
+  CHART_GRID_STROKE,
+  CHART_LABEL_FILL,
+  CHART_TOOLTIP,
+  chartTick,
+} from './chart-theme'
 
 type FunnelProps = {
   data: { label: string; value: number }[]
@@ -26,24 +32,17 @@ export function Funnel({ data }: FunnelProps) {
         layout="vertical"
         margin={{ top: 8, right: 48, bottom: 8, left: 8 }}
       >
-        <CartesianGrid horizontal={false} stroke="#f1f5f9" />
+        <CartesianGrid horizontal={false} stroke={CHART_GRID_STROKE} />
         <XAxis type="number" hide />
         <YAxis
           type="category"
           dataKey="label"
-          tick={{ fontSize: 12, fill: '#475569' }}
+          tick={chartTick(12)}
           axisLine={false}
           tickLine={false}
           width={96}
         />
-        <Tooltip
-          cursor={{ fill: '#f8fafc' }}
-          contentStyle={{
-            fontSize: 12,
-            borderRadius: 8,
-            border: '1px solid #e2e8f0',
-          }}
-        />
+        <Tooltip {...CHART_TOOLTIP} />
         <Bar dataKey="value" radius={[0, 6, 6, 0]}>
           {data.map((_, i) => (
             <Cell key={i} fill={COLORS[i % COLORS.length]} />
@@ -51,7 +50,7 @@ export function Funnel({ data }: FunnelProps) {
           <LabelList
             dataKey="value"
             position="right"
-            style={{ fontSize: 12, fontWeight: 600, fill: '#0f172a' }}
+            style={{ fontSize: 12, fontWeight: 600, fill: CHART_LABEL_FILL }}
           />
         </Bar>
       </BarChart>

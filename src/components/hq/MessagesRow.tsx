@@ -97,7 +97,8 @@ const AVATAR_COLORS = [
 
 const BADGE_TONE: Record<string, string> = {
   hot:      'bg-red-500 text-white',
-  asap:     'bg-amber-500 text-white',
+  // White on amber-500 is ~2.1:1. `featured` below already had this right.
+  asap:     'bg-amber-500 text-black',
   mil:      'bg-blue-500 text-white',
   today:    'bg-emerald-500 text-white',
   new:      'bg-sky-500 text-white',

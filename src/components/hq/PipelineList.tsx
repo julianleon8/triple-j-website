@@ -127,7 +127,9 @@ export function PipelineList({ rows: initialRows, paramKey = 'type', hideFilters
                   aria-pressed={active}
                 >
                   {label}
-                  <span className={`ml-1.5 text-[11px] ${active ? 'text-white/70' : 'text-(--text-tertiary)'}`}>
+                  {/* Never white on gold — the active pill is bg-(--brand-fg),
+                      and globals.css documents --hq-on-gold as never white. */}
+                  <span className={`ml-1.5 text-[11px] ${active ? 'text-(--text-on-brand) opacity-70' : 'text-(--text-tertiary)'}`}>
                     {count}
                   </span>
                 </button>

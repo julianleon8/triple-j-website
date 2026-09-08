@@ -125,13 +125,18 @@ function ColorSelect({
   defaultValue?: string
   label: string
 }) {
+  // Every control on this screen sets its own bg AND text colour. Both are
+  // load-bearing: Tailwind preflight puts `background: transparent; color:
+  // inherit` on form elements, so a bare <select> inherits HQ's near-white ink
+  // — fine while closed over the dark card, but desktop Chrome paints the open
+  // listbox with the system field colour and the <option>s went white-on-white.
   return (
     <div>
       <label className="block text-xs font-semibold text-(--text-secondary) mb-1">{label}</label>
       <select
         name={name}
         defaultValue={defaultValue ?? ''}
-        className="w-full rounded-lg border border-(--border-strong) px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-(--brand-fg)"
+        className="w-full rounded-lg border border-(--border-strong) bg-(--surface-2) text-(--text-primary) px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-(--brand-fg)"
       >
         <option value="">— None —</option>
         {PANEL_COLORS.map((c) => (
@@ -808,7 +813,7 @@ export default function GalleryManager({ initialItems }: { initialItems: Gallery
                 type="text"
                 required
                 placeholder="e.g. 30x40 Welded Carport"
-                className="w-full rounded-lg border border-(--border-strong) px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-(--brand-fg)"
+                className="w-full rounded-lg border border-(--border-strong) bg-(--surface-2) text-(--text-primary) px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-(--brand-fg)"
               />
             </div>
             <div>
@@ -818,14 +823,14 @@ export default function GalleryManager({ initialItems }: { initialItems: Gallery
                 type="text"
                 placeholder="e.g. Killeen, TX"
                 defaultValue="Central Texas"
-                className="w-full rounded-lg border border-(--border-strong) px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-(--brand-fg)"
+                className="w-full rounded-lg border border-(--border-strong) bg-(--surface-2) text-(--text-primary) px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-(--brand-fg)"
               />
             </div>
             <div>
               <label className="block text-xs font-semibold text-(--text-secondary) mb-1">Type</label>
               <select
                 name="type"
-                className="w-full rounded-lg border border-(--border-strong) px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-(--brand-fg)"
+                className="w-full rounded-lg border border-(--border-strong) bg-(--surface-2) text-(--text-primary) px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-(--brand-fg)"
               >
                 {TYPE_OPTIONS.map((t) => (
                   <option key={t}>{t}</option>
@@ -836,7 +841,7 @@ export default function GalleryManager({ initialItems }: { initialItems: Gallery
               <label className="block text-xs font-semibold text-(--text-secondary) mb-1">Tag</label>
               <select
                 name="tag"
-                className="w-full rounded-lg border border-(--border-strong) px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-(--brand-fg)"
+                className="w-full rounded-lg border border-(--border-strong) bg-(--surface-2) text-(--text-primary) px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-(--brand-fg)"
               >
                 {TAG_OPTIONS.map((t) => (
                   <option key={t}>{t}</option>
@@ -850,7 +855,7 @@ export default function GalleryManager({ initialItems }: { initialItems: Gallery
               <select
                 name="panel_profile"
                 defaultValue=""
-                className="w-full rounded-lg border border-(--border-strong) px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-(--brand-fg)"
+                className="w-full rounded-lg border border-(--border-strong) bg-(--surface-2) text-(--text-primary) px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-(--brand-fg)"
               >
                 <option value="">— None —</option>
                 {PANEL_PROFILE_OPTIONS.map((p) => (
@@ -863,7 +868,7 @@ export default function GalleryManager({ initialItems }: { initialItems: Gallery
               <select
                 name="gauge"
                 defaultValue=""
-                className="w-full rounded-lg border border-(--border-strong) px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-(--brand-fg)"
+                className="w-full rounded-lg border border-(--border-strong) bg-(--surface-2) text-(--text-primary) px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-(--brand-fg)"
               >
                 <option value="">— None —</option>
                 {GAUGE_OPTIONS.map((g) => (
@@ -879,7 +884,7 @@ export default function GalleryManager({ initialItems }: { initialItems: Gallery
                 name="alt_text"
                 type="text"
                 placeholder="Brief description of the photo"
-                className="w-full rounded-lg border border-(--border-strong) px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-(--brand-fg)"
+                className="w-full rounded-lg border border-(--border-strong) bg-(--surface-2) text-(--text-primary) px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-(--brand-fg)"
               />
             </div>
             <div className="sm:col-span-2 flex items-center gap-2">
@@ -888,7 +893,7 @@ export default function GalleryManager({ initialItems }: { initialItems: Gallery
                 name="is_featured"
                 type="checkbox"
                 value="true"
-                className="h-4 w-4 rounded border-(--border-strong)"
+                className="h-4 w-4 rounded border-(--border-strong) accent-(--brand-fg)"
               />
               <label htmlFor="new-is-featured" className="text-xs font-semibold text-(--text-secondary)">
                 Feature this project (pins to first slot on /gallery + homepage hero)
@@ -1017,7 +1022,7 @@ export default function GalleryManager({ initialItems }: { initialItems: Gallery
                     </div>
                   )}
                   {item.is_featured && (
-                    <span className="absolute top-2 left-2 bg-amber-500 text-white text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full shadow">
+                    <span className="absolute top-2 left-2 bg-amber-500 text-black text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full shadow">
                       Featured
                     </span>
                   )}
@@ -1236,7 +1241,7 @@ function EditPanel({
             name="title"
             defaultValue={item.title}
             required
-            className="w-full rounded-lg border border-(--border-strong) px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-(--brand-fg)"
+            className="w-full rounded-lg border border-(--border-strong) bg-(--surface-2) text-(--text-primary) px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-(--brand-fg)"
           />
         </div>
         <div className="grid grid-cols-2 gap-3">
@@ -1245,7 +1250,7 @@ function EditPanel({
             <input
               name="city"
               defaultValue={item.city}
-              className="w-full rounded-lg border border-(--border-strong) px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-(--brand-fg)"
+              className="w-full rounded-lg border border-(--border-strong) bg-(--surface-2) text-(--text-primary) px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-(--brand-fg)"
             />
           </div>
           <div>
@@ -1253,7 +1258,7 @@ function EditPanel({
             <select
               name="type"
               defaultValue={item.type}
-              className="w-full rounded-lg border border-(--border-strong) px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-(--brand-fg)"
+              className="w-full rounded-lg border border-(--border-strong) bg-(--surface-2) text-(--text-primary) px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-(--brand-fg)"
             >
               {TYPE_OPTIONS.map((t) => (
                 <option key={t}>{t}</option>
@@ -1267,7 +1272,7 @@ function EditPanel({
             <select
               name="tag"
               defaultValue={item.tag}
-              className="w-full rounded-lg border border-(--border-strong) px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-(--brand-fg)"
+              className="w-full rounded-lg border border-(--border-strong) bg-(--surface-2) text-(--text-primary) px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-(--brand-fg)"
             >
               {TAG_OPTIONS.map((t) => (
                 <option key={t}>{t}</option>
@@ -1282,7 +1287,7 @@ function EditPanel({
             <select
               name="panel_profile"
               defaultValue={item.panel_profile ?? ''}
-              className="w-full rounded-lg border border-(--border-strong) px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-(--brand-fg)"
+              className="w-full rounded-lg border border-(--border-strong) bg-(--surface-2) text-(--text-primary) px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-(--brand-fg)"
             >
               <option value="">— None —</option>
               {PANEL_PROFILE_OPTIONS.map((p) => (
@@ -1295,7 +1300,7 @@ function EditPanel({
             <select
               name="gauge"
               defaultValue={item.gauge ?? ''}
-              className="w-full rounded-lg border border-(--border-strong) px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-(--brand-fg)"
+              className="w-full rounded-lg border border-(--border-strong) bg-(--surface-2) text-(--text-primary) px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-(--brand-fg)"
             >
               <option value="">— None —</option>
               {GAUGE_OPTIONS.map((g) => (
@@ -1321,7 +1326,7 @@ function EditPanel({
           <input
             name="alt_text"
             defaultValue={item.alt_text}
-            className="w-full rounded-lg border border-(--border-strong) px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-(--brand-fg)"
+            className="w-full rounded-lg border border-(--border-strong) bg-(--surface-2) text-(--text-primary) px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-(--brand-fg)"
           />
         </div>
         <div className="flex gap-2 pt-2">
@@ -1363,7 +1368,7 @@ function EditPanel({
                   unoptimized={photo.image_url.startsWith('/')}
                 />
                 {photo.is_cover && (
-                  <span className="absolute inset-x-0 bottom-0 bg-amber-500 text-white text-[9px] text-center font-bold py-0.5">
+                  <span className="absolute inset-x-0 bottom-0 bg-amber-500 text-black text-[9px] text-center font-bold py-0.5">
                     COVER
                   </span>
                 )}

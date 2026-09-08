@@ -83,7 +83,8 @@ export function EventsTable({ rows }: { rows: EmailEventRow[] }) {
               aria-pressed={active}
             >
               {label}
-              <span className={`ml-1.5 text-[10px] ${active ? 'text-white/70' : 'text-(--text-tertiary)'}`}>
+              {/* Never white on gold — the active pill is bg-(--brand-fg). */}
+              <span className={`ml-1.5 text-[10px] ${active ? 'text-(--text-on-brand) opacity-70' : 'text-(--text-tertiary)'}`}>
                 {count}
               </span>
             </button>
