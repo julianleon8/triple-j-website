@@ -4,6 +4,7 @@ import { join } from 'node:path'
 import {
   DRAFT_VERSION,
   FIELD_KEYS,
+  FIELD_LABELS,
   clearDraft,
   completedCount,
   draftKey,
@@ -11,12 +12,14 @@ import {
   isDraftLead,
   loadDraft,
   mergeServerDraft,
+  missingCaptureFields,
   normalizeTenDigits,
   cityOrZipPayload,
   parseDraft,
   saveDraft,
   serializeDraft,
   type CaptureDraft,
+  type CapturedLead,
   type DraftStore,
 } from './capture-draft'
 
@@ -221,5 +224,60 @@ describe('cityOrZipPayload keeps ZIPs out of leads.city', () => {
     for (const v of ['76501', '78664', '00000', '76501-1234']) {
       expect(cityOrZipPayload(v).city).toBeNull()
     }
+  })
+})
+
+describe('missingCaptureFields', () => {
+  const full: CapturedLead = {
+    phone: '5125551234',
+    name: 'Ana',
+    service_type: 'carport',
+    size_raw: '20x30',
+    email: 'a@b.com',
+    city: 'Killeen',
+    zip: '76542',
+    needs_concrete: 'yes',
+  }
+  const empty: CapturedLead = {
+    phone: null, name: null, service_type: null, size_raw: null,
+    email: null, city: null, zip: null, needs_concrete: null,
+  }
+
+  it('returns nothing when every row is filled', () => {
+    expect(missingCaptureFields(full)).toEqual([])
+  })
+
+  it('returns every key, in checklist order, when nothing is filled', () => {
+    expect(missingCaptureFields(empty)).toEqual([...FIELD_KEYS])
+  })
+
+  it('treats whitespace as blank', () => {
+    expect(missingCaptureFields({ ...full, name: '   ' })).toEqual(['name'])
+  })
+
+  // The city row is one field over two columns — either satisfies it.
+  it('accepts a city OR a zip for the city row', () => {
+    expect(missingCaptureFields({ ...full, city: null })).toEqual([])
+    expect(missingCaptureFields({ ...full, zip: null })).toEqual([])
+    expect(missingCaptureFields({ ...full, city: null, zip: null })).toEqual(['city'])
+  })
+
+  // needs_concrete is a string enum, not a boolean: every value is an answer.
+  it('counts any concrete answer as filled, including "already_have"', () => {
+    for (const v of ['yes', 'already_have', 'unsure']) {
+      expect(missingCaptureFields({ ...full, needs_concrete: v })).toEqual([])
+    }
+    expect(missingCaptureFields({ ...full, needs_concrete: null })).toEqual(['concrete'])
+  })
+
+  it('agrees with isDraftLead on the two fields that define a draft', () => {
+    const missing = missingCaptureFields({ ...full, name: null, service_type: null })
+    expect(missing).toContain('name')
+    expect(missing).toContain('service')
+    expect(isDraftLead({ name: null, service_type: null })).toBe(true)
+  })
+
+  it('has a label for every field key', () => {
+    for (const k of FIELD_KEYS) expect(FIELD_LABELS[k]).toBeTruthy()
   })
 })

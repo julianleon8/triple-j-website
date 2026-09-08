@@ -200,3 +200,53 @@ export function cityOrZipPayload(value: string): Record<string, unknown> {
   if (v === '') return { city: null, zip: null }
   return /^\d{5}(-\d{4})?$/.test(v) ? { zip: v, city: null } : { city: v }
 }
+
+/** How each checklist row reads back on a saved lead. */
+export const FIELD_LABELS: Record<FieldKey, string> = {
+  phone: 'Phone',
+  name: 'Name',
+  service: 'Service',
+  size: 'Size',
+  email: 'Email',
+  city: 'City or ZIP',
+  concrete: 'Concrete',
+}
+
+/** The lead columns each checklist row writes to. */
+export type CapturedLead = {
+  phone: string | null
+  name: string | null
+  service_type: string | null
+  size_raw: string | null
+  email: string | null
+  city: string | null
+  zip: string | null
+  needs_concrete: string | null
+}
+
+/**
+ * Which checklist rows are still blank on a saved lead, in checklist order.
+ *
+ * The lead detail screen's "Missing from capture" card renders this, so what
+ * counts as missing is defined once and shared with the capture screen rather
+ * than re-derived per screen and drifting.
+ *
+ * `concrete` is a string enum (yes | already_have | unsure), not a boolean —
+ * every one of those is a real answer, so only NULL/empty counts as missing.
+ * `city` is satisfied by either column, because the checklist row is one field
+ * over two (see cityOrZipPayload).
+ */
+export function missingCaptureFields(lead: CapturedLead): FieldKey[] {
+  const blank = (v: string | null) => v === null || v.trim() === ''
+  return FIELD_KEYS.filter((k) => {
+    switch (k) {
+      case 'phone':    return blank(lead.phone)
+      case 'name':     return blank(lead.name)
+      case 'service':  return blank(lead.service_type)
+      case 'size':     return blank(lead.size_raw)
+      case 'email':    return blank(lead.email)
+      case 'city':     return blank(lead.city) && blank(lead.zip)
+      case 'concrete': return blank(lead.needs_concrete)
+    }
+  })
+}

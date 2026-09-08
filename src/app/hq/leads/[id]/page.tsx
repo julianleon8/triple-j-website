@@ -6,6 +6,8 @@ import { notFound } from 'next/navigation'
 import { ArrowLeft, Phone, MessageSquare } from 'lucide-react'
 import { getAdminClient } from '@/lib/supabase/admin'
 import { LEAD_STATUS_CLASS, MUTED_STATUS_CLASS, COLD_THRESHOLD_HOURS, leadDisplayName } from '@/lib/pipeline'
+import { SendNowCard } from './components/SendNowCard'
+import { MissingFromCapture } from './components/MissingFromCapture'
 import { ColdBanner } from '@/components/hq/ColdBanner'
 import { CardSkeleton } from '@/components/hq/Skeleton'
 import { LeadStatusButtons } from './components/LeadStatusButtons'
@@ -26,6 +28,7 @@ type LeadRecord = {
   service_type: string | null
   structure_type: string | null
   needs_concrete: string | null
+  size_raw: string | null
   current_surface: string | null
   timeline: string | null
   best_time_to_call: string | null
@@ -54,6 +57,16 @@ type LeadRecord = {
   lost_reason: string | null
   lost_reason_notes: string | null
 }
+
+/**
+ * The one-tap reply, sent from Julian's own phone via the SMS composer.
+ *
+ * "Today" is the promise the site already makes — /quote says "Same day,
+ * guaranteed within 24 hours" — so this does not invent a new commitment. Uses
+ * the public brand "Triple J Metal", never the legal name.
+ */
+const THANKS_MESSAGE =
+  'Thanks for the call — quote coming today. — Julian, Triple J Metal'
 
 export default async function LeadDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
@@ -125,6 +138,26 @@ export default async function LeadDetailPage({ params }: { params: Promise<{ id:
         </div>
       </header>
 
+      {/* This is where hanging up lands: the reply first, the blanks second,
+          everything else after. */}
+      {lead.status === 'new' && lead.phone && (
+        <SendNowCard
+          leadId={lead.id}
+          phone={lead.phone}
+          message={THANKS_MESSAGE}
+        />
+      )}
+
+      <MissingFromCapture leadId={lead.id} lead={lead} />
+
+      {/* What they said, before the field dump. */}
+      {lead.message && (
+        <section className="rounded-2xl border border-(--border-subtle) bg-(--surface-2) p-5">
+          <h2 className="text-[13px] font-semibold uppercase tracking-wider text-(--text-tertiary)">Notes from the call</h2>
+          <p className="mt-2 whitespace-pre-wrap text-[15px] text-(--text-primary)">{lead.message}</p>
+        </section>
+      )}
+
       {/* Details card */}
       <section className="rounded-2xl border border-(--border-subtle) bg-(--surface-2) p-5">
         <h2 className="text-[13px] font-semibold uppercase tracking-wider text-(--text-tertiary)">Details</h2>
@@ -151,24 +184,22 @@ export default async function LeadDetailPage({ params }: { params: Promise<{ id:
         </dl>
       </section>
 
-      {/* Message card */}
-      {lead.message && (
-        <section className="rounded-2xl border border-(--border-subtle) bg-(--surface-2) p-5">
-          <h2 className="text-[13px] font-semibold uppercase tracking-wider text-(--text-tertiary)">Message</h2>
-          <p className="mt-2 whitespace-pre-wrap text-[15px] text-(--text-primary)">{lead.message}</p>
-        </section>
-      )}
-
-      <AttributionCard lead={lead} />
-
       <IntentStagePicker
         leadId={lead.id}
         current={lead.intent_stage as 'info_gathering' | 'timeline_known' | 'budget_set' | 'ready_to_buy' | null}
       />
 
-      <Suspense fallback={<CardSkeleton height="h-16" radius="rounded-2xl" />}>
-        <DeferredReferrerPicker leadId={lead.id} referringCustomerId={lead.referring_customer_id} />
-      </Suspense>
+      <details className="overflow-hidden rounded-2xl border border-(--border-subtle) bg-(--surface-2)">
+        <summary className="tap-list cursor-pointer list-none px-5 py-4 font-display text-[14px] font-bold uppercase tracking-[0.06em] text-(--text-secondary)">
+          Attribution &amp; referral
+        </summary>
+        <div className="space-y-4 px-5 pb-5">
+          <AttributionCard lead={lead} />
+          <Suspense fallback={<CardSkeleton height="h-16" radius="rounded-2xl" />}>
+            <DeferredReferrerPicker leadId={lead.id} referringCustomerId={lead.referring_customer_id} />
+          </Suspense>
+        </div>
+      </details>
 
       {/* Activity scaffold */}
       <section className="rounded-2xl border border-(--border-subtle) bg-(--surface-2) p-5">

@@ -62,6 +62,16 @@ Do not copy anything from this file into `AGENTS.md`. That duplication is what p
   **Today · Leads · Capture · Jobs · More**; **Gallery moved into the More hub** to make room for Capture and
   is still in the desktop nav. The tab grid is sized from `HQ_TABS.length` via an inline style, because an
   interpolated `grid-cols-${n}` is a class Tailwind never generates. (2026-09-07)
+- **The one-tap lead reply is an `sms:` link, never a Twilio send.** `/hq/leads/[id]` leads with
+  "Send now · one tap" for a `new` lead with a phone: *"Thanks for the call — quote coming today.
+  — Julian, Triple J Metal"*, opened in the device composer so it arrives from Julian's own number
+  at no per-message cost and with no signal required. Because an `sms:` link confirms nothing and
+  **there is no message-log table**, tapping optimistically sets `status: 'contacted'` (migration
+  015's trigger stamps `first_response_at`) and the timeline shows "Contacted" — it must never
+  claim a text was sent. Blank-field definitions live in `missingCaptureFields()` in
+  `src/lib/hq/capture-draft.ts` and are shared with the capture checklist. Note `needs_concrete` is
+  a string enum (`yes` / `already_have` / `unsure`), not a boolean. (2026-09-08)
+
 - **Today holds four blocks and nothing else:** Capture a call (full-width gold, → `/hq/capture`),
   the call-next card, "N drafts to finish", and quotes waiting on an answer. Revenue, win rate and
   avg ticket live on `/hq/more/stats` — they were already there, so the strip was deleted rather
