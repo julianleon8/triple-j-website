@@ -165,7 +165,7 @@ type ActionButtonProps = {
 function ActionButton({ label, icon: Icon, tone, onClick, disabled, title }: ActionButtonProps) {
   const toneClass =
     tone === 'primary'
-      ? 'bg-(--brand-fg) text-white'
+      ? 'bg-(--brand-fg) text-(--text-on-brand)'
       : tone === 'positive'
       ? 'bg-emerald-600 text-white'
       : 'border border-(--border-subtle) bg-(--surface-2) text-(--text-primary) hover:bg-(--surface-3)'

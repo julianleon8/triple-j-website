@@ -161,7 +161,7 @@ export function JobPhotoStrip({ jobId, photos: initialPhotos, photoCount }: Prop
           type="button"
           onClick={onPick}
           disabled={busy && uploads.length >= 6}
-          className="shrink-0 inline-flex items-center gap-1.5 rounded-full bg-(--brand-fg) px-3.5 py-2 text-[13px] font-semibold text-white tap-solid disabled:opacity-60"
+          className="shrink-0 inline-flex items-center gap-1.5 rounded-full bg-(--brand-fg) px-3.5 py-2 text-[13px] font-semibold text-(--text-on-brand) tap-solid disabled:opacity-60"
         >
           {busy ? (
             <Loader2 size={14} strokeWidth={2} className="animate-spin" />

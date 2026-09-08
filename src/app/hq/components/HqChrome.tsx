@@ -31,14 +31,18 @@ export default function HqChrome({ children }: { children: React.ReactNode }) {
       </Suspense>
 
       {/* Desktop top nav — hidden on mobile */}
-      <header className="sticky top-0 z-30 hidden border-b border-white/10 bg-(--brand-fg) text-white shadow-sm sm:block">
+      {/* Was a solid brand-blue slab. --brand-fg is gold inside HQ now, and a
+          full-width gold bar reads as a warning banner rather than as chrome,
+          so the desktop header sits on the card surface instead. Desktop is
+          not drawn in the 2b direction; this keeps it quiet and consistent. */}
+      <header className="sticky top-0 z-30 hidden border-b border-(--border-subtle) bg-(--surface-2) text-(--text-primary) shadow-sm sm:block">
         <div className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-6 py-4">
           <Link
             href="/hq"
             className="font-bold tracking-tight sm:text-xl min-w-0 shrink"
           >
             <span className="block truncate leading-tight">Triple J Metal</span>
-            <span className="block text-xs font-semibold uppercase tracking-wider text-white/70">
+            <span className="block text-xs font-semibold uppercase tracking-wider text-(--text-secondary)">
               Headquarters
             </span>
           </Link>
@@ -62,7 +66,7 @@ export default function HqChrome({ children }: { children: React.ReactNode }) {
               type="button"
               onClick={handleRefresh}
               disabled={isRefreshing}
-              className="flex h-8 w-8 items-center justify-center rounded-full bg-white/10 hover:bg-white/20 text-white disabled:opacity-50 transition-colors"
+              className="flex h-8 w-8 items-center justify-center rounded-full border border-(--border-subtle) bg-(--surface-3) text-(--text-primary) hover:bg-(--surface-1) disabled:opacity-50 transition-colors"
               aria-label="Refresh page"
             >
               <RefreshCw size={15} strokeWidth={2.3} className={isRefreshing ? 'animate-spin' : ''} />

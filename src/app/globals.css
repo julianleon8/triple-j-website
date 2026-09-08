@@ -1,5 +1,14 @@
 @import "tailwindcss";
 
+/* `dark:` means "inside HQ", not "the OS is in dark mode".
+   HQ is a forced-dark surface (see .hq-ui below), so the ~144 `dark:`
+   utilities under src/app/hq, src/components/hq and src/lib/pipeline.ts must
+   fire unconditionally there. Redefining the variant does that with no file
+   edits. Nothing outside those three locations uses `dark:`, so redefining it
+   is inert everywhere else — the marketing site is light-only by design and
+   locks `colorScheme: "light"` in its layout. */
+@custom-variant dark (&:where(.hq-ui, .hq-ui *));
+
 /* =========================================================
    Triple J Metal — Design Tokens v2
    ---------------------------------------------------------
@@ -9,6 +18,7 @@
            remap automatically; raw scales stay constant for
            components that need a fixed color (e.g. brand-600
            is always brand-600).
+   HQ:     Forced dark, always. See the .hq-ui block below.
    ========================================================= */
 
 :root {
@@ -53,6 +63,28 @@
   --color-success:      #15803d;
   --color-danger:       #dc2626;
 
+  /* ── HQ "Shop floor" raw constants (design direction 2b) ──
+     Fixed values, never flipped. Utilities never reference these directly —
+     the .hq-ui block below maps them onto the semantic tokens, so every
+     existing bg-(--surface-1) / text-(--text-primary) in HQ re-points with
+     no class edits. Exact hexes come from the design handoff and are final. */
+  --hq-page:          #0b0d0f; /* screen background, tab bar */
+  --hq-card:          #14181c; /* cards, list containers */
+  --hq-raised:        #1b2126; /* emphasized row, icon tiles, toggle track */
+  --hq-border:        rgba(255, 255, 255, 0.10); /* card borders */
+  --hq-divider:       rgba(255, 255, 255, 0.08); /* row dividers */
+  --hq-border-strong: rgba(255, 255, 255, 0.20); /* secondary button outline */
+  --hq-ink:           #f2f4f5; /* primary text */
+  --hq-ink-2:         #a8b0b6; /* secondary text, caps labels (7.0:1) */
+  --hq-ink-3:         #8c979f; /* mono meta text (5.0:1) — do not shift */
+  --hq-gold:          #f5a524; /* primary action, active tab, today, drafts */
+  --hq-gold-hover:    #ffb845;
+  --hq-on-gold:       #0b0d0f; /* text/icons on gold — never white */
+  --hq-sky:           #4d8dff; /* links, back affordances, secondary action */
+  --hq-red:           #ef4444; /* urgent / cold / destructive */
+  --hq-green:         #4ade80; /* healthy margin, connected status */
+  --hq-hairline:      #5c666e; /* dashed empty/placeholder outlines */
+
   /* ── Semantic tokens — flip in dark mode ────────────────── */
 
   /* Surfaces (page bg → most-elevated) */
@@ -74,6 +106,12 @@
   /* Brand uses the same hue in both themes; tweak for dark contrast */
   --brand-fg:       #1e6bd6;
   --brand-fg-hover: #1851b5;
+
+  /* Links / back affordances / secondary actions. Outside HQ this is just the
+     brand colour — one interactive role, as before. HQ splits it in two:
+     --brand-fg becomes gold (primary action) and --link-fg stays blue, because
+     direction 2b uses both and one token cannot carry both jobs. */
+  --link-fg:        var(--brand-fg);
 
   /* Urgency — COLD banner / overdue badge (Phase 2+). */
   --urgent-bg:      #dc2626;
@@ -104,6 +142,67 @@
     /* Urgency — brighter red on dark for contrast. */
     --urgent-bg:      #ef4444;
   }
+}
+
+/* =========================================================
+   HQ — forced dark ("Shop floor", direction 2b).
+   ---------------------------------------------------------
+   Applied once, on the wrapper in src/app/hq/layout.tsx. Same mechanism as
+   [data-theme='military'] below: remap the semantic tokens for a subtree and
+   every utility already written against them re-points, with no class edits
+   across 105 HQ files.
+
+   HQ does NOT follow prefers-color-scheme. It is dark on a light phone too —
+   one operator, one skin, and the amber action colour only reads correctly on
+   a dark ground.
+
+   ⚠ CUSTOM PROPERTIES ONLY IN THIS BLOCK. Hand-written rules in this file are
+   emitted UNLAYERED, after Tailwind's @layer utilities, so a real property
+   here (padding, font-family, color…) would outrank every utility inside HQ
+   and could not be overridden from a component. A custom-property declaration
+   sets no real property, so it cannot win that fight — that is the entire
+   reason this block is safe. `color-scheme` is the one deliberate exception,
+   documented below. Do not add a second one.
+   ========================================================= */
+.hq-ui {
+  /* Surfaces: page → card → raised row */
+  --surface-1:       var(--hq-page);
+  --surface-2:       var(--hq-card);
+  --surface-3:       var(--hq-raised);
+  --surface-overlay: rgba(0, 0, 0, 0.72);
+
+  /* Text */
+  --text-primary:   var(--hq-ink);
+  --text-secondary: var(--hq-ink-2);
+  --text-tertiary:  var(--hq-ink-3);
+  --text-on-brand:  var(--hq-on-gold); /* dark ink on gold, never white */
+
+  /* Borders */
+  --border-subtle: var(--hq-divider);
+  --border-strong: var(--hq-border-strong);
+
+  /* Two interactive roles: gold acts, blue navigates. */
+  --brand-fg:       var(--hq-gold);
+  --brand-fg-hover: var(--hq-gold-hover);
+  --link-fg:        var(--hq-sky);
+
+  --urgent-bg: var(--hq-red);
+
+  /* THE EXCEPTION. Without it iOS paints light-mode form controls, caret,
+     text-selection, autofill and scrollbars inside a dark tree. No HQ file
+     uses a scheme-* utility, so nothing is being overridden here. */
+  color-scheme: dark;
+}
+
+/* body's background comes from --surface-1, but body is an ANCESTOR of the
+   .hq-ui wrapper, so it never sees the remap. On a light-mode phone that
+   leaves a white gutter behind HQ whenever iOS rubber-band overscroll pulls
+   past the content. Paint the document itself instead.
+   :has() needs iOS 15.4+; older Safari degrades to that white gutter rather
+   than to a broken page. */
+html:has(.hq-ui) {
+  background-color: var(--hq-page);
+  color-scheme: dark;
 }
 
 /* Expose tokens to Tailwind's utility generator (v4 @theme) */
@@ -175,11 +274,13 @@ body {
   overscroll-behavior-y: contain;
 }
 
-/* Display/headline type — Barlow Condensed is SCOPED to the marketing site.
-   HQ (iPhone PWA) wraps its tree in .hq-ui / font-(--font-ios), so headings
-   there inherit the iOS stack and read clean instead of magazine-heavy.
-   Anything outside (marketing) must not rely on these sizes — every HQ
-   heading sets an explicit text-[Npx] via Tailwind. */
+/* Display/headline type — these SIZES are scoped to the marketing site.
+   Barlow Condensed itself is no longer marketing-only: HQ uses it for headings
+   too as of the 2b direction, but applies it per-heading via utilities
+   (font-(family-name:--font-display) + an explicit text-[Npx]), never through
+   a bare .hq-ui h1/h2/h3 rule — that rule would be unlayered and would outrank
+   the very text-[Npx] utilities the HQ screens rely on.
+   Anything outside (marketing) must not rely on these clamp sizes. */
 .marketing h1,
 .marketing h2,
 .marketing h3 {

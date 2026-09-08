@@ -94,7 +94,7 @@ export function VoiceRecordingOverlay({
                   ? 'bg-red-500 text-white'
                   : phase === 'success'
                   ? 'bg-emerald-500 text-white'
-                  : 'bg-(--brand-fg) text-white'
+                  : 'bg-(--brand-fg) text-(--text-on-brand)'
               }`}
             >
               {phase === 'success' ? (

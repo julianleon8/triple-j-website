@@ -26,7 +26,7 @@ export function SignOutButton({ variant = 'row' }: { variant?: Variant }) {
         type="button"
         onClick={handle}
         disabled={pending}
-        className="ml-2 rounded-md border border-white/30 px-3 py-2 text-xs font-bold uppercase tracking-wide hover:bg-white/10 disabled:opacity-60"
+        className="ml-2 rounded-md border border-(--border-strong) px-3 py-2 text-xs font-bold uppercase tracking-wide hover:bg-(--surface-3) disabled:opacity-60"
       >
         {pending ? 'Signing out…' : 'Sign out'}
       </button>

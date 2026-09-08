@@ -154,7 +154,7 @@ function NewCustomerInline({ onCreated, onCancel }: NewCustomerInlineProps) {
         type="button"
         onClick={submit}
         disabled={saving}
-        className="w-full rounded-xl bg-(--brand-fg) px-3 py-3 text-[15px] font-semibold text-white tap-solid disabled:opacity-60"
+        className="w-full rounded-xl bg-(--brand-fg) px-3 py-3 text-[15px] font-semibold text-(--text-on-brand) tap-solid disabled:opacity-60"
       >
         {saving ? 'Saving…' : 'Save customer'}
       </button>

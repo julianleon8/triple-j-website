@@ -36,7 +36,7 @@ export function JobMapHero({ address, city }: Props) {
             href={mapsDeepLink}
             target="_blank"
             rel="noreferrer"
-            className="mt-3 inline-flex items-center gap-2 rounded-xl bg-(--brand-fg) px-3 py-2 text-[14px] font-semibold text-white"
+            className="mt-3 inline-flex items-center gap-2 rounded-xl bg-(--brand-fg) px-3 py-2 text-[14px] font-semibold text-(--text-on-brand)"
           >
             <Navigation size={14} strokeWidth={2} /> Directions
           </a>

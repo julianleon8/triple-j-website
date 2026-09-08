@@ -109,7 +109,7 @@ function Toggle({
           disabled={busy}
           className={`rounded-md px-2.5 py-1 text-[12px] font-semibold ${
             value === true
-              ? 'bg-(--brand-fg) text-white shadow-sm'
+              ? 'bg-(--brand-fg) text-(--text-on-brand) shadow-sm'
               : 'text-(--text-tertiary)'
           }`}
         >

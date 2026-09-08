@@ -317,7 +317,11 @@ export function HqHeader() {
       <div className="flex items-center justify-between px-4 py-2">
         <div className="flex items-center gap-2 min-w-0">
           <h1
-            className={`font-(--font-ios) font-bold text-(--text-primary) tracking-tight transition-all ${
+            // Font family is inherited from the HQ layout wrapper. The old
+            // the bare font-() shorthand here compiled to font-weight, not
+            // font-family, so it was fighting font-bold rather than setting a
+            // face — it stayed bold only by CSS source order.
+            className={`font-bold text-(--text-primary) tracking-tight transition-all ${
               scrolled ? 'text-[17px]' : 'text-[28px]'
             }`}
           >
@@ -353,7 +357,7 @@ export function HqHeader() {
           <button
             type="button"
             onClick={() => router.push('/hq/settings')}
-            className="flex h-9 w-9 items-center justify-center rounded-full bg-(--brand-fg) text-white text-sm font-bold tap-solid"
+            className="flex h-9 w-9 items-center justify-center rounded-full bg-(--link-fg) text-(--text-on-brand) text-sm font-bold tap-solid"
             aria-label="Settings"
           >
             JL

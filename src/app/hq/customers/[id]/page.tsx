@@ -66,7 +66,7 @@ export default async function CustomerDetailPage({ params }: { params: Promise<{
         <div className="mt-4 grid grid-cols-2 gap-2">
           <a
             href={customer.phone ? `tel:${customer.phone}` : undefined}
-            className="flex items-center justify-center gap-2 rounded-xl bg-(--brand-fg) px-3 py-3 text-[16px] font-semibold text-white tap-solid"
+            className="flex items-center justify-center gap-2 rounded-xl bg-(--brand-fg) px-3 py-3 text-[16px] font-semibold text-(--text-on-brand) tap-solid"
             aria-disabled={!customer.phone ? "true" : undefined}
           >
             <Phone size={18} strokeWidth={2} /> Call

@@ -133,7 +133,7 @@ export function PartnerInquiriesTable({ initialInquiries }: { initialInquiries: 
                 <div className="flex flex-wrap gap-2">
                   <a
                     href={`mailto:${inq.email}`}
-                    className="inline-flex items-center gap-2 h-9 px-3 rounded-lg bg-(--brand-fg) text-white text-[13px] font-semibold hover:bg-(--brand-fg-hover)"
+                    className="inline-flex items-center gap-2 h-9 px-3 rounded-lg bg-(--brand-fg) text-(--text-on-brand) text-[13px] font-semibold hover:bg-(--brand-fg-hover)"
                   >
                     Email {inq.email}
                   </a>

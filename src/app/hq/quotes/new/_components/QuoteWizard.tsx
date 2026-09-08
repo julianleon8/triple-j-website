@@ -245,7 +245,7 @@ export function QuoteWizard({ customers: initialCustomers }: { customers: Wizard
             type="button"
             onClick={() => goTo((step + 1) as Step)}
             disabled={advanceDisabled}
-            className="ml-auto inline-flex items-center gap-1 rounded-xl bg-(--brand-fg) px-4 py-3 text-[15px] font-semibold text-white tap-solid disabled:opacity-40"
+            className="ml-auto inline-flex items-center gap-1 rounded-xl bg-(--brand-fg) px-4 py-3 text-[15px] font-semibold text-(--text-on-brand) tap-solid disabled:opacity-40"
           >
             Next <ArrowRight size={16} strokeWidth={2} />
           </button>

@@ -144,7 +144,7 @@ export function ExpenseAccountPicker({ currentId, currentName }: Props) {
         type="button"
         onClick={onSave}
         disabled={saving || !dirty}
-        className="inline-flex items-center gap-1.5 rounded-xl bg-(--brand-fg) px-4 py-2 text-[14px] font-semibold text-white tap-solid disabled:opacity-50"
+        className="inline-flex items-center gap-1.5 rounded-xl bg-(--brand-fg) px-4 py-2 text-[14px] font-semibold text-(--text-on-brand) tap-solid disabled:opacity-50"
       >
         {saving ? (
           <>

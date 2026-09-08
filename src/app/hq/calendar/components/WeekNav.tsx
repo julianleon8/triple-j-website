@@ -68,7 +68,7 @@ export function WeekNav({ mondayIso, sundayIso, rangeLabel }: Props) {
             type="button"
             onClick={() => go(todayMondayIso)}
             disabled={isPending}
-            className="flex h-10 items-center gap-1.5 rounded-xl bg-(--brand-fg) px-3 text-[13px] font-semibold text-white tap-solid disabled:opacity-50"
+            className="flex h-10 items-center gap-1.5 rounded-xl bg-(--brand-fg) px-3 text-[13px] font-semibold text-(--text-on-brand) tap-solid disabled:opacity-50"
           >
             <CalendarDays size={14} strokeWidth={2} />
             Today

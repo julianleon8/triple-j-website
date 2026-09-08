@@ -101,7 +101,7 @@ export function PendingReceiptsCard({
               ? 'No pending receipts.'
               : undefined
           }
-          className="shrink-0 inline-flex items-center gap-1.5 rounded-xl bg-(--brand-fg) px-3 py-2 text-[13px] font-semibold text-white tap-solid disabled:opacity-50"
+          className="shrink-0 inline-flex items-center gap-1.5 rounded-xl bg-(--brand-fg) px-3 py-2 text-[13px] font-semibold text-(--text-on-brand) tap-solid disabled:opacity-50"
         >
           {pushing ? (
             <>

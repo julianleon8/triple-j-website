@@ -15,7 +15,7 @@
  */
 export default function AuthLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="font-(--font-ios) min-h-dvh flex-1 bg-(--surface-1) text-(--text-primary) flex items-center justify-center px-4 py-10">
+    <div className="font-(family-name:--font-ios) min-h-dvh flex-1 bg-(--surface-1) text-(--text-primary) flex items-center justify-center px-4 py-10">
       <div className="w-full max-w-sm rounded-2xl border border-(--border-subtle) bg-(--surface-2) p-8 shadow-xl">
         {children}
       </div>

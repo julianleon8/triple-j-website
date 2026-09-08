@@ -942,7 +942,7 @@ export default function GalleryManager({ initialItems }: { initialItems: Gallery
           <button
             type="submit"
             disabled={uploading}
-            className="px-5 py-2.5 rounded-lg bg-(--brand-fg) text-white text-sm font-semibold hover:bg-(--brand-fg-hover) disabled:opacity-50 transition-colors"
+            className="px-5 py-2.5 rounded-lg bg-(--brand-fg) text-(--text-on-brand) text-sm font-semibold hover:bg-(--brand-fg-hover) disabled:opacity-50 transition-colors"
           >
             {uploading
               ? uploadProgress ?? 'Uploading…'
@@ -1328,7 +1328,7 @@ function EditPanel({
           <button
             type="submit"
             disabled={busy}
-            className="px-4 py-2 rounded-lg bg-(--brand-fg) text-white text-sm font-semibold hover:bg-(--brand-fg-hover) disabled:opacity-50 transition-colors"
+            className="px-4 py-2 rounded-lg bg-(--brand-fg) text-(--text-on-brand) text-sm font-semibold hover:bg-(--brand-fg-hover) disabled:opacity-50 transition-colors"
           >
             {busy ? 'Saving…' : 'Save'}
           </button>

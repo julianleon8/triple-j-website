@@ -177,7 +177,7 @@ export function AddCostSheet({ jobId, children }: Props) {
                 type="button"
                 onClick={save}
                 disabled={saving}
-                className="rounded-xl bg-(--brand-fg) px-3 py-3 text-[14px] font-semibold text-white tap-solid disabled:opacity-50"
+                className="rounded-xl bg-(--brand-fg) px-3 py-3 text-[14px] font-semibold text-(--text-on-brand) tap-solid disabled:opacity-50"
               >
                 {saving ? 'Saving…' : 'Add'}
               </button>

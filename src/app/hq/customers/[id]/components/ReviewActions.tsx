@@ -49,7 +49,7 @@ export function ReviewActions({ customerId, state }: Props) {
         type="button"
         onClick={() => send('asked')}
         disabled={!!pending}
-        className="flex w-full items-center justify-center gap-2 rounded-xl bg-(--brand-fg) px-3 py-3 text-[15px] font-semibold text-white tap-solid disabled:opacity-50"
+        className="flex w-full items-center justify-center gap-2 rounded-xl bg-(--brand-fg) px-3 py-3 text-[15px] font-semibold text-(--text-on-brand) tap-solid disabled:opacity-50"
       >
         <Star size={16} strokeWidth={2} />
         {pending === 'asked' ? 'Saving…' : 'Ask for review'}
@@ -79,7 +79,7 @@ export function ReviewActions({ customerId, state }: Props) {
           type="button"
           onClick={() => setPasteOpen(true)}
           disabled={!!pending}
-          className="flex items-center justify-center gap-1.5 rounded-xl bg-(--brand-fg) px-3 py-3 text-[14px] font-semibold text-white tap-solid disabled:opacity-50"
+          className="flex items-center justify-center gap-1.5 rounded-xl bg-(--brand-fg) px-3 py-3 text-[14px] font-semibold text-(--text-on-brand) tap-solid disabled:opacity-50"
         >
           <Check size={16} strokeWidth={2} />
           Review left
@@ -143,7 +143,7 @@ export function ReviewActions({ customerId, state }: Props) {
                 type="button"
                 onClick={() => send('left', url.trim() || undefined)}
                 disabled={pending === 'left'}
-                className="rounded-xl bg-(--brand-fg) px-3 py-3 text-[14px] font-semibold text-white tap-solid disabled:opacity-50"
+                className="rounded-xl bg-(--brand-fg) px-3 py-3 text-[14px] font-semibold text-(--text-on-brand) tap-solid disabled:opacity-50"
               >
                 {pending === 'left' ? 'Saving…' : 'Save'}
               </button>

@@ -39,11 +39,16 @@ const BADGE_TONE: Record<NonNullable<NonNullable<GroupedRowProps['badge']>['tone
  */
 export function GroupedRow(props: GroupedRowProps) {
   const Icon = props.icon
+  // Icon tiles are white-on-saturated (rose/indigo/violet/sky/green/amber…),
+  // which is right for every tone except the brand one: --brand-fg is gold in
+  // HQ, and white on gold is ~1.9:1. Pair that tone with its own ink instead.
+  const iconTone = props.iconTone ?? 'bg-(--brand-fg)'
+  const iconInk = iconTone.includes('--brand-fg') ? 'text-(--text-on-brand)' : 'text-white'
   const body = (
     <div className={`flex min-h-14 items-center gap-3 px-4 py-2.5 ${props.disabled ? 'opacity-50' : ''}`}>
       {Icon && (
         <div
-          className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-[8px] text-white ${props.iconTone ?? 'bg-(--brand-fg)'}`}
+          className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-[8px] ${iconInk} ${iconTone}`}
           aria-hidden="true"
         >
           <Icon size={16} strokeWidth={2} />

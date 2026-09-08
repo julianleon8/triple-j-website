@@ -121,7 +121,7 @@ export function PipelineList({ rows: initialRows, paramKey = 'type', hideFilters
                   onClick={() => setFilter(key)}
                   className={`whitespace-nowrap rounded-full px-3.5 py-1.5 text-[13px] font-semibold transition-colors ${
                     active
-                      ? 'bg-(--brand-fg) text-white'
+                      ? 'bg-(--brand-fg) text-(--text-on-brand)'
                       : 'bg-(--surface-2) text-(--text-secondary) hover:text-(--text-primary)'
                   }`}
                   aria-pressed={active}

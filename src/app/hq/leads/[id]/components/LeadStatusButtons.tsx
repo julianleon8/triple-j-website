@@ -115,7 +115,7 @@ export function LeadStatusButtons({ leadId, currentStatus, existingCustomerId }:
             type="button"
             onClick={markWon}
             disabled={!!pending || isWon}
-            className="flex items-center justify-center gap-2 rounded-2xl bg-(--brand-fg) px-3 py-4 text-[16px] font-semibold text-white tap-solid disabled:opacity-50"
+            className="flex items-center justify-center gap-2 rounded-2xl bg-(--brand-fg) px-3 py-4 text-[16px] font-semibold text-(--text-on-brand) tap-solid disabled:opacity-50"
           >
             <UserCheck size={18} strokeWidth={2} />
             {pending === 'won' ? 'Converting…' : 'Mark Won'}

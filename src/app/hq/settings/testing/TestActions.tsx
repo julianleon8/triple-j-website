@@ -34,7 +34,7 @@ function ActionCard({ title, description, primaryLabel, onPrimary, primaryTone =
   }
 
   const primaryClass = {
-    brand: 'bg-(--brand-fg) hover:bg-(--brand-fg-hover) text-white',
+    brand: 'bg-(--brand-fg) hover:bg-(--brand-fg-hover) text-(--text-on-brand)',
     amber: 'bg-amber-500 hover:bg-amber-400 text-black',
     red:   'bg-red-600 hover:bg-red-700 text-white',
   }[primaryTone]

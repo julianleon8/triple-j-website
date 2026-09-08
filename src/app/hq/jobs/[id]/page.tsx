@@ -104,7 +104,7 @@ export default async function JobDetailPage({ params }: { params: Promise<{ id: 
               <li key={p.key} className="flex flex-1 items-center gap-2">
                 <div
                   className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-[11px] font-bold ${
-                    done ? 'bg-(--brand-fg) text-white' : 'bg-(--surface-3) text-(--text-tertiary)'
+                    done ? 'bg-(--brand-fg) text-(--text-on-brand)' : 'bg-(--surface-3) text-(--text-tertiary)'
                   }`}
                   aria-current={i === activeIdx ? 'step' : undefined}
                 >
@@ -165,7 +165,7 @@ export default async function JobDetailPage({ params }: { params: Promise<{ id: 
             <a
               href={`tel:${job.customers.phone}`}
               onClick={(e) => e.stopPropagation()}
-              className="shrink-0 inline-flex items-center gap-1.5 rounded-full bg-(--brand-fg) px-3 py-2 text-[13px] font-semibold text-white"
+              className="shrink-0 inline-flex items-center gap-1.5 rounded-full bg-(--brand-fg) px-3 py-2 text-[13px] font-semibold text-(--text-on-brand)"
             >
               <Phone size={14} strokeWidth={2} /> Call
             </a>

@@ -66,7 +66,7 @@ export default function NewCustomerForm({ onCreate, onCancel }: Props) {
       <textarea name="notes" placeholder="Notes" rows={2} className={`${INPUT} resize-none w-full`} />
       <div className="flex flex-wrap items-center gap-2">
         <button type="submit" disabled={saving}
-          className="bg-(--brand-fg) hover:bg-(--brand-fg-hover) disabled:opacity-50 text-white text-sm font-bold min-h-11 px-4 rounded-lg transition">
+          className="bg-(--brand-fg) hover:bg-(--brand-fg-hover) disabled:opacity-50 text-(--text-on-brand) text-sm font-bold min-h-11 px-4 rounded-lg transition">
           {saving ? 'Saving…' : 'Create Customer'}
         </button>
         <button type="button" onClick={onCancel} disabled={saving}

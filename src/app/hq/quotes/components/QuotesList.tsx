@@ -48,7 +48,7 @@ export function QuotesList({ rows, counts }: Props) {
         />
         <Link
           href="/hq/quotes/new"
-          className="shrink-0 inline-flex items-center gap-1 rounded-full bg-(--brand-fg) px-3 py-1.5 text-[13px] font-semibold text-white tap-solid"
+          className="shrink-0 inline-flex items-center gap-1 rounded-full bg-(--brand-fg) px-3 py-1.5 text-[13px] font-semibold text-(--text-on-brand) tap-solid"
         >
           <Plus size={14} strokeWidth={2} /> New
         </Link>

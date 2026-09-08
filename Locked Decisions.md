@@ -15,7 +15,7 @@ Do not copy anything from this file into `AGENTS.md`. That duplication is what p
 - **Concrete spec:** **3,000 PSI is standard. 4,000 PSI is on request only** — never promised as the default. (2026-05-01 — **REVERSES** the 2026-04-15 lock that made 4,000 PSI a headline differentiator.) Confirmed by Julian 2026-09-06 and now true of the shipped site: all 22 occurrences rewritten, and `scripts/check-vault.mjs` enforces it with no exceptions.
 - **Services** include lean-to patios and house additions alongside carports, garages, barns, RV/boat covers, equipment covers, metal porches, ranch structures, barndominiums.
 - **Tagline:** "Built right, built fast, built by Triple J." (2026-04-15)
-- **Fonts:** Barlow Condensed (headlines) + Inter (body). Geist removed. Barlow is scoped to marketing only — not HQ. (2026-04-24)
+- **Fonts:** Barlow Condensed (headlines) + Inter (body). Geist removed. Barlow is scoped to marketing only — not HQ. (2026-04-24) HQ body text is the iOS system stack, applied as `font-(family-name:--font-ios)` — the `family-name:` prefix is required, because Tailwind v4 reads the bare `font-()` shorthand as font-weight and that silently left HQ on Inter from the day the class was written. (fix 2026-09-07)
 - **Design:** Industrial charcoal/white/steel-blue identity; public site stays light. First design pass brings the portfolio directly after a simplified hero, adds a shared Juan/Julian/Freddy introduction, and shortens the gallery header with URL-based building filters. Use actual jobsite imagery until a real crew portrait is supplied. Implementation approved for publication to main. (2026-09-07)
 - **TrustBar stats:** Zero Subcontractors · Welded or Bolted · Same-Week · Temple TX.
 - **Testimonials:** auto-scroll marquee, CSS `@keyframes`, pause-on-hover, `'use client'`. **`REVIEWS` is empty and the section renders nothing** — the six invented "Verified Project" quotes were removed 2026-09-07. Real reviews only: fill `testimonials.md`, paste them in, and the section returns on its own. Never re-add a `rating` without a real review behind it.
@@ -27,7 +27,19 @@ Do not copy anything from this file into `AGENTS.md`. That duplication is what p
 - **Permits are advisory only** — "Building permits? We'll talk you through it." Never promise to pull, file, or guarantee one. (2026-09-07)
 - **`/quote` carries no prices, no deposit or payment language, and no stars or reviews.** (2026-09-07)
 - **Campaign attribution:** preserve the first marketing landing and campaign parameters for the browser-tab session across navigation and reloads; use memory if session storage is blocked. (2026-09-06)
-- **Interactive brand token in HQ** is `--brand-fg`; Lucide `strokeWidth={2}` is the HQ default. (2026-04-24)
+- **HQ is forced dark, always.** `.hq-ui`, applied to the wrapper in `src/app/hq/layout.tsx`, remaps the
+  semantic tokens for that subtree to the "Shop floor" direction — page `#0b0d0f`, card `#14181c`, raised
+  `#1b2126`, ink `#f2f4f5`. HQ does **not** follow `prefers-color-scheme`; the marketing site still does.
+  `dark:` is redefined in `src/app/globals.css` to mean "inside `.hq-ui`" rather than "the OS is dark", so
+  the ~144 existing `dark:` utilities fire unconditionally in HQ with no file edits. **Only custom
+  properties may go in the `.hq-ui` block** — hand-written rules in that file are emitted unlayered and
+  would outrank every Tailwind utility inside HQ; `color-scheme: dark` is the one documented exception.
+  (2026-09-07)
+- **Two interactive tokens in HQ, not one:** `--brand-fg` is the gold action colour `#f5a524`, and text on
+  it is `--text-on-brand` `#0b0d0f` — **never `text-white`**, which lands at ~1.9:1. `--link-fg` is the blue
+  used for links, back affordances and secondary buttons. Outside HQ `--link-fg` is simply `--brand-fg`, so
+  nothing changes there. Lucide `strokeWidth={2}` is still the HQ default. (2026-09-07 — **REVERSES** the
+  2026-04-24 single-brand-token rule.)
 - **Steel color names:** no vendor-specific color names in customer copy. (2026-04-26)
 - **`/service-areas` is dead** — 301 → `/locations`. (2026-04-26)
 - **County location pages are dead** — all eight 301 → their strongest member city, or `/locations` where

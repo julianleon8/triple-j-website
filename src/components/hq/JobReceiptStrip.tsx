@@ -394,7 +394,7 @@ export function JobReceiptStrip({ jobId, receipts: initialReceipts }: Props) {
           onPointerEnter={prefetchSheet}
           onFocus={prefetchSheet}
           disabled={busy}
-          className="shrink-0 inline-flex items-center gap-1.5 rounded-full bg-(--brand-fg) px-3.5 py-2 text-[13px] font-semibold text-white tap-solid disabled:opacity-60"
+          className="shrink-0 inline-flex items-center gap-1.5 rounded-full bg-(--brand-fg) px-3.5 py-2 text-[13px] font-semibold text-(--text-on-brand) tap-solid disabled:opacity-60"
         >
           {busy ? (
             <Loader2 size={14} strokeWidth={2} className="animate-spin" />
@@ -731,7 +731,7 @@ function ConfirmForm({ sheet, onChange, onLineUpdate, onLineAdd, onLineRemove, o
           type="button"
           onClick={onSubmit}
           disabled={sheet.submitting}
-          className="ml-auto inline-flex items-center justify-center gap-1.5 rounded-xl bg-(--brand-fg) px-4 py-3 text-[14px] font-semibold text-white tap-solid disabled:opacity-60"
+          className="ml-auto inline-flex items-center justify-center gap-1.5 rounded-xl bg-(--brand-fg) px-4 py-3 text-[14px] font-semibold text-(--text-on-brand) tap-solid disabled:opacity-60"
         >
           {sheet.submitting ? (
             <>

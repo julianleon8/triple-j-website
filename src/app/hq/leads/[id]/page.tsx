@@ -110,7 +110,7 @@ export default async function LeadDetailPage({ params }: { params: Promise<{ id:
         <div className="mt-4 grid grid-cols-2 gap-2">
           <a
             href={lead.phone ? `tel:${lead.phone}` : undefined}
-            className="flex items-center justify-center gap-2 rounded-xl bg-(--brand-fg) px-3 py-3 text-[16px] font-semibold text-white tap-solid disabled:opacity-50"
+            className="flex items-center justify-center gap-2 rounded-xl bg-(--brand-fg) px-3 py-3 text-[16px] font-semibold text-(--text-on-brand) tap-solid disabled:opacity-50"
             aria-disabled={!lead.phone ? "true" : undefined}
           >
             <Phone size={18} strokeWidth={2} /> Call

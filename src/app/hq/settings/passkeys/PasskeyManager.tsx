@@ -93,7 +93,7 @@ export function PasskeyManager({ initial }: { initial: Passkey[] }) {
         type="button"
         onClick={register}
         disabled={busy}
-        className="w-full rounded-xl bg-(--brand-fg) py-3 text-sm font-semibold text-white transition disabled:opacity-50"
+        className="w-full rounded-xl bg-(--brand-fg) py-3 text-sm font-semibold text-(--text-on-brand) transition disabled:opacity-50"
       >
         {busy ? 'Waiting for your device…' : 'Add a passkey'}
       </button>

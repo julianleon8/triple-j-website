@@ -470,7 +470,7 @@ function ChipRow<V extends string | number>({
             onClick={() => onChange(opt.value)}
             className={`rounded-full px-3.5 py-2 text-[13px] font-semibold tap-solid ${
               active
-                ? 'bg-(--brand-fg) text-white'
+                ? 'bg-(--brand-fg) text-(--text-on-brand)'
                 : 'border border-(--border-subtle) bg-(--surface-2) text-(--text-primary)'
             }`}
           >
