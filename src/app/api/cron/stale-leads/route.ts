@@ -16,7 +16,7 @@ export const maxDuration = 30
  * signal and no extra column is needed to detect it.
  *
  * Each lead is nudged at most once, ever (leads.nudged_at, migration 027).
- * /hq NeedsAttentionFeed keeps showing it until it is actually worked; this
+ * the /hq call-next card keeps offering it until it is actually worked; this
  * push exists only to say "you have not seen this yet".
  */
 async function runStaleLeads({ db }: CronContext): Promise<CronResult> {

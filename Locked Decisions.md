@@ -62,6 +62,14 @@ Do not copy anything from this file into `AGENTS.md`. That duplication is what p
   **Today · Leads · Capture · Jobs · More**; **Gallery moved into the More hub** to make room for Capture and
   is still in the desktop nav. The tab grid is sized from `HQ_TABS.length` via an inline style, because an
   interpolated `grid-cols-${n}` is a class Tailwind never generates. (2026-09-07)
+- **Today holds four blocks and nothing else:** Capture a call (full-width gold, → `/hq/capture`),
+  the call-next card, "N drafts to finish", and quotes waiting on an answer. Revenue, win rate and
+  avg ticket live on `/hq/more/stats` — they were already there, so the strip was deleted rather
+  than moved. **"Needs attention" is gone**; the call-next card is the most urgent thing, and the
+  feed restated the same ranking from a second, differently-limited copy of the same query. The
+  drafts row is **not** a statistic and must not move to Stats: a draft scores 0 in `urgencyScore`,
+  so that row is the only way back to an unfinished capture. (2026-09-08)
+
 - **Quote building is not in HQ.** `/hq/quotes` is a read-only tracking list — segments **Out · Won ·
   Lost · All**, with `draft` in All only, because a draft is now a legacy row rather than work in
   progress. `/hq/quotes/new` returns `notFound()`; its wizard components stay on disk and keep

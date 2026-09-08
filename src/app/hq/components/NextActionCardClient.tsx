@@ -63,40 +63,51 @@ export function NextActionCardClient({ payload }: { payload: NextActionPayload |
   return (
     <section
       aria-label="Next action"
-      className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-[#1851b5] to-[#0d2f5c] p-5 text-white shadow-lg"
+      className="relative overflow-hidden rounded-md border border-(--border-subtle) bg-(--surface-2) p-4 pl-5"
     >
+      {/* 5px status accent, not a tinted card — the same absolutely positioned
+          bar the cold-lead rows use. */}
+      <span
+        aria-hidden
+        className="absolute inset-y-0 left-0 w-[5px] bg-hq-red"
+      />
+
       <div className="flex items-start justify-between gap-3">
-        <span className="rounded-sm bg-white/15 px-2.5 py-1 text-[11px] font-bold uppercase tracking-wider text-white/95">
-          {reason}
+        <span className="font-display text-[13px] font-bold uppercase tracking-[0.08em] text-hq-red">
+          Call next
+          <span className="ml-2 font-mono text-[11px] tracking-[0.04em]">{reason}</span>
         </span>
         <button
           type="button"
           onClick={onDismiss}
-          className="text-[12px] font-semibold text-white/70 active:text-white/100 underline-offset-4 hover:underline"
+          className="shrink-0 font-mono text-[11px] uppercase tracking-[0.04em] text-(--text-tertiary) underline-offset-4 hover:underline"
         >
           Dismiss
         </button>
       </div>
-      <h2 className="mt-3 text-[22px] font-bold leading-tight tracking-tight truncate">
+
+      <h2 className="mt-2 truncate font-display text-[32px] font-bold uppercase leading-none tracking-[0.02em] text-(--text-primary)">
         {row.primary}
       </h2>
-      <p className="mt-1 text-[14px] text-white/80 truncate">{row.secondary}</p>
+      <p className="mt-1.5 truncate text-[14px] text-(--text-secondary)">{row.secondary}</p>
+
       <div className="mt-4 flex items-center gap-2">
         {callHref ? (
           <a
             href={callHref}
             onClick={tap}
-            className="inline-flex flex-1 items-center justify-center gap-2 rounded-md bg-white py-2.5 text-[15px] font-bold text-[#12407a] tap-solid"
+            className="inline-flex h-[50px] flex-1 items-center justify-center gap-2 rounded-md bg-(--brand-fg) text-[17px] font-bold uppercase tracking-[0.04em] text-(--text-on-brand) tap-solid"
           >
-            <Phone size={16} strokeWidth={2} /> Call
+            <Phone size={17} strokeWidth={2.2} /> Call
           </a>
         ) : null}
         <Link
           href={row.href}
           onClick={tap}
-          className="inline-flex flex-1 items-center justify-center gap-2 rounded-md bg-white/15 py-2.5 text-[15px] font-bold text-white tap-solid"
+          aria-label={`Open ${row.primary}`}
+          className="inline-flex h-[50px] w-[50px] shrink-0 items-center justify-center rounded-md border border-(--border-strong) text-(--link-fg) tap-solid"
         >
-          Open <ArrowRight size={16} strokeWidth={2} />
+          <ArrowRight size={20} strokeWidth={2.2} />
         </Link>
       </div>
     </section>
@@ -107,11 +118,13 @@ function EmptyState() {
   return (
     <section
       aria-label="Next action"
-      className="rounded-3xl border border-(--border-subtle) bg-(--surface-2) p-5 text-center"
+      className="rounded-md border border-(--border-subtle) bg-(--surface-2) p-5 text-center"
     >
-      <p className="text-[17px] font-semibold text-(--text-primary)">You&apos;re caught up.</p>
-      <p className="mt-1 text-[13px] text-(--text-secondary)">
-        Nothing urgent right now. New activity will show up here.
+      <p className="font-display text-[19px] font-bold uppercase tracking-[0.04em] text-(--text-primary)">
+        You&apos;re caught up
+      </p>
+      <p className="mt-1 font-mono text-[11px] uppercase tracking-[0.04em] text-(--text-tertiary)">
+        Nothing urgent right now
       </p>
     </section>
   )

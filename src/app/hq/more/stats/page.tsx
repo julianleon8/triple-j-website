@@ -178,6 +178,9 @@ export default async function StatsPage() {
 
   // Pipeline
   const openLeads = L.filter(l => !['won', 'lost'].includes(l.status)).length
+  // Carried over from Today's KPI strip, the only one of its four tiles with
+  // no equivalent already on this page. Reuses this file's own startOfWeek().
+  const leadsThisWeek = L.filter(l => l.created_at >= weekStart).length
   const activePermitLeads = P.filter(l => ['new', 'called', 'qualified'].includes(l.status)).length
   const pipelineValue = Q
     .filter(q => ['draft', 'sent'].includes(q.status))
@@ -300,8 +303,9 @@ export default async function StatsPage() {
 
       <StatsGroup title="Pipeline">
         <KPICard label="Open leads" value={String(openLeads)} sub="Not won/lost" accent="blue">
-          <Sparkline data={leads30dSpark} color="#1e6bd6" />
+          <Sparkline data={leads30dSpark} color="#8aaeff" />
         </KPICard>
+        <KPICard label="Leads this week" value={String(leadsThisWeek)} sub="Since Sunday" accent="sky" />
         <KPICard label="Active permits" value={String(activePermitLeads)} sub="new · called · qualified" accent="indigo" />
         <KPICard label="Pipeline value" value={fmtUSD(pipelineValue)} sub="Draft + sent quotes" accent="sky" />
       </StatsGroup>
@@ -323,7 +327,7 @@ export default async function StatsPage() {
 
       <StatsGroup title="Revenue">
         <KPICard label="Revenue this month" value={fmtUSD(revenueThisMonth)} sub="Completed jobs" accent="green">
-          <Sparkline data={revenueMtdSpark} color="#059669" />
+          <Sparkline data={revenueMtdSpark} color="#4ade80" />
         </KPICard>
         <KPICard label="Avg deal size" value={fmtUSD(Math.round(avgDealSize))} sub={`${completedJobs.length} completed jobs`} accent="emerald" />
         <KPICard label="Balance due" value={fmtUSD(balanceDue)} sub="Open + in-progress jobs" accent="amber" />

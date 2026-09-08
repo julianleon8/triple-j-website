@@ -375,7 +375,8 @@ export function jobToRow(job: JobForRow): PipelineRow {
 /**
  * Returns a 0–100 urgency score for a pipeline row.
  * 0 = don't surface in Today's Needs Attention feed.
- * Higher = more urgent. Used by NextActionCard (top row) + NeedsAttentionFeed (all > 0).
+ * Higher = more urgent. NextActionCard takes the top row; anything scoring 0 is
+ * excluded from Today entirely.
  *
  * Rubric (intentionally conservative — we'd rather miss than cry-wolf):
  *   NEW lead:                70  (+20 asap, +5 military)
@@ -432,7 +433,7 @@ export function reasonFor(row: PipelineRow): string {
 
 export function urgencyScore(row: PipelineRow): number {
   // A draft is an unfinished note to self, not an action. Today's "call next"
-  // card and NeedsAttentionFeed both filter on score > 0, so this single line
+  // card filters on score > 0, so this single line
   // is what stops a nameless capture becoming the next thing to do.
   if (row.isDraft) return 0
 
