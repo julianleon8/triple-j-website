@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { Pencil } from 'lucide-react'
 import type { PipelineRow } from '@/lib/pipeline'
 import { isCold } from '@/lib/pipeline'
 import { ColdBanner } from './ColdBanner'
@@ -11,7 +12,8 @@ import { ColdBanner } from './ColdBanner'
  * Used by the Leads tab, Customers tab, and Today's Needs Attention feed.
  */
 export function MessagesRow({ row }: { row: PipelineRow }) {
-  const cold = isCold(row)
+  const draft = row.isDraft === true
+  const cold = !draft && isCold(row)
   const unread = isUnreadLead(row)
   const avatarBg = AVATAR_COLORS[hashPick(row.primary || row.id)]
   const initials = initialsFrom(row.primary)
@@ -22,14 +24,27 @@ export function MessagesRow({ row }: { row: PipelineRow }) {
       <Link
         href={row.href}
         prefetch
-        className="relative flex items-start gap-3 px-4 py-3 min-h-16 bg-(--surface-2) tap-list"
+        className={`relative flex items-start gap-3 px-4 py-3 min-h-16 tap-list ${
+          draft ? 'bg-(--surface-3)' : 'bg-(--surface-2)'
+        }`}
       >
         {cold && (
           <span aria-hidden="true" className="absolute left-0 top-0 h-full w-1 bg-(--urgent-bg)" />
         )}
-        <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-md text-white text-[14px] font-bold ${avatarBg}`}>
-          {initials}
-        </div>
+        {draft && (
+          <span aria-hidden="true" className="absolute left-0 top-0 h-full w-1 bg-(--brand-fg)" />
+        )}
+        {draft ? (
+          // A dashed tile instead of initials. This also sidesteps the null-name
+          // path entirely: initialsFrom() never sees a row without a name.
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md border border-dashed border-(--hq-hairline) text-(--brand-fg)">
+            <Pencil size={16} strokeWidth={2.2} aria-hidden="true" />
+          </div>
+        ) : (
+          <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-md text-white text-[14px] font-bold ${avatarBg}`}>
+            {initials}
+          </div>
+        )}
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-1.5 flex-wrap">
             <span className="text-[17px] font-semibold text-(--text-primary) truncate">
@@ -41,15 +56,26 @@ export function MessagesRow({ row }: { row: PipelineRow }) {
               </span>
             ))}
           </div>
-          <p className="mt-0.5 text-[13px] text-(--text-secondary) line-clamp-2">
-            {row.secondary}
-          </p>
+          {draft ? (
+            <p className="mt-0.5 font-mono text-[11px] uppercase tracking-[0.04em] text-(--text-secondary)">
+              {row.meta?.phone ? 'Draft · phone + notes' : 'Draft · needs a phone'}
+            </p>
+          ) : (
+            <p className="mt-0.5 text-[13px] text-(--text-secondary) line-clamp-2">
+              {row.secondary}
+            </p>
+          )}
         </div>
         <div className="flex flex-col items-end gap-1 shrink-0">
+          {draft ? (
+            <span className="rounded-sm bg-(--brand-fg) px-3 py-1.5 font-display text-[15px] font-bold uppercase tracking-[0.06em] text-(--text-on-brand)">
+              Finish
+            </span>
+          ) : null}
           <span className="text-[12px] text-(--text-tertiary) tabular-nums">
             {formatRelative(row.created_at)}
           </span>
-          {unread && (
+          {!draft && unread && (
             <span className="h-2.5 w-2.5 rounded-full bg-(--brand-fg)" aria-label="Unread" />
           )}
         </div>

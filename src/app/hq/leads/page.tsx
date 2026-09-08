@@ -24,16 +24,23 @@ export default async function LeadsPage() {
     admin
       .from('leads')
       .select(
-        'id, created_at, name, phone, email, city, zip, service_type, structure_type, timeline, is_military, status, message',
+        'id, created_at, name, phone, email, city, zip, service_type, structure_type, timeline, is_military, status, message, is_draft, size_raw',
       )
       .order('created_at', { ascending: false })
       .limit(PAGE_SIZE),
-    admin.from('leads').select('status'),
+    // is_draft rides on the existing whole-table status scan rather than
+    // becoming a fifth query. Note this pass counts every row while the list
+    // above holds only the newest 50 — that asymmetry predates drafts, but the
+    // draft count has to be honest, so it is computed here rather than from
+    // the 50 rows on screen.
+    admin.from('leads').select('status, is_draft'),
   ])
 
   const leads = (rowsRaw ?? []) as LeadRecord[]
   const rows = leads.map(leadToRow)
-  const allStatus = (statusRaw ?? []) as { status: string }[]
+  const allStatus = (statusRaw ?? []) as { status: string; is_draft: boolean | null }[]
+
+  const draftCount = allStatus.filter((l) => l.is_draft).length
 
   const counts = {
     new:  allStatus.filter((l) => l.status === 'new').length,
@@ -42,5 +49,6 @@ export default async function LeadsPage() {
     done: allStatus.filter((l) => l.status === 'won' || l.status === 'lost').length,
   }
 
-  return <LeadsInbox rows={rows} counts={counts} pageSize={PAGE_SIZE} totalAll={counts.all} />
+  return <LeadsInbox rows={rows} counts={counts} pageSize={PAGE_SIZE} totalAll={counts.all}
+        draftCount={draftCount} />
 }

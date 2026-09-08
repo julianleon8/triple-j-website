@@ -6,6 +6,7 @@
  */
 
 import { formatCityOrZip } from '@/lib/locations'
+import { isDraftLead } from '@/lib/hq/capture-draft'
 
 export type PipelineKind = 'lead' | 'permit' | 'customer' | 'quote' | 'job'
 
@@ -31,6 +32,11 @@ export type PipelineRow = {
   trailing?: PipelineTrailing
   badges?: PipelineBadge[]
   created_at: string
+  /**
+   * A lead still missing a name or a service — leads.is_draft, carried through
+   * explicitly rather than derived from what the row happens to render.
+   */
+  isDraft?: boolean
   /** Non-visual hints carried alongside the row (phone for swipe-to-call, etc.). */
   meta?: { phone?: string | null; sentAt?: string | null }
 }
@@ -64,6 +70,8 @@ export type LeadForRow = {
   phone: string | null
   city: string | null
   zip: string | null
+  /** Generated in the database (migration 033); absent on older select lists. */
+  is_draft?: boolean | null
   /** Null on a capture draft; the 'carport' column default was dropped in 033. */
   service_type: string | null
   structure_type: string | null
@@ -254,6 +262,7 @@ export function leadToRow(lead: LeadForRow): PipelineRow {
       statusClass: LEAD_STATUS_CLASS[lead.status] ?? MUTED_STATUS_CLASS,
     },
     badges,
+    isDraft: lead.is_draft ?? isDraftLead(lead),
     created_at: lead.created_at,
     meta: { phone: lead.phone },
   }
@@ -403,6 +412,7 @@ function hoursSinceSent(row: PipelineRow): number {
 export function reasonFor(row: PipelineRow): string {
   switch (row.kind) {
     case 'lead': {
+      if (row.isDraft) return 'Unfinished draft'
       if (row.badges?.some((b) => b.tone === 'asap')) return 'ASAP lead'
       if (row.badges?.some((b) => b.tone === 'mil')) return 'Military lead'
       return 'New lead'
@@ -421,6 +431,11 @@ export function reasonFor(row: PipelineRow): string {
 }
 
 export function urgencyScore(row: PipelineRow): number {
+  // A draft is an unfinished note to self, not an action. Today's "call next"
+  // card and NeedsAttentionFeed both filter on score > 0, so this single line
+  // is what stops a nameless capture becoming the next thing to do.
+  if (row.isDraft) return 0
+
   let score = 0
 
   const status = extractRowStatus(row)

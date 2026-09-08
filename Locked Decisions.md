@@ -83,6 +83,14 @@ Do not copy anything from this file into `AGENTS.md`. That duplication is what p
   `service_type` lost its `'carport'` default — with the default in place an omitted column becomes a real
   value and `is_draft` can never be true. Drafts sort first in the Leads inbox New segment, never appear in
   Hot or Done, and score 0 in `urgencyScore`. (2026-09-07)
+- **Draftness is carried on the row, never inferred from what it renders.** `PipelineRow.isDraft` comes
+  from the generated column, with `isDraftLead()` as the fallback for select lists that did not ask for it.
+  This matters because `matchesSegment()` drops a row whose trailing is not a status out of **every**
+  segment including `all` — so reading draftness off the status pill would make drafts vanish from the
+  inbox the next time the pill treatment changed. Drafts match **New and All only**, sort first
+  **client-side** (server-side ordering would break `loadOlder()`, whose cursor is the last row's
+  `created_at`), and the "N to finish" counts come from the whole-table scan, not the 50 rows on screen.
+  (2026-09-07)
 - **Capture writes through its own owner-only route**, `POST /api/hq/leads` (phone alone is enough),
   modelled on `/api/hq/voice-lead`. `POST /api/leads` stays exactly as it is — it is the public endpoint
   with hCaptcha and a 5/IP/hour limit, and loosening its required fields would open a nameless-lead spam

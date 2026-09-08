@@ -20,6 +20,11 @@ type Props = {
   pageSize?: number
   /** Total leads in the DB (for the "older leads exist" footer). */
   totalAll?: number
+  /**
+   * Drafts across the WHOLE table, not just the 50 rows loaded here — counted
+   * server-side so the "N to finish" line cannot quietly undercount.
+   */
+  draftCount?: number
 }
 
 function statusOf(row: PipelineRow): string | null {
@@ -28,6 +33,12 @@ function statusOf(row: PipelineRow): string | null {
 }
 
 function matchesSegment(row: PipelineRow, seg: Segment): boolean {
+  // Drafts are placed explicitly, never by inference. Note the rule below:
+  // a row whose trailing is not a status drops out of EVERY segment including
+  // 'all', so if draftness were read off the pill a restyle would silently
+  // make drafts disappear from the inbox entirely.
+  if (row.isDraft) return seg === 'new' || seg === 'all'
+
   const s = statusOf(row)
   if (!s) return false
   if (seg === 'all') return true
@@ -36,7 +47,7 @@ function matchesSegment(row: PipelineRow, seg: Segment): boolean {
   return s === 'won' || s === 'lost'
 }
 
-export function LeadsInbox({ rows: initialRows, counts, pageSize, totalAll }: Props) {
+export function LeadsInbox({ rows: initialRows, counts, pageSize, totalAll, draftCount }: Props) {
   const router = useRouter()
   const [rows, setRows] = useState(initialRows)
   const [seg, setSeg] = useState<Segment>('new')
@@ -48,7 +59,17 @@ export function LeadsInbox({ rows: initialRows, counts, pageSize, totalAll }: Pr
    *  Load-older button. */
   const [exhausted, setExhausted] = useState(false)
 
-  const filtered = useMemo(() => rows.filter((r) => matchesSegment(r, seg)), [rows, seg])
+  const filtered = useMemo(() => {
+    const inSegment = rows.filter((r) => matchesSegment(r, seg))
+    // Drafts sort first, CLIENT-side. Doing it in the query would break
+    // loadOlder(), whose cursor is the created_at of the last row on screen —
+    // with drafts hoisted server-side the last row stops being the oldest and
+    // the pager would skip rows. Drafts are few, so this costs nothing.
+    return [
+      ...inSegment.filter((r) => r.isDraft),
+      ...inSegment.filter((r) => !r.isDraft),
+    ]
+  }, [rows, seg])
 
   function patchRow(id: string, fn: (r: PipelineRow) => PipelineRow) {
     setRows((prev) => prev.map((r) => (r.id === id ? fn(r) : r)))
@@ -156,6 +177,14 @@ export function LeadsInbox({ rows: initialRows, counts, pageSize, totalAll }: Pr
               { key: 'done', label: 'Done', count: counts.done },
             ]}
           />
+
+          {/* Counted across the whole table, not the 50 rows loaded here, so
+              it stays honest once there are more leads than one page. */}
+          {(seg === 'new' || seg === 'all') && (draftCount ?? 0) > 0 ? (
+            <p className="font-display text-[14px] font-semibold uppercase tracking-[0.1em] text-(--brand-fg)">
+              {draftCount} {draftCount === 1 ? 'draft' : 'drafts'} to finish
+            </p>
+          ) : null}
 
           {filtered.length === 0 ? (
             <div className="rounded-xl border border-(--border-subtle) bg-(--surface-2) p-10 text-center">
