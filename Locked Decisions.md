@@ -56,6 +56,23 @@ Do not copy anything from this file into `AGENTS.md`. That duplication is what p
 
 - **The `leads.source` allowlist is owned by the database CHECK** (`leads_source_check`, migration 029). The public `POST /api/leads` accepts only `website_form | quote_page` from a client, as a closed zod enum — a bad value is a 400, never a constraint violation surfacing as a 500 and a lost lead. Every other source value is set server-side by its own ingest path. (2026-09-07)
 
+- **A lead is a draft while `name` or `service_type` is NULL** — nothing else. `leads.is_draft` is a
+  generated stored column (migration 033) and `isDraftLead()` in `src/lib/hq/capture-draft.ts` is its
+  TypeScript mirror; the test pins the two against one fixture table so they cannot drift. **Size is
+  deliberately NOT part of the predicate**, though the design named it: dimensions are optional on the
+  public form, so including them would file most of the inbound web funnel as a draft. That exclusion is
+  also why `POST /api/leads` needed no change. `leads.name` and `leads.phone` are nullable as of 033, and
+  `service_type` lost its `'carport'` default — with the default in place an omitted column becomes a real
+  value and `is_draft` can never be true. Drafts sort first in the Leads inbox New segment, never appear in
+  Hot or Done, and score 0 in `urgencyScore`. (2026-09-07)
+- **Capture writes through its own owner-only route**, `POST /api/hq/leads` (phone alone is enough),
+  modelled on `/api/hq/voice-lead`. `POST /api/leads` stays exactly as it is — it is the public endpoint
+  with hCaptcha and a 5/IP/hour limit, and loosening its required fields would open a nameless-lead spam
+  hole into the CRM. `source` is `'phone'`, already in the validated allowlist; no new source value.
+  (2026-09-07)
+- **Voice memos are drafts, not fake customers.** The `'Voice memo (no name)'` / `phone: ''` /
+  `'carport'` placeholders are gone; a memo that yields no name writes real NULLs and surfaces in the
+  inbox with a FINISH action. (2026-09-07)
 - **Project handoff:** use the existing project-page quote form, prefill building type only, and show a removable project-reference card. Reference removal preserves user edits. Resolve submitted reference IDs server-side against active projects, and append canonical reference details to existing lead notes for HQ and owner email; no migration. (2026-09-07)
 - **Related projects:** show up to three active photographed matches on standard service pages, featured first. Turnkey requires Carport + Turnkey tag. HOA has no matching section without verified metadata. The existing Hybrid gallery moves above descriptive content. Approved for publication before property-photo work. (2026-09-07)
 
