@@ -1,5 +1,66 @@
 # Next Session Primer — Read This First
 
+## Shared business database — audit done, build not started, 2026-09-11
+
+Read `docs/BUSINESS-OS-AUDIT-2026-09-07.md` first. Draft schema is `dev/business-os-schema.draft.sql`
+— **not** in `supabase/migrations/` on purpose, so it cannot be applied by accident. Branch:
+`claude/shared-business-database-06mw1f`. Nothing is applied to any database; nothing is on `main`.
+
+**Do not re-litigate two findings.** The databases are nearly empty (7 leads, 3 customers, 1 quote
+here; 14 members, 6 transactions on Mesa; jobs/job_costs/time_entries/job_receipts/billing_accounts
+all zero) against ~850K live tokens of markdown — so this is a document system, not a metrics
+system, and a metrics-first build returns zeros for months. And text-to-SQL is out: 33–46% execution
+accuracy for small local models, ~52% for GPT-4o, against 62 tables. Numbers are looked up, never
+derived.
+
+**The buildable next session — a vertical slice on this repo only, entirely local:**
+
+1. Apply four retrieval fixes to the draft: add a `context_prefix` column to `os.chunks` (stored
+   apart from `body` so re-embedding does not mean re-generating); swap the `tsvector` FTS index for
+   `pg_search` BM25; move filter predicates into `WHERE` ahead of `ORDER BY`; replace the single
+   `ts_rank` in `os.search` with RRF fusion.
+2. Write `scripts/os-sync.mjs` — parse `Locked Decisions.md` (72 bullets) into rule rows, the
+   Naming section of `AGENTS.md` into rule rows, `dev/sales-pack-2026-04-30.md` into `os.facts`
+   price rows with their qualifiers and effective dates, and the designated vault files into
+   `os.documents`. Every row carries the sha256 of its exact source block.
+3. Chunk documents on headings, carrying the heading path.
+4. Load a throwaway local PostgreSQL and **measure**: write ~20 questions Julian would really ask
+   ("what is the concrete spec", "what does a 20x20 carport cost", "what rules touch
+   `src/lib/services.ts`") and record how often the right row lands top-3.
+
+That last step is the point. Keyword-only is the **baseline the hybrid has to beat** — take the
+number before adding embeddings, not after, or there is nothing to compare against.
+
+**The parser is the real work, and this repo is the hard one.** `Locked Decisions.md` is 72
+hand-written bullets of the shape `- **Label:** text (date)` with heavy variation, inline
+`**REVERSES**` markers and multi-line wraps; supersession and date extraction are the fiddly part.
+Mesa's 54 numbered rules are far more regular — which is an argument for doing Triple J first and
+inheriting an easier parser, not the reverse.
+
+**Blocked, do not guess:**
+- Applying anything to the live database — needs Julian's explicit go-ahead. 032 is the last applied
+  migration, so a real migration renumbers to 033 at that point.
+- Personal-vs-business scope. Julian is weighing narrowing this to his own knowledge (and one day
+  Juan's) while making the content boundless. It changes the `os.audience` enum from a three-tier
+  org clearance to roughly `private`/`shared` — but **do not delete the concept**: boundless personal
+  scope carries health, money and family material, and a co-owner father is not automatically
+  cleared for it. The slice above does not depend on this; leave the enum as drafted.
+- Embedding dimension (768 / `nomic-embed-text`) — one-way door, changing it means re-embedding.
+- Contextual-Retrieval prefix generation — needs a model and a spend decision. Worth it: −49% failed
+  retrievals alone, −67% with reranking.
+- Reranker and hardware (Qwen3-30B-A3B, ~17 GB at Q4 on a 24 GB card).
+- Grokbot write credentials.
+
+**Not yet recorded anywhere:** the architecture decisions Julian made in conversation (exact rows
+over an index; schema in this project over a fourth Supabase project; everything writes, grokbots
+included) have no `Decisions.md` row, because this system spans both repos and that ledger is
+website-scoped. Decide where they belong before they are lost — that question is itself the problem
+this system exists to solve.
+
+**Untested:** the semantic path. `pgvector` was unavailable in the sandbox, so the vector column and
+HNSW index degraded to keyword-only exactly as designed — which is not the same as verified.
+
+
 ## Permit scraper — rebuilt on Temple, 2026-09-07
 
 Read the Lead Engine section of `Locked Decisions.md` before touching it. What is true now: `temple` is the only enabled source; `permit_reports` records which PDFs have been processed; permits carry a `lead_class` (accessory / new_home / commercial); Bell County is off for good reasons, not a bug.
