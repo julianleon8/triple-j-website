@@ -149,6 +149,13 @@ export function Services() {
           ))}
         </div>
 
+        <div className="mt-10 rounded-2xl bg-ink-900 p-7 md:p-10 text-white">
+          <p className="text-xs font-bold uppercase tracking-widest text-brand-300">Now quoting fencing</p>
+          <h3 className="mt-3 text-3xl md:text-4xl text-white">Metal fences. Gates. A better boundary.</h3>
+          <p className="mt-4 max-w-2xl text-white/75">Metal privacy, pipe and ranch, and ornamental metal fencing for Temple, Belton, Killeen, and surrounding communities.</p>
+          <Link href="/services/metal-fencing" className="mt-6 inline-flex min-h-11 items-center rounded-lg bg-white px-5 font-semibold text-ink-900">Explore fencing &amp; gates →</Link>
+        </div>
+
         {/* Footer link to all services — magazine "see more" */}
         <div className="mt-12 flex justify-center">
           <Link
@@ -165,6 +172,7 @@ export function Services() {
             { label: "Carport", service: "carport" },
             { label: "Garage", service: "garage" },
             { label: "Barn", service: "barn" },
+            { label: "Metal Fencing", service: "fencing" },
             { label: "Lean-To / Patio", service: "lean_to" },
           ].map((item) => (
             <QuoteShortcut key={item.service} service={item.service} className="inline-flex min-h-11 items-center rounded-md border border-ink-200 bg-white px-4 text-sm font-semibold text-brand-700 hover:border-brand-600">

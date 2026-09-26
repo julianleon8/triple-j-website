@@ -10,6 +10,8 @@ Do not copy anything from this file into `AGENTS.md`. That duplication is what p
 
 ## Product
 
+- **Fencing launch:** Metal privacy, pipe/ranch, ornamental metal fencing and gates approved. Dedicated page and quote intake; project-specific price and schedule, with no invented rankings. Fencing is stored as `other` with explicit scope in lead notes. Campaign spend requires an owner-set cap. (2026-09-26)
+
 - **Timeline:** "**same-week**", never say "48-hour build". 48 hrs = materials arrival, not build time. Saying otherwise is misleading. (2026-04-15)
 - **Frame:** "**welded or bolted**" everywhere. Triple J does both. Never "custom welded" alone. (2026-04-15)
 - **Concrete spec:** **3,000 PSI is standard. 4,000 PSI is on request only** — never promised as the default. (2026-05-01 — **REVERSES** the 2026-04-15 lock that made 4,000 PSI a headline differentiator.) Confirmed by Julian 2026-09-06 and now true of the shipped site: all 22 occurrences rewritten, and `scripts/check-vault.mjs` enforces it with no exceptions.

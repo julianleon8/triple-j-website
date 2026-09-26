@@ -42,9 +42,48 @@ export type ServiceData = {
   /** Blog post slugs to feature in the inline 'Further Reading' callout.
    *  Up to 3 render. Omit or leave empty to suppress the section. */
   relatedPosts?: string[]
+  initialService?: "fencing"
+  trustPoints?: string[]
+  featuresHeading?: string
 }
 
 export const SERVICES: Record<string, ServiceData> = {
+
+  'metal-fencing': {
+    slug: 'metal-fencing',
+    title: 'Metal Fencing & Gates',
+    shortTitle: 'Metal Fencing & Gates',
+    keywordGap: null,
+    metaTitle: 'Metal Fencing & Gates in Temple, Belton & Killeen TX',
+    metaDescription: 'Metal privacy fences, pipe and ranch fencing, ornamental metal fences and gates. Temple-based Triple J Metal serves Bell County. Request a free quote.',
+    heroHeadline: 'Metal Fencing & Gates in Temple, Belton & Killeen',
+    heroCopy: 'More privacy at home. A defined boundary for your land. An entrance that fits your property. Triple J Metal builds metal privacy fencing, pipe and ranch fencing, ornamental metal fences, and gates for Central Texas properties. Tell our Temple-based crew what you need, and we’ll work through the layout with you.',
+    mainBenefit: 'Your fence, your layout — with a local metal crew you can talk to directly.',
+    featuresHeading: 'Find the Right Fence for Your Property',
+    initialService: 'fencing',
+    trustPoints: ['Temple-based crew', 'English & Spanish', 'Project-specific quotes'],
+    features: [
+      { title: 'Metal Privacy Fencing', description: 'Create a more private yard or screen a work area with metal panels. We’ll discuss height, finish, post layout, and the look you want before quoting.' },
+      { title: 'Pipe & Ranch Fencing', description: 'Define your acreage, frontage, or ranch entrance with pipe fencing. Tell us how the land is used so we can discuss the right layout and any livestock containment needs.' },
+      { title: 'Ornamental Metal Fencing', description: 'Frame your property with an open metal fence that preserves the view. Discuss picket style, spacing, height, and finish with our crew.' },
+      { title: 'Gates & Property Access', description: 'Plan pedestrian or driveway access alongside your fence. Share the number of gates and approximate opening widths so access is part of the quote from the start.' },
+      { title: 'A Quote Built Around Your Site', description: 'Fence length, height, materials, terrain, access, and any old-fence removal affect the scope. We’ll confirm what is included in your written quote.' },
+      { title: 'Help Choosing a Layout', description: 'Not sure where to begin? Send your ZIP, approximate footage, and a description of the property. We’ll discuss options and next steps with you.' },
+    ],
+    technicalAuthority: 'Based in Temple, we take fencing inquiries from Temple, Belton, Killeen, Harker Heights, and surrounding Central Texas communities. A fence needs to fit its site: slopes, drainage, gate openings, property boundaries, and applicable city or HOA requirements all matter. Share your address and any existing plans so the proposed layout and materials can be reviewed before installation.',
+    competitorRows: [],
+    faqs: [
+      { q: 'What types of metal fencing do you offer?', a: 'We offer metal privacy fencing, pipe and ranch fencing, ornamental metal fencing, and gates. Use the quote form to choose a style, or select “Not sure yet” and tell us what you want the fence to do.' },
+      { q: 'How much does a metal fence cost?', a: 'Every fence is quoted to its scope. Total linear feet, height, material and finish, gate count, terrain, and removal work affect the price. Send approximate measurements to get the conversation started; final pricing follows scope and site review.' },
+      { q: 'Can I request gates with my fence?', a: 'Yes. Include pedestrian or driveway gates in your request, with approximate opening widths if known. Gate operation and any special hardware are confirmed during quoting.' },
+      { q: 'Do I need exact measurements to request a quote?', a: 'No. Approximate linear footage and height are enough to start. We’ll confirm measurements and the layout before a final scope is agreed.' },
+      { q: 'When can you install my fence?', a: 'Tell us your preferred timing. We confirm scheduling after reviewing the site, scope, material availability, and any required approvals. The quote form is an inquiry, not a reserved installation date.' },
+      { q: 'Will metal fencing work with my city or HOA rules?', a: 'Requirements vary by property and fence design. Share any HOA guidelines, survey, or approval documents you already have. Materials, height, placement, and approval responsibilities need to be confirmed for your project before work starts.' },
+    ],
+    militaryAngle: false,
+    relatedSlugs: ['carports', 'barns', 'metal-garages'],
+  },
+
 
   // ─── GAP 2: Welded vs Bolted ─────────────────────────────────────────────
   carports: {

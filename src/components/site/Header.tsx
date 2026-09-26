@@ -79,7 +79,7 @@ export function Header() {
             <TrackedPhoneLink
               surface="header_topbar"
               mode="children-only"
-              className="flex items-center gap-1.5 text-white/85 hover:text-white"
+              className="flex shrink-0 whitespace-nowrap items-center gap-1.5 text-white/85 hover:text-white"
             >
               <PhoneIcon className="h-3.5 w-3.5" />
               <span className="font-semibold tracking-tight tabular-nums">
@@ -88,7 +88,7 @@ export function Header() {
             </TrackedPhoneLink>
             <span className="inline-flex items-center gap-1.5 rounded-full bg-[color:var(--color-brand-600)]/20 border border-[color:var(--color-brand-400)]/30 px-2.5 py-0.5 text-[11px] font-bold uppercase tracking-[0.15em] text-[color:var(--color-brand-300)]">
               <span aria-hidden="true">⚡</span>
-              Same-Week Installs · Central Texas
+              {pathname === "/services/metal-fencing" ? "Metal Fencing · Central Texas" : pathname === "/quote" ? "Free Quotes · Central Texas" : "Same-Week Installs · Central Texas"}
             </span>
           </div>
         </Container>
@@ -142,11 +142,11 @@ export function Header() {
             {/* Desktop nav — active gets brand-blue underline */}
             <nav
               aria-label="Primary"
-              className="hidden lg:flex items-center gap-1"
+              className="hidden xl:flex items-center gap-1"
             >
               {NAV_LINKS.map((link) => {
                 const active =
-                  pathname === link.href || pathname.startsWith(link.href + "/");
+                  pathname === link.href || (pathname.startsWith(link.href + "/") && !NAV_LINKS.some((item) => item.href !== link.href && pathname === item.href));
                 return (
                   <Link
                     key={link.href}
@@ -171,7 +171,7 @@ export function Header() {
               <TrackedPhoneLink
                 surface="header_dropdown"
                 mode="children-only"
-                className="hidden md:flex items-center gap-2 text-white font-semibold text-[15px] px-3 py-2 hover:text-[color:var(--color-brand-300)] transition-colors"
+                className="hidden md:flex whitespace-nowrap shrink-0 items-center gap-2 text-white font-semibold text-[15px] px-3 py-2 hover:text-[color:var(--color-brand-300)] transition-colors"
               >
                 <PhoneIcon className="h-4 w-4" />
                 <span className="tabular-nums">
@@ -193,7 +193,7 @@ export function Header() {
                 aria-label={mobileOpen ? "Close menu" : "Open menu"}
                 aria-expanded={mobileOpen}
                 onClick={() => setMobileOpen((v) => !v)}
-                className="lg:hidden inline-flex items-center justify-center h-11 w-11 rounded-md text-white hover:bg-white/10"
+                className="xl:hidden inline-flex items-center justify-center h-11 w-11 rounded-md text-white hover:bg-white/10"
               >
                 {mobileOpen ? (
                   <CloseIcon className="h-6 w-6" />
@@ -208,7 +208,7 @@ export function Header() {
 
       {/* Mobile drawer */}
       <div
-        className={`lg:hidden fixed inset-x-0 top-0 bottom-0 z-40 bg-[color:var(--color-ink-900)] pt-20 transition-transform duration-300 ease-out ${
+        className={`xl:hidden fixed inset-x-0 top-0 bottom-0 z-40 bg-[color:var(--color-ink-900)] pt-20 transition-transform duration-300 ease-out ${
           mobileOpen ? "translate-y-0" : "-translate-y-full"
         }`}
         aria-hidden={!mobileOpen}

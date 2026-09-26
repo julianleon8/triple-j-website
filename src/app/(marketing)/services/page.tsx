@@ -9,9 +9,9 @@ import { SERVICES, SERVICE_SLUGS } from "@/lib/services";
 import { SITE } from "@/lib/site";
 
 export const metadata: Metadata = {
-  title: "Metal Building Services — Carports, Garages & More",
+  title: "Metal Buildings, Fencing & Gates in Central Texas",
   description:
-    `${SITE.name} builds custom metal carports, garages, barns, RV covers, and HOA-compliant structures across Central Texas. Welded or bolted, concrete included. Call ${SITE.phone}.`,
+    `${SITE.name} builds custom metal carports, garages, barns, RV covers, metal fencing, and gates across Central Texas. Welded or bolted, concrete included. Call ${SITE.phone}.`,
   alternates: { canonical: "/services" },
 };
 
@@ -186,13 +186,13 @@ export default function ServicesPage() {
                   >
                     {/* Photo with title overlay */}
                     <div className="relative aspect-[4/3] overflow-hidden">
-                      <Image
+                      {SERVICE_PHOTOS[slug] ? <Image
                         src={SERVICE_PHOTOS[slug]}
                         alt={svc.title}
                         fill
                         sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                         className="object-cover transition-transform duration-700 ease-out group-hover:scale-110"
-                      />
+                      /> : <div aria-hidden="true" className="absolute inset-0 bg-brand-900 bg-[repeating-linear-gradient(90deg,transparent_0px,transparent_35px,#64748b_35px,#64748b_42px)]" />}
                       <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/40 to-black/20" />
                       <div className="absolute inset-0 bg-gradient-to-tl from-transparent via-transparent to-[color:var(--color-brand-600)]/0 group-hover:to-[color:var(--color-brand-600)]/30 transition-colors duration-500" />
 

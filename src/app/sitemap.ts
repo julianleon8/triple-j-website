@@ -69,7 +69,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   for (const slug of SERVICE_SLUGS) {
     entries.push({
       url: `${base}/services/${slug}`,
-      lastModified: CONTENT_REVISED,
+      lastModified: slug === "metal-fencing" ? new Date("2026-09-26T00:00:00.000Z") : CONTENT_REVISED,
       changeFrequency: "monthly",
       priority: 0.85,
     });

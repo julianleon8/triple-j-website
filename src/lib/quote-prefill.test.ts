@@ -82,3 +82,8 @@ describe('parseQuotePrefill — nothing to do', () => {
     expect(parseQuotePrefill({ utm_source: 'fb', src: 'fb' })).toEqual({});
   });
 });
+
+ it('prefills fencing campaign links', () => {
+   expect(parseQuotePrefill({ service: 'fencing', zip: '76502' })).toEqual({ service: 'fencing', zip: '76502' });
+   expect(parseQuotePrefill({ service: 'metal-fencing' }).service).toBe('fencing');
+ });

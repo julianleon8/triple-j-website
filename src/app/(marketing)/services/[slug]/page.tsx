@@ -140,7 +140,7 @@ export default async function ServicePage(
       {/* ── Features grid ── */}
       <section className="py-16 md:py-24 bg-white">
         <Container>
-          <h2 className="text-center mb-12">What&rsquo;s Included</h2>
+          <h2 className="text-center mb-12">{svc.featuresHeading ?? "What’s Included"}</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {svc.features.map((f) => (
               <div
@@ -168,15 +168,11 @@ export default async function ServicePage(
             {svc.technicalAuthority}
           </p>
           <div className="mt-8 flex gap-4 flex-wrap">
-            <div className="flex items-center gap-2 text-sm font-semibold text-[color:var(--color-ink-700)]">
-              <span className="text-[color:var(--color-brand-600)]">✓</span> Licensed &amp; Insured
-            </div>
-            <div className="flex items-center gap-2 text-sm font-semibold text-[color:var(--color-ink-700)]">
-              <span className="text-[color:var(--color-brand-600)]">✓</span> Texas-Sourced Red Iron Steel
-            </div>
-            <div className="flex items-center gap-2 text-sm font-semibold text-[color:var(--color-ink-700)]">
-              <span className="text-[color:var(--color-brand-600)]">✓</span> Temple-Based Crew
-            </div>
+            {(svc.trustPoints ?? ['Licensed & Insured', 'Texas-Sourced Red Iron Steel', 'Temple-Based Crew']).map((point) => (
+              <div key={point} className="flex items-center gap-2 text-sm font-semibold text-[color:var(--color-ink-700)]">
+                <span className="text-[color:var(--color-brand-600)]">✓</span> {point}
+              </div>
+            ))}
           </div>
         </Container>
       </section>
@@ -187,7 +183,7 @@ export default async function ServicePage(
       )}
 
       {/* ── Competitor comparison ── */}
-      <section className="py-16 md:py-24 bg-white">
+      {svc.competitorRows.length > 0 && <section className="py-16 md:py-24 bg-white">
         <Container size="narrow">
           <h2 className="mb-2">Why Not the Other Guys?</h2>
           <p className="text-[color:var(--color-ink-500)] mb-8">
@@ -214,6 +210,8 @@ export default async function ServicePage(
           </div>
         </Container>
       </section>
+
+      }
 
       {/* ── Military section (RV covers page only) ── */}
       {svc.militaryAngle && (
@@ -283,7 +281,7 @@ export default async function ServicePage(
       )}
 
       {/* ── Quote form ── */}
-      <QuoteForm />
+      <QuoteForm initialService={svc.initialService} />
     </>
   )
 }

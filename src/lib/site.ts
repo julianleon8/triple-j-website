@@ -51,6 +51,7 @@ export const SITE = {
 
 export const NAV_LINKS = [
   { href: "/services", label: "Services" },
+  { href: "/services/metal-fencing", label: "Fencing" },
   { href: "/gallery", label: "Gallery" },
   { href: "/blog", label: "Blog" },
   { href: "/partners", label: "Partners" },
@@ -60,6 +61,7 @@ export const NAV_LINKS = [
 
 /** Footer service links — `href` must match a real route (or `/contact` until a dedicated page exists). */
 export const SERVICES = [
+  { title: "Metal Fencing & Gates", href: "/services/metal-fencing" },
   { title: "Carports", href: "/services/carports" },
   { title: "Metal Garages", href: "/services/metal-garages" },
   { title: "Metal Barns", href: "/services/barns" },

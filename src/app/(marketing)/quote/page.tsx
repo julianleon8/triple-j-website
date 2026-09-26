@@ -14,9 +14,9 @@ import { SITE } from '@/lib/site'
 import { getSiteUrl } from '@/lib/site-url'
 
 export const metadata: Metadata = {
-  title: 'Get a Free Quote | Metal Buildings in Central Texas',
+  title: 'Get a Free Quote | Metal Buildings & Fencing',
   description:
-    `Free quote on a welded or bolted metal carport, garage, barn, or RV cover. Temple, TX crew — same day, guaranteed within 24 hours. Call ${SITE.phone}.`,
+    `Free quote on a welded or bolted metal carport, garage, barn, RV cover, or metal fence. Temple, TX crew — same day, guaranteed within 24 hours. Call ${SITE.phone}.`,
   // Bare canonical on purpose: this page is the target of every ad variant, and
   // they all arrive with a different query string (?src=fb, ?service=, ?city=).
   // Without this each one would look like a separate URL.
@@ -92,6 +92,7 @@ async function loadReference(id: string): Promise<ProjectReference | undefined> 
 export default async function QuotePage({ searchParams }: PageProps<'/quote'>) {
   const baseUrl = getSiteUrl()
   const prefill = parseQuotePrefill(await searchParams)
+  const isFencing = prefill.service === "fencing" && !prefill.projectId
   const reference = prefill.projectId ? await loadReference(prefill.projectId) : undefined
 
   return (
@@ -139,7 +140,7 @@ export default async function QuotePage({ searchParams }: PageProps<'/quote'>) {
               <h1 className="mt-5 font-display font-extrabold uppercase tracking-tight leading-[0.95] text-white text-4xl sm:text-5xl lg:text-6xl">
                 Tell us about
                 <br />
-                <span className="text-[color:var(--color-brand-400)]">your build.</span>
+                <span className="text-[color:var(--color-brand-400)]">{isFencing ? "your fence." : "your build."}</span>
               </h1>
 
               <p className="mt-6 text-lg sm:text-xl font-semibold text-white">
@@ -181,11 +182,11 @@ export default async function QuotePage({ searchParams }: PageProps<'/quote'>) {
               <ul className="mt-8 space-y-3 text-sm text-white/75">
                 <li className="flex gap-3">
                   <span aria-hidden="true" className="text-[color:var(--color-brand-400)]">·</span>
-                  Welded or bolted — your call, quoted both ways.
+                  {isFencing ? "Metal privacy, pipe/ranch, ornamental fencing and gates." : "Welded or bolted — your call, quoted both ways."}
                 </li>
                 <li className="flex gap-3">
                   <span aria-hidden="true" className="text-[color:var(--color-brand-400)]">·</span>
-                  Building permits? We&rsquo;ll talk you through it.
+                  {isFencing ? "Share your layout and any city or HOA requirements." : "Building permits? We’ll talk you through it."}
                 </li>
                 <li className="flex gap-3">
                   <span aria-hidden="true" className="text-[color:var(--color-brand-400)]">·</span>
@@ -201,8 +202,10 @@ export default async function QuotePage({ searchParams }: PageProps<'/quote'>) {
         </Container>
       </section>
 
-      <HowItWorks />
-      <Gallery />
+      {isFencing ? <section className="py-16 bg-white"><Container size="narrow">
+        <h2>Your fence, from inquiry to installation</h2>
+        <p className="mt-5 text-lg text-ink-600">Send your approximate footage, style, and gate needs. We’ll review the site and scope, provide a written quote, and confirm an installation schedule after materials and any required approvals are settled.</p>
+      </Container></section> : <><HowItWorks /><Gallery /></>}
     </>
   )
 }

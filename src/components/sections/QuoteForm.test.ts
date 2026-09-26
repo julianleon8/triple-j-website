@@ -79,3 +79,13 @@ it('prefills the ZIP from ?city=', () => {
   const html = render({ chrome: false, initialZip: '76541' });
   expect(html).toContain('value="76541"');
 });
+
+it('shows fence scope instead of building construction and dimensions', () => {
+  const html = render({ initialService: 'fencing' });
+  expect(html).toContain('Fence Style');
+  expect(html).toContain('Total fence length in linear feet');
+  expect(html).toContain('Fence height in feet');
+  expect(html).toContain('Old Fence Removal Needed?');
+  expect(html).not.toContain('W × L × H');
+  expect(html).not.toContain('Welded — permanent');
+});

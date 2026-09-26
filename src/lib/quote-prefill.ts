@@ -20,7 +20,7 @@ import { LOCATIONS } from './locations';
 import type { ReferenceService } from './project-reference';
 
 export type QuotePrefill = {
-  service?: ReferenceService;
+  service?: ReferenceService | "fencing";
   zip?: string;
   projectId?: string;
 };
@@ -36,7 +36,8 @@ type RawParams = Record<string, string | string[] | undefined>;
  * its label preserved in the notes (see QuoteForm). Prefilling it just selects
  * the chip; the submit-time mapping is untouched.
  */
-const SERVICE_ALIASES: Record<string, ReferenceService> = {
+const SERVICE_ALIASES: Record<string, ReferenceService | "fencing"> = {
+  fencing: 'fencing', fence: 'fencing', 'metal-fencing': 'fencing', gates: 'fencing',
   carport: 'carport', carports: 'carport',
   garage: 'garage', garages: 'garage', shop: 'garage', workshop: 'garage',
   barn: 'barn', barns: 'barn',

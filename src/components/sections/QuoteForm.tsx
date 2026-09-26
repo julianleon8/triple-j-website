@@ -1,5 +1,7 @@
 "use client";
 
+import { fencingNotes } from "@/lib/fencing-inquiry";
+
 import Image from "next/image";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
@@ -9,7 +11,7 @@ import type HCaptcha from "@hcaptcha/react-hcaptcha";
 import { Button } from "@/components/ui/Button";
 import { Container } from "@/components/ui/Container";
 import { ArrowRightIcon } from "@/components/ui/icons";
-import { projectService, type ProjectReference, type ReferenceService } from "@/lib/project-reference";
+import { projectService, type ProjectReference } from "@/lib/project-reference";
 import { summarizeBuild } from "@/lib/quote-summary";
 import { captureAttribution } from "@/lib/marketing-attribution";
 
@@ -34,7 +36,7 @@ const HCAPTCHA_SITE_KEY = process.env.NEXT_PUBLIC_HCAPTCHA_SITE_KEY;
    from 2026-04-15 was revised in 2026-04-23 to a 2-step structure that
    opens with a visual service-chip selector — see Decisions.md. */
 
-type ServiceType = "carport" | "garage" | "barn" | "rv_cover" | "lean_to" | "other";
+type ServiceType = "fencing" | "carport" | "garage" | "barn" | "rv_cover" | "lean_to" | "other";
 type StructureType = "welded" | "bolted" | "unsure";
 type NeedsConcrete = "yes" | "already_have" | "unsure";
 type Surface = "dirt" | "gravel" | "asphalt" | "concrete";
@@ -58,6 +60,11 @@ type FormState = {
   length: string;
   height: string;
   zip: string;
+  fence_style: string;
+  fence_length: string;
+  fence_height: string;
+  fence_gates: string;
+  fence_removal: string;
   // Step 2 — contact + details
   name: string;
   phone: string;
@@ -78,6 +85,7 @@ const INITIAL: FormState = {
   needs_concrete: "", current_surface: "", timeline: "",
   best_time_to_call: "",
   budget: "",
+  fence_style: "Not sure yet", fence_length: "", fence_height: "", fence_gates: "", fence_removal: "Not sure",
   is_military: false, message: "",
 };
 
@@ -110,9 +118,10 @@ const inputCls =
 /* ─── Service chip (step 1 opener) ──────────────────────────────────────────
    Visual chip with photo thumbnail, used for service-type selection. */
 
-type ServiceChip = { value: ServiceType; label: string; sublabel: string; image: string };
+type ServiceChip = { value: ServiceType; label: string; sublabel: string; image?: string };
 
 const SERVICE_CHIPS: readonly ServiceChip[] = [
+  { value: "fencing", label: "Metal Fencing", sublabel: "Privacy, ranch, ornamental & gates" },
   { value: "lean_to", label: "Lean-To / Patio", sublabel: "Attached or freestanding", image: "/images/porch-cover-lean-to.jpg" },
   { value: "other", label: "Other / Custom", sublabel: "Tell us what you need", image: "/images/red-iron-frame-hero.jpg" },
   { value: "carport",  label: "Carport",     sublabel: "Welded or bolted",  image: "/images/carport-gable-residential.jpg" },
@@ -142,7 +151,7 @@ function ServiceChipCard({
       }`}
     >
       <div className="relative aspect-[5/4] overflow-hidden">
-        <Image
+        {chip.image ? <Image
           src={chip.image}
           alt={`${chip.label} — ${chip.sublabel}`}
           fill
@@ -151,6 +160,7 @@ function ServiceChipCard({
             selected ? "scale-105" : "group-hover:scale-105"
           }`}
         />
+        : <div aria-hidden="true" className="absolute inset-0 bg-brand-900 bg-[repeating-linear-gradient(90deg,transparent_0px,transparent_25px,#64748b_25px,#64748b_31px)]" />}
         <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/40 to-black/10" />
         {selected && (
           <span
@@ -202,6 +212,22 @@ function OptionPill({
 
 /* ─── Step 1 — Project ─────────────────────────────────────────────────── */
 
+function FenceFields({ form, update }: { form: FormState; update: <K extends keyof FormState>(k: K, v: FormState[K]) => void }) {
+  return <div className="space-y-7">
+    <div><FieldLabel>Fence Style</FieldLabel><div className="flex flex-wrap gap-2">
+      {["Metal privacy", "Pipe / ranch", "Ornamental metal", "Gates only", "Not sure yet"].map((style) => <OptionPill key={style} selected={form.fence_style === style} onClick={() => update("fence_style", style)}>{style}</OptionPill>)}
+    </div></div>
+    <div><FieldLabel optional>Approximate Fence Size</FieldLabel><div className="grid grid-cols-2 gap-3">
+      <input type="number" min={0} step="any" className={inputCls} aria-label="Total fence length in linear feet" placeholder="Length (linear ft)" value={form.fence_length} onChange={(e) => update("fence_length", e.target.value)} />
+      <input type="number" min={0} step="any" className={inputCls} aria-label="Fence height in feet" placeholder="Height (ft)" value={form.fence_height} onChange={(e) => update("fence_height", e.target.value)} />
+    </div><p className="mt-2 text-xs text-white/60">Rough measurements are fine. Leave blank if you’re not sure.</p></div>
+    <div><label htmlFor="fence-gates" className="block text-sm text-white/70 mb-2">Gates (optional)</label><input id="fence-gates" className={inputCls} maxLength={300} placeholder="e.g. 1 walk gate + 12 ft driveway gate" value={form.fence_gates} onChange={(e) => update("fence_gates", e.target.value)} /></div>
+    <div><FieldLabel>Old Fence Removal Needed?</FieldLabel><div className="flex flex-wrap gap-2">
+      {["Yes", "No", "Not sure"].map((value) => <OptionPill key={value} selected={form.fence_removal === value} onClick={() => update("fence_removal", value)}>{value}</OptionPill>)}
+    </div></div>
+  </div>;
+}
+
 function StepProject({
   form, update,
 }: {
@@ -225,6 +251,7 @@ function StepProject({
         </div>
       </div>
 
+      {form.service_type === "fencing" ? <FenceFields form={form} update={update} /> : <>
       {/* Construction preference */}
       <div>
         <FieldLabel>Construction</FieldLabel>
@@ -272,6 +299,8 @@ function StepProject({
           W × L × H in feet — rough is fine
         </p>
       </div>
+
+      </>}
 
       {/* Location */}
       <div>
@@ -342,7 +371,7 @@ function StepContact({
       </div>
 
       {/* Concrete */}
-      <div>
+      {form.service_type !== "fencing" && <div>
         <FieldLabel>Concrete Pad</FieldLabel>
         <div className="flex flex-wrap gap-2">
           {([
@@ -361,8 +390,10 @@ function StepContact({
         </div>
       </div>
 
+      }
+
       {/* Surface — only when "already_have" */}
-      {form.needs_concrete === "already_have" && (
+      {form.service_type !== "fencing" && form.needs_concrete === "already_have" && (
         <div>
           <FieldLabel>Current Surface</FieldLabel>
           <div className="flex flex-wrap gap-2">
@@ -501,7 +532,7 @@ export type QuoteFormProps = {
    */
   chrome?: boolean;
   /** Preselected service chip, from ?service= on /quote. */
-  initialService?: ReferenceService;
+  initialService?: ServiceType;
   /** Prefilled ZIP, from ?city= or ?zip= on /quote. */
   initialZip?: string;
   /**
@@ -591,20 +622,20 @@ export function QuoteForm({
       phone:           form.phone.trim(),
       email:           form.email.trim() || undefined,
       zip:             form.zip.trim() || undefined,
-      service_type:    form.service_type === "lean_to" ? "other" : form.service_type || undefined,
-      structure_type:  form.structure_type,
-      width:           form.width || undefined,
-      length:          form.length || undefined,
-      height:          form.height || undefined,
-      needs_concrete:  form.needs_concrete || undefined,
-      current_surface: form.current_surface || undefined,
+      service_type:    ["lean_to", "fencing"].includes(form.service_type) ? "other" : form.service_type || undefined,
+      structure_type:  form.service_type === "fencing" ? undefined : form.structure_type,
+      width:           form.service_type === "fencing" ? undefined : form.width || undefined,
+      length:          form.service_type === "fencing" ? undefined : form.length || undefined,
+      height:          form.service_type === "fencing" ? undefined : form.height || undefined,
+      needs_concrete:  form.service_type === "fencing" ? undefined : form.needs_concrete || undefined,
+      current_surface: form.service_type === "fencing" ? undefined : form.current_surface || undefined,
       timeline:        form.timeline || undefined,
       best_time_to_call: form.best_time_to_call || undefined,
       source,
       estimated_budget_min: budgetBand?.min,
       estimated_budget_max: budgetBand?.max ?? undefined,
       is_military:     form.is_military,
-      message:         [form.service_type === "lean_to" ? "Requested build: Lean-To / Patio" : "", form.message.trim()].filter(Boolean).join("\n\n") || undefined,
+      message:         [form.service_type === "lean_to" ? "Requested build: Lean-To / Patio" : "", form.service_type === "fencing" ? fencingNotes(form) : "", form.message.trim()].filter(Boolean).join("\n\n") || undefined,
       captcha_token:   captchaToken ?? undefined,
       reference_project_id: reference?.id,
       ...captureAttribution(),
@@ -663,7 +694,7 @@ export function QuoteForm({
 
   const progressPct = step === 1 ? 50 : 100;
 
-  const buildSummary = step === 2 ? summarizeBuild(form) : null;
+  const buildSummary = step === 2 ? (form.service_type === "fencing" ? fencingNotes(form).replaceAll("\n", " · ") : summarizeBuild(form)) : null;
 
   // The reference card and the form card render in both modes; everything
   // between them is chrome. Kept as one expression so bare mode is provably

@@ -67,3 +67,6 @@ Each completed project should include:
 - Technical specs (e.g. '40x60 pre-engineered structure')
 - Final result
 - Customer outcome
+## Fencing launch — 2026-09-26
+
+Positioning: “Metal fencing and gates built around your property by a Temple-based metal crew.” Fencing estimates are project-specific; do not inherit building price anchors, same-week installation promises, material gauges or warranties. Use actual fencing project proof, and never describe company-wide project totals as completed fences. Advertising drafts and timing live in `marketing/fencing-launch.md`.

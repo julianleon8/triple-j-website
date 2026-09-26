@@ -1,3 +1,9 @@
+## 2026-09-26 — Fencing launch
+
+Added metal privacy, pipe/ranch, ornamental metal fencing and gates at `/services/metal-fencing`; linked from home, nav, service directory and footer. Shared quote form captures fencing-specific scope and stores it in existing Other lead notes. `/quote?service=fencing` prefills fencing and uses relevant supporting copy. Existing API, attribution and security controls retained. No pricing or guaranteed installation timeline invented. Launch checklist and ad/post drafts: `marketing/fencing-launch.md`.
+
+Validation: typecheck, lint, 373 tests; production build with placeholder local database configuration; desktop/mobile browser checks of page, fencing prefill and two-step state. No real customer lead or owner email generated. Paid ads and Business Profile edits not performed. Built from current origin/main in a separate `fencing-launch` checkout; unrelated local property-photo work remains untouched in `website-review`.
+
 # Session Notes
 
 ## 2026-09-08 — HQ redesign Tracks 3 + 4, and six contrast bugs
