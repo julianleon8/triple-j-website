@@ -1,3 +1,9 @@
+# Homepage update — 2026-09-26
+
+Removed homepage “Meet Triple J” section at owner request. Current checkout remains `fencing-launch`; About retains the existing shared Crew component.
+
+---
+
 # Fencing launch — 2026-09-26
 
 Current release work is in sibling `fencing-launch`, based on origin/main a7f38ed; do not publish the stale `website-review` tree over it. Fencing page, links and inquiry fields are complete and validated. See `marketing/fencing-launch.md` for launch copy and sequence. Next marketing steps: confirm actual fencing photos, Business Profile verification/services, paid-ad spending cap, crew availability, and end-to-end live lead/notification receipt. Fencing is stored as Other with scope in notes; dedicated fencing analytics would be a later schema/reporting task. No paid ads have been activated.

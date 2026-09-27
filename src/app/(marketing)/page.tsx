@@ -2,7 +2,6 @@ import { SITE } from "@/lib/site";
 import Image from "next/image";
 import type { Metadata } from "next";
 import { Gallery } from "@/components/sections/Gallery";
-import { Crew } from "@/components/sections/Crew";
 import { HowItWorks } from "@/components/sections/HowItWorks";
 import { QuoteForm } from "@/components/sections/QuoteForm";
 import { ServiceAreas } from "@/components/sections/ServiceAreas";
@@ -57,7 +56,6 @@ export default function HomePage() {
       </section>
       <Gallery />
       <Services />
-      <Crew />
       <HowItWorks />
       <ServiceAreas />
       <QuoteForm />

@@ -1,3 +1,7 @@
+## 2026-09-26 — Remove homepage Meet Triple J
+
+Removed the Crew section and unused import from the homepage at the owner’s request. About retains its existing team section. Required typecheck, lint and test checks run before publication.
+
 ## 2026-09-26 — Fencing launch
 
 Added metal privacy, pipe/ranch, ornamental metal fencing and gates at `/services/metal-fencing`; linked from home, nav, service directory and footer. Shared quote form captures fencing-specific scope and stores it in existing Other lead notes. `/quote?service=fencing` prefills fencing and uses relevant supporting copy. Existing API, attribution and security controls retained. No pricing or guaranteed installation timeline invented. Launch checklist and ad/post drafts: `marketing/fencing-launch.md`.
