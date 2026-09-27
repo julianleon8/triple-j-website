@@ -59,15 +59,15 @@ export default function WeldedVsBoltedPost() {
         headers={['', 'Welded Red Iron (Triple J)', 'Bolted Kit', 'Wood Frame']}
         highlightCol={1}
         rows={[
-          ['Wind rating',        '140 MPH engineered', '90–110 MPH typical', '90 MPH typical'],
-          ['Frame gauge',        '12-gauge standard',  '14-gauge typical',   'N/A'],
+          ['Wind rating',        'Design-specific', 'Design-specific', 'Design-specific'],
+          ['Frame gauge',        '14-gauge standard; 12 on request',  '14-gauge typical',   'N/A'],
           ['Joints',             'Continuous welds',   'Bolt + slip-fit',    'Nailed/screwed'],
-          ['Custom dimensions',  'Any size',           'Fixed kit sizes',    'Any size'],
-          ['Permits',            'We pull them',       'Customer handles',   'Contractor varies'],
-          ['Concrete included',  'Yes — same contract','No — customer source','Varies'],
-          ['Warranty',           'Frame + structure',  'Voided above 90 MPH winds', 'Builder warranty'],
-          ['Real estate value',  'Permanent improvement', 'Personal property', 'Permanent improvement'],
-          ['Lead time',          'Same week (typical)','4–16 weeks',         '4–12 weeks'],
+          ['Custom dimensions',  'Any size',           'Confirm options',    'Any size'],
+          ['Permits',            'Advisory help; confirm filing',       'Customer handles',   'Contractor varies'],
+          ['Concrete included',  'Separately priced; same contract available','Confirm scope','Confirm scope'],
+          ['Warranty',           'Confirm written terms', 'Confirm written terms', 'Confirm written terms'],
+          ['Real estate value',  'Permanent improvement', 'Project-specific', 'Permanent improvement'],
+          ['Lead time',          'Same week (typical)','Confirm current schedule',         'Confirm current schedule'],
         ]}
       />
 

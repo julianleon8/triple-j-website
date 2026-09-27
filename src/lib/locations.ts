@@ -1,4 +1,3 @@
-import { SITE } from '@/lib/site'
 
 export type MilitarySection = {
   headline: string
@@ -97,6 +96,7 @@ export type LocationData = {
   /** Blog post slugs to feature in the inline 'Further Reading' callout.
    *  Up to 3 render. Omit or leave empty to suppress the section. */
   relatedPosts?: string[]
+  localSource?: { label: string; url: string }
 }
 
 export const LOCATIONS: Record<string, LocationData> = {
@@ -163,11 +163,11 @@ export const LOCATIONS: Record<string, LocationData> = {
     // Legacy fallbacks (used if new fields below aren't populated)
     heroHeadline: "Built in Killeen. Built for Fort Cavazos.",
     heroCopy:
-      "Killeen has no shortage of national companies selling carport kits — but Triple J Metal is the only local Central Texas builder who shows up and installs it, pours the concrete pad, and hands you the keys. PCS orders don't wait, and neither do we.",
+      "Triple J Metal builds welded or bolted carports, garages, and RV covers in Killeen. Our Temple-based crew can include site preparation and a separately priced concrete pad in the same contract. Share your project and preferred timing for a quote.",
     areaContext:
       "We serve all of Killeen, including areas near Fort Cavazos, Killeen-Fort Hood Regional Airport, Rosewood Heights, Westcliff, and the US-190 corridor into Copperas Cove. Rural properties welcome.",
     whyLocal:
-      "The Carport Co., Viking Steel, and Infinity Carports all have Killeen pages — but none of them have a local crew or pour concrete. Triple J Metal does. We offer same-week scheduling, a local phone number, welded steel, and the only turnkey concrete option you'll find from a local installer.",
+      "Work directly with our Temple-based crew on your Killeen project. We offer welded or bolted red iron, English and Spanish communication, and concrete available in the same contract.",
     services: [
       'Welded or bolted red iron carports',
       'Bolted metal carports',
@@ -447,27 +447,23 @@ export const LOCATIONS: Record<string, LocationData> = {
     localIntro:
       "Belton runs the county courthouse, and we know everyone in the permit office. The 1885 courthouse still stands — we build with that kind of intention. From Lakeshore Drive lake-houses to Pendleton ranch land, we build same-week across all of Bell County. Hablamos español con Juan y Freddy.",
     landmarks: [
-      {
-        name: 'Bell County Courthouse',
-        blurb:
-          "1885 limestone landmark and the seat of permit authority for the whole county. We've pulled permits through these doors more times than we can count — it's part of what 'local' actually means.",
-        imageSrc: '/images/locations/belton/bell-county-courthouse.jpg',
-        imageAlt: '1885 Bell County Courthouse in downtown Belton, Texas',
-      },
-      {
-        name: 'Lake Belton & BLORA',
-        blurb:
-          "Belton's lake country runs along the western edge — Lakeshore Drive properties, weekend barns, RV and boat covers. Lakeside structures we've been building for years.",
-        imageSrc: '/images/locations/belton/lake-belton.jpg',
-        imageAlt: 'Lake Belton shoreline in Belton, Texas',
-      },
-      {
-        name: 'Pendleton & Ranch Country',
-        blurb:
-          "South Bell County opens into pasture, ranch land, and rural property. Welded red-iron barns, equipment sheds, and lean-tos — the structures rural buyers actually need.",
-        // imageSrc TODO: ranch / pasture shot
-      },
-    ],
+  {
+    "name": "Bell County Courthouse",
+    "blurb": "The Bell County Courthouse is a local landmark. Permit requirements and filing responsibilities depend on the location and scope of your project.",
+    "imageSrc": "/images/locations/belton/bell-county-courthouse.jpg",
+    "imageAlt": "1885 Bell County Courthouse in downtown Belton, Texas"
+  },
+  {
+    "name": "Lake Belton & BLORA",
+    "blurb": "Belton's lake country runs along the western edge — Lakeshore Drive properties, weekend barns, RV and boat covers. Lakeside structures we've been building for years.",
+    "imageSrc": "/images/locations/belton/lake-belton.jpg",
+    "imageAlt": "Lake Belton shoreline in Belton, Texas"
+  },
+  {
+    "name": "Pendleton & Ranch Country",
+    "blurb": "South Bell County opens into pasture, ranch land, and rural property. Welded red-iron barns, equipment sheds, and lean-tos — the structures rural buyers actually need."
+  }
+],
     neighborhoods: [
       'Lakeshore Drive',
       'Heritage Place',
@@ -478,11 +474,11 @@ export const LOCATIONS: Record<string, LocationData> = {
     ],
     topServices: ['carports', 'barns', 'rv-covers'],
     whyLocalBullets: [
-      "We know the Bell County permit office by first name — pulling permits in Belton is part of our regular week.",
-      "15 min from our Temple shop — fastest install in Bell County, no national-dealer dispatch lag.",
-      "Concrete poured and engineered for Bell County's expansive clay soils — same contract.",
-      "Welded OR bolted red-iron — your choice for Texas wind, hail, and the long haul.",
-    ],
+  "We can discuss permit requirements; confirm filing and approval responsibilities before work starts.",
+  "15 min from our Temple shop — fastest install in Bell County, no national-dealer dispatch lag.",
+  "Concrete poured and engineered for Bell County's expansive clay soils — same contract.",
+  "Welded OR bolted red-iron — your choice for Texas wind, hail, and the long haul."
+],
     callouts: [
       {
         eyebrow: 'Permit Advisory',
@@ -517,34 +513,68 @@ export const LOCATIONS: Record<string, LocationData> = {
 
   salado: {
     slug: 'salado',
-    heroImageAlt: 'Welded metal building on a Salado, Texas ranch property in Bell County',
+    heroImageAlt: "Triple J Metal steel construction project in Central Texas",
     name: 'Salado',
     county: 'Bell County',
     zip: '76571',
     lat: 30.9452,
     lng: -97.5344,
-    metaTitle: 'Metal Carports Salado TX | Turnkey + Concrete',
+    metaTitle: "Metal Buildings & Fencing in Salado, TX",
     metaDescription:
-      'Custom metal carports in Salado, TX — welded or bolted red iron, concrete pad included, same-week installs. Local Temple crew 20 min away.',
-    heroHeadline: 'Metal Carports in Salado, TX — Local Builder, Concrete Included',
+      "Welded or bolted carports, garages, barns and metal fencing in Salado, TX. Temple-based Triple J Metal. Concrete available; request a project quote.",
+    heroHeadline: "Metal Buildings & Fencing in Salado, TX",
     heroCopy:
-      "Salado homeowners and ranchers don't have to wait weeks for a national carport company to ship a kit. Triple J Metal is based in Temple — 20 minutes away — and our crew installs welded or bolted red iron structures with concrete pads in the same contract. One call, one company, done.",
+      "Plan a carport, garage, barn, or metal fence with our Temple-based crew. Tell us your dimensions and priorities; we’ll confirm the design, scope, and scheduling for your property.",
     areaContext:
-      "We serve all of Salado and the surrounding Bell County area, including rural properties along I-35, FM 2268, and the Robertson Creek corridor. We also regularly work in Jarrell and the southern end of Bell County.",
+      "Salado Creek and the village center give Salado a distinct setting. A new carport, garage, or fence should work with the existing home and the way you use the property. Start with the available space, access, and finish you want; then we can discuss a welded or bolted structure and any concrete work as one quoted scope.",
     whyLocal:
-      "Most carport companies targeting Salado are national dealers with no local footprint. Triple J Metal is a Temple family business — we drive 20 minutes to your property, build it ourselves, and include the concrete pad at no extra contract hassle.",
+      "Our Temple-based crew serves Salado. Work directly with the team on design, site preparation, installation, and the written project scope.",
     services: [
-      'Welded or bolted red iron carports',
-      'Bolted metal carports',
-      'Turnkey carports with concrete pads',
-      'Metal garages',
-      'RV and boat covers',
-      'Metal barns',
-      'Ranch structures',
-      'Lean-to patios',
-      'House additions',
-    ],
-  },
+  "Welded or bolted carports",
+  "Metal garages",
+  "Barns and equipment covers",
+  "RV and boat covers",
+  "Metal fencing and gates",
+  "Site prep and separately priced concrete"
+],
+      customHeadline: {
+  "line1": "Built for Salado.",
+  "line2": "Made for your Salado property."
+},
+    heroSubhead: "Plan a carport, garage, barn, or metal fence with our Temple-based crew. Tell us your dimensions and priorities; we’ll confirm the design, scope, and scheduling for your property.",
+    localIntro: "Salado Creek and the village center give Salado a distinct setting. A new carport, garage, or fence should work with the existing home and the way you use the property. Start with the available space, access, and finish you want; then we can discuss a welded or bolted structure and any concrete work as one quoted scope.",
+    habla: true,
+    topServices: [
+  "carports",
+  "metal-fencing",
+  "metal-garages"
+],
+    landmarks: [
+  {
+    "name": "Salado Creek",
+    "blurb": "Salado Creek is a defining part of the village. For your own property, discuss drainage and the proposed building or fence location early in planning."
+  }
+],
+    whyLocalBullets: [
+  "Choose colors and panel profiles alongside the existing home, rather than as an afterthought.",
+  "Include a sketch of parking, gate access, and any areas you want to keep open.",
+  "Review drainage and foundation needs for the actual site before settling the layout.",
+  "Concrete and fencing are separately defined in the quote so the full scope is clear."
+],
+    callouts: [
+  {
+    "eyebrow": "Finish & Layout",
+    "headline": "Bring the house and fence into the same plan.",
+    "blurb": "Share exterior colors, rooflines, and any architectural guidelines before selecting panels or fence materials. We can discuss privacy, ornamental fencing, and gate openings alongside a carport or garage.",
+    "ctaLabel": "Explore metal fencing & gates",
+    "ctaHref": "/services/metal-fencing"
+  }
+],
+    localSource: {
+  "label": "Salado local reference",
+  "url": "https://www.saladotx.gov/sites/default/files/fileattachments/development_services/page/2356/comp_plan.pdf"
+},
+},
 
   waco: {
     slug: 'waco',
@@ -661,15 +691,15 @@ export const LOCATIONS: Record<string, LocationData> = {
     lng: -97.6779,
     metaTitle: 'Metal Carports & Buildings in Georgetown, TX | Same-Week Welded Installs',
     metaDescription:
-      "Metal carport Georgetown TX — welded or bolted red iron, turnkey concrete, same-week installs while local contractors are 4–6 weeks out. Sun City RV covers, Liberty Hill ranch barns, San Gabriel River foundations.",
+      "Welded or bolted carports, garages and RV covers in Georgetown, TX. Temple-based crew; concrete available in the same contract. Request a quote.",
     // Legacy fallbacks (used if new fields below aren't populated)
-    heroHeadline: 'Built for Georgetown. Same-week, while everyone else waits.',
+    heroHeadline: "Metal Buildings in Georgetown, TX",
     heroCopy:
-      "Most Georgetown contractors are quoting 4–6 weeks out. Triple J isn't. We're a Temple-based family crew that drives 70 miles south, welds or bolts your structure on-site, and pours the concrete pad in the same contract. Sun City RVs, Liberty Hill ranch property, San Gabriel-adjacent homes — all built same-week.",
+      "Triple J Metal serves Georgetown with welded or bolted carports, garages, and RV covers. Work directly with our Temple-based crew to plan the design, concrete needs, and installation schedule.",
     areaContext:
       "We serve all of Georgetown and the surrounding Williamson County corridor — Sun City, Berry Creek, Georgetown Lake, the Liberty Hill ranch country to the west, and old-town Georgetown around Southwestern University. RV covers, ranch barns, and HOA-compliant residential are our day-in-day-out work in this market.",
     whyLocal:
-      "Georgetown's contractor pool is booked 4–6 weeks out. Triple J is same-week, with our own welders, our own concrete crew, and engineering for whatever the soil and water table actually do under your slab. National kit-shippers won't show up here at all. We will.",
+      "We offer a direct relationship with the crew building your project, with concrete available as a separately priced part of the same contract.",
     services: [
       'Welded or bolted red iron carports',
       'Bolted metal carports',
@@ -689,17 +719,17 @@ export const LOCATIONS: Record<string, LocationData> = {
     // University) when sourced from Unsplash/Pexels into /public/images/locations/georgetown/.
     // Alt text already accurate.
     heroImage: '/images/porch-cover-lean-to.jpg',
-    heroImageAlt: 'San Gabriel River near Georgetown, Texas',
+    heroImageAlt: "Triple J Metal lean-to patio project in Central Texas",
     customHeadline: {
-      line1: 'Built for Georgetown.',
-      line2: 'Same-week, while everyone else waits.',
-    },
+  "line1": "Built for Georgetown.",
+  "line2": "Your project. Our local crew."
+},
     heroSubhead:
-      "Most Georgetown contractors are 4–6 weeks out. We're not. Triple J drives 70 miles south from Temple — Sun City RV covers, Liberty Hill ranch barns, San Gabriel River-adjacent foundations engineered for what the soil actually does.",
-    distanceFromTemple: '70 mi south · 1 hr 10 min from HQ',
+      "Triple J Metal serves Georgetown with welded or bolted carports, garages, and RV covers. Work directly with our Temple-based crew to plan the design, concrete needs, and installation schedule.",
+
     habla: true,
     localIntro:
-      "Georgetown is split between Sun City retirees protecting RVs and golf carts, San Gabriel-adjacent properties that flood-pulse with the river, and Liberty Hill ranch land that's growing into Williamson County's last open country. The local contractor pool is booked 4–6 weeks out — Triple J is same-week, with our own welders, our own concrete, and engineering for whatever the soil and water table actually do under your slab. Hablamos español con Juan y Freddy.",
+      "For a Georgetown carport, garage, or RV cover, start with the dimensions, access, and appearance you need. Share any property guidelines and the condition of the existing driveway or slab so the quoted scope fits your site.",
     landmarks: [
       {
         name: 'San Gabriel River',
@@ -726,11 +756,11 @@ export const LOCATIONS: Record<string, LocationData> = {
     ],
     topServices: ['rv-covers', 'hoa-compliant-structures', 'barns'],
     whyLocalBullets: [
-      'Same-week scheduling — most Georgetown contractors are quoting 4–6 weeks. Triple J builds before they call you back.',
-      'Sun City RV covers and golf-cart enclosures — extra-tall clearance, HOA-grade aesthetic, sized for the rigs retirees actually drive.',
-      'San Gabriel River-adjacent foundations — concrete spec and anchor depth engineered for flood-pulse properties and seasonal water tables.',
-      "Liberty Hill ranch country — welded red-iron barns, equipment sheds, and lean-tos for Williamson County's growing rural property base.",
-    ],
+  "Discuss current scheduling directly with our team; dates depend on the project scope and site readiness.",
+  "Sun City RV covers and golf-cart enclosures — extra-tall clearance, HOA-grade aesthetic, sized for the rigs retirees actually drive.",
+  "San Gabriel River-adjacent foundations — concrete spec and anchor depth engineered for flood-pulse properties and seasonal water tables.",
+  "Liberty Hill ranch country — welded red-iron barns, equipment sheds, and lean-tos for Williamson County's growing rural property base."
+],
     callouts: [
       {
         eyebrow: 'Sun City Specialists',
@@ -850,154 +880,328 @@ export const LOCATIONS: Record<string, LocationData> = {
 
   lampasas: {
     slug: 'lampasas',
-    heroImageAlt: 'Welded metal building on a Lampasas, Texas property in Lampasas County',
+    heroImageAlt: "Triple J Metal steel construction project in Central Texas",
     name: 'Lampasas',
     county: 'Lampasas County',
     zip: '76550',
     lat: 31.0632,
     lng: -98.1793,
-    metaTitle: 'Metal Carports Lampasas TX | Ranch Structures',
+    metaTitle: "Metal Buildings & Fencing in Lampasas, TX",
     metaDescription:
-      'Metal carports, barns, and ranch structures in Lampasas, TX — welded or bolted red iron, concrete included, same-week installs.',
-    heroHeadline: 'Metal Carports & Ranch Structures in Lampasas, TX',
+      "Welded or bolted carports, garages, barns and metal fencing in Lampasas, TX. Temple-based Triple J Metal. Concrete available; request a project quote.",
+    heroHeadline: "Metal Buildings & Fencing in Lampasas, TX",
     heroCopy:
-      "Lampasas and Lampasas County are ranch and farm country — and the structures here need to hold up to Hill Country weather without a kit falling apart. Triple J Metal builds welded red iron carports, barns, and ranch structures in Lampasas with concrete pads poured in the same contract.",
+      "Plan a carport, garage, barn, or metal fence with our Temple-based crew. Tell us your dimensions and priorities; we’ll confirm the design, scope, and scheduling for your property.",
     areaContext:
-      "We serve all of Lampasas County, including rural ranch properties along US-281, FM 580, and the Colorado River corridor. We regularly work in Kempner and Copperas Cove as well.",
+      "Lampasas is home to Hancock Springs and its spring-fed pool. For a home or acreage project in the Lampasas area, the useful starting point is what needs covering: a daily driver, a trailer, farm equipment, or a workshop. Triple J Metal takes inquiries for welded or bolted carports, barns, and garages, with foundation and access needs reviewed for each property.",
     whyLocal:
-      "Lampasas is 45 minutes from Temple — close enough for our crew to make the drive with no travel fee on most jobs. National dealers who target this area ship kits with no installer. We show up and build it.",
+      "Our Temple-based crew serves Lampasas. Work directly with the team on design, site preparation, installation, and the written project scope.",
     services: [
-      'Welded or bolted red iron carports',
-      'Bolted metal carports',
-      'Turnkey carports with concrete pads',
-      'Metal barns',
-      'Metal garages',
-      'Ranch structures',
-      'RV and boat covers',
-      'Lean-to patios',
-      'House additions',
-    ],
-  },
+  "Welded or bolted carports",
+  "Metal garages",
+  "Barns and equipment covers",
+  "RV and boat covers",
+  "Metal fencing and gates",
+  "Site prep and separately priced concrete"
+],
+      customHeadline: {
+  "line1": "Built for Lampasas.",
+  "line2": "Room for vehicles, equipment, and more."
+},
+    heroSubhead: "Plan a carport, garage, barn, or metal fence with our Temple-based crew. Tell us your dimensions and priorities; we’ll confirm the design, scope, and scheduling for your property.",
+    localIntro: "Lampasas is home to Hancock Springs and its spring-fed pool. For a home or acreage project in the Lampasas area, the useful starting point is what needs covering: a daily driver, a trailer, farm equipment, or a workshop. Triple J Metal takes inquiries for welded or bolted carports, barns, and garages, with foundation and access needs reviewed for each property.",
+    habla: true,
+    topServices: [
+  "barns",
+  "rv-covers",
+  "carports"
+],
+    landmarks: [
+  {
+    "name": "Hancock Springs Park",
+    "blurb": "The city lists a spring-fed pool, picnic area, and historic Hostess House at Hancock Springs Park."
+  }
+],
+    whyLocalBullets: [
+  "Plan clear height around the tallest vehicle or attachment, including roof-mounted equipment.",
+  "Discuss delivery access and turning space before selecting a building footprint.",
+  "Foundation and anchoring details are reviewed for the actual site and design.",
+  "Need a ranch boundary or entrance gate? Include fencing in your inquiry."
+],
+    callouts: [
+  {
+    "eyebrow": "Equipment & Access",
+    "headline": "Measure the equipment and the approach.",
+    "blurb": "For an RV, trailer, or equipment cover, send overall height and width along with photos or a sketch of the approach. Door clearance, turning room, and usable interior space all belong in the plan.",
+    "ctaLabel": "Plan your project",
+    "ctaHref": "/quote?city=lampasas"
+  }
+],
+    localSource: {
+  "label": "Lampasas local reference",
+  "url": "https://lampasas.org/367/Hancock-Springs-Park"
+},
+},
 
   holland: {
     slug: 'holland',
-    heroImageAlt: 'Welded metal building on a Holland, Texas rural property in Bell County',
+    heroImageAlt: "Triple J Metal steel construction project in Central Texas",
     name: 'Holland',
     county: 'Bell County',
     zip: '76534',
     lat: 30.8796,
     lng: -97.4091,
-    metaTitle: 'Metal Carports Holland TX | Bell County',
+    metaTitle: "Metal Buildings & Fencing in Holland, TX",
     metaDescription:
-      `${SITE.name} builds metal carports and barns in Holland, TX — welded or bolted red iron, concrete available. Local Bell County crew. Call ${SITE.phone}.`,
-    heroHeadline: 'Metal Carports & Barns in Holland, TX — Local Bell County Crew',
+      "Welded or bolted carports, garages, barns and metal fencing in Holland, TX. Temple-based Triple J Metal. Concrete available; request a project quote.",
+    heroHeadline: "Metal Buildings & Fencing in Holland, TX",
     heroCopy:
-      "Holland is rural Bell County — and rural properties here need structures that are built right, not shipped in a box. Triple J Metal builds welded and bolted carports, barns, and garages in Holland with same-week scheduling and concrete pad options included in one contract.",
+      "Plan a carport, garage, barn, or metal fence with our Temple-based crew. Tell us your dimensions and priorities; we’ll confirm the design, scope, and scheduling for your property.",
     areaContext:
-      "We serve Holland and surrounding rural Bell County, including properties along FM 93, FM 2115, and the Elm Creek corridor heading toward Temple and Georgetown.",
+      "Holland lies in southeast Bell County, east of Salado; its city history traces early settlement along Darr’s Creek. We take project inquiries for residential parking, equipment storage, and fencing in the Holland area. Tell us what the space needs to do, and we’ll discuss a layout that fits your property and budget.",
     whyLocal:
-      "Holland is a short drive from our Temple base. We know Bell County inside and out — the soils, the weather patterns, the permit requirements. Local crew, local knowledge, one contract.",
+      "Our Temple-based crew serves Holland. Work directly with the team on design, site preparation, installation, and the written project scope.",
     services: [
-      'Welded or bolted red iron carports',
-      'Bolted metal carports',
-      'Turnkey carports with concrete pads',
-      'Metal barns',
-      'Metal garages',
-      'Ranch structures',
-      'Lean-to patios',
-      'House additions',
-    ],
-  },
+  "Welded or bolted carports",
+  "Metal garages",
+  "Barns and equipment covers",
+  "RV and boat covers",
+  "Metal fencing and gates",
+  "Site prep and separately priced concrete"
+],
+      customHeadline: {
+  "line1": "Built for Holland.",
+  "line2": "Practical steel for Holland homes and land."
+},
+    heroSubhead: "Plan a carport, garage, barn, or metal fence with our Temple-based crew. Tell us your dimensions and priorities; we’ll confirm the design, scope, and scheduling for your property.",
+    localIntro: "Holland lies in southeast Bell County, east of Salado; its city history traces early settlement along Darr’s Creek. We take project inquiries for residential parking, equipment storage, and fencing in the Holland area. Tell us what the space needs to do, and we’ll discuss a layout that fits your property and budget.",
+    habla: true,
+    topServices: [
+  "barns",
+  "carports",
+  "metal-fencing"
+],
+    landmarks: [
+  {
+    "name": "Darr’s Creek & Holland’s history",
+    "blurb": "The City of Holland records early community life along Darr’s Creek east of present-day Holland. Your proposed building location and access should be reviewed on their own merits."
+  }
+],
+    whyLocalBullets: [
+  "Bring approximate dimensions for equipment, storage bays, and covered parking.",
+  "Include gate openings and the route vehicles will use to enter the property.",
+  "Site conditions and drainage guide the foundation discussion; no one-size-fits-all soil assumption.",
+  "Our Temple-based team can discuss the project in English or Spanish."
+],
+    callouts: [
+  {
+    "eyebrow": "Ranch & Residential",
+    "headline": "Plan the gate before the fence line.",
+    "blurb": "Share the equipment or vehicles that need access, the approximate fence length, and the opening widths you need. Pipe/ranch fencing, metal privacy, and ornamental options can be discussed in the same inquiry.",
+    "ctaLabel": "Explore metal fencing & gates",
+    "ctaHref": "/services/metal-fencing"
+  }
+],
+    localSource: {
+  "label": "Holland local reference",
+  "url": "https://cityofholland.org/about-us"
+},
+},
 
   taylor: {
     slug: 'taylor',
-    heroImageAlt: 'Welded metal building on a Taylor, Texas property in Williamson County',
+    heroImageAlt: "Triple J Metal steel construction project in Central Texas",
     name: 'Taylor',
     county: 'Williamson County',
     zip: '76574',
     lat: 30.5711,
     lng: -97.4097,
-    metaTitle: 'Metal Carports Taylor TX | Williamson County',
+    metaTitle: "Metal Buildings & Fencing in Taylor, TX",
     metaDescription:
-      'Custom metal carports and garages in Taylor, TX — welded or bolted red iron steel, concrete pad included, same-week scheduling.',
-    heroHeadline: 'Metal Carports & Garages in Taylor, TX — Welded Steel + Concrete',
+      "Welded or bolted carports, garages, barns and metal fencing in Taylor, TX. Temple-based Triple J Metal. Concrete available; request a project quote.",
+    heroHeadline: "Metal Buildings & Fencing in Taylor, TX",
     heroCopy:
-      "Taylor is growing fast thanks to new development in Williamson County. Homeowners and property managers here need carports and garages that hold up to Central Texas weather. Triple J Metal builds welded and bolted structures in Taylor with turnkey concrete included.",
+      "Plan a carport, garage, barn, or metal fence with our Temple-based crew. Tell us your dimensions and priorities; we’ll confirm the design, scope, and scheduling for your property.",
     areaContext:
-      "We serve all of Taylor and surrounding Williamson County, including Granger, Hutto, and rural properties along SH-95 and FM 1660.",
+      "Taylor’s city center combines historic buildings, shops, and services, while Murphy Park provides a major public recreation space. For your own property, focus on how the new structure will meet the existing driveway, yard, and building. We offer welded or bolted carports and garages, plus metal fencing and gates, with concrete available as a separately priced part of the project.",
     whyLocal:
-      "Taylor is about 55 minutes from Temple — close enough for our crew on standard residential and commercial jobs. No national kit dealer in this market includes concrete or installs with their own crew.",
+      "Our Temple-based crew serves Taylor. Work directly with the team on design, site preparation, installation, and the written project scope.",
     services: [
-      'Welded or bolted red iron carports',
-      'Bolted metal carports',
-      'Turnkey carports with concrete pads',
-      'Metal garages',
-      'RV and boat covers',
-      'Metal barns',
-      'Lean-to patios',
-      'House additions',
-    ],
-  },
+  "Welded or bolted carports",
+  "Metal garages",
+  "Barns and equipment covers",
+  "RV and boat covers",
+  "Metal fencing and gates",
+  "Site prep and separately priced concrete"
+],
+      customHeadline: {
+  "line1": "Built for Taylor.",
+  "line2": "A Taylor build that fits the whole property."
+},
+    heroSubhead: "Plan a carport, garage, barn, or metal fence with our Temple-based crew. Tell us your dimensions and priorities; we’ll confirm the design, scope, and scheduling for your property.",
+    localIntro: "Taylor’s city center combines historic buildings, shops, and services, while Murphy Park provides a major public recreation space. For your own property, focus on how the new structure will meet the existing driveway, yard, and building. We offer welded or bolted carports and garages, plus metal fencing and gates, with concrete available as a separately priced part of the project.",
+    habla: true,
+    topServices: [
+  "carports",
+  "metal-garages",
+  "metal-fencing"
+],
+    landmarks: [
+  {
+    "name": "Downtown Taylor & Murphy Park",
+    "blurb": "Taylor’s official downtown program describes its historic buildings and businesses; the city lists Murphy Park on Veterans Drive."
+  }
+],
+    whyLocalBullets: [
+  "Choose a roofline and finish that suit the existing property.",
+  "Measure driveway access and the clearance needed at each door or gate.",
+  "Discuss grading, drainage, and any existing slab before finalizing the scope.",
+  "We confirm availability for your address and project before promising an installation date."
+],
+    callouts: [
+  {
+    "eyebrow": "Parking & Workshop Space",
+    "headline": "Make room for more than the vehicle.",
+    "blurb": "A garage plan needs door openings, workbench space, and room to move around the vehicle. Share those needs with the overall footprint so the quote reflects usable space.",
+    "ctaLabel": "Plan your project",
+    "ctaHref": "/quote?city=taylor"
+  }
+],
+    localSource: {
+  "label": "Taylor local reference",
+  "url": "https://taylortx.gov/901/Downtown"
+},
+},
 
   troy: {
     slug: 'troy',
-    heroImageAlt: 'Welded metal building on a Troy, Texas property in Bell County',
+    heroImageAlt: "Triple J Metal steel construction project in Central Texas",
     name: 'Troy',
     county: 'Bell County',
     zip: '76579',
     lat: 31.2057,
     lng: -97.2983,
-    metaTitle: 'Metal Carports Troy TX | Bell County',
+    metaTitle: "Metal Buildings & Fencing in Troy, TX",
     metaDescription:
-      'Metal carports and barns in Troy, TX — welded or bolted red iron, concrete available, same-week installs. Local Temple-based Bell County crew.',
-    heroHeadline: 'Metal Carports & Ranch Structures in Troy, TX',
+      "Welded or bolted carports, garages, barns and metal fencing in Troy, TX. Temple-based Triple J Metal. Concrete available; request a project quote.",
+    heroHeadline: "Metal Buildings & Fencing in Troy, TX",
     heroCopy:
-      "Troy is a small rural Bell County community — and property owners here often get overlooked by the big carport dealers who only target the larger cities. Triple J Metal serves Troy and surrounding rural Bell County with the same full-service install as anywhere else: welded or bolted steel, concrete if needed, one contract.",
+      "Plan a carport, garage, barn, or metal fence with our Temple-based crew. Tell us your dimensions and priorities; we’ll confirm the design, scope, and scheduling for your property.",
     areaContext:
-      "We serve Troy and rural north Bell County, including properties along US-79, FM 935, and the Little River corridor. We're also close to Lott, Rosebud, and Marlin.",
+      "Troy’s West Main Street connects with I-35, linking the town to the Temple corridor. For a carport, barn, or equipment cover, the best plan starts with everyday access: where you park, turn, load, and store. Triple J Metal serves Troy from Temple with welded or bolted steel options and a quote tailored to the site.",
     whyLocal:
-      "Troy is a short drive from our Temple base. We treat every job the same — rural or suburban, small carport or large barn. Same crew, same contract, same standards.",
+      "Our Temple-based crew serves Troy. Work directly with the team on design, site preparation, installation, and the written project scope.",
     services: [
-      'Welded or bolted red iron carports',
-      'Bolted metal carports',
-      'Turnkey carports with concrete pads',
-      'Metal barns',
-      'Metal garages',
-      'Ranch structures',
-      'Lean-to patios',
-      'House additions',
-    ],
-  },
+  "Welded or bolted carports",
+  "Metal garages",
+  "Barns and equipment covers",
+  "RV and boat covers",
+  "Metal fencing and gates",
+  "Site prep and separately priced concrete"
+],
+      customHeadline: {
+  "line1": "Built for Troy.",
+  "line2": "Covered space for Troy homes and equipment."
+},
+    heroSubhead: "Plan a carport, garage, barn, or metal fence with our Temple-based crew. Tell us your dimensions and priorities; we’ll confirm the design, scope, and scheduling for your property.",
+    localIntro: "Troy’s West Main Street connects with I-35, linking the town to the Temple corridor. For a carport, barn, or equipment cover, the best plan starts with everyday access: where you park, turn, load, and store. Triple J Metal serves Troy from Temple with welded or bolted steel options and a quote tailored to the site.",
+    habla: true,
+    topServices: [
+  "carports",
+  "barns",
+  "rv-covers"
+],
+    landmarks: [
+  {
+    "name": "West Main Street & I-35",
+    "blurb": "The city’s West Main Street project identifies the connection from I-35 toward Trojan Road. Share the actual entrance and access route for your property when arranging a quote."
+  }
+],
+    whyLocalBullets: [
+  "Size openings for the vehicle or equipment that will actually pass through them.",
+  "Decide which sides need weather cover and which should remain accessible.",
+  "Review site slope and water flow before choosing the footprint and foundation.",
+  "Concrete, enclosure, and gates are listed as part of the agreed scope rather than assumed in a base price."
+],
+    callouts: [
+  {
+    "eyebrow": "Working Space",
+    "headline": "Keep loading and parking out of each other’s way.",
+    "blurb": "For a barn or cover, show us where equipment enters and where materials will be stored. Open sides, enclosure, and gate placement can be considered around how the property is used.",
+    "ctaLabel": "Plan your project",
+    "ctaHref": "/quote?city=troy"
+  }
+],
+    localSource: {
+  "label": "Troy local reference",
+  "url": "https://www.cityoftroy.us/news/3506"
+},
+},
 
   nolanville: {
     slug: 'nolanville',
-    heroImageAlt: 'Welded metal carport on a Nolanville, Texas property near Fort Cavazos',
+    heroImageAlt: "Triple J Metal steel construction project in Central Texas",
     name: 'Nolanville',
     county: 'Bell County',
     zip: '76559',
     lat: 31.0799,
     lng: -97.6024,
-    metaTitle: 'Metal Carports Nolanville TX | Bell County',
+    metaTitle: "Metal Buildings & Fencing in Nolanville, TX",
     metaDescription:
-      `${SITE.name} installs metal carports and garages in Nolanville, TX — 15 min from Temple, welded or bolted red iron, concrete included. Call ${SITE.phone}.`,
-    heroHeadline: 'Metal Carports & Garages in Nolanville, TX — 15 Minutes from Temple',
+      "Welded or bolted carports, garages, barns and metal fencing in Nolanville, TX. Temple-based Triple J Metal. Concrete available; request a project quote.",
+    heroHeadline: "Metal Buildings & Fencing in Nolanville, TX",
     heroCopy:
-      "Nolanville sits between Temple and Killeen on the Bell County corridor — prime Triple J Metal territory. We're 15 minutes from Nolanville and build welded or bolted carports, garages, and RV covers with concrete pads included in the same contract. Same-week scheduling, local crew.",
+      "Plan a carport, garage, barn, or metal fence with our Temple-based crew. Tell us your dimensions and priorities; we’ll confirm the design, scope, and scheduling for your property.",
     areaContext:
-      "We serve Nolanville and the surrounding Bell County corridor, including communities along US-190, Sparta Road, and properties between Killeen and Temple. We're also close to Harker Heights and Gatesville.",
+      "Nolanville’s public Nolan Creek program highlights the creek’s role in recreation and stormwater. That makes drainage a useful early planning topic, without assuming every property has the same conditions. Bring your parking or fencing plans to our Temple-based team and we’ll discuss the footprint, access, and materials for your site.",
     whyLocal:
-      "Nolanville is practically in our backyard. We've built throughout Bell County and know the permit requirements, soil types, and what structures hold up in this part of Texas. One call, one company.",
+      "Our Temple-based crew serves Nolanville. Work directly with the team on design, site preparation, installation, and the written project scope.",
     services: [
-      'Welded or bolted red iron carports',
-      'Bolted metal carports',
-      'Turnkey carports with concrete pads',
-      'Metal garages',
-      'RV and boat covers',
-      'Metal barns',
-      'Lean-to patios',
-      'House additions',
-    ],
-  },
+  "Welded or bolted carports",
+  "Metal garages",
+  "Barns and equipment covers",
+  "RV and boat covers",
+  "Metal fencing and gates",
+  "Site prep and separately priced concrete"
+],
+      customHeadline: {
+  "line1": "Built for Nolanville.",
+  "line2": "Make more of your Nolanville property."
+},
+    heroSubhead: "Plan a carport, garage, barn, or metal fence with our Temple-based crew. Tell us your dimensions and priorities; we’ll confirm the design, scope, and scheduling for your property.",
+    localIntro: "Nolanville’s public Nolan Creek program highlights the creek’s role in recreation and stormwater. That makes drainage a useful early planning topic, without assuming every property has the same conditions. Bring your parking or fencing plans to our Temple-based team and we’ll discuss the footprint, access, and materials for your site.",
+    habla: true,
+    topServices: [
+  "carports",
+  "metal-fencing",
+  "rv-covers"
+],
+    landmarks: [
+  {
+    "name": "Nolan Creek",
+    "blurb": "The city’s Nolan Creek program explains its recreation and stormwater role. Before adding a structure or fence, discuss how the proposed layout relates to water flow on your property."
+  }
+],
+    whyLocalBullets: [
+  "Start with parking dimensions, roof clearance, and usable gate widths.",
+  "Share any property survey or architectural guidelines available for the project.",
+  "Review drainage and the proposed fence or building position before installation.",
+  "English and Spanish project discussions are available through our Temple-based team."
+],
+    callouts: [
+  {
+    "eyebrow": "Fencing & Gates",
+    "headline": "Privacy where you want it. Access where you need it.",
+    "blurb": "Tell us whether you need a metal privacy fence, an open ornamental design, or pipe/ranch fencing. Include the approximate footage, height, and pedestrian or driveway gates in your quote request.",
+    "ctaLabel": "Explore metal fencing & gates",
+    "ctaHref": "/services/metal-fencing"
+  }
+],
+    localSource: {
+  "label": "Nolanville local reference",
+  "url": "https://www.nolanvilletx.gov/page/Nolan%20Creek%20Matters"
+},
+},
 
   // ─── COUNTIES (county-wide SEO surfaces) ────────────────────────────────────
   // Each county groups multiple cities under one URL so we rank for

@@ -1,3 +1,13 @@
+# About update — 2026-09-26
+
+Removed the “Our Rig” section and equipment cards at owner request as part of the claims and city-page release.
+
+## 2026-09-26 — Claim cleanup and six city pages
+
+Completed requested backlog items 2 and 5: corrected pricing basis; removed unverifiable Temple Steel Buildings and the Spanish comparison row; replaced unsupported national-provider comparisons with scope guidance; corrected permit-filing and concrete exclusivity wording. Expanded Salado, Lampasas, Holland, Taylor, Troy, Nolanville with local references, project-planning detail, service/fencing links and city-prefilled quote links. City galleries filter active rows by canonical and legacy city labels. Google profile remains unresolved per owner report of repeated removals; no profile action taken.
+
+Validation: required typecheck/lint/test checks and build; Taylor browser preview. Production city-gallery read verification follows deployment. Source notes: `research/markets/city-pages-2026-09-26.md`.
+
 ## 2026-09-26 — Remove homepage Meet Triple J
 
 Removed the Crew section and unused import from the homepage at the owner’s request. About retains its existing team section. Required typecheck, lint and test checks run before publication.

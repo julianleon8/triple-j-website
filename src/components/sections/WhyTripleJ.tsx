@@ -18,32 +18,32 @@ const COMPARISON = [
   {
     attr: "Construction",
     tripleJ: "Welded OR bolted red-iron — your choice",
-    others: "Bolted tubular kit only — no weld option",
+    others: "Confirm framing and connection options",
   },
   {
     attr: "Build Time",
     tripleJ: "Same-week scheduling",
-    others: "4–16 weeks from order",
+    others: "Request a current project-specific date",
   },
   {
     attr: "Concrete Pad",
     tripleJ: "Poured turnkey — single contract",
-    others: "Customer hires separate contractor",
+    others: "Confirm concrete scope and price",
   },
   {
     attr: "Permits",
-    tripleJ: "We handle research + filing",
-    others: "Customer pulls their own",
+    tripleJ: "We discuss requirements; filing responsibilities confirmed",
+    others: "Confirm filing responsibilities",
   },
   {
     attr: "Storm Performance",
-    tripleJ: "Permanent — won't rattle or loosen",
-    others: "Bolts loosen in Texas wind/hail",
+    tripleJ: "Design and anchoring specified for the project",
+    others: "Compare engineering and anchoring specifications",
   },
   {
     attr: "Who Builds It",
     tripleJ: "Our crew — we show up",
-    others: "Subcontractor network, varies by region",
+    others: "Ask who performs installation",
   },
 ] as const;
 

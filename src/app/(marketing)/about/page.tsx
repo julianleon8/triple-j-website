@@ -1,6 +1,5 @@
 import { Crew } from "@/components/sections/Crew"
 import type { Metadata } from 'next'
-import Image from 'next/image'
 import { Container } from '@/components/ui/Container'
 import { ButtonLink } from '@/components/ui/Button'
 import { QuoteForm } from '@/components/sections/QuoteForm'
@@ -101,23 +100,23 @@ export default function AboutPage() {
               },
               {
                 headline: 'Welded Steel Option',
-                body: 'We offer real welded red iron steel — a permanent structure that improves your property value. Bolted kits rattle in Central Texas storms. Welded ones don\'t.',
+                body: 'We offer welded and bolted steel options. Framing, anchoring, and any engineering requirements are confirmed for your design and site.',
               },
               {
                 headline: 'Turnkey Concrete — Same Contract',
-                body: 'No other local installer includes concrete pad pouring in the same contract. We handle site prep, concrete, and structure — one call, one crew, one invoice.',
+                body: 'We can quote site prep, concrete, and the structure together. Concrete is separately priced so you can see exactly what your project includes.',
               },
               {
                 headline: 'Same-Week Scheduling',
-                body: 'National companies quote 4–16 week lead times. We schedule same-week after your approval — small carports done in a day, larger structures in two.',
+                body: 'Ask about same-week scheduling. We confirm your installation date after reviewing scope, materials, site readiness, and required approvals.',
               },
               {
                 headline: 'Custom Dimensions',
                 body: 'Our structures aren\'t catalog sizes. You tell us the width, length, and height — we build exactly that. Any configuration, any roof style.',
               },
               {
-                headline: 'Licensed & Insured',
-                body: 'Triple J Metal is fully licensed and insured in Texas. We also handle permitting as an add-on service when your county or HOA requires it.',
+                headline: 'Permit Planning',
+                body: 'We provide permit guidance and discuss required approvals before scheduling. Filing responsibilities and any additional services are confirmed in your written scope.',
               },
             ].map(({ headline, body }) => (
               <div
@@ -129,79 +128,6 @@ export default function AboutPage() {
                 <p className="text-sm text-ink-500 leading-relaxed">{body}</p>
               </div>
             ))}
-          </div>
-        </Container>
-      </section>
-
-      {/* ── Our Rig (equipment trust signal) ─────────────────────────────
-          Two branded trucks + skid-steer = "we own the gear, not just the
-          marketing site." Sits between the differentiators list and the
-          supplier story so the page reads: what we are (story) → why we're
-          different (sets us apart) → proof we're real (rig) → who we buy
-          from (suppliers) → how we work (values). Equipment photos come
-          from the /hq/gallery "Triple J Equipment" item — refreshed when
-          Julian uploads new equipment shots there. */}
-      <section className="py-16 md:py-24 bg-ink-900 text-white overflow-hidden">
-        <Container>
-          <div className="max-w-2xl mb-10">
-            <span className="text-xs font-bold uppercase tracking-[0.18em] text-brand-400">
-              Our Rig
-            </span>
-            <h2 className="mt-3 text-white">
-              Two branded trucks. One crew. Our own gear.
-            </h2>
-            <p className="mt-4 text-white/70 text-lg leading-relaxed">
-              When a national kit dealer drops your structure off, that&rsquo;s the last you see
-              of them. Triple J shows up with the equipment to actually build it — and we own
-              every piece of it ourselves. No rentals, no sub-rentals, no &ldquo;the guy didn&rsquo;t
-              show up&rdquo; excuses.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-5 md:gap-6">
-            <figure className="group">
-              <div className="relative aspect-[4/3] overflow-hidden rounded-2xl bg-ink-800 border border-white/10">
-                <Image
-                  src="https://idrbgxlvvnqduvbqtaei.supabase.co/storage/v1/object/public/gallery/1777195958360.jpg"
-                  alt="Triple J Metal RAM and second branded work truck on a Central Texas job site"
-                  fill
-                  sizes="(max-width: 768px) 100vw, 50vw"
-                  className="object-cover transition-transform duration-700 ease-out group-hover:scale-[1.03]"
-                />
-                <div aria-hidden="true" className="absolute inset-0 bg-gradient-to-t from-ink-900/40 via-transparent to-transparent" />
-              </div>
-              <figcaption className="mt-4">
-                <p className="text-xs font-bold uppercase tracking-[0.16em] text-brand-400">
-                  Branded fleet
-                </p>
-                <p className="mt-1 text-base text-white/85 leading-relaxed">
-                  Two trucks, both branded, both ours. If you see them in your driveway it means
-                  the build crew is here — not a salesperson, not a sub.
-                </p>
-              </figcaption>
-            </figure>
-
-            <figure className="group">
-              <div className="relative aspect-[4/3] overflow-hidden rounded-2xl bg-ink-800 border border-white/10">
-                <Image
-                  src="https://idrbgxlvvnqduvbqtaei.supabase.co/storage/v1/object/public/gallery/items/c99a3a48-34c9-4caa-9343-7e65a87e5110/1777195959738.jpeg"
-                  alt="Triple J Metal skid steer lifting structural steel next to a warehouse under construction"
-                  fill
-                  sizes="(max-width: 768px) 100vw, 50vw"
-                  className="object-cover transition-transform duration-700 ease-out group-hover:scale-[1.03]"
-                />
-                <div aria-hidden="true" className="absolute inset-0 bg-gradient-to-t from-ink-900/40 via-transparent to-transparent" />
-              </div>
-              <figcaption className="mt-4">
-                <p className="text-xs font-bold uppercase tracking-[0.16em] text-brand-400">
-                  40-ft vertical reach
-                </p>
-                <p className="mt-1 text-base text-white/85 leading-relaxed">
-                  Our skid-steer handles ranch warehouses, two-story barns, and tall-clearance
-                  RV covers — without renting boom trucks or waiting on outside operators.
-                </p>
-              </figcaption>
-            </figure>
           </div>
         </Container>
       </section>

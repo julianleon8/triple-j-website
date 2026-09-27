@@ -130,7 +130,7 @@ export default function BestBuildersRoundupPage() {
         <Container size="narrow">
           <p className="text-sm leading-relaxed">
             <strong className="text-white">Disclosure:</strong> This is Triple J Metal&rsquo;s website.
-            We&rsquo;re #1 on the list because that&rsquo;s our home page. The other five builders are
+            Triple J appears first because we publish this list; the order is not an independent ranking. The other listed builders are
             real Bell County companies sourced from Yelp searches as of April 2026. We don&rsquo;t earn
             referrals if you choose a competitor — but we want you to be able to compare us fairly.
           </p>
@@ -142,15 +142,12 @@ export default function BestBuildersRoundupPage() {
         <Container size="narrow">
           <h2 className="mb-5">Why a Bell County builder usually beats a national kit</h2>
           <p className="text-ink-700 text-base leading-relaxed mb-4">
-            Metal carport buyers in Central Texas have two paths: buy a prefab kit from a national
-            company (Eagle, Get Carports, Carport Central, Viking, Infinity) and arrange installation
-            yourself, OR hire a local builder who delivers and installs the structure on your property
-            with their own crew.
+            Metal carport buyers can compare local builders with national providers. Installation may be included in either model. Ask who will do the work, whether concrete is included, and what the written scope covers.
           </p>
           <p className="text-ink-700 text-base leading-relaxed">
             For most homeowners, the local-builder path produces a better outcome: someone you can
             actually call back, faster scheduling, and (in most cases) a real concrete pad poured by
-            the same company. That&rsquo;s why this roundup focuses on the six local Bell County
+            the same company. That&rsquo;s why this roundup focuses on the local Central Texas
             builders we know about — including us.
           </p>
         </Container>
@@ -159,7 +156,7 @@ export default function BestBuildersRoundupPage() {
       {/* ── Builder profiles ─────────────────────────────────────────── */}
       <section className="py-14 md:py-20 bg-ink-50">
         <Container>
-          <h2 className="mb-8">The six local builders</h2>
+          <h2 className="mb-8">Local builders to compare</h2>
           <ol className="space-y-6">
             {builders.map((c, i) => {
               const isSelf = c.type === 'self'
@@ -231,9 +228,7 @@ export default function BestBuildersRoundupPage() {
             <li className="flex items-start gap-3">
               <span className="text-(--color-brand-600) font-bold shrink-0 mt-0.5">1.</span>
               <span>
-                <strong>Welded or bolted?</strong> Welded red iron is permanent and storm-rated;
-                bolted is faster and cheaper. Triple J does both — many local builders offer only
-                bolted. Ask explicitly.
+                <strong>Welded or bolted?</strong> Triple J offers both. Compare the complete design, framing, anchoring, and specifications for your site.
               </span>
             </li>
             <li className="flex items-start gap-3">
@@ -277,8 +272,7 @@ export default function BestBuildersRoundupPage() {
             <ul className="space-y-3 text-ink-800 leading-relaxed">
               <li className="flex items-start gap-3">
                 <span className="text-(--color-brand-600) font-bold shrink-0 mt-0.5">✓</span>
-                You want the welded option (a permanent steel structure rated for Texas storms),
-                not just a bolted kit.
+                You want to discuss welded and bolted options with the crew that will install the structure.
               </li>
               <li className="flex items-start gap-3">
                 <span className="text-(--color-brand-600) font-bold shrink-0 mt-0.5">✓</span>

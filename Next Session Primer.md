@@ -1,3 +1,13 @@
+# About update — 2026-09-26
+
+Removed the “Our Rig” section and equipment cards at owner request as part of the claims and city-page release.
+
+# Claims and city pages — 2026-09-26
+
+Backlog items 2 and 5 completed in this release: claims/pricing cleanup and richer Salado, Lampasas, Holland, Taylor, Troy and Nolanville pages. City galleries now use recorded city matches rather than the same six regional projects. Actual projects remain the source of photo proof. Google verification is still open; owner reports repeated profile removals, cause unknown. Paid advertising still awaits a spending cap and confirmed tracking.
+
+---
+
 # Homepage update — 2026-09-26
 
 Removed homepage “Meet Triple J” section at owner request. Current checkout remains `fencing-launch`; About retains the existing shared Crew component.

@@ -10,6 +10,8 @@ Do not copy anything from this file into `AGENTS.md`. That duplication is what p
 
 ## Product
 
+- **Website claims and city-page cleanup:** Removed unsupported competitor installation/lead-time/exclusivity claims and the unverifiable Temple Steel Buildings listing. Concrete is separately priced; service pricing uses the approved steel-and-install basis. Salado, Lampasas, Holland, Taylor, Troy and Nolanville now have researched local context, planning guidance and service links. City galleries show only active projects with matching city labels. (2026-09-26)
+
 - **Fencing launch:** Metal privacy, pipe/ranch, ornamental metal fencing and gates approved. Dedicated page and quote intake; project-specific price and schedule, with no invented rankings. Fencing is stored as `other` with explicit scope in lead notes. Campaign spend requires an owner-set cap. (2026-09-26)
 
 - **Timeline:** "**same-week**", never say "48-hour build". 48 hrs = materials arrival, not build time. Saying otherwise is misleading. (2026-04-15)
@@ -18,7 +20,7 @@ Do not copy anything from this file into `AGENTS.md`. That duplication is what p
 - **Services** include lean-to patios and house additions alongside carports, garages, barns, RV/boat covers, equipment covers, metal porches, ranch structures, barndominiums.
 - **Tagline:** "Built right, built fast, built by Triple J." (2026-04-15)
 - **Fonts:** Barlow Condensed (headlines) + Inter (body). Geist removed. **Barlow Condensed is the HQ heading face too** — uppercase, 600/700, applied per heading as `font-display` beside an explicit `text-[Npx]`, never as a bare `.hq-ui h1/h2/h3` rule (that rule would be unlayered and would outrank the very sizes the screens set). Inter remains the marketing body face. (2026-09-07 — **REVERSES** the 2026-04-24 "Barlow is scoped to marketing only, not HQ" lock, which the "Shop floor" direction depends on.) HQ body text is the iOS system stack, applied as `font-(family-name:--font-ios)` — the `family-name:` prefix is required, because Tailwind v4 reads the bare `font-()` shorthand as font-weight and that silently left HQ on Inter from the day the class was written. (fix 2026-09-07)
-- **Design:** Industrial charcoal/white/steel-blue identity; public site stays light. First design pass brings the portfolio directly after a simplified hero, keeps the Juan/Julian/Freddy introduction on About only (homepage “Meet Triple J” removed at owner request, 2026-09-26), and shortens the gallery header with URL-based building filters. Use actual jobsite imagery until a real crew portrait is supplied. Implementation approved for publication to main. (2026-09-07)
+- **Design:** Industrial charcoal/white/steel-blue identity; public site stays light. First design pass brings the portfolio directly after a simplified hero, keeps the Juan/Julian/Freddy introduction on About only (homepage “Meet Triple J” removed at owner request, 2026-09-26), removes the About “Our Rig” equipment section at owner request (2026-09-26), and shortens the gallery header with URL-based building filters. Use actual jobsite imagery until a real crew portrait is supplied. Implementation approved for publication to main. (2026-09-07)
 - **TrustBar stats:** Zero Subcontractors · Welded or Bolted · Same-Week · Temple TX.
 - **Testimonials:** auto-scroll marquee, CSS `@keyframes`, pause-on-hover, `'use client'`. **`REVIEWS` is empty and the section renders nothing** — the six invented "Verified Project" quotes were removed 2026-09-07. Real reviews only: fill `testimonials.md`, paste them in, and the section returns on its own. Never re-add a `rating` without a real review behind it.
 - **Lead form:** two steps: project + ZIP, then contact + details. Offer Lean-To / Patio and Other / Custom; homepage shortcuts preselect the build. Lean-To maps to the existing `other` lead category with its label preserved in notes. One component with a `chrome` prop — `chrome={false}` renders the card alone for `/quote` and the host page must supply the dark ground it is styled against. `best_time_to_call` is part of the field set on every instance. Implemented; approved for publication 2026-09-07.
@@ -235,22 +237,4 @@ Do not copy anything from this file into `AGENTS.md`. That duplication is what p
 Known gaps between what is locked above and what is actually shipped. `scripts/check-vault.mjs`
 reports these on every run. Delete an entry the moment it is closed.
 
-- **The bilingual comparison row on the live site is factually wrong** (found 2026-09-06).
-  `LOCAL_ROUNDUP_COMPARISON_ROWS` in `src/lib/competitors.ts` marks "Hablamos Español" as a Triple J-only `yes`.
-  Polo's Carports & Metal Buildings serves Temple/Belton/Killeen with a full Spanish site. This is a public
-  claim about named competitors. **Highest-priority correction in this list.**
-
-- **The fourteen thin location pages** (found 2026-09-07). Six cities carry landmarks, callouts and
-  `topServices`; `salado`, `lampasas`, `holland`, `taylor`, `troy` and `nolanville` carry 28–36 lines of data
-  and none of the three, and every city page still shares the same 6-photo gallery strip. The eight county
-  pages in the same tier were 301'd away on 2026-09-07; **these six were kept and still need filling.**
-  Needs real local knowledge from Julian — landmarks and neighborhoods must not be invented.
-
-- **`Temple Steel Buildings` in `src/lib/competitors.ts` cannot be verified** (found 2026-09-06). No website,
-  listing, or trace of the operator or of "Brice Evans" was found. It renders on
-  `/best-metal-carport-builders-temple-tx`, whose credibility rests on every competitor claim being publicly
-  verifiable. **Remove or re-source.**
-
-- **Google Business Profile is not verified** (found 2026-09-06). `SITE.social.google` is `""`. This blocks the
-  local 3-pack — the one search surface national kit dealers cannot occupy without a local address — and blocks
-  the review-count gap from ever closing. Highest-leverage unfinished item in local SEO.
+- **Google Business Profile verification remains unresolved.** Owner reported on 2026-09-26 that Google keeps removing the profile. Cause has not been diagnosed. Profile verification/reinstatement remains owner follow-up; do not mark verified or add a Google review URL until confirmed.

@@ -190,3 +190,8 @@ For **what is true right now**, read `Locked Decisions.md`. This file is the his
 | 2026-09-26 | Fencing launch | Owner approved metal privacy, pipe/ranch, ornamental metal fencing and gates. Add /services/metal-fencing, homepage/nav/footer visibility, and fencing-aware quote intake. Use project-specific pricing and scheduling; no unsupported top-rated or #1 claims. Fencing maps to Other with scope preserved in notes; no paid ad spend set. |
 
 | 2026-09-26 | Homepage crew section | Owner requested removal of “Meet Triple J” from the homepage. Remove its Crew render; About retains the shared component. |
+
+| 2026-09-26 | Backlog items 2 and 5 | Owner requested website claim cleanup and six city-page improvements. Remove unsupported comparisons rather than substitute unverified competitor estimates. Use municipal sources for local context and match gallery projects by recorded city. |
+| 2026-09-26 | Google verification | Owner reports Google keeps removing the profile; verification remains unresolved. Cause not diagnosed; no profile edits authorized or performed in this release. |
+
+| 2026-09-26 | Remove the About page “Our Rig” section, including truck and equipment cards, at owner request. | Owner instruction; equipment assets retained. |

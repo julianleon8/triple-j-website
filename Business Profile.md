@@ -48,3 +48,6 @@
 ### Premium Storm/HOA Upgrade
 - 12-gauge steel + Board & Batten or concealed-fastener standing-seam systems + 40-year painted finish
 - For luxury subdivisions (Heritage Oaks, Bella Charca) with strict HOA guidelines
+## Google Business Profile status — 2026-09-26
+
+Owner reports repeated profile removals and still needs to complete verification. The cause has not been established.

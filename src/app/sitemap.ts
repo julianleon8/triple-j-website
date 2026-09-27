@@ -40,6 +40,9 @@ export const dynamic = "force-dynamic";
 // gallery rows below keep their true per-row timestamps from Supabase.
 const CONTENT_REVISED = new Date("2026-09-07T00:00:00.000Z");
 
+const COPY_REVISED = new Date("2026-09-26T00:00:00.000Z");
+const REVISED_CITIES = new Set(["salado", "lampasas", "holland", "taylor", "troy", "nolanville", "georgetown", "belton", "killeen"]);
+
 type GalleryItemRow = {
   id: string;
   updated_at: string | null;
@@ -69,7 +72,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   for (const slug of SERVICE_SLUGS) {
     entries.push({
       url: `${base}/services/${slug}`,
-      lastModified: slug === "metal-fencing" ? new Date("2026-09-26T00:00:00.000Z") : CONTENT_REVISED,
+      lastModified: COPY_REVISED,
       changeFrequency: "monthly",
       priority: 0.85,
     });
@@ -78,7 +81,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   for (const slug of Object.keys(LOCATIONS)) {
     entries.push({
       url: `${base}/locations/${slug}`,
-      lastModified: CONTENT_REVISED,
+      lastModified: REVISED_CITIES.has(slug) ? COPY_REVISED : CONTENT_REVISED,
       changeFrequency: "monthly",
       priority: 0.8,
     });
@@ -87,7 +90,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   for (const slug of ALTERNATIVES_SLUGS) {
     entries.push({
       url: `${base}/alternatives/${slug}`,
-      lastModified: CONTENT_REVISED,
+      lastModified: COPY_REVISED,
       changeFrequency: "monthly",
       priority: 0.7,
     });

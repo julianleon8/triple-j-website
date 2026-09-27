@@ -70,3 +70,7 @@ Each completed project should include:
 ## Fencing launch — 2026-09-26
 
 Positioning: “Metal fencing and gates built around your property by a Temple-based metal crew.” Fencing estimates are project-specific; do not inherit building price anchors, same-week installation promises, material gauges or warranties. Use actual fencing project proof, and never describe company-wide project totals as completed fences. Advertising drafts and timing live in `marketing/fencing-launch.md`.
+
+## Claims and local pages — 2026-09-26
+
+Current published comparisons avoid blanket claims about competitor lead times, installation exclusions, Spanish availability, and concrete exclusivity. Describe Triple J capabilities and ask customers to compare current written scopes. Historical copy above is superseded where inconsistent. Local pages use sourced municipal context, do not invent local job history, and show projects only when the gallery city matches.

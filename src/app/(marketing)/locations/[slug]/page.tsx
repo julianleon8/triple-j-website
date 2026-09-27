@@ -82,12 +82,12 @@ export default async function LocationPage(
   const loc = LOCATIONS[slug];
   if (!loc) notFound();
 
-  // Pull a small batch of recent gallery photos (generic, not city-filtered
-  // per design decision 2026-04-23 — same set on every city page).
+  // Only show active projects recorded in this city, including legacy city labels.
   const { data: galleryRows } = await getAdminClient()
     .from("gallery_items")
     .select("id, title, city, gallery_photos ( image_url, alt_text, is_cover )")
     .eq("is_active", true)
+    .in("city", [loc.name, `${loc.name} Texas`, `${loc.name}, Texas`, `${loc.name} TX`, `${loc.name}, TX`])
     .order("is_featured", { ascending: false })
     .order("sort_order", { ascending: true })
     .limit(6);
@@ -255,7 +255,7 @@ export default async function LocationPage(
 
             <div className="mt-9 flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-6">
               <ButtonLink
-                href="/#quote"
+                href={`/quote?city=${slug}`}
                 variant="primary"
                 size="lg"
                 icon={<ArrowRightIcon className="h-5 w-5" />}
@@ -362,6 +362,8 @@ export default async function LocationPage(
         </Container>
       </section>
 
+      {loc.localSource && <Container size="wide" className="pb-8"><a href={loc.localSource.url} className="text-sm underline text-brand-700">{loc.localSource.label}</a></Container>}
+
       {/* ─── Where We Build (neighborhoods chips) ─────────────────────── */}
       {loc.neighborhoods && loc.neighborhoods.length > 0 ? (
         <section
@@ -408,7 +410,7 @@ export default async function LocationPage(
                 id="services-heading"
                 className="mt-3 font-display font-extrabold uppercase tracking-tight leading-none text-[color:var(--color-ink-900)] text-3xl sm:text-4xl md:text-5xl"
               >
-                Three things we&rsquo;re known for here.
+                Explore options for your property.
               </h2>
             </Reveal>
             <Link
@@ -428,13 +430,13 @@ export default async function LocationPage(
                   className="group relative flex flex-col h-full overflow-hidden rounded-2xl bg-[color:var(--color-ink-900)] shadow-md hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 ease-out"
                 >
                   <div className="relative aspect-[4/3] overflow-hidden">
-                    <Image
+                    {svc.slug !== "metal-fencing" ? <Image
                       src={SERVICE_PHOTOS[svc.slug] ?? FALLBACK_HERO}
                       alt={svc.title}
                       fill
                       sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                       className="object-cover transition-transform duration-700 ease-out group-hover:scale-110"
-                    />
+                    /> : <div aria-hidden="true" className="absolute inset-0 bg-brand-900 bg-[repeating-linear-gradient(90deg,transparent_0px,transparent_35px,#64748b_35px,#64748b_42px)]" />}
                     <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/40 to-black/20" />
                     <div className="absolute inset-x-0 bottom-0 p-5">
                       <h3 className="font-display font-extrabold uppercase tracking-tight leading-none text-white text-2xl md:text-3xl">
@@ -560,7 +562,7 @@ export default async function LocationPage(
         </Container>
       </section>
 
-      {/* ─── Recent work gallery (generic, not city-filtered) ─────────── */}
+      {/* ─── Verified city project matches ─────────── */}
       {galleryPhotos.length > 0 ? (
         <section
           aria-labelledby="gallery-heading"
@@ -576,7 +578,7 @@ export default async function LocationPage(
                   id="gallery-heading"
                   className="mt-3 font-display font-extrabold uppercase tracking-tight leading-none text-[color:var(--color-ink-900)] text-3xl sm:text-4xl"
                 >
-                  Real Central Texas jobs.
+                  Projects in {loc.name}.
                 </h2>
               </div>
               <Link

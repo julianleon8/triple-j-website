@@ -33,7 +33,7 @@ const SERVICE_CARDS = [
     eyebrow: "Garages",
     headline: "Enclosed shop space — your spec, our crew.",
     blurb:
-      "30×30 welded shell starts here. Walls, roll-up doors, walk-throughs, and insulation are quoted on top per your spec.",
+      "30×30 bolted steel-and-install base starts here. Walls, roll-up doors, walk-throughs, and insulation are quoted on top per your spec.",
     image: "/images/metal-garage-green.jpg",
     priceFrom: "5,500",
   },
@@ -58,7 +58,7 @@ const SERVICE_CARDS = [
     // RV Cover 20×35 (Double-Wide) — Copperas Cove TX bolted build.
     image:
       "https://idrbgxlvvnqduvbqtaei.supabase.co/storage/v1/object/public/gallery/1777251893180.jpg",
-    priceFrom: "3,800",
+    priceFrom: "6,500",
   },
 ] as const;
 

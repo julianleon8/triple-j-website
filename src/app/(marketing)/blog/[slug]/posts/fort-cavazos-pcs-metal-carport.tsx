@@ -55,7 +55,7 @@ export default function FortCavazosPost() {
       <p>
         For families who need to park their vehicles covered immediately, we can often prioritize your
         project in the schedule if you mention your PCS situation on the quote call. We&#8217;re a local
-        crew &#8212; we don&#8217;t have a 4&#8211;16 week national backorder queue.
+        crew &#8212; we confirm scheduling for your project directly.
       </p>
 
       <h2>How Triple J Compares to Competitors on Military Timelines</h2>
@@ -65,28 +65,17 @@ export default function FortCavazosPost() {
         headers={['', 'Triple J Metal (Temple TX)', 'National Kit Dealers', 'Regional Bolted Dealers']}
         highlightCol={1}
         rows={[
-          ['Typical lead time',    '1–3 weeks (permit dependent)', '4–16 weeks',     '4–12 weeks'],
-          ['Concrete included',    'Yes — same contract',          'No — DIY',       'No — separate contractor'],
-          ['Permit handled by',    'Triple J',                     'Customer',       'Customer'],
-          ['Site prep',            'Our skid steer crew',          'Not included',   'Not included'],
+          ['Typical lead time',    '1–3 weeks (permit dependent)', 'Confirm current schedule',     'Confirm current schedule'],
+          ['Concrete included',    'Separately priced; same contract available', 'Confirm scope', 'Confirm scope'],
+          ['Permit handled by',    'Confirm filing responsibility', 'Confirm with provider', 'Confirm with provider'],
+          ['Site prep',            'Our skid steer crew',          'Confirm scope', 'Confirm scope'],
           ['Military discount',    'Yes — ask on quote call',      'None noted',     'Varies'],
-          ['Local crew',           'Temple TX — 10 min from base', 'National brand', 'Troy / Waco TX'],
+          ['Local crew',           'Temple-based crew', 'National brand', 'Troy / Waco TX'],
         ]}
       />
 
-      <h2>BAH and Financing: What Most Families Use</h2>
-      <p>
-        Bell County BAH rates for Fort Cavazos are set annually by DoD. At current rates, a 20&#215;20 welded
-        carport from Triple J &#8212; which runs between <strong>$4,500 and $7,500</strong> installed &#8212; is accessible to
-        most E-5 and above on monthly installment financing. We work with financing partners who offer
-        6&#8211;36 month terms.
-      </p>
-      <p>
-        For buyers using a VA loan for their home purchase, be aware that accessory structures like
-        carports are generally not included in VA mortgage financing. These are typically paid out of
-        pocket, financed separately, or purchased through a personal loan. Ask your housing office
-        about the BAH allowance and any stipends for property improvements in your quarters allowance.
-      </p>
+      <h2>Budgeting for Your Carport</h2>
+      <p>A 20×20 flat-roof carport at 10 ft height starts at $3,000 bolted or $3,300 welded for steel and installation, before tax. Concrete, walls, and other add-ons are priced separately. Request a written quote for your actual dimensions and scope before planning the purchase.</p>
 
       <h2>Off-Post Housing Considerations</h2>
       <p>

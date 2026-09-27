@@ -93,70 +93,58 @@ export const SERVICES: Record<string, ServiceData> = {
     keywordGap: 2,
     metaTitle: 'Custom Metal Carports Temple TX | Welded & Bolted',
     metaDescription:
-      'Welded or bolted metal carports in Temple, Belton, Killeen & Central Texas. Same-week installs, concrete pad included.',
+      "Welded or bolted metal carports in Temple, Belton, Killeen & Central Texas. Same-week installs, concrete available.",
     heroHeadline: 'Custom Metal Carports — Welded or Bolted, Same-Week Installs',
     heroCopy:
-      'Most carport companies ship you a kit and leave. Triple J Metal shows up with a crew, welds or bolts your structure on-site, and cleans up before we leave. Welded red iron steel is a permanent real estate improvement — it doesn\'t rattle loose in Texas storms. Bolted red iron is the affordable option when a kit-level investment fits your budget. Either way, we build it right the first time.',
-    mainBenefit: 'Permanent welded steel that becomes part of your property — not a kit that shakes apart in a Texas storm.',
+      "Triple J Metal builds and installs welded or bolted red iron carports in Temple, Belton, Killeen, and surrounding Central Texas communities. Choose the dimensions, roof style, and coverage that fit your property. Our crew can include site prep and a separately priced concrete pad in the same contract.",
+    mainBenefit: "Welded or bolted red iron, sized for your vehicles and installed by our local crew.",
     features: [
-      {
-        title: 'Welded Red Iron — Permanent',
-        description:
-          'Our custom-welded carports use 14-gauge (standard) or 12-gauge (storm upgrade) red iron steel, welded on-site with a Miller Bobcat welder. No bolt-on connections to loosen over time.',
-      },
-      {
-        title: 'Bolted Red Iron — Affordable',
-        description:
-          'Prefer a budget-friendly option? We also install bolted red iron carport kits — but unlike Alan\'s or kit dealers, we handle every step: delivery, site prep, and installation.',
-      },
-      {
-        title: 'Same-Week Scheduling',
-        description:
-          'Most installs are completed in one working day — larger structures in two. East Texas Carports quotes 4–16 weeks. We schedule within days, not months.',
-      },
-      {
-        title: 'Any Size or Configuration',
-        description:
-          'Single-car, double-car, or commercial-width. Open sides, partial sides, or fully enclosed. We build to your dimensions, not to a standard catalog.',
-      },
-      {
-        title: 'Concrete Pad Available',
-        description:
-          'Need a concrete slab poured first? We handle site prep and concrete in the same contract. No need to hire a separate concrete crew.',
-      },
-      {
-        title: 'Texas-Sourced Red Iron Steel',
-        description:
-          'Panels sourced from leading regional Texas suppliers — PBR/PBU R-Panels on Galvalume® substrate with painted finishes rated for Central Texas weather. Multi-source so a single supplier shortage never delays your build.',
-      },
-    ],
+  {
+    "title": "Welded Red Iron — Permanent",
+    "description": "On-site welded red iron with material and connection details confirmed for your project. Standard framing is 14-gauge; a 12-gauge upgrade is available where appropriate."
+  },
+  {
+    "title": "Bolted Red Iron — Affordable",
+    "description": "We offer bolted red iron structures with delivery and installation by our crew. Site preparation and concrete can be included in the quoted scope."
+  },
+  {
+    "title": "Same-Week Scheduling",
+    "description": "Ask about same-week availability. Installation dates are confirmed after scope, materials, site readiness, and any required approvals are reviewed."
+  },
+  {
+    "title": "Any Size or Configuration",
+    "description": "Single-car, double-car, or commercial-width. Open sides, partial sides, or fully enclosed. We build to your dimensions, not to a standard catalog."
+  },
+  {
+    "title": "Concrete Pad Available",
+    "description": "Need a concrete slab poured first? We handle site prep and concrete in the same contract. No need to hire a separate concrete crew."
+  },
+  {
+    "title": "Texas-Sourced Red Iron Steel",
+    "description": "Panels sourced from leading regional Texas suppliers — PBR/PBU R-Panels on Galvalume® substrate with painted finish options for your project. Material availability is confirmed during scheduling."
+  }
+],
     technicalAuthority:
-      'All Triple J carports are engineered for Central Texas conditions: 90 mph wind rating, concrete footings engineered for Bell County\'s expansive clay soils, and painted-Galvalume® panels backed by a 40-year paint warranty that resist UV degradation and hail impact. We\'re familiar with Bell County and Coryell County setback requirements and can advise on permit needs before we break ground.',
-    competitorRows: [
-      { them: 'Ships a kit — you arrange installation', us: 'We deliver, weld, and install everything' },
-      { them: '4–16 week lead times (East Texas Carports)', us: 'Most builds scheduled within the week' },
-      { them: 'Extra fees for customizations', us: 'Custom dimensions included in your quote' },
-      { them: 'You handle your own concrete', us: 'Concrete pad available in the same contract' },
-      { them: 'Warranties voided if land isn\'t perfectly level', us: 'We grade and prep the site ourselves' },
-    ],
+      "We review the site, intended use, dimensions, and foundation needs before finalizing your carports project. Steel gauge, anchoring, engineering requirements, finishes, and warranty terms are confirmed for the selected design. Concrete is available as a separately priced part of the same contract. We can discuss permit requirements; filing and approval responsibilities must be confirmed before work starts.",
+    competitorRows: [],
     faqs: [
-      {
-        q: 'What\'s the difference between welded and bolted carports?',
-        a: 'Welded carports are custom-fabricated on-site using a MIG welder — the steel is fused together permanently. Bolted carports use pre-drilled red iron sections connected with bolts. Welded is more durable and a true real estate improvement. Bolted is slightly less expensive and appropriate for lower-wind environments or temporary installations.',
-      },
-      {
-        q: 'Do you handle permits?',
-        a: 'We can advise on Bell County and surrounding county permit requirements. Many residential carports under a certain square footage don\'t require permits, but we\'ll walk you through what applies to your property before we start.',
-      },
-      {
-        q: 'How much does a custom carport cost?',
-        a: `A Triple J welded 20×20 carport typically runs $4,500–$7,500 depending on gauge, panel style, and whether concrete is included. Bolted configurations start lower. We quote every job individually — call ${SITE.phone} or fill out our quote form.`,
-      },
-      {
-        q: 'Do you install on existing concrete?',
-        a: 'Yes. If you already have a slab, we anchor directly to it. We can also pour a new pad as part of the same job if needed.',
-      },
-    ],
+  {
+    "q": "What's the difference between welded and bolted carports?",
+    "a": "Welded and bolted describe how structural connections are made. We offer both. The right choice depends on the design, intended use, site conditions, and budget. Wind performance depends on the complete engineered system, including anchoring, rather than the connection method alone."
+  },
+  {
+    "q": "Do you handle permits?",
+    "a": "We can discuss permit requirements for your location and project. Requirements vary; confirm the applicable approvals and who is responsible for filing before work begins."
+  },
+  {
+    "q": "How much does a custom carport cost?",
+    "a": "The 20×20 flat-roof carport at 10 ft height starts at $3,000 bolted or $3,300 welded for steel and installation, before tax. Concrete, walls, and other add-ons are priced separately. Final pricing depends on the selected dimensions and scope."
+  },
+  {
+    "q": "Do you install on existing concrete?",
+    "a": "Yes. If you already have a slab, we anchor directly to it. We can also pour a new pad as part of the same job if needed."
+  }
+],
     militaryAngle: false,
     relatedSlugs: ['turnkey-carports-with-concrete', 'rv-covers', 'metal-garages'],
     relatedPosts: ['welded-vs-bolted-metal-buildings-central-texas'],
@@ -170,11 +158,11 @@ export const SERVICES: Record<string, ServiceData> = {
     keywordGap: 1,
     metaTitle: 'Carports With Concrete Pads Central Texas | One Contract',
     metaDescription:
-      'The only Central Texas carport builder that includes site prep and concrete pouring in a single contract. No coordinating multiple contractors.',
+      "Carports with site prep, concrete and steel installation in one contract. Temple-based Triple J Metal serves Central Texas. Request an itemized quote.",
     heroHeadline: 'Carports with Concrete — One Contract, Start to Finish',
     heroCopy:
-      'Every other carport company in Central Texas has the same fine print: "Customer is responsible for site preparation and concrete." That means you\'re calling a concrete contractor, waiting on permits, getting a separate quote, coordinating schedules — before the carport people will even show up. Triple J Metal is the only local installer that handles site grading, concrete pad pouring, and structure installation under one contract. One call. One crew. One invoice.',
-    mainBenefit: 'The only Central Texas carport company that includes site prep and concrete in the same contract — no separate concrete crew.',
+      "Plan the pad and the carport together. Triple J Metal can handle site preparation, concrete, and a welded or bolted steel structure under one contract. We itemize the scope so you can see what is included and coordinate the work with one company.",
+    mainBenefit: "Site prep, concrete and your steel structure — planned together in one contract.",
     features: [
       {
         title: 'Site Grading & Prep',
@@ -208,14 +196,8 @@ export const SERVICES: Record<string, ServiceData> = {
       },
     ],
     technicalAuthority:
-      'Central Texas\'s expansive clay soils — especially in Bell and Coryell counties — require proper base preparation before any concrete is poured. We pour 3,000 PSI concrete as standard — 4,000 PSI on request — with appropriate reinforcement, grade the site to ensure positive drainage away from the structure, and allow full cure time before anchoring the frame. This is why national companies exclude concrete: the liability of getting it wrong is high. Our crew does it daily.',
-    competitorRows: [
-      { them: 'Site prep: "not included, customer\'s responsibility"', us: 'Site grading and leveling included' },
-      { them: 'Concrete: "you\'ll need to hire a separate contractor"', us: 'Concrete pad poured by us, same contract' },
-      { them: 'Warranties voided if slab not perfectly level (Safeguard)', us: 'We level the site ourselves — no voided warranties' },
-      { them: 'Multiple contractors = multiple invoices and scheduling gaps', us: 'One call, one crew, one invoice' },
-      { them: 'Customer coordinates 2–3 trades to get a carport built', us: 'We handle everything start to finish' },
-    ],
+      "We review the site, intended use, dimensions, and foundation needs before finalizing your turnkey + concrete project. Steel gauge, anchoring, engineering requirements, finishes, and warranty terms are confirmed for the selected design. Concrete is available as a separately priced part of the same contract. We can discuss permit requirements; filing and approval responsibilities must be confirmed before work starts.",
+    competitorRows: [],
     faqs: [
       {
         q: 'Why don\'t other carport companies include concrete?',
@@ -288,27 +270,22 @@ export const SERVICES: Record<string, ServiceData> = {
       },
     ],
     technicalAuthority:
-      'All Triple J metal garages are built with PBR/PBU R-Panels — the same commercial-grade paneling used on agricultural and industrial structures throughout Texas. Roofing is Galvalume® steel with a painted finish backed by a 40-year warranty, rated for Central Texas UV exposure and hail impact. We pull Bell County permits where required and ensure structures meet local setback requirements.',
-    competitorRows: [
-      { them: 'Standard catalog sizes only', us: 'Any dimension — we build to your spec' },
-      { them: 'Kit delivery, self-install', us: 'Full installation by our crew' },
-      { them: 'No concrete — customer\'s responsibility', us: 'Concrete pad available, same contract' },
-      { them: '6–16 week lead times', us: 'Most installs scheduled within the week' },
-    ],
+      "We review the site, intended use, dimensions, and foundation needs before finalizing your garages project. Steel gauge, anchoring, engineering requirements, finishes, and warranty terms are confirmed for the selected design. Concrete is available as a separately priced part of the same contract. We can discuss permit requirements; filing and approval responsibilities must be confirmed before work starts.",
+    competitorRows: [],
     faqs: [
-      {
-        q: 'How much does a metal garage cost?',
-        a: `A basic 20×20 single-bay enclosed garage starts around $6,000–$9,000 depending on gauge, panel style, and door configuration. Multi-bay and larger structures are quoted individually. Call ${SITE.phone} or submit a quote request.`,
-      },
-      {
-        q: 'Can you add windows and side doors?',
-        a: 'Yes. We can frame openings for windows, man-doors, and any door configuration during construction.',
-      },
-      {
-        q: 'Can the garage be insulated?',
-        a: 'We can frame the structure for insulation. We\'ll connect you with insulation contractors, or you can handle that phase yourself after we\'re done.',
-      },
-    ],
+  {
+    "q": "How much does a metal garage cost?",
+    "a": "Garage pricing depends on the frame, walls, doors, dimensions, and foundation. Our 30×30 flat-roof steel-and-install base starts at $5,500 before tax; enclosure, doors, concrete, and other add-ons are priced separately. Ask for a complete project quote."
+  },
+  {
+    "q": "Can you add windows and side doors?",
+    "a": "Yes. We can frame openings for windows, man-doors, and any door configuration during construction."
+  },
+  {
+    "q": "Can the garage be insulated?",
+    "a": "We can frame the structure for insulation. We'll connect you with insulation contractors, or you can handle that phase yourself after we're done."
+  }
+],
     militaryAngle: false,
     relatedSlugs: ['carports', 'turnkey-carports-with-concrete', 'barns'],
     relatedPosts: ['welded-vs-bolted-metal-buildings-central-texas'],
@@ -325,7 +302,7 @@ export const SERVICES: Record<string, ServiceData> = {
       'Metal barns and ranch structures across Bell and Coryell counties. Welded or bolted red iron, concrete available, same-week installs.',
     heroHeadline: 'Metal Barns Built for Central Texas Ranch Life',
     heroCopy:
-      'A Central Texas barn has to handle 90 mph gusts, hail the size of golf balls, and baking summer heat — then do it all again next season. Triple J Metal builds welded red iron barns engineered for this climate: thick steel, proper anchoring, and Texas-sourced Galvalume® roofing rated for the punishment Texas delivers. We\'ve built structures across Bell and Coryell counties for livestock, equipment storage, hay, and mixed use. Our John Deere skid-steer reaches 40 feet — we can tackle larger structures that smaller crews can\'t.',
+      "Plan a barn around how you use your land: equipment storage, hay, livestock shelter, or a combination of uses. Triple J Metal offers welded or bolted steel structures with layout, access, anchoring, and foundation details confirmed for the project.",
     mainBenefit: 'Welded red iron barns engineered for Central Texas weather — livestock, equipment, hay, or mixed use.',
     features: [
       {
@@ -360,13 +337,8 @@ export const SERVICES: Record<string, ServiceData> = {
       },
     ],
     technicalAuthority:
-      'Bell County ranch properties often have caliche and clay soil that requires proper grading and drainage planning before a barn slab is poured. We\'ve built across the Temple–Belton–Killeen–Copperas Cove corridor and know the soil conditions, flood zone considerations, and county permit requirements for agricultural structures. We pour 3,000 PSI concrete as standard for slabs, 4,000 PSI on request, and ensure proper anchor bolt placement for the local wind load requirements.',
-    competitorRows: [
-      { them: 'Bolted kit barns — connections loosen over time', us: 'Welded red iron — permanently fused steel' },
-      { them: 'National dealer, no local crew', us: 'Temple-based crew, same-week scheduling' },
-      { them: 'No concrete — customer\'s responsibility', us: 'Concrete slab or gravel floor in the same contract' },
-      { them: 'Can\'t reach taller structures', us: 'Skid-steer reaches 40 ft for taller barns' },
-    ],
+      "We review the site, intended use, dimensions, and foundation needs before finalizing your barns project. Steel gauge, anchoring, engineering requirements, finishes, and warranty terms are confirmed for the selected design. Concrete is available as a separately priced part of the same contract. We can discuss permit requirements; filing and approval responsibilities must be confirmed before work starts.",
+    competitorRows: [],
     faqs: [
       {
         q: 'Do you need permits for a farm barn in Bell County?',
@@ -394,51 +366,40 @@ export const SERVICES: Record<string, ServiceData> = {
     keywordGap: 3,
     metaTitle: 'RV Covers Central Texas | Same-Week Installs | Fort Cavazos Military Discount',
     metaDescription:
-      'Custom RV and boat covers across Central Texas — same-week scheduling, military discount, concrete pad included.',
+      "Custom RV and boat covers across Central Texas — same-week scheduling, military discount, concrete available.",
     heroHeadline: 'RV & Boat Covers — Same-Week Installs, Texas Hail Won\'t Wait',
     heroCopy:
-      'Texas hail season doesn\'t send a calendar invite. A single storm can total an unprotected RV or boat in minutes. Triple J Metal builds tall-clearance RV and boat covers faster than any competitor in Central Texas — most jobs are scheduled and on-site within days of your approval. East Texas Carports quotes 4–16 weeks. If you just bought an RV, just PCS\'d to Fort Cavazos, or just had a close call with hail — call us today.',
+      "Texas hail season doesn't send a calendar invite. A single storm can total an unprotected RV or boat in minutes. Triple J Metal builds tall-clearance RV and boat covers for Central Texas properties — most jobs are scheduled and on-site within days of your approval. If you just bought an RV, just PCS'd to Fort Cavazos, or just had a close call with hail — call us today.",
     mainBenefit: 'Same-week installs beat every competitor in Central Texas. Military discount available for Fort Cavazos families.',
     features: [
-      {
-        title: 'Tall Clearance for Class A & Class C RVs',
-        description:
-          'Standard clearance heights from 12–16 feet. We build to your RV or boat\'s exact height requirements — no squeezing under a low kit structure.',
-      },
-      {
-        title: 'Same-Week Install — No Waiting',
-        description:
-          'We schedule within days of your approval. East Texas Carports, Viking Steel, and similar dealers quote 4–16 weeks. If hail season is approaching, speed matters.',
-      },
-      {
-        title: 'Fort Cavazos Military Discount',
-        description:
-          'Active duty, veterans, and first responders receive a discount on all RV and boat cover installs. PCS\'ing to Fort Cavazos? We\'ll protect your vehicle before your household goods arrive.',
-      },
-      {
-        title: 'Welded or Bolted — Your Choice',
-        description:
-          'Custom welded red iron for a permanent installation, or bolted for a more budget-friendly option. Both built and installed by our crew.',
-      },
-      {
-        title: 'Concrete Pad Included if Needed',
-        description:
-          'Pull your RV onto a fresh concrete pad — no gravel, no ruts. We pour the slab and install the cover in the same contract.',
-      },
-      {
-        title: 'Side Curtains & Enclosures',
-        description:
-          'Need extra weather protection? We can add metal side panels or roll-up doors for a fully or partially enclosed RV storage bay.',
-      },
-    ],
+  {
+    "title": "Tall Clearance for Class A & Class C RVs",
+    "description": "Standard clearance heights from 12–16 feet. We build to your RV or boat's exact height requirements — no squeezing under a low kit structure."
+  },
+  {
+    "title": "Same-Week Install — No Waiting",
+    "description": "Ask about same-week availability. Installation dates are confirmed after scope, materials, site readiness, and any required approvals are reviewed."
+  },
+  {
+    "title": "Fort Cavazos Military Discount",
+    "description": "Active duty, veterans, and first responders receive a discount on all RV and boat cover installs. PCS'ing to Fort Cavazos? We'll protect your vehicle before your household goods arrive."
+  },
+  {
+    "title": "Welded or Bolted — Your Choice",
+    "description": "Custom welded red iron for a permanent installation, or bolted for a more budget-friendly option. Both built and installed by our crew."
+  },
+  {
+    "title": "Concrete Pad Included if Needed",
+    "description": "Pull your RV onto a fresh concrete pad — no gravel, no ruts. We pour the slab and install the cover in the same contract."
+  },
+  {
+    "title": "Side Curtains & Enclosures",
+    "description": "Need extra weather protection? We can add metal side panels or roll-up doors for a fully or partially enclosed RV storage bay."
+  }
+],
     technicalAuthority:
-      'Central Texas averages some of the highest hail frequency in the nation — Bell County alone sees multiple significant hail events per year. A standard Class A RV is 13–13.5 feet tall; we build clearance frames to 14–16 feet to ensure full roof clearance with room to maneuver. All structures are anchored into engineered concrete or direct-buried posts engineered for 90 mph wind loads.',
-    competitorRows: [
-      { them: '4–16 week lead times (East Texas Carports)', us: 'On-site within days — same-week scheduling' },
-      { them: 'Standard kit heights may not clear your RV', us: 'Built to your RV\'s exact height requirements' },
-      { them: 'No military discount', us: 'Fort Cavazos military and first responder discount' },
-      { them: 'No concrete — you handle site prep', us: 'Concrete pad poured in the same contract' },
-    ],
+      "We review the site, intended use, dimensions, and foundation needs before finalizing your rv & boat covers project. Steel gauge, anchoring, engineering requirements, finishes, and warranty terms are confirmed for the selected design. Concrete is available as a separately priced part of the same contract. We can discuss permit requirements; filing and approval responsibilities must be confirmed before work starts.",
+    competitorRows: [],
     faqs: [
       {
         q: 'What clearance height do I need for my RV?',
@@ -472,8 +433,8 @@ export const SERVICES: Record<string, ServiceData> = {
       'HOA-compliant metal carports, garages, and porches with architectural panel finishes for Heritage Oaks, Bella Charca, and Central Texas luxury subdivisions.',
     heroHeadline: 'HOA-Compliant Metal Structures for Central Texas Luxury Subdivisions',
     heroCopy:
-      'Heritage Oaks and Bella Charca homeowners know the challenge: your HOA has strict architectural guidelines, your builder only built the main house, and the secondary structures — the RV cover, the porch extension, the detached garage — are yours to figure out. National carport brands sell utility-grade sheds that HOAs reject on first review. Triple J Metal builds premium architectural structures using concealed-fastener standing-seam and Board & Batten panel systems that meet the strictest HOA guidelines in Central Texas — and we include concrete and site prep so you never have to manage a second contractor.',
-    mainBenefit: 'Architectural-grade panel systems (concealed-fastener standing-seam, Board & Batten) that pass HOA review in Heritage Oaks, Bella Charca, and similar Central Texas luxury developments.',
+      "Planning a carport, detached garage, or cover for a property with architectural guidelines? Share those requirements before choosing a design. We offer finish, profile, and color options to help you prepare a proposal for review, including Board & Batten and concealed-fastener systems. Approval rests with the reviewing authority; concrete and site prep can be quoted in the same contract.",
+    mainBenefit: 'Architectural panel and finish options to discuss against your property’s specific HOA guidelines.',
     features: [
       {
         title: 'Concealed-Fastener Standing-Seam Roofing',
@@ -507,14 +468,8 @@ export const SERVICES: Record<string, ServiceData> = {
       },
     ],
     technicalAuthority:
-      'Heritage Oaks and Bella Charca are developed by Saratoga Homes and Flintrock Building Texas in the Killeen–Harker Heights corridor — home prices from $500,000 to $900,000. HOA architectural guidelines typically require color continuity with the primary residence, no exposed fasteners on roofing, and framing gauges that meet residential engineering standards. Our concealed-fastener standing-seam and Board & Batten systems are designed for exactly this market. We\'ve worked in Bell County luxury neighborhoods and understand the approval process.',
-    competitorRows: [
-      { them: 'Utility-grade panels — HOA rejection guaranteed', us: 'Standing seam + Board & Batten — HOA-ready' },
-      { them: 'Standard color palette of 6–8 options', us: '39-color palette with color-match service' },
-      { them: '14-gauge only — may not pass HOA engineering review', us: '12-gauge upgrade available for premium builds' },
-      { them: 'No concrete — manage your own site prep', us: 'Concrete and site prep in the same contract' },
-      { them: 'Weeks of neighborhood disruption', us: 'Same-week build — minimal neighborhood impact' },
-    ],
+      "We review the site, intended use, dimensions, and foundation needs before finalizing your hoa structures project. Steel gauge, anchoring, engineering requirements, finishes, and warranty terms are confirmed for the selected design. Concrete is available as a separately priced part of the same contract. We can discuss permit requirements; filing and approval responsibilities must be confirmed before work starts.",
+    competitorRows: [],
     faqs: [
       {
         q: 'Will my HOA approve a metal structure?',
