@@ -1,4 +1,5 @@
 import { ImageResponse } from 'next/og'
+import { getOgAssets, Wordmark } from '@/lib/og-card'
 import { SITE } from '@/lib/site'
 
 /**
@@ -7,7 +8,8 @@ import { SITE } from '@/lib/site'
  * Next.js's file-based OG image API: any `opengraph-image.tsx` (or
  * `twitter-image.tsx`) inside a route segment becomes that page's
  * og:image / twitter:image. Generated as a 1200×630 PNG at request time
- * + cached. No external asset needed; brand-consistent.
+ * + cached. Fonts and the lion wordmark come from src/lib/og-card.tsx,
+ * shared with every other card.
  *
  * Falls back to /og-default.jpg sitewide if this route fails to render.
  */
@@ -24,6 +26,8 @@ export const size = { width: 1200, height: 630 }
 export const contentType = 'image/png'
 
 export default async function MilitaryOpenGraphImage() {
+  const { fonts, logo } = await getOgAssets()
+
   return new ImageResponse(
     (
       <div
@@ -33,28 +37,16 @@ export default async function MilitaryOpenGraphImage() {
           display: 'flex',
           flexDirection: 'column',
           justifyContent: 'space-between',
-          padding: '64px 80px',
+          padding: '56px 80px 60px',
           backgroundImage:
             'linear-gradient(135deg, #000000 0%, #0f172a 50%, #1e3a8a 100%)',
           color: 'white',
-          fontFamily: 'sans-serif',
+          fontFamily: 'Inter',
         }}
       >
         {/* Top row: brand + Fort Cavazos pill */}
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <div
-            style={{
-              display: 'flex',
-              fontSize: 36,
-              fontWeight: 800,
-              letterSpacing: '-0.02em',
-              textTransform: 'uppercase',
-              gap: 10,
-            }}
-          >
-            <span>Triple J</span>
-            <span style={{ color: '#4d8dff' }}>Metal</span>
-          </div>
+          <Wordmark logo={logo} size={40} />
           <div
             style={{
               display: 'flex',
@@ -81,21 +73,22 @@ export default async function MilitaryOpenGraphImage() {
             style={{
               display: 'flex',
               flexDirection: 'column',
-              fontSize: 86,
-              fontWeight: 900,
-              lineHeight: 1.0,
-              letterSpacing: '-0.03em',
+              fontFamily: 'Barlow Condensed',
+              fontSize: 104,
+              fontWeight: 800,
+              lineHeight: 0.95,
+              letterSpacing: '-0.01em',
               textTransform: 'uppercase',
               maxWidth: 1000,
             }}
           >
             <span>Same-Week Carports</span>
-            <span style={{ display: 'flex', gap: 18 }}>
+            <span style={{ display: 'flex', gap: 22 }}>
               <span>for</span>
               <span style={{ color: '#4d8dff' }}>PCS Families.</span>
             </span>
           </div>
-          <div style={{ fontSize: 26, color: 'rgba(255,255,255,0.75)', maxWidth: 950 }}>
+          <div style={{ fontSize: 26, fontWeight: 500, lineHeight: 1.35, color: 'rgba(255,255,255,0.75)', maxWidth: 950 }}>
             Welded or bolted. Concrete pad in the same contract. 7% military
             discount honored. Hablamos español.
           </div>
@@ -109,6 +102,7 @@ export default async function MilitaryOpenGraphImage() {
             alignItems: 'center',
             color: 'rgba(255,255,255,0.55)',
             fontSize: 20,
+            fontWeight: 500,
             borderTop: '1px solid rgba(255,255,255,0.15)',
             paddingTop: 20,
           }}
@@ -118,6 +112,6 @@ export default async function MilitaryOpenGraphImage() {
         </div>
       </div>
     ),
-    size,
+    { ...size, fonts },
   )
 }

@@ -51,8 +51,10 @@ Do not copy anything from this file into `AGENTS.md`. That duplication is what p
   `/locations` lists counties as plain text derived from `LOCATIONS[slug].county`. (2026-09-07)
 - **No `FAQPage` markup** — Google retired the FAQ rich result 2026-05-07. Visible Q&A stays; the JSON-LD
   does not. (2026-09-07)
-- **Every route family renders its own OG card** via `src/lib/og-card.tsx` + `opengraph-image.tsx`.
-  `/og-default.jpg` is the fallback, not the default. (2026-09-07)
+- **Every route family renders its own OG card** via `src/lib/og-card.tsx` + `opengraph-image.tsx`; the
+  homepage renders the photo brand card (`renderBrandCard`). `/og-default.jpg` is the fallback, not the
+  default — a `force-static` route rendering that same brand card as JPEG, never a hand-made file in
+  `public/`. Every card uses the site's own Barlow Condensed + Inter from `src/lib/og-fonts`. (2026-09-28)
 - **No `AggregateRating` or `Review` JSON-LD anywhere** — and none may be added while the GBP is unverified.
   Google treats reviews an entity controls about itself as ineligible regardless. (2026-09-07)
 

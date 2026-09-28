@@ -11,7 +11,21 @@ const withSerwist = withSerwistInit({
   disable: process.env.NODE_ENV === "development",
 });
 
+// Files the OG cards read from disk at render time (src/lib/og-card.tsx).
+// Every card prerenders at build, but the tracer picked these up for only
+// some of the card routes, so name them for all of them — a card rendered on
+// demand without its fonts would 500.
+const OG_CARD_FILES = [
+  "./src/lib/og-fonts/*.woff",
+  "./public/images/logo-lion.png",
+  "./public/images/red-iron-frame-hero.jpg",
+];
+
 const nextConfig: NextConfig = {
+  outputFileTracingIncludes: {
+    "/**/opengraph-image*": OG_CARD_FILES,
+    "/og-default.jpg": OG_CARD_FILES,
+  },
   async redirects() {
     return [
       {
