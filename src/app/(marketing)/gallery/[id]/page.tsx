@@ -34,7 +34,7 @@ export async function generateMetadata(
   const { id } = await params
   const { data: item } = await getAdminClient()
     .from('gallery_items')
-    .select('title, city, type, alt_text')
+    .select('title, city, type, alt_text, gallery_photos ( id, image_url, alt_text, sort_order, is_cover )')
     .eq('id', id)
     .eq('is_active', true)
     .maybeSingle()
@@ -43,11 +43,20 @@ export async function generateMetadata(
   const description =
     item.alt_text ||
     `${item.type} built by Triple J Metal in ${item.city}. Welded or bolted, same-week scheduling, Temple TX crew.`
+  // The project's own cover photo is the share image — nothing represents the
+  // page better. This `openGraph` replaces the layout's wholesale, so without
+  // `images` here the page would share no image at all.
+  const cover = sortPhotos((item.gallery_photos ?? []) as GalleryPhoto[])[0]
   return {
     title,
     description,
     alternates: { canonical: `/gallery/${id}` },
-    openGraph: { title, description, type: 'article' },
+    openGraph: {
+      title,
+      description,
+      type: 'article',
+      ...(cover ? { images: [{ url: cover.image_url, alt: cover.alt_text || title }] } : {}),
+    },
   }
 }
 

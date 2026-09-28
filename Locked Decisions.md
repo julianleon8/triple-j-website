@@ -54,7 +54,11 @@ Do not copy anything from this file into `AGENTS.md`. That duplication is what p
 - **Every route family renders its own OG card** via `src/lib/og-card.tsx` + `opengraph-image.tsx`; the
   homepage renders the photo brand card (`renderBrandCard`). `/og-default.jpg` is the fallback, not the
   default — a `force-static` route rendering that same brand card as JPEG, never a hand-made file in
-  `public/`. Every card uses the site's own Barlow Condensed + Inter from `src/lib/og-fonts`. (2026-09-28)
+  `public/`. Every card uses the site's own Barlow Condensed + Inter from `src/lib/og-fonts`. **Every public
+  page shares an image:** a page that sets its own `openGraph` must name `images` or ship an `opengraph-image`
+  beside it — Next drops the parent's images otherwise — and `src/app/og-coverage.test.ts` fails the build if
+  one does not. Card text is the page's own H1 and description, never new claims; gallery project pages share
+  their own cover photo. (2026-09-28)
 - **No `AggregateRating` or `Review` JSON-LD anywhere** — and none may be added while the GBP is unverified.
   Google treats reviews an entity controls about itself as ineligible regardless. (2026-09-07)
 

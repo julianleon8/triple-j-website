@@ -5,10 +5,10 @@ to a broken `public/og-default.jpg`. Now: a photo brand card for the homepage, `
 from the same code, the site's fonts and lion mark on every OG card, no blanket "Built Turnkey." (owner:
 welded, bolted, *or* turnkey), and "concrete available" wherever copy spoke of concrete in general.
 Rules: `Locked Decisions.md` (OG cards; turnkey). **If the owner still sees the old card in iMessage**, it
-is the phone's saved preview — texting `triplejmetaltx.com/?v=2` forces a fresh one. **Open:** nine pages
-still send no `og:image` to Facebook/WhatsApp (About, Contact, Gallery, Blog, Locations, Partners, three
-service subpages — iMessage falls back to the new card), and `/alternatives/*` plus
-`/best-metal-carport-builders-temple-tx` have no share image at all.
+is the phone's saved preview — texting `triplejmetaltx.com/?v=2` forces a fresh one. Every public page now
+shares an image — `src/app/og-coverage.test.ts` fails the build for a page that overrides `openGraph`
+without one. **Open (owner's call):** `/contact`'s H1 promises "We Call Back Same Day", but the copy rules
+keep the same-day promise on `/quote` only; the contact card leaves it out.
 
 ---
 

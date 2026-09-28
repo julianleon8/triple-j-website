@@ -21,9 +21,13 @@ Shipped on `claude/og-share-card`, fast-forwarded to `main` on owner approval:
 Validation: typecheck, lint, 373 tests, local production builds, every card family viewed, Vercel preview
 builds pulled and compared byte-for-byte, live tags checked after deploy.
 
-Open: nine pages still send no `og:image` to Facebook/WhatsApp (About, Contact, Gallery, Blog, Locations,
-Partners, three service subpages — iMessage falls back to the new card for them); `/alternatives/*` and
-`/best-metal-carport-builders-temple-tx` have no share image at all.
+Follow-up, same day (owner: "yes"): the nine pages with no `og:image` and the five with no image at
+all got their own cards from text already on each page; gallery project pages share their cover photo.
+Every sitemap URL now sends an `og:image`. `src/app/og-coverage.test.ts` (19 tests) keeps it that way.
+Tests 373 → 392.
+
+Open: `/contact`'s H1 says "We Call Back Same Day", but the copy rules keep the same-day promise on
+`/quote` only — owner's call; the contact card leaves it out.
 
 ## 2026-09-26 — About update
 
