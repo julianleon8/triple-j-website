@@ -232,8 +232,12 @@ export async function renderOgCard({
               maxWidth: 1000,
             }}
           >
-            <span>{headline}</span>
-            {accent ? <span style={{ color: '#4d8dff' }}>{accent}</span> : null}
+            {/* Balanced so a wrap never strands one word ("WAIT."). Set on
+                each span: satori does not inherit textWrap from a parent. */}
+            <span style={{ textWrap: 'balance' }}>{headline}</span>
+            {accent ? (
+              <span style={{ color: '#4d8dff', textWrap: 'balance' }}>{accent}</span>
+            ) : null}
           </div>
           {subhead ? (
             <div

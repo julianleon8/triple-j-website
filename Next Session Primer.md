@@ -3,7 +3,9 @@
 Branch `claude/og-share-card` (not merged) fixes the homepage link preview. iMessage showed a blue card
 with an empty white circle: the homepage shipped no `og:image` and fell back to a broken
 `public/og-default.jpg`. The branch adds a photo brand card for the homepage, renders `/og-default.jpg`
-from the same code, and gives every OG card the site's fonts and lion mark. Verified: typecheck, lint,
+from the same code, and gives every OG card the site's fonts and lion mark. Service cards no longer say
+"Built Turnkey." (owner: welded, bolted, *or* turnkey) — their blue line is each page's own hero
+qualifier. Verified: typecheck, lint,
 373 tests, production build, every card family viewed. **To ship:** fast-forward `main` to the branch once
 the owner approves the look. **Open after that:** nine pages still send no `og:image` (About, Contact,
 Gallery, Blog, Locations, Partners, three service subpages), and `/alternatives/*` plus

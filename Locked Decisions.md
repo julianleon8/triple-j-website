@@ -155,7 +155,11 @@ Do not copy anything from this file into `AGENTS.md`. That duplication is what p
 - **Public pricing is ALLOWED** on the website, ads, blog, `llms.txt`, and email. (2026-04-30 — **REVERSES** the earlier no-public-pricing rule)
   - Carve-out: Facebook **group** posts stay quote-based, not price-led.
 - **Sheet prices are steel + install ONLY.** Concrete is always a separately-priced add-on. Never attach a sheet price to the word "turnkey". (2026-05-02)
-- **"Turnkey" is a real offering** — site prep + concrete + structure on a single contract. Use the word freely when **no specific price is attached to it**. Stripping it entirely was an over-correction and was reverted. (2026-05-02)
+- **"Turnkey" is a real offering, and one of three** — every structure is sold **welded, bolted, or turnkey**,
+  and turnkey means site prep + concrete + installation on a single contract. Use the word freely where turnkey
+  is the thing on offer and **no specific price is attached to it** — never as a blanket label on every service
+  or card: "Built Turnkey." on all seven service OG cards was removed at owner direction. Stripping the word
+  entirely was an over-correction and was reverted. (2026-09-28; refines 2026-05-02)
 - **Welded = bolted total × 1.10.** Replaces the old flat +$600 surcharge, which overcharged small builds and undercharged large ones. Quotes given before 2026-05-02 are honored at +$600. (2026-05-02)
 - **Never publish per-sqft concrete pricing.** Internal/competitive intel — quote it by DM or call only. (2026-05-02)
 - **2026 price raise:** +13–15% across the board, effective 2026-05-01. (2026-04-30)
