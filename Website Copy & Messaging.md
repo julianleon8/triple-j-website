@@ -32,7 +32,7 @@ _Last updated: 2026-04-15_
 - 'Electrostatic painting' — replaced by MetalMax material marketing
 - 'Built in under 48 hours' — MISLEADING. 48 hrs = materials arrival time, not build time. Use "same-week" instead.
 - 'Custom welded' as the only option — Triple J does BOTH welded AND bolted. Always say "welded or bolted."
-- 'Built turnkey' as a label on everything — every structure is welded, bolted, **or** turnkey, and turnkey means concrete + installation on one contract. Name turnkey where it is what's being sold (the turnkey carport page, the single-contract pitch), never as a blanket claim. (2026-09-28)
+- 'Built turnkey' as a label on everything — every structure is welded, bolted, **or** turnkey, and turnkey means concrete + installation on one contract. Name turnkey where it is what's being sold (the turnkey carport page, the single-contract pitch), never as a blanket claim. Speaking of concrete in general, say "concrete available" — not "concrete included" or "turnkey with concrete". (2026-09-28)
 
 ## Ad Copy Angles
 - 'Why Wait Months?' — banner comparing same-week speed vs 4–16 week competitor wait times

@@ -1,4 +1,31 @@
-# About update — 2026-09-26
+# Session Notes
+
+## 2026-09-28 — Link previews: homepage share card, brand fonts, no blanket turnkey
+
+Owner texted the homepage link and iMessage showed a blue card with an empty white circle. Cause: the
+homepage shipped no `og:image` (its `openGraph` override drops the layout's `images`), so iMessage fell
+back to `twitter:image` — a hand-made `public/og-default.jpg` whose logo slot was a blank white disc.
+Thirteen pages showed that image; five showed none.
+
+Shipped on `claude/og-share-card`, fast-forwarded to `main` on owner approval:
+- **Homepage card** (`src/app/(marketing)/opengraph-image.tsx` → `renderBrandCard`): lion lockup + homepage
+  hero photo, same info as before. JPEG, 128 KB — WhatsApp drops big previews; `sharp` now a direct dep.
+- **`/og-default.jpg` is a `force-static` route** rendering the same card; the static file is gone.
+- **Every OG card loads the brand fonts** from `src/lib/og-fonts` — `next/og` ships only Geist Regular, so
+  all heavy weights had been rendering at 400 — and carries the lion mark. Headlines wrap balanced.
+- **No blanket "Built Turnkey."** — service cards take their blue line from the page's own hero qualifier.
+  Blanket "concrete included" / "turnkey with concrete" copy now says "concrete available" (Killeen, Harker
+  Heights, /military card, root, /services and homepage descriptions).
+- `outputFileTracingIncludes` names the card fonts/logo/photo; the tracer had missed them on 5 of 7 routes.
+
+Validation: typecheck, lint, 373 tests, local production builds, every card family viewed, Vercel preview
+builds pulled and compared byte-for-byte, live tags checked after deploy.
+
+Open: nine pages still send no `og:image` to Facebook/WhatsApp (About, Contact, Gallery, Blog, Locations,
+Partners, three service subpages — iMessage falls back to the new card for them); `/alternatives/*` and
+`/best-metal-carport-builders-temple-tx` have no share image at all.
+
+## 2026-09-26 — About update
 
 Removed the “Our Rig” section and equipment cards at owner request as part of the claims and city-page release.
 
@@ -17,8 +44,6 @@ Removed the Crew section and unused import from the homepage at the owner’s re
 Added metal privacy, pipe/ranch, ornamental metal fencing and gates at `/services/metal-fencing`; linked from home, nav, service directory and footer. Shared quote form captures fencing-specific scope and stores it in existing Other lead notes. `/quote?service=fencing` prefills fencing and uses relevant supporting copy. Existing API, attribution and security controls retained. No pricing or guaranteed installation timeline invented. Launch checklist and ad/post drafts: `marketing/fencing-launch.md`.
 
 Validation: typecheck, lint, 373 tests; production build with placeholder local database configuration; desktop/mobile browser checks of page, fencing prefill and two-step state. No real customer lead or owner email generated. Paid ads and Business Profile edits not performed. Built from current origin/main in a separate `fencing-launch` checkout; unrelated local property-photo work remains untouched in `website-review`.
-
-# Session Notes
 
 ## 2026-09-08 — HQ redesign Tracks 3 + 4, and six contrast bugs
 

@@ -12,12 +12,12 @@ import { ButtonLink } from "@/components/ui/Button";
 export const metadata: Metadata = {
   title: "Metal Carports, Garages & Barns in Temple, Central Texas",
   description:
-    `Turnkey metal buildings welded or bolted on-site by ${SITE.name} — Temple, TX. Carports, garages, barns, RV covers with concrete pads. Same-week scheduling across Bell, Coryell, and McLennan counties. Call ${SITE.phone}.`,
+    `Metal buildings welded or bolted on-site by ${SITE.name} — Temple, TX. Carports, garages, barns, RV covers, concrete available. Same-week scheduling across Bell, Coryell, and McLennan counties. Call ${SITE.phone}.`,
   alternates: { canonical: "/" },
   openGraph: {
     title: "Metal Carports, Garages & Barns in Central Texas — Triple J Metal",
     description:
-      "Welded or bolted metal buildings built by our Temple TX crew — turnkey with concrete, same-week scheduling.",
+      "Welded or bolted metal buildings built by our Temple TX crew — concrete available, same-week scheduling.",
     url: "/",
     type: "website",
   },

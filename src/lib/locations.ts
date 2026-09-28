@@ -110,7 +110,7 @@ export const LOCATIONS: Record<string, LocationData> = {
     lng: -97.6477,
     metaTitle: 'Metal Carports Harker Heights TX | Same-Week Install',
     metaDescription:
-      'Welded or bolted metal carports in Harker Heights, TX — same-week installs, concrete pad included, Fort Cavazos military discount.',
+      'Welded or bolted metal carports in Harker Heights, TX — same-week installs, concrete available, Fort Cavazos military discount.',
     heroHeadline: 'Metal Carports in Harker Heights, TX — Same-Week Installs',
     heroCopy:
       "Harker Heights homeowners trust Triple J Metal for durable metal carports installed fast. We're a local Central Texas company — not a national kit seller — which means we show up, weld it, and stand behind our work. PCS'ing to Fort Cavazos? We'll protect your vehicles before your household goods arrive.",
@@ -159,7 +159,7 @@ export const LOCATIONS: Record<string, LocationData> = {
     lng: -97.7278,
     metaTitle: 'Metal Carports Killeen TX | Built for Fort Cavazos Timelines',
     metaDescription:
-      "Killeen's local metal building crew — welded or bolted carports, RV covers, and garages built same-week for Fort Cavazos PCS timelines. Concrete included. Hablamos español.",
+      "Killeen's local metal building crew — welded or bolted carports, RV covers, and garages built same-week for Fort Cavazos PCS timelines. Concrete available. Hablamos español.",
     // Legacy fallbacks (used if new fields below aren't populated)
     heroHeadline: "Built in Killeen. Built for Fort Cavazos.",
     heroCopy:

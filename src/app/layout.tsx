@@ -45,7 +45,7 @@ export const metadata: Metadata = {
     canonical: "/",
   },
   description:
-    `${SITE.name} builds welded or bolted metal carports, garages, and barns across Central Texas. Turnkey concrete included, same-week scheduling. Serving Temple, Belton, Killeen & more. Call ${SITE.phone}.`,
+    `${SITE.name} builds welded or bolted metal carports, garages, and barns across Central Texas. Concrete available, same-week scheduling. Serving Temple, Belton, Killeen & more. Call ${SITE.phone}.`,
   keywords: [
     "metal carports central texas",
     "carport builders temple tx",
@@ -73,7 +73,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: SITE.name,
     description:
-      "Welded or bolted metal buildings in Central Texas — built turnkey with concrete by our Temple, TX crew.",
+      "Welded or bolted metal buildings in Central Texas — built by our Temple, TX crew, concrete available.",
     images: ["/og-default.jpg"],
   },
   appleWebApp: {

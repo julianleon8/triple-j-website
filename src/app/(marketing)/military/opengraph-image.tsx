@@ -89,8 +89,8 @@ export default async function MilitaryOpenGraphImage() {
             </span>
           </div>
           <div style={{ fontSize: 26, fontWeight: 500, lineHeight: 1.35, color: 'rgba(255,255,255,0.75)', maxWidth: 950 }}>
-            Welded or bolted. Concrete pad in the same contract. 7% military
-            discount honored. Hablamos español.
+            Welded or bolted. Concrete available. 7% military discount
+            honored. Hablamos español.
           </div>
         </div>
 

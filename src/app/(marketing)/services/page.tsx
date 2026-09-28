@@ -11,7 +11,7 @@ import { SITE } from "@/lib/site";
 export const metadata: Metadata = {
   title: "Metal Buildings, Fencing & Gates in Central Texas",
   description:
-    `${SITE.name} builds custom metal carports, garages, barns, RV covers, metal fencing, and gates across Central Texas. Welded or bolted, concrete included. Call ${SITE.phone}.`,
+    `${SITE.name} builds custom metal carports, garages, barns, RV covers, metal fencing, and gates across Central Texas. Welded or bolted, concrete available. Call ${SITE.phone}.`,
   alternates: { canonical: "/services" },
 };
 

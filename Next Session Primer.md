@@ -1,14 +1,13 @@
-# Share cards — 2026-09-28 · NOT LIVE, waiting on owner approval
+# Share cards — 2026-09-28 · LIVE
 
-Branch `claude/og-share-card` (not merged) fixes the homepage link preview. iMessage showed a blue card
-with an empty white circle: the homepage shipped no `og:image` and fell back to a broken
-`public/og-default.jpg`. The branch adds a photo brand card for the homepage, renders `/og-default.jpg`
-from the same code, and gives every OG card the site's fonts and lion mark. Service cards no longer say
-"Built Turnkey." (owner: welded, bolted, *or* turnkey) — their blue line is each page's own hero
-qualifier. Verified: typecheck, lint,
-373 tests, production build, every card family viewed. **To ship:** fast-forward `main` to the branch once
-the owner approves the look. **Open after that:** nine pages still send no `og:image` (About, Contact,
-Gallery, Blog, Locations, Partners, three service subpages), and `/alternatives/*` plus
+The homepage link preview is fixed and live (owner-approved). It had shipped no `og:image` and fell back
+to a broken `public/og-default.jpg`. Now: a photo brand card for the homepage, `/og-default.jpg` rendered
+from the same code, the site's fonts and lion mark on every OG card, no blanket "Built Turnkey." (owner:
+welded, bolted, *or* turnkey), and "concrete available" wherever copy spoke of concrete in general.
+Rules: `Locked Decisions.md` (OG cards; turnkey). **If the owner still sees the old card in iMessage**, it
+is the phone's saved preview — texting `triplejmetaltx.com/?v=2` forces a fresh one. **Open:** nine pages
+still send no `og:image` to Facebook/WhatsApp (About, Contact, Gallery, Blog, Locations, Partners, three
+service subpages — iMessage falls back to the new card), and `/alternatives/*` plus
 `/best-metal-carport-builders-temple-tx` have no share image at all.
 
 ---
