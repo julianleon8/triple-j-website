@@ -3,6 +3,7 @@
 import { useEffect, useSyncExternalStore, type ComponentProps, type ReactNode } from 'react'
 import { track } from '@vercel/analytics'
 
+import { callConversionSendTo } from '@/lib/call-conversion'
 import {
   CANONICAL_PHONE,
   CANONICAL_PHONE_HREF,
@@ -87,9 +88,17 @@ export function useTrackedPhone(): TrackingResult {
   return result
 }
 
-/** Click handler that fires the analytics event. Used by both link
- *  components below + exported so existing custom anchors can adopt it. */
+/** Click handler that fires the analytics event and the Google Ads call
+ *  conversion. Used by both link components below + exported so existing
+ *  custom anchors can adopt it. */
 function logCallClick(tracked: TrackingResult, surface: string) {
+  const sendTo = callConversionSendTo(
+    process.env.NEXT_PUBLIC_GOOGLE_ADS_ID,
+    process.env.NEXT_PUBLIC_GOOGLE_ADS_CALL_CONVERSION_LABEL,
+  )
+  if (sendTo && typeof window.gtag === 'function') {
+    window.gtag('event', 'conversion', { send_to: sendTo })
+  }
   track('phone_clicked', {
     source: tracked.source,
     number: tracked.display,

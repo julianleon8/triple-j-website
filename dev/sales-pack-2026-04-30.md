@@ -7,7 +7,7 @@ Copy/paste ready. Order of deployment:
 3. **Tomorrow afternoon:** send GC cold emails (list below).
 4. **Wednesday:** SMS blast to past customers.
 
-Default incentive used throughout: **free upgrade to colored panels** (perceived value ~$300, material cost ~$25). Swap if you want a different hook.
+**No standing promotion.** The free colored-panel upgrade (first 3 bookings by 2026-05-15) expired and was removed at owner direction on 2026-09-29. Colored panels are priced as listed. Any new offer is the owner's call.
 
 ---
 
@@ -29,7 +29,7 @@ Default incentive used throughout: **free upgrade to colored panels** (perceived
 > ✅ Welded OR bolted red-iron frame — your choice
 > ✅ 14-gauge steel · 140 MPH wind rated
 > ✅ Vertical roof, drip edge, trim
-> ✅ Same-week install once materials drop — not 4–16 weeks
+> ✅ Same-week install once materials drop — no 2–8 week wait
 > ✅ ZERO subcontractors — our in-house welders do every joint themselves
 > ✅ Bilingual crew · Se habla español
 > ✅ Fort Cavazos military discount
@@ -46,7 +46,7 @@ Default incentive used throughout: **free upgrade to colored panels** (perceived
 > • Walls: $70/LF of perimeter (4 walls on 20×20 = 80 LF × $70 = $5,600)
 > • Walk doors: $800 ea · Rollup doors: $800 ea · Windows: $350 ea
 > • Heights above 12': +$450/ft
-> • Colored panels (39 options): +$400 — **free for first 3 bookings by 2026-05-15**
+> • Colored panels (39 options): +$400
 >
 > **Other sizes (steel + install bolted base — welded is +10%):**
 > • 20×20 gabled: $4,000 · 20×30 flat: $4,300
@@ -55,15 +55,13 @@ Default incentive used throughout: **free upgrade to colored panels** (perceived
 > • 30×30 flat: $5,500 · 30×30 gabled: $7,000
 > • 40×100 flat: $29,500 · concrete pad add-on available, quoted separately
 >
-> ⚡ **Open install slot this month.** First 3 callers booked by **2026-05-15** get a **free upgrade to colored panels** (any of 39 colors instead of standard Galvalume — a $400 upgrade, free).
->
 > 📍 Serving Temple, Belton, Killeen, Harker Heights, Copperas Cove, Salado, Holland, Troy, Nolanville, Waco, Lampasas, Taylor, Round Rock, Georgetown — wider Central Texas on request.
 >
 > Not exactly what you need? Message me anyway — we build any dimension, any config. Send your ZIP + rough size and I'll have a same-day quote in your inbox.
 >
 > Triple J Metal · Temple, TX
 > 📞 254-346-7764
-> 🌐 triplejmetaltx.com
+> 🌐 triplejmetaltx.com/quote?service=carport&src=fbm&utm_content=a
 
 ---
 
@@ -101,7 +99,7 @@ Default incentive used throughout: **free upgrade to colored panels** (perceived
 > • Walls: $70/LF of perimeter (4 walls on 30×30 = 120 LF × $70 = $8,400)
 > • Rollup doors: $800 ea · walk doors: $800 ea · windows: $350 ea
 > • Heights above 12': +$450/ft
-> • Colored panels (39 options): +$400 — **free for first 3 bookings this week**
+> • Colored panels (39 options): +$400
 >
 > **Sizes & configs (steel + install bolted base — welded is +10%):**
 > • 25×25 flat: $4,000 · 25×25 gabled: $5,200
@@ -109,15 +107,13 @@ Default incentive used throughout: **free upgrade to colored panels** (perceived
 > • 40×100 flat: $29,500
 > • Concrete pad add-on available on any of the above — quoted separately
 >
-> ⚡ **Open install slot this month.** First 3 callers booked by **2026-05-15** get **free colored-panel upgrade** (skip Galvalume, pick any of 39 colors).
->
 > 📍 Serving Bell County, McLennan County, Williamson County, Coryell, Lampasas, and surrounding.
 >
 > Bigger or smaller? Different config? Message me — we build any dimension. Send ZIP + rough size, I'll quote same day.
 >
 > Triple J Metal · Temple, TX
 > 📞 254-346-7764
-> 🌐 triplejmetaltx.com
+> 🌐 triplejmetaltx.com/quote?service=garage&src=fbm&utm_content=b
 
 ---
 
@@ -158,15 +154,13 @@ Default incentive used throughout: **free upgrade to colored panels** (perceived
 > • Walls to enclose: $70/LF of perimeter (4 walls on 20×40 = 120 LF × $70 = $8,400)
 > • Doors: $800 ea · Windows: $350 ea
 >
-> ⚡ **Open install slot this month.** First 3 callers booked by **2026-05-15** get **free colored-panel upgrade** (39 colors).
->
 > 📍 Serving Temple, Belton, Killeen, Harker Heights, Copperas Cove, Salado, Lampasas, Holland, Taylor, Troy, Nolanville, Waco — wider Central Texas on request.
 >
 > Got a 38' Class A and need a custom span? A boat-and-truck combo cover? A ranch equipment shed? Message me with your dimensions and I'll quote same day.
 >
 > Triple J Metal · Temple, TX
 > 📞 254-346-7764
-> 🌐 triplejmetaltx.com
+> 🌐 triplejmetaltx.com/quote?service=rv_cover&src=fbm&utm_content=c
 
 ---
 
@@ -215,10 +209,8 @@ Default incentive used throughout: **free upgrade to colored panels** (perceived
 > • 20×25 flat: $3,800 · 25×25 gabled: $5,200 · 25×50 flat: $8,000
 > • Add walls: $70/LF of perimeter (4 walls on 25×25 = 100 LF × $70 = $7,000)
 > • Walk doors: $800 ea · rollup doors: $800 ea · windows: $350 ea
-> • Colored panels (39 options): +$400 — **free for first 3 bookings**
+> • Colored panels (39 options): +$400
 > • Concrete pad available on any size — quoted separately
->
-> ⚡ **Open install slot this month.** First 3 callers booked by **2026-05-15** get **free colored-panel upgrade**.
 >
 > 📍 Serving Temple, Belton, Killeen, Harker Heights, Copperas Cove, Salado, Holland, Troy, Nolanville, Waco, Lampasas — wider Central Texas on request.
 >
@@ -226,7 +218,7 @@ Default incentive used throughout: **free upgrade to colored panels** (perceived
 >
 > Triple J Metal · Temple, TX
 > 📞 254-346-7764
-> 🌐 triplejmetaltx.com
+> 🌐 triplejmetaltx.com/quote?service=carport&src=fbm&utm_content=d
 
 ---
 
@@ -264,10 +256,8 @@ Default incentive used throughout: **free upgrade to colored panels** (perceived
 > • Walls to enclose: $70/LF of perimeter (4 walls on 20×40 = 120 LF × $70 = $8,400)
 > • Doors: $800 ea · windows: $350 ea
 > • Heights above 12': +$450/ft
-> • Colored panels: +$400 — **free for first 3 bookings**
+> • Colored panels: +$400
 > • Concrete pad available on any size — quoted separately
->
-> ⚡ **Open install slot this month.** First 3 callers booked by **2026-05-15** get **free colored-panel upgrade**.
 >
 > 📍 Serving Bell, McLennan, Williamson, Coryell, Lampasas counties.
 >
@@ -275,7 +265,7 @@ Default incentive used throughout: **free upgrade to colored panels** (perceived
 >
 > Triple J Metal · Temple, TX
 > 📞 254-346-7764
-> 🌐 triplejmetaltx.com
+> 🌐 triplejmetaltx.com/quote?service=carport&src=fbm&utm_content=e
 
 ---
 
@@ -317,17 +307,15 @@ Default incentive used throughout: **free upgrade to colored panels** (perceived
 > • 36" walk door: +$800
 > • Windows: +$350 each
 > • Heights above 12' (for lifts, racking): +$450/ft
-> • Colored panels: +$400 — **free for first 3 bookings**
+> • Colored panels: +$400
 >
 > Fully enclosed 30×30 bolted workshop with concrete slab runs **~$24,300 all-in** (shell $5,500 + walls $8,400 + slab $8,100 + 1 rollup $800 + 1 walk $800 + 2 windows $700). Drop the slab and BYO = ~$16,200. Welded version: +10%. Want a quote spec'd to your finish-out plan? DM us.
->
-> ⚡ **Open install slot this month.** First 3 callers booked by **2026-05-15** get **free colored-panel upgrade**.
 >
 > 📍 Serving Bell, McLennan, Williamson, Coryell, Lampasas, Burnet counties.
 >
 > Triple J Metal · Temple, TX
 > 📞 254-346-7764
-> 🌐 triplejmetaltx.com
+> 🌐 triplejmetaltx.com/quote?service=garage&src=fbm&utm_content=f
 
 ---
 
@@ -352,7 +340,7 @@ Default incentive used throughout: **free upgrade to colored panels** (perceived
 > ✅ 14-gauge steel · 140 MPH wind rated · engineered for Central Texas
 > ✅ Single-contract — we coordinate structure + slab + panels + walls in one project
 > ✅ ZERO subcontractors — built by our welders, supervised every day
-> ✅ Same-week install (vs. 4–16 weeks at competitors)
+> ✅ Same-week install (vs. 2–8 weeks at competitors)
 > ✅ Bilingual crew · Fort Cavazos military discount · Fully insured
 >
 > 💰 **Price Breakdown (40×100 flat, 10' height — itemized)**
@@ -369,9 +357,7 @@ Default incentive used throughout: **free upgrade to colored panels** (perceived
 > • Roll-up doors (12×14, 14×14, larger custom): from $1,200
 > • Walk doors: +$800 ea · Windows: +$350 ea
 > • Insulation, HVAC pre-prep, electrical chase: quoted on plans
-> • Colored panel upgrade (39 options): +$400 — **free for first 3 bookings**
->
-> ⚡ **Open install slot this month** for one commercial-scale build. First 3 callers booked by **2026-05-15** get the **free colored-panel upgrade** + priority concrete-cure scheduling.
+> • Colored panel upgrade (39 options): +$400
 >
 > 📍 Serving Bell, McLennan, Williamson, Coryell, Lampasas, Burnet, Falls counties — wider Texas on request for $30K+ jobs.
 >
@@ -379,7 +365,7 @@ Default incentive used throughout: **free upgrade to colored panels** (perceived
 >
 > Triple J Metal · Temple, TX
 > 📞 254-346-7764
-> 🌐 triplejmetaltx.com
+> 🌐 triplejmetaltx.com/quote?src=fbm&utm_content=g
 
 ---
 
@@ -401,7 +387,7 @@ Default incentive used throughout: **free upgrade to colored panels** (perceived
 > ✅ Estructura SOLDADA o ATORNILLADA de viga roja — tú eliges
 > ✅ Acero calibre 14 · resistencia al viento 140 MPH
 > ✅ Techo vertical, escurrimiento, molduras
-> ✅ Instalación en la misma semana una vez que llega el material — no esperas de 4–16 semanas
+> ✅ Instalación en la misma semana una vez que llega el material — no esperas de 2–8 semanas
 > ✅ CERO subcontratistas — soldadores propios
 > ✅ Hablamos español e inglés
 > ✅ Descuento militar Fort Cavazos
@@ -418,7 +404,7 @@ Default incentive used throughout: **free upgrade to colored panels** (perceived
 > • Paredes para encerrar: $70 por pie lineal de perímetro (4 paredes en 20×20 = 80 LF × $70 = $5,600)
 > • Puertas peatonales: $800 c/u · puertas enrollables: $800 c/u · ventanas: $350 c/u
 > • Alturas mayores a 12': +$450/pie
-> • Paneles de color (39 opciones): +$400 — **gratis para las primeras 3 reservas hasta el 2026-05-15**
+> • Paneles de color (39 opciones): +$400
 >
 > **Otras medidas (acero + instalación, precio base atornillada — soldada +10%):**
 > • 20×20 dos aguas: $4,000 · 20×30 plana: $4,300
@@ -426,15 +412,13 @@ Default incentive used throughout: **free upgrade to colored panels** (perceived
 > • 25×25 plana: $4,000 · 30×30 plana: $5,500
 > • Losa de concreto disponible en cualquier medida — cotizada aparte
 >
-> ⚡ **Cupos de instalación abiertos este mes.** Las primeras 3 reservas antes del **2026-05-15** reciben **mejora gratis al color del panel** (cualquiera de 39 colores en vez del Galvalume estándar — valor $400, gratis).
->
 > 📍 Servimos Temple, Belton, Killeen, Harker Heights, Copperas Cove, Salado, Holland, Troy, Nolanville, Waco, Lampasas, Taylor, Round Rock, Georgetown — centro de Texas en general.
 >
 > ¿Necesitas una medida diferente? Mándame mensaje con tu código postal y el tamaño aproximado — te mando cotización el mismo día.
 >
 > Triple J Metal · Temple, TX
 > 📞 254-346-7764
-> 🌐 triplejmetaltx.com
+> 🌐 triplejmetaltx.com/quote?service=carport&src=fbm&utm_content=h
 
 ---
 
@@ -474,7 +458,7 @@ Default incentive used throughout: **free upgrade to colored panels** (perceived
 > • Paredes: $70 por pie lineal de perímetro (4 paredes en 30×30 = 120 LF × $70 = $8,400)
 > • Puertas enrollables: $800 c/u · puertas peatonales: $800 c/u · ventanas: $350 c/u
 > • Alturas mayores a 12': +$450/pie
-> • Paneles de color (39 opciones): +$400 — **gratis para las primeras 3 reservas**
+> • Paneles de color (39 opciones): +$400
 >
 > **Medidas y configuraciones (acero + instalación, precio base atornillada — soldada +10%):**
 > • 25×25 plana: $4,000 · 25×25 dos aguas: $5,200
@@ -482,15 +466,13 @@ Default incentive used throughout: **free upgrade to colored panels** (perceived
 > • 40×100 plana (comercial): $29,500
 > • Losa de concreto disponible en cualquier medida — cotizada aparte
 >
-> ⚡ **Cupos abiertos este mes.** Las primeras 3 reservas antes del **2026-05-15** reciben **mejora gratis al color del panel** (cualquiera de 39 colores).
->
 > 📍 Servimos los condados de Bell, McLennan, Williamson, Coryell, Lampasas y alrededores.
 >
 > ¿Más grande, más chico, o configuración diferente? Mándame mensaje — construimos cualquier dimensión. Manda código postal + tamaño, te cotizo el mismo día.
 >
 > Triple J Metal · Temple, TX
 > 📞 254-346-7764
-> 🌐 triplejmetaltx.com
+> 🌐 triplejmetaltx.com/quote?service=garage&src=fbm&utm_content=i
 
 ---
 
@@ -503,8 +485,6 @@ Use one variant per group. Don't post the same text in 5 different groups — Fa
 > Open install slot this month for a metal carport, garage, RV cover, or workshop.
 >
 > Triple J Metal — Temple-based family business, 150+ builds done across Central Texas. Welded or bolted, your choice. Single-contract: we pour the concrete (or you BYO slab), frame it, panel it. Same-week install once materials drop.
->
-> First 3 people booked by 2026-05-15 get a **free colored-panel upgrade** (any of 39 colors instead of standard Galvalume).
 >
 > If you've been thinking about adding one, message me with your zip and rough size — I'll send a quote same day. No pushy follow-ups.
 >
@@ -523,8 +503,6 @@ Use one variant per group. Don't post the same text in 5 different groups — Fa
 > – Concrete pad add-on if you need it (or BYO slab)
 > – English & Spanish on the crew
 >
-> First 3 bookings by 2026-05-15 get **free colored panel upgrade.**
->
 > Send me a message with your address and what you're looking at — I'll quote same day. Military discount built in, no need to ask.
 >
 > Triple J Metal · 254-346-7764
@@ -538,8 +516,6 @@ Use one variant per group. Don't post the same text in 5 different groups — Fa
 > Family-run out of Temple, 150+ structures done, two in-house welders so we don't lose days waiting on subs. We do the concrete, the steel, the panels — single contract, single crew.
 >
 > Built tough enough for Central Texas wind. Welded red-iron frame option for permanence (+10% over bolted), concrete pad add-on if you need it.
->
-> First 3 bookings by 2026-05-15 get **free panel-color upgrade.**
 >
 > Drop your zip and rough size in a DM — I'll have a quote in your hands same day.
 >
@@ -557,8 +533,6 @@ Use one variant per group. Don't post the same text in 5 different groups — Fa
 > – Same-week install once steel arrives
 > – 150+ builds done since founding
 >
-> First 3 bookings by 2026-05-15 get **free colored panel upgrade** — any of 39 colors instead of Galvalume.
->
 > Message me with zip + dimensions, I'll send a quote same day.
 >
 > Triple J Metal · 254-346-7764
@@ -572,8 +546,6 @@ Use one variant per group. Don't post the same text in 5 different groups — Fa
 > Tenemos cupo de instalación abierto este mes para cocheras, garajes, cubiertas para RV, o talleres. Vertemos la losa de concreto (si la necesitas — o tú traes tu propia losa), instalamos la estructura de acero, y los paneles. Soldado o atornillado — soldado es +10% por permanencia. Instalación en la misma semana una vez que llega el material.
 >
 > Hablamos español y inglés. Sin subcontratistas — solo nuestro equipo.
->
-> Las primeras 3 personas que reserven antes del 2026-05-15 reciben **mejora gratis al color del panel** (cualquiera de 39 colores).
 >
 > Mándame mensaje con tu código postal y el tamaño aproximado — te mando cotización el mismo día.
 >
@@ -618,8 +590,6 @@ This goes on the Page's own wall (facebook.com/triplejmetaltx). Visible to exist
 > • 40×100 commercial flat: from $29,500 (welded $32,450)
 > • Concrete pad, walls, doors, windows, colored panels — quoted on top per your spec
 >
-> ⚡ First 3 bookings by **2026-05-15** get a **free colored-panel upgrade** ($400 value — pick any of 39 colors instead of standard Galvalume).
->
 > 📞 254-346-7764
 > 💬 m.me/triplejmetaltx
 > 🌐 triplejmetaltx.com
@@ -649,8 +619,6 @@ Post separately on the Page wall (don't combine into one bilingual post — algo
 > • Cubierta RV 20×40: desde $6,500 (soldada $7,150) — o $8,300 con 14' libres (soldada $9,130)
 > • Comercial 40×100: desde $29,500 (soldado $32,450)
 > • Losa de concreto, paredes, puertas, ventanas, paneles de color — se cotizan aparte según tu spec
->
-> ⚡ Las primeras 3 reservas antes del **2026-05-15** reciben **mejora gratis al color del panel** (valor $400 — cualquiera de 39 colores en vez del Galvalume estándar).
 >
 > 📞 254-346-7764
 > 💬 m.me/triplejmetaltx
@@ -684,11 +652,11 @@ Send manually one at a time so it doesn't trigger spam filters. ~50 customers ×
 
 **Template (English):**
 
-> Hey [FIRST_NAME], it's Julian from Triple J Metal. Hope the [STRUCTURE — carport / garage / cover] is treating you good. Quick heads up — we've got open install slots this month and I'm reaching out to past clients first. If you've been thinking about adding another structure, or know a friend or neighbor who has, send them my way and I'll take care of you both. First few referrals booked by 2026-05-15 get a free colored-panel upgrade. — Julian, 254-346-7764
+> Hey [FIRST_NAME], it's Julian from Triple J Metal. Hope the [STRUCTURE — carport / garage / cover] is treating you good. Quick heads up — we've got open install slots this month and I'm reaching out to past clients first. If you've been thinking about adding another structure, or know a friend or neighbor who has, send them my way and I'll take care of you both. — Julian, 254-346-7764
 
 **Template (Spanish):**
 
-> Hola [FIRST_NAME], soy Julian de Triple J Metal. Espero que la [STRUCTURE] siga bien. Aviso rápido — tenemos cupo de instalación abierto este mes y le estoy avisando primero a clientes pasados. Si has pensado en agregar otra estructura, o conoces a alguien que la necesite, mándamelos. Las primeras referencias reservadas antes del 2026-05-15 reciben mejora gratis al color del panel. — Julian, 254-346-7764
+> Hola [FIRST_NAME], soy Julian de Triple J Metal. Espero que la [STRUCTURE] siga bien. Aviso rápido — tenemos cupo de instalación abierto este mes y le estoy avisando primero a clientes pasados. Si has pensado en agregar otra estructura, o conoces a alguien que la necesite, mándamelos. — Julian, 254-346-7764
 
 **Tracking:** put a quick note in `/hq/customers` for each contact — when you texted, response, status. Otherwise you'll lose track at 50 names.
 
@@ -710,7 +678,7 @@ Send manually one at a time so it doesn't trigger spam filters. ~50 customers ×
 > Reaching out because acreage and ranch buyers ask their agent the same question constantly: "where do I get a carport / outbuilding installed?" Most agents don't have a go-to answer beyond a Google search.
 >
 > If you'd like to have one, here's what we offer your buyers:
-> – Same-week install (most competitors are 4–16 weeks out)
+> – Same-week install (most competitors are 2–8 weeks out)
 > – Welded or bolted, single-contract — structure + install, with concrete pad add-on if the buyer needs it
 > – Concrete pad poured by our crew (3,000 PSI standard, 4,000 PSI on request)
 > – Two in-house welders, zero subcontractors — your buyer's not waiting on a third party
@@ -914,4 +882,4 @@ This satisfies the federal CAN-SPAM Act (valid postal address + opt-out mechanis
 - [ ] Realtor cold emails sent — [N] agents
 - [ ] GC cold emails sent — [N] contractors
 
-**Track responses:** every reply, missed call, or DM goes into `/hq/leads` with `source = 'fb-marketplace' | 'fb-group' | 'sms-past-customer' | 'cold-email-realtor' | 'cold-email-gc'`. Otherwise we won't know which channel actually pays off.
+**Track responses:** a buyer who uses a listing's link arrives in `/hq/leads` already tagged — `utm_source = fbm` and the listing letter in `utm_content`. A buyer who only messages or calls: put their phone number into **HQ → Capture** and write the channel in the notes ("Marketplace A", "FB group — Killeen", "past-customer text"). `leads.source` is a closed list enforced by the database, so the channel goes in the notes, never in `source`. Otherwise we won't know which channel actually pays off.

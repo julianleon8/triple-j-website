@@ -14,7 +14,7 @@ Do not copy anything from this file into `AGENTS.md`. That duplication is what p
 
 - **Fencing launch:** Metal privacy, pipe/ranch, ornamental metal fencing and gates approved. Dedicated page and quote intake; project-specific price and schedule, with no invented rankings. Fencing is stored as `other` with explicit scope in lead notes. Campaign spend comes out of the paid-ad cap below. (2026-09-26)
 
-- **Paid-ad cap:** **$500/month total across every paid channel**, set by the owner. The channel split is a proposal in `marketing/lead-plan-2026-09-29.md` until the owner approves it. No campaign is live. (2026-09-29)
+- **Paid-ad cap and split:** **$500/month total across every paid channel.** October: $400 Google Search + $100 one-time (truck magnets, yard signs). November onward: $400 Google Search + $100 Facebook boosted post. Facebook Marketplace, the Page and groups stay free. Owner-approved; plan in `marketing/lead-plan-2026-09-29.md`. No campaign is live yet. (2026-09-29)
 
 - **Timeline:** "**same-week**", never say "48-hour build". 48 hrs = materials arrival, not build time. Saying otherwise is misleading. (2026-04-15)
 - **Frame:** "**welded or bolted**" everywhere. Triple J does both. Never "custom welded" alone. (2026-04-15)
@@ -150,6 +150,7 @@ Do not copy anything from this file into `AGENTS.md`. That duplication is what p
   with hCaptcha and a 5/IP/hour limit, and loosening its required fields would open a nameless-lead spam
   hole into the CRM. `source` is `'phone'`, already in the validated allowlist; no new source value.
   (2026-09-07)
+- **One Messenger sender, one open lead.** A Page message from a sender with an open (not won/lost) `facebook_messenger` lead appends to it and sends no second alert; the sender's PSID leads the `message` as `FB-Messenger-<psid>`. Owner: `src/lib/messenger-lead.ts`. (2026-09-29)
 - **Voice memos are drafts, not fake customers.** The `'Voice memo (no name)'` / `phone: ''` /
   `'carport'` placeholders are gone; a memo that yields no name writes real NULLs and surfaces in the
   inbox with a FINISH action. (2026-09-07)
@@ -168,6 +169,7 @@ Do not copy anything from this file into `AGENTS.md`. That duplication is what p
   concrete in general, say **"concrete available"** — never "concrete included" or "turnkey with concrete" as a
   blanket. Stripping the word entirely was an over-correction and was reverted. (2026-09-28; refines 2026-05-02)
 - **Welded = bolted total × 1.10.** Replaces the old flat +$600 surcharge, which overcharged small builds and undercharged large ones. Quotes given before 2026-05-02 are honored at +$600. (2026-05-02)
+- **No standing promotion.** The free colored-panel upgrade expired 2026-05-15 and was removed from all sales-pack copy at owner direction; do not reintroduce a free upgrade or deadline offer without the owner. (2026-09-29)
 - **Never publish per-sqft concrete pricing.** Internal/competitive intel — quote it by DM or call only. (2026-05-02)
 - **2026 price raise:** +13–15% across the board, effective 2026-05-01. (2026-04-30)
 - **Anchors** (steel + install, bolted, before tax): 20×20 carport **$3,000** · 25×25 carport **$4,000** · 30×30 garage **$5,500** · 20×40 RV/boat cover **$6,500** · 40×100 commercial/ranch **$29,500**. Walls $70/LF of perimeter.

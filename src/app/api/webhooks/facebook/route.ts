@@ -2,6 +2,12 @@ import { NextRequest, NextResponse } from 'next/server'
 import crypto from 'node:crypto'
 import { getAdminClient } from '@/lib/supabase/admin'
 import { notifyNewLead, type LeadRecord } from '@/lib/lead-notifications'
+import {
+  CLOSED_LEAD_STATUSES,
+  appendMessengerText,
+  firstMessengerMessage,
+  messengerMarker,
+} from '@/lib/messenger-lead'
 
 export const dynamic = 'force-dynamic'
 
@@ -175,6 +181,30 @@ async function handleLeadgen(leadgenId: string) {
 // Messenger DM handler
 // ────────────────────────────────────────────────────────────────────────
 async function handleMessenger(senderId: string, text: string) {
+  const supabase = getAdminClient()
+
+  // One conversation is one lead: a follow-up from a sender with an open lead
+  // is appended to it, with no second alert. See src/lib/messenger-lead.ts.
+  const { data: open, error: findError } = await supabase
+    .from('leads')
+    .select('id, message')
+    .eq('source', 'facebook_messenger')
+    .like('message', `${messengerMarker(senderId)}%`)
+    .not('status', 'in', `(${CLOSED_LEAD_STATUSES.join(',')})`)
+    .order('created_at', { ascending: false })
+    .limit(1)
+    .maybeSingle()
+  if (findError) throw findError
+
+  if (open) {
+    const message = appendMessengerText(open.message, text)
+    if (message) {
+      const { error } = await supabase.from('leads').update({ message }).eq('id', open.id)
+      if (error) throw error
+    }
+    return
+  }
+
   const token = process.env.META_PAGE_ACCESS_TOKEN
 
   // Try to resolve the sender's name via Graph API. Requires pages_messaging
@@ -205,7 +235,7 @@ async function handleMessenger(senderId: string, text: string) {
     }
   }
 
-  const { data: lead, error } = await getAdminClient()
+  const { data: lead, error } = await supabase
     .from('leads')
     .insert({
       name,
@@ -215,7 +245,7 @@ async function handleMessenger(senderId: string, text: string) {
       // the NOT NULL constraint on leads.phone.
       phone: 'messenger',
       email: null,
-      message: text.trim(),
+      message: firstMessengerMessage(senderId, text),
       service_type: 'other',
       source: 'facebook_messenger',
     })

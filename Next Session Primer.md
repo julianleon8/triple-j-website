@@ -1,14 +1,18 @@
-# Lead plan — 2026-09-29 · PROPOSED
+# Lead plan — 2026-09-29 · APPROVED, not yet live
 
-The owner set a **$500/month paid-ad cap** (`Locked Decisions.md`). The plan is in
-`marketing/lead-plan-2026-09-29.md`: Google Search for the paid budget, Facebook Marketplace, the Page and
-groups for free, and **Google Business Profile reinstatement plus the first 10 reviews as priority #1**.
-The channel split waits on owner approval. **No campaign is live and no `src/` change was made.** Two
-code tasks wait on the owner's go-ahead: counting phone taps as a Google Ads conversion (needs a second
-conversion label from the owner), and making Messenger file one lead per person, not one per message.
-Owner dashboard tasks: turn on Vercel Web Analytics (never enabled; the API says "not found") and add a
-Google Ads call asset. Before anyone posts the sales-pack Marketplace listings, remove the expired
-2026-05-15 offer and the "4–16 weeks" claim; renewing the offer is the owner's call.
+Read `marketing/lead-plan-2026-09-29.md`. The owner approved the whole plan: $500/month; October $400
+Google Search + $100 magnets/signs; November onward $400 Google + $100 Facebook; priority #1 is the
+Google Business Profile plus 10 reviews. **No campaign is live.**
+
+**On branch `claude/relaxed-planck-2gkqgf`, not `main`:** phone-tap Google Ads conversion (no-ops until
+the owner sets `NEXT_PUBLIC_GOOGLE_ADS_CALL_CONVERSION_LABEL`), Messenger one-lead-per-sender, and
+sales-pack cleanup (colored-panel deal removed, "2–8 weeks", tracked Marketplace links). Merge to `main`
+when the owner says so.
+
+**Waiting on the owner:** turn on Vercel Web Analytics (never enabled); create the "Phone call clicks"
+conversion action and set its label in Vercel; add a Google Ads call asset; confirm the Meta app is
+subscribed to the Page's `messages` and `leadgen` fields (no Facebook lead has ever arrived); the reason
+Google gave for removing the profile; **call the 4 leads still `new` since May–June.**
 
 ---
 

@@ -1,5 +1,31 @@
 # Session Notes
 
+## 2026-09-29 — Lead plan: $500/month, Google Search paid, Facebook free
+
+Owner: "I'm not getting any leads… $500 per month." Audit first, then a plan the owner approved in full.
+
+Found:
+- **Lead history:** 7 leads ever, all `website_form`, the last on 2026-06-12. **4 of the 7 still `new`.**
+  The one won job came from a Facebook link. Nothing has ever arrived through the Meta webhook.
+- **Vercel Web Analytics was never enabled.** The API returns "not found", so no traffic data exists.
+- **Google Ads form conversion is live** (`AW-18112939313` plus its label, verified in the production
+  bundle). Phone taps counted for nothing.
+- **The Messenger webhook filed one lead per message.**
+- **The sales pack still carried** the expired colored-panel deal and the retired "4–16 weeks" claim.
+
+Shipped on `claude/relaxed-planck-2gkqgf` (not yet on `main`):
+- `marketing/lead-plan-2026-09-29.md`: October $400 Google + $100 magnets/signs; November onward $400
+  Google + $100 Facebook. Priority #1 is reinstating the Google Business Profile plus 10 reviews.
+- **Phone-tap conversion:** `src/lib/call-conversion.ts` + `TrackedPhone.tsx`. It no-ops until the owner
+  sets `NEXT_PUBLIC_GOOGLE_ADS_CALL_CONVERSION_LABEL`.
+- **Messenger threading:** `src/lib/messenger-lead.ts`, one open lead per sender and one alert.
+- **Sales pack:** colored-panel deal removed everywhere (owner), "4–16" changed to "2–8" in 4 places,
+  Marketplace links tracked `?src=fbm&utm_content=<letter>`, and the channel-tracking note made true to
+  the `leads.source` CHECK.
+- Vault: three `Decisions.md` rows, and `Locked Decisions.md`, `Connectors.md` and `.env.example` updated.
+
+Validation: typecheck, lint, full test suite (new tests: `messenger-lead`, `call-conversion`), vault check.
+
 ## 2026-09-28 — Link previews: homepage share card, brand fonts, no blanket turnkey
 
 Owner texted the homepage link and iMessage showed a blue card with an empty white circle. Cause: the
