@@ -1,3 +1,17 @@
+# Lead plan — 2026-09-29 · PROPOSED
+
+The owner set a **$500/month paid-ad cap** (`Locked Decisions.md`). The plan is in
+`marketing/lead-plan-2026-09-29.md`: Google Search for the paid budget, Facebook Marketplace, the Page and
+groups for free, and **Google Business Profile reinstatement plus the first 10 reviews as priority #1**.
+The channel split waits on owner approval. **No campaign is live and no `src/` change was made.** Two
+code tasks wait on the owner's go-ahead: counting phone taps as a Google Ads conversion (needs a second
+conversion label from the owner), and making Messenger file one lead per person, not one per message.
+Owner dashboard tasks: turn on Vercel Web Analytics (never enabled; the API says "not found") and add a
+Google Ads call asset. Before anyone posts the sales-pack Marketplace listings, remove the expired
+2026-05-15 offer and the "4–16 weeks" claim; renewing the offer is the owner's call.
+
+---
+
 # Share cards — 2026-09-28 · LIVE
 
 The homepage link preview is fixed and live (owner-approved). It had shipped no `og:image` and fell back

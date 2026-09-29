@@ -12,7 +12,9 @@ Do not copy anything from this file into `AGENTS.md`. That duplication is what p
 
 - **Website claims and city-page cleanup:** Removed unsupported competitor installation/lead-time/exclusivity claims and the unverifiable Temple Steel Buildings listing. Concrete is separately priced; service pricing uses the approved steel-and-install basis. Salado, Lampasas, Holland, Taylor, Troy and Nolanville now have researched local context, planning guidance and service links. City galleries show only active projects with matching city labels. (2026-09-26)
 
-- **Fencing launch:** Metal privacy, pipe/ranch, ornamental metal fencing and gates approved. Dedicated page and quote intake; project-specific price and schedule, with no invented rankings. Fencing is stored as `other` with explicit scope in lead notes. Campaign spend requires an owner-set cap. (2026-09-26)
+- **Fencing launch:** Metal privacy, pipe/ranch, ornamental metal fencing and gates approved. Dedicated page and quote intake; project-specific price and schedule, with no invented rankings. Fencing is stored as `other` with explicit scope in lead notes. Campaign spend comes out of the paid-ad cap below. (2026-09-26)
+
+- **Paid-ad cap:** **$500/month total across every paid channel**, set by the owner. The channel split is a proposal in `marketing/lead-plan-2026-09-29.md` until the owner approves it. No campaign is live. (2026-09-29)
 
 - **Timeline:** "**same-week**", never say "48-hour build". 48 hrs = materials arrival, not build time. Saying otherwise is misleading. (2026-04-15)
 - **Frame:** "**welded or bolted**" everywhere. Triple J does both. Never "custom welded" alone. (2026-04-15)
