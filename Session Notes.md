@@ -34,6 +34,11 @@ Follow-up, same session. The owner said: "all of the above by email to julianleo
 - **Google Ads daily report:** `marketing/google-ads-daily-report.js`, a read-only Google Ads Script. It was run
   against a mocked `AdsApp` in Node: over-budget and no-lead warnings fired, a zero-activity account warned about
   impressions, and HTML was escaped. It has not been run in the real account; the owner installs it.
+- **Steven Kohring attributed to the website** (owner): won lead `c45cf9a1-…` created and linked to his
+  customer record (`source = phone`, `utm_source = website`, dated 2026-09-26). He had no lead and no job
+  row; the Rogers gallery project is his. There's no data trail: website phone taps were never recorded
+  (Web Analytics off), and the form has sent no lead since 2026-06-12. That's unverified; the owner should
+  submit a test from a phone.
 - **Doc for Juan and Freddy:** "Triple J Lead Plan — $500/Month" (Claude Docs), with the budget table and the
   checklist with owners. It's private until the owner shares it.
 
