@@ -19,7 +19,7 @@ Do not copy anything from this file into `AGENTS.md`. That duplication is what p
 - **Timeline:** "**same-week**", never say "48-hour build". 48 hrs = materials arrival, not build time. Saying otherwise is misleading. (2026-04-15)
 - **Frame:** "**welded or bolted**" everywhere. Triple J does both. Never "custom welded" alone. (2026-04-15)
 - **Concrete spec:** **3,000 PSI is standard. 4,000 PSI is on request only** — never promised as the default. (2026-05-01 — **REVERSES** the 2026-04-15 lock that made 4,000 PSI a headline differentiator.) Confirmed by Julian 2026-09-06 and now true of the shipped site: all 22 occurrences rewritten, and `scripts/check-vault.mjs` enforces it with no exceptions.
-- **Services** include lean-to patios and house additions alongside carports, garages, barns, RV/boat covers, equipment covers, metal porches, ranch structures, barndominiums.
+- **Services** include lean-to patios and house additions alongside carports, garages, barns, RV/boat covers, equipment covers, metal porches, ranch structures. **Barndominiums are paused until 2027** (see On hold). (2026-09-29)
 - **Tagline:** "Built right, built fast, built by Triple J." (2026-04-15)
 - **Fonts:** Barlow Condensed (headlines) + Inter (body). Geist removed. **Barlow Condensed is the HQ heading face too** — uppercase, 600/700, applied per heading as `font-display` beside an explicit `text-[Npx]`, never as a bare `.hq-ui h1/h2/h3` rule (that rule would be unlayered and would outrank the very sizes the screens set). Inter remains the marketing body face. (2026-09-07 — **REVERSES** the 2026-04-24 "Barlow is scoped to marketing only, not HQ" lock, which the "Shop floor" direction depends on.) HQ body text is the iOS system stack, applied as `font-(family-name:--font-ios)` — the `family-name:` prefix is required, because Tailwind v4 reads the bare `font-()` shorthand as font-weight and that silently left HQ on Inter from the day the class was written. (fix 2026-09-07)
 - **Design:** Industrial charcoal/white/steel-blue identity; public site stays light. First design pass brings the portfolio directly after a simplified hero, keeps the Juan/Julian/Freddy introduction on About only (homepage “Meet Triple J” removed at owner request, 2026-09-26), removes the About “Our Rig” equipment section at owner request (2026-09-26), and shortens the gallery header with URL-based building filters. Use actual jobsite imagery until a real crew portrait is supplied. Implementation approved for publication to main. (2026-09-07)
@@ -240,6 +240,7 @@ Do not copy anything from this file into `AGENTS.md`. That duplication is what p
 
 ## On hold / descoped
 
+- **Barndominium builds — paused until 2027.** Ads exclude barndominium searches (barndominium, barndominiums, barndo and barndos are negative keywords). The barns page still mentions barndominium projects through GCs (`src/lib/services.ts`); that copy is unchanged pending the owner's call. (2026-09-29)
 - **Stripe — descoped.** Listed as "phase 4" since 2026-04-13 but never had a dependency, an env var, or a line of code. QuickBooks is the money rail. Revisit only if customer card payment is actually requested. (2026-09-06)
 - **ClickUp CRM** — on hold; revisit after live leads validate volume.
 - **Native iOS app** — deferred; invest in PWA performance instead. (2026-04-25)
