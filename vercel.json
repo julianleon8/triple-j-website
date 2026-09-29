@@ -27,6 +27,10 @@
     {
       "path": "/api/cron/bounce-watch",
       "schedule": "0 */6 * * *"
+    },
+    {
+      "path": "/api/cron/morning-brief",
+      "schedule": "0 12 * * 1-5"
     }
   ]
 }

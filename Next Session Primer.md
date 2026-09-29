@@ -1,18 +1,20 @@
-# Lead plan — 2026-09-29 · APPROVED, not yet live
+# Lead plan — 2026-09-29 · APPROVED, fixes live
 
-Read `marketing/lead-plan-2026-09-29.md`. The owner approved the whole plan: $500/month; October $400
-Google Search + $100 magnets/signs; November onward $400 Google + $100 Facebook; priority #1 is the
-Google Business Profile plus 10 reviews. **No campaign is live.**
+Read `marketing/lead-plan-2026-09-29.md`. $500/month: October $400 Google Search + $100 magnets/signs;
+November onward $400 Google + $100 Facebook. Priority #1 is the Google Business Profile plus 10 reviews.
+**No ad campaign is live yet.**
 
-**On branch `claude/relaxed-planck-2gkqgf`, not `main`:** phone-tap Google Ads conversion (no-ops until
-the owner sets `NEXT_PUBLIC_GOOGLE_ADS_CALL_CONVERSION_LABEL`), Messenger one-lead-per-sender, and
-sales-pack cleanup (colored-panel deal removed, "2–8 weeks", tracked Marketplace links). Merge to `main`
-when the owner says so.
+**Live on `main`:** the phone-tap Google Ads conversion (no-ops until the owner sets
+`NEXT_PUBLIC_GOOGLE_ADS_CALL_CONVERSION_LABEL`), Messenger one-lead-per-sender, the sales-pack cleanup, and
+the **weekday morning brief** (`morning-brief` cron, 7 AM Central, email only). **First check next session:**
+`select started_at, ok, notified, error from cron_runs where job = 'morning-brief' order by started_at desc limit 3;`,
+then ask the owner whether both inboxes got it.
 
-**Waiting on the owner:** turn on Vercel Web Analytics (never enabled); create the "Phone call clicks"
-conversion action and set its label in Vercel; add a Google Ads call asset; confirm the Meta app is
-subscribed to the Page's `messages` and `leadgen` fields (no Facebook lead has ever arrived); the reason
-Google gave for removing the profile; **call the 4 leads still `new` since May–June.**
+**Waiting on the owner:** paste `marketing/google-ads-daily-report.js` into Google Ads (steps at the top of
+the file); turn on Vercel Web Analytics; create the "Phone call clicks" conversion and set its label; add a
+call asset; confirm the Meta app is subscribed to the Page's `messages` and `leadgen` fields; the reason
+Google gave for removing the profile; call the 4 leads still `new` since May–June; share the Claude Doc
+with Juan and Freddy.
 
 ---
 

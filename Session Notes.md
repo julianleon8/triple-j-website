@@ -26,6 +26,17 @@ Shipped on `claude/relaxed-planck-2gkqgf` (not yet on `main`):
 
 Validation: typecheck, lint, full test suite (new tests: `messenger-lead`, `call-conversion`), vault check.
 
+Follow-up, same session. The owner said: "all of the above by email to julianleon0724@yahoo.com and the triple j email."
+- **`main` fast-forwarded to `ea72890`**, so the phone-tap conversion, Messenger threading and sales-pack cleanup are live.
+- **Morning brief:** `src/lib/jobs/morning-brief.ts`, `src/emails/MorningBrief.tsx` and the `morning-brief` cron
+  (`0 12 * * 1-5`). It's an email digest to `SITE.email` + Julian's Yahoo. It's sent even when empty, and it never
+  pushes (the one-push-per-lead rule stands). The template was rendered and checked by eye.
+- **Google Ads daily report:** `marketing/google-ads-daily-report.js`, a read-only Google Ads Script. It was run
+  against a mocked `AdsApp` in Node: over-budget and no-lead warnings fired, a zero-activity account warned about
+  impressions, and HTML was escaped. It has not been run in the real account; the owner installs it.
+- **Doc for Juan and Freddy:** "Triple J Lead Plan — $500/Month" (Claude Docs), with the budget table and the
+  checklist with owners. It's private until the owner shares it.
+
 ## 2026-09-28 — Link previews: homepage share card, brand fonts, no blanket turnkey
 
 Owner texted the homepage link and iMessage showed a blue card with an empty white circle. Cause: the
