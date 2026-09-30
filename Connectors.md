@@ -13,7 +13,7 @@ Env var values live in `.env` (gitignored) and in Vercel's project settings. `.e
 | **Supabase** | `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY` | `src/lib/supabase/{client,server,admin}.ts`, `src/middleware.ts` | Everything — auth, leads, HQ dashboard |
 | **Resend** | `RESEND_API_KEY`, `RESEND_WEBHOOK_SECRET`, `OWNER_EMAIL`, `MORNING_BRIEF_TO` (optional) | `src/lib/lead-notifications.ts`, `src/app/api/quotes/[id]/{send,accept}/route.ts`, `src/app/api/partner-inquiries/route.ts`, `src/app/api/webhooks/resend/route.ts` | Lead + quote email. The lead still persists to Postgres |
 | **QuickBooks** | `QBO_CLIENT_ID`, `QBO_CLIENT_SECRET`, `QBO_REDIRECT_URI`, `QBO_ENVIRONMENT` | `src/lib/qbo.ts`, `src/lib/jobs/receipt-push.ts`, `src/app/api/qbo/{connect,callback}/route.ts` | Receipt → expense push. Save-local + retry, so no data loss. **Refresh token lives ~101 days and rotates only on use** — the `qbo-keepalive` cron is what stops an idle connection dying |
-| **Anthropic** | `ANTHROPIC_API_KEY` | `src/lib/{voice-lead-extractor,receipt-extractor,permit-extractor}.ts` | Voice→lead, receipt OCR, permit extraction |
+| **Anthropic** | `ANTHROPIC_API_KEY` | `src/lib/{voice-lead-extractor,receipt-extractor,permit-extractor}.ts`; locally, `scripts/serp-steal.mjs` | Voice→lead, receipt OCR, permit extraction. The keyword script's judgments |
 | **OpenAI** | `OPENAI_API_KEY` | `src/lib/openai.ts` | Whisper transcription in the voice-memo pipeline |
 | **Twilio** | `TWILIO_ACCOUNT_SID`, `TWILIO_AUTH_TOKEN`, `TWILIO_FROM_NUMBER` | `src/lib/twilio.ts` | Quote SMS |
 | **hCaptcha** | `NEXT_PUBLIC_HCAPTCHA_SITE_KEY`, `HCAPTCHA_SECRET_KEY` | `src/lib/captcha.ts`, `QuoteForm.tsx`, `PartnerInquiryForm.tsx` | Spam floods the public forms |
@@ -25,6 +25,7 @@ Env var values live in `.env` (gitignored) and in Vercel's project settings. `.e
 | **Vercel build** | `VERCEL_GIT_COMMIT_SHA`, `VERCEL_DEPLOYMENT_CREATED_AT` | `src/app/hq/settings/page.tsx` | Build stamp display only |
 | **Setup route** | `SETUP_KEY` | `src/app/api/setup/route.ts` | One-time bootstrap gate |
 | **U.S. Census (ZIP data)** | none — public domain, no key | `scripts/build-zip-data.mjs` → `src/lib/data/zip-geo.json`, read by `src/lib/zip.ts` | Nothing at runtime. Build-time only: the JSON is committed, so census.gov being down affects only regeneration |
+| **SERP API** (DataForSEO or Serper) | `DATAFORSEO_LOGIN`, `DATAFORSEO_PASSWORD` or `SERPER_API_KEY` | `scripts/lib/serp/providers.mjs`, run by `scripts/serp-steal.mjs` | Nothing at runtime: local keyword research only, never set in Vercel. Returns Google's top 10 and map pack as seen from each city, which no earlier tool here could (see `research/competitors/roster-2026-09.md`). DataForSEO wins when both are set. Cost per run is printed by the script and recorded in the report |
 
 ## Scheduled jobs
 

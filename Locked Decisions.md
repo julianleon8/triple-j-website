@@ -183,6 +183,7 @@ Do not copy anything from this file into `AGENTS.md`. That duplication is what p
 - **Welded or bolted** is a differentiator **against national kit dealers only.** At least four local operators weld — Central Texas Metal Buildings, Polo's, Laneways, and Hill Country Mobile Welding (which covers Georgetown and Round Rock). Do not claim local competitors cannot weld. (2026-09-06)
 - **Competitor lead times are 2–8 weeks**, not "4–16". Verified Sept 2026: Get Carports 4–8, Dayton 4–8, Mayberry 4–6, Cardinal 2–4. Same-week still wins; use the defensible number. (2026-09-06)
 - **Canonical competitor roster:** `research/competitors/roster-2026-09.md`. `src/lib/competitors.ts` is the publishable subset, not a second source of truth. (2026-09-06)
+- **Keyword research runs through `scripts/serp-steal.mjs`.** Google's top 10 and map pack as seen from each city come from a SERP API (DataForSEO or Serper, key held locally, never in Vercel); Claude says what each ranking page is and whether a strong local page could outrank it; code decides the bucket. **First run on Opus 5.5 (`--model claude-opus-5-5`), repeat runs on Sonnet 5.5 (the default).** A SERP API key is approved for this tool; the provider is not chosen yet. Reports land in `research/keywords/`; the raw cache in `.serp-cache/` is never committed. (2026-09-30)
 
 ## Lead Engine
 
@@ -253,4 +254,5 @@ Do not copy anything from this file into `AGENTS.md`. That duplication is what p
 Known gaps between what is locked above and what is actually shipped. `scripts/check-vault.mjs`
 reports these on every run. Delete an entry the moment it is closed.
 
+- **The keyword tool has not run on live data yet.** It needs `ANTHROPIC_API_KEY` plus `DATAFORSEO_LOGIN`/`DATAFORSEO_PASSWORD` or `SERPER_API_KEY` wherever it runs. It was verified against real dealer pages and a stand-in for the Claude API only. (2026-09-30)
 - **Google Business Profile verification remains unresolved.** Owner reported on 2026-09-26 that Google keeps removing the profile. Cause has not been diagnosed. Profile verification/reinstatement remains owner follow-up; do not mark verified or add a Google review URL until confirmed.

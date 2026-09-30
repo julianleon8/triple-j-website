@@ -71,6 +71,10 @@ yarn-error.log*
 # same origin as the dotfolders above: symlinks created by `npx skills add`
 skills/
 
+# scripts/serp-steal.mjs working cache: raw search results, fetched pages and
+# Claude judgments. Only the report in research/keywords/ is committed.
+/.serp-cache/
+
 # local-only archive of browser-saved HTML and retired canvas files
 /_archive/
 # local audit scratch (regenerable)

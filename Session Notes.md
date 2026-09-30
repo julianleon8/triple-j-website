@@ -1,5 +1,25 @@
 # Session Notes
 
+## 2026-09-30 — Keyword openings tool (`scripts/serp-steal.mjs`)
+
+Owner shared a "find every keyword we can steal" video and said: "Start it use opus then sonnet 5.5 for analysis."
+
+Shipped (scripts and vault only; no `src/` change, nothing user-facing):
+- `scripts/serp-steal.mjs` with `plan` / `run` / `report`, and modules in `scripts/lib/serp/`:
+  - search grid (`grid.mjs`)
+  - DataForSEO and Serper results normalized to one shape (`providers.mjs`)
+  - page facts and copy-paste city-page detection (`pages.mjs`)
+  - structured-output judgments (`judge.mjs`)
+  - buckets and scoring (`rollup.mjs`)
+  - Markdown plus a one-file HTML board (`report.mjs`)
+- Seeds in `research/keywords/seeds.json`. Cities come from `site.ts`, service paths are checked against real pages, and a test fails if a seed points nowhere.
+- Verified: 29 new tests (443 total); real fetches of Viking, Get Carports, Carport Central, Metal Carports Direct and Rough Country pages; and two full runs against a stand-in Claude API, the second answered entirely from cache. All fixture outputs were deleted.
+- Vault: a `Decisions.md` row, two `Locked Decisions.md` lines (the tool, and an Outstanding entry for "not run live yet"), a `Connectors.md` SERP row, and key names in `.env.example`.
+
+Findings:
+- Viking's Killeen and Temple pages are 99.8% identical with the town names masked, and Get Carports' are 100%. Carport Central's are 61%, so partly customized.
+- Rough Country (Temple, a local manufacturer) is a JavaScript site: a plain fetch sees no text, and its 254 number and address live only in structured data. Handled.
+
 ## 2026-09-29 — Lead plan: $500/month, Google Search paid, Facebook free
 
 Owner: "I'm not getting any leads… $500 per month." Audit first, then a plan the owner approved in full.

@@ -1,3 +1,26 @@
+# Keyword openings tool — 2026-09-30 · BUILT, NOT RUN LIVE
+
+`scripts/serp-steal.mjs` is on `main` and has never seen real Google results: no search or Claude key existed
+in the build environment. To run it, put `ANTHROPIC_API_KEY` plus `SERPER_API_KEY` (2,500 free searches) or
+`DATAFORSEO_LOGIN`/`DATAFORSEO_PASSWORD` in `.env.local`, then:
+
+```
+node scripts/serp-steal.mjs plan                                        # list + cost estimate, free
+node scripts/serp-steal.mjs run --limit 5 --model claude-opus-5-5       # trial, well under $1
+node scripts/serp-steal.mjs run --model claude-opus-5-5                 # first full run, ~$19 + search results
+node scripts/serp-steal.mjs run                                         # later runs: Sonnet 5.5, ~$9
+```
+
+**On the first live run, check:**
+- the provider's response shape against `normalizeDataForSeo` / `normalizeSerper` (written from their
+  docs, not yet from a live response);
+- 20 of Claude's "beatable" calls by hand;
+- then publish `research/keywords/serp-steal-<date>.html` as a private Artifact and share it.
+
+**Open (owner's call):** which search-results provider to pay for, if any.
+
+---
+
 # Lead plan — 2026-09-29 · APPROVED, fixes live
 
 Read `marketing/lead-plan-2026-09-29.md`. $500/month: October $400 Google Search + $100 magnets/signs;

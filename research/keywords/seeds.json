@@ -1,0 +1,25 @@
+{
+  "about": "Base search terms for scripts/serp-steal.mjs. Cities are never listed here: they come from SERVICE_CITIES in src/lib/site.ts (or every LOCATIONS page with --cities all). `service` is the site path the term belongs to, or null when the site has no page for it yet. `scope`: city = '<term> <city> tx' searched from that city; near = the bare term searched from each city; home = the bare term searched once from Temple.",
+  "terms": [
+    { "term": "carports", "service": "/services/carports", "scope": "city" },
+    { "term": "metal carports", "service": "/services/carports", "scope": "city" },
+    { "term": "carport builders", "service": "/services/carports", "scope": "city" },
+    { "term": "carport installation", "service": "/services/carports", "scope": "city" },
+    { "term": "welded carports", "service": "/services/carports", "scope": "city" },
+    { "term": "carport with concrete", "service": "/services/turnkey-carports-with-concrete", "scope": "city" },
+    { "term": "metal garages", "service": "/services/metal-garages", "scope": "city" },
+    { "term": "metal building contractors", "service": "/services/metal-garages", "scope": "city" },
+    { "term": "metal barns", "service": "/services/barns", "scope": "city" },
+    { "term": "rv covers", "service": "/services/rv-covers", "scope": "city" },
+    { "term": "metal fence contractors", "service": "/services/metal-fencing", "scope": "city" },
+    { "term": "patio covers", "service": null, "scope": "city" },
+    { "term": "carport installers near me", "service": "/services/carports", "scope": "near" },
+    { "term": "metal building builders near me", "service": "/services/metal-garages", "scope": "near" },
+    { "term": "welded vs bolted carport", "service": null, "scope": "home" },
+    { "term": "metal carport cost texas", "service": "/services/carports", "scope": "home" },
+    { "term": "carport concrete slab cost", "service": "/services/turnkey-carports-with-concrete", "scope": "home" },
+    { "term": "hoa approved metal carport", "service": "/services/hoa-compliant-structures", "scope": "home" },
+    { "term": "pbr vs pbu panels", "service": "/services/pbr-vs-pbu-panels", "scope": "home" },
+    { "term": "barndominium builders central texas", "service": null, "scope": "home" }
+  ]
+}
