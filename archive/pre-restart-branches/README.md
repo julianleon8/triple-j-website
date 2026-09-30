@@ -1,11 +1,12 @@
-# Pre-restart branches — deleted 2026-09-30
+# Pre-restart branches — set for deletion 2026-09-30
 
 Historical only, not authoritative. `main` was restarted from a fresh root on 2026-09-06; these 14 branches
 came from the history before that and shared no commits with it. All 203 of their commits were audited on
 2026-09-30 (`Decisions.md`, that date): two lost fixes were ported to `main`, and everything else was already
 on `main`, moved into `archive/` or `research/`, rebuilt, reverted on purpose, or stale. The owner then asked
-for the branches to be deleted. Archive tags were tried first and refused (HTTP 403), so the only unshipped
-work the owner may still want is kept here as patches.
+for the branches to be deleted. This session's GitHub access refused both archive tags and the deletion
+(HTTP 403), so the owner deletes them on GitHub's Branches page, and the only unshipped work the owner may
+still want is kept here as patches.
 
 ## Kept as patches
 

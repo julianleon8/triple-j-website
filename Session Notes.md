@@ -28,8 +28,8 @@ Sessions of 2026-09-29 and 09-30 (one conversation).
   - **Messenger leads get Reply on Messenger.** `src/lib/lead-contact.ts` keeps the "messenger" / "Not
     provided" placeholders out of every `tel:`/`sms:` link (lead screen, inbox swipe, Today's call-next card,
     owner alert email).
-- **The 14 pre-restart branches were deleted** at the owner's request. Archive tags were refused (HTTP 403 from
-  the session's GitHub access), so an index of all 14 with tip commits, plus patches of the two unshipped changes
+- **The owner asked for the 14 pre-restart branches to be deleted.** The session's GitHub access refused both
+  archive tags and the deletion (HTTP 403), so the owner deletes them on GitHub's Branches page. An index of all 14 with tip commits, plus patches of the two unshipped changes
   (roll-up door prices, automatic texting), is in `archive/pre-restart-branches/`.
 - Verified: typecheck, lint, 455 tests (16 new; the new ones fail on the old code), vault and secret checks.
   `next build --webpack` compiles and type-checks, then stops at page-data collection for want of Supabase
