@@ -115,6 +115,7 @@ export async function notifyNewLead({ lead, sizeLine = null }: NotifyNewLeadInpu
     leadId: lead.id,
     name: displayName(lead),
     phone: lead.phone ?? '',
+    source: lead.source,
     email: lead.email,
     city,
     zip: lead.zip,

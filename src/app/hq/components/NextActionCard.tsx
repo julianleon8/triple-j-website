@@ -1,6 +1,7 @@
 import { getAdminClient } from '@/lib/supabase/admin'
 import { buildPipeline, urgencyScore, reasonFor, type PipelineRow } from '@/lib/pipeline'
 import { NextActionCardClient, type NextActionPayload } from './NextActionCardClient'
+import { dialablePhone } from '@/lib/lead-contact'
 
 export async function NextActionCard() {
   const db = getAdminClient()
@@ -64,8 +65,9 @@ type LeadRecord = { id: string; phone: string | null }
 
 function callHrefFor(row: PipelineRow, leads: LeadRecord[]): string | null {
   if (row.kind !== 'lead') return null
-  const lead = leads.find((l) => l.id === row.id)
-  if (!lead?.phone) return null
-  return `tel:${lead.phone.replace(/[^\d+]/g, '')}`
+  // A Messenger lead's "messenger" placeholder gets no Call button: the card
+  // falls back to Open, and the lead screen offers Reply on Messenger.
+  const dial = dialablePhone(leads.find((l) => l.id === row.id)?.phone)
+  return dial ? `tel:${dial}` : null
 }
 

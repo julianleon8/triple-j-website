@@ -8,6 +8,7 @@ import { SegmentedControl } from '@/components/hq/ui/SegmentedControl'
 import { MessagesRow } from '@/components/hq/MessagesRow'
 import { SwipeActions, type SwipeAction } from '@/components/hq/SwipeActions'
 import { ActionDrawer } from '@/components/hq/ActionDrawer'
+import { dialablePhone } from '@/lib/lead-contact'
 
 type Counts = { new: number; hot: number; all: number; done: number }
 type Segment = 'new' | 'hot' | 'all' | 'done'
@@ -138,8 +139,10 @@ export function LeadsInbox({ rows: initialRows, counts, pageSize, totalAll, draf
       label: 'Call',
       tone: 'positive',
       exec: async () => {
-        if (phone && typeof window !== 'undefined') {
-          window.location.href = `tel:${phone}`
+        // Placeholders like "messenger" are not numbers; the swipe does nothing.
+        const dial = dialablePhone(phone)
+        if (dial && typeof window !== 'undefined') {
+          window.location.href = `tel:${dial}`
         }
         return false
       },

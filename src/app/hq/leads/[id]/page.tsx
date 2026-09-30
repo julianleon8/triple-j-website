@@ -15,6 +15,7 @@ import { AttributionCard } from './components/AttributionCard'
 import { ReferrerPicker } from './components/ReferrerPicker'
 import { IntentStagePicker } from './components/IntentStagePicker'
 import { zipInfo, formatDistance, formatLeadLocation, BAND_LABELS } from '@/lib/zip'
+import { dialablePhone, isMessengerLead, MESSENGER_INBOX_URL } from '@/lib/lead-contact'
 
 type LeadRecord = {
   id: string
@@ -96,6 +97,9 @@ export default async function LeadDetailPage({ params }: { params: Promise<{ id:
   const statusClass = LEAD_STATUS_CLASS[lead.status] ?? MUTED_STATUS_CLASS
   // Server component — safe to pull in the 280 KB ZIP dataset. See src/lib/zip.ts.
   const geo = zipInfo(lead.zip)
+  // "messenger" / "Not provided" are placeholders, not numbers: never dial them.
+  const dial = dialablePhone(lead.phone)
+  const messenger = !dial && isMessengerLead(lead)
 
   return (
     <div className="space-y-4">
@@ -123,30 +127,42 @@ export default async function LeadDetailPage({ params }: { params: Promise<{ id:
           </span>
         </div>
 
-        <div className="mt-4 grid grid-cols-2 gap-2">
+        {messenger ? (
+          // A Messenger DM has no phone; the reply goes back through Messenger.
           <a
-            href={lead.phone ? `tel:${lead.phone}` : undefined}
-            className="flex items-center justify-center gap-2 rounded-xl bg-(--brand-fg) px-3 py-3 text-[16px] font-semibold text-(--text-on-brand) tap-solid disabled:opacity-50"
-            aria-disabled={!lead.phone ? "true" : undefined}
+            href={MESSENGER_INBOX_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-4 flex items-center justify-center gap-2 rounded-xl bg-(--brand-fg) px-3 py-3 text-[16px] font-semibold text-(--text-on-brand) tap-solid"
           >
-            <Phone size={18} strokeWidth={2} /> Call
+            <MessageSquare size={18} strokeWidth={2} /> Reply on Messenger
           </a>
-          <a
-            href={lead.phone ? `sms:${lead.phone}` : undefined}
-            className="flex items-center justify-center gap-2 rounded-xl border border-(--border-subtle) bg-(--surface-1) px-3 py-3 text-[16px] font-semibold text-(--text-primary) tap-list disabled:opacity-50"
-            aria-disabled={!lead.phone ? "true" : undefined}
-          >
-            <MessageSquare size={18} strokeWidth={2} /> SMS
-          </a>
-        </div>
+        ) : (
+          <div className="mt-4 grid grid-cols-2 gap-2">
+            <a
+              href={dial ? `tel:${dial}` : undefined}
+              className="flex items-center justify-center gap-2 rounded-xl bg-(--brand-fg) px-3 py-3 text-[16px] font-semibold text-(--text-on-brand) tap-solid disabled:opacity-50"
+              aria-disabled={!dial ? "true" : undefined}
+            >
+              <Phone size={18} strokeWidth={2} /> Call
+            </a>
+            <a
+              href={dial ? `sms:${dial}` : undefined}
+              className="flex items-center justify-center gap-2 rounded-xl border border-(--border-subtle) bg-(--surface-1) px-3 py-3 text-[16px] font-semibold text-(--text-primary) tap-list disabled:opacity-50"
+              aria-disabled={!dial ? "true" : undefined}
+            >
+              <MessageSquare size={18} strokeWidth={2} /> SMS
+            </a>
+          </div>
+        )}
       </header>
 
       {/* This is where hanging up lands: the reply first, the blanks second,
           everything else after. */}
-      {lead.status === 'new' && lead.phone && (
+      {lead.status === 'new' && dial && (
         <SendNowCard
           leadId={lead.id}
-          phone={lead.phone}
+          phone={dial}
           message={THANKS_MESSAGE}
         />
       )}
@@ -171,7 +187,7 @@ export default async function LeadDetailPage({ params }: { params: Promise<{ id:
       <section className="rounded-2xl border border-(--border-subtle) bg-(--surface-2) p-5">
         <h2 className="text-[13px] font-semibold uppercase tracking-wider text-(--text-tertiary)">Details</h2>
         <dl className="mt-3 grid grid-cols-1 gap-y-2.5 text-[15px] sm:grid-cols-2 sm:gap-x-6">
-          <Field label="Phone" value={lead.phone} />
+          <Field label="Phone" value={messenger ? 'None (Messenger DM)' : lead.phone} />
           <Field label="Email" value={lead.email} />
           <Field label="Service" value={readable(lead.service_type)} />
           <Field label="Structure" value={readable(lead.structure_type)} />

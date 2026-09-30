@@ -239,10 +239,10 @@ async function handleMessenger(senderId: string, text: string) {
     .from('leads')
     .insert({
       name,
-      // Messenger doesn't give us a phone. HQ's LeadsTable renders a
-      // "Reply on Messenger" button when source === 'facebook_messenger'
-      // instead of a tel: link, so this is just a sentinel that satisfies
-      // the NOT NULL constraint on leads.phone.
+      // Messenger doesn't give us a phone. This sentinel satisfies the NOT
+      // NULL constraint on leads.phone; src/lib/lead-contact.ts keeps it out
+      // of tel:/sms: links, and HQ and the owner alert offer "Reply on
+      // Messenger" instead.
       phone: 'messenger',
       email: null,
       message: firstMessengerMessage(senderId, text),

@@ -1,10 +1,19 @@
 import { Heading, Text, Section, Row, Column, Link, Hr } from '@react-email/components'
 import BrandLayout, { BRAND_COLOR, INK_900 } from './BrandLayout'
+import { dialablePhone, isMessengerLead, MESSENGER_INBOX_URL } from '@/lib/lead-contact'
+
+/** What the Phone line says when there is no number to dial. */
+function phoneLabel(phone: string, messenger: boolean): string {
+  if (messenger) return 'None (Messenger DM, reply in Meta Business Suite)'
+  return phone && phone !== 'Not provided' ? phone : 'Not provided'
+}
 
 interface LeadOwnerAlertProps {
   leadId: string
   name: string
   phone: string
+  /** leads.source. A Messenger DM has no phone, so its reply goes through Messenger. */
+  source?: string | null
   email?: string | null
   city: string
   zip?: string | null
@@ -31,6 +40,7 @@ export default function LeadOwnerAlert(props: LeadOwnerAlertProps) {
     leadId,
     name,
     phone,
+    source,
     email,
     city,
     zip,
@@ -56,12 +66,16 @@ export default function LeadOwnerAlert(props: LeadOwnerAlertProps) {
     ? { label: 'This Week', bg: '#d97706' }
     : null
 
-  const phoneClean = phone.replace(/\D/g, '')
+  // "messenger" / "Not provided" are placeholders: no Call or Text buttons for them.
+  const dial = dialablePhone(phone)
+  const messenger = !dial && isMessengerLead({ source, phone })
   const hqUrl = `https://www.triplejmetaltx.com/hq/leads/${leadId}`
 
   const rows: [string, React.ReactNode][] = [
     ['Name', <strong key="n" style={{ color: '#0a0e1a' }}>{name}</strong>],
-    ['Phone', <Link key="p" href={`tel:${phone}`} style={dataLink}>{phone}</Link>],
+    ['Phone', dial
+      ? <Link key="p" href={`tel:${dial}`} style={dataLink}>{phone}</Link>
+      : phoneLabel(phone, messenger)],
   ]
   if (email) rows.push(['Email', <Link key="e" href={`mailto:${email}`} style={dataLink}>{email}</Link>])
   if (bestTimeLabel) rows.push(['Best time', bestTimeLabel])
@@ -114,17 +128,27 @@ export default function LeadOwnerAlert(props: LeadOwnerAlertProps) {
       <Section style={{ margin: '0 0 22px' }}>
         <table cellPadding={0} cellSpacing={0} role="presentation" style={{ width: '100%' }}>
           <tr>
-            <td style={{ paddingRight: 6 }}>
-              <Link href={`tel:${phoneClean}`} style={ctaPrimary}>
-                📞 Call now
-              </Link>
-            </td>
-            <td style={{ paddingLeft: 6, paddingRight: 6 }}>
-              <Link href={`sms:${phoneClean}`} style={ctaSecondary}>
-                💬 Text
-              </Link>
-            </td>
-            <td style={{ paddingLeft: 6 }}>
+            {dial ? (
+              <>
+                <td style={{ paddingRight: 6 }}>
+                  <Link href={`tel:${dial}`} style={ctaPrimary}>
+                    📞 Call now
+                  </Link>
+                </td>
+                <td style={{ paddingLeft: 6, paddingRight: 6 }}>
+                  <Link href={`sms:${dial}`} style={ctaSecondary}>
+                    💬 Text
+                  </Link>
+                </td>
+              </>
+            ) : messenger ? (
+              <td style={{ paddingRight: 6 }}>
+                <Link href={MESSENGER_INBOX_URL} style={ctaPrimary}>
+                  💬 Reply on Messenger
+                </Link>
+              </td>
+            ) : null}
+            <td style={{ paddingLeft: dial || messenger ? 6 : 0 }}>
               <Link href={hqUrl} style={ctaSecondary}>
                 📋 Open in HQ
               </Link>
@@ -166,7 +190,9 @@ export function leadOwnerAlertText(props: LeadOwnerAlertProps): string {
     `${isHot ? '⚡ HOT LEAD' : 'NEW LEAD'} — ${props.name}`,
     `${props.city}${props.zip ? `, ${props.state ?? 'TX'} ${props.zip}` : `, ${props.state ?? 'TX'}`} · ${props.serviceType.replace(/_/g, ' ')}`,
     ``,
-    `📞 ${props.phone}`,
+    dialablePhone(props.phone)
+      ? `📞 ${props.phone}`
+      : `📞 ${phoneLabel(props.phone, isMessengerLead(props))}`,
   ]
   if (props.email) lines.push(`✉️  ${props.email}`)
   if (props.bestTimeLabel) lines.push(`⏰ Best time: ${props.bestTimeLabel}`)

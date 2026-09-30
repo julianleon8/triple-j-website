@@ -32,3 +32,32 @@ describe('leadOwnerAlertText — best time to call', () => {
     expect(text).toContain('📞 254-555-0100');
   });
 });
+
+describe('LeadOwnerAlert — leads with no phone to dial', () => {
+  const messengerLead = { ...base, phone: 'messenger', source: 'facebook_messenger' };
+
+  it('offers Reply on Messenger, never a tel:/sms: link to the placeholder', async () => {
+    const { renderToStaticMarkup } = await import('react-dom/server');
+    const { default: LeadOwnerAlert } = await import('./LeadOwnerAlert');
+    const html = renderToStaticMarkup(LeadOwnerAlert(messengerLead));
+    expect(html).toContain('Reply on Messenger');
+    expect(html).toContain('https://business.facebook.com/latest/inbox/messages');
+    expect(html).not.toContain('tel:messenger');
+    expect(html).not.toContain('sms:messenger');
+    expect(html).not.toContain('Call now');
+  });
+
+  it('keeps Call and Text for a real number', async () => {
+    const { renderToStaticMarkup } = await import('react-dom/server');
+    const { default: LeadOwnerAlert } = await import('./LeadOwnerAlert');
+    const html = renderToStaticMarkup(LeadOwnerAlert(base));
+    expect(html).toContain('href="tel:2545550100"');
+    expect(html).toContain('href="sms:2545550100"');
+    expect(html).not.toContain('Reply on Messenger');
+  });
+
+  it('says so in the plain-text version instead of printing the placeholder', () => {
+    expect(leadOwnerAlertText(messengerLead)).toContain('📞 None (Messenger DM');
+    expect(leadOwnerAlertText({ ...base, phone: 'Not provided', source: 'facebook_lead_ads' })).toContain('📞 Not provided');
+  });
+});
