@@ -1,0 +1,1191 @@
+From bbd845a49c0e358206b54c2c1114958e55ace370 Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Tue, 21 Apr 2026 09:35:31 +0000
+Subject: [PATCH] =?UTF-8?q?Phase=202a=20Wave=20B:=20Twilio=20SMS=20?=
+ =?UTF-8?q?=E2=80=94=20auto-reply=20+=2024hr=20review=20request?=
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+- Migration 007: sms_events (delivery log, Twilio SID, template,
+  lead/customer/job FKs) + scheduled_sms (pending queue drained by
+  cron). RLS: authenticated-only SELECT, service-role INSERT/UPDATE.
+- src/lib/twilio.ts: lazy Twilio client, sendSms() logs every attempt
+  to sms_events (success or failure). Throws on Twilio error after
+  recording the event so callers decide whether to fire-and-forget.
+- src/lib/sms-templates.ts: leadAutoReply + reviewRequest. Every body
+  ends with "Reply STOP to opt out." to stay TCPA-compliant. Review
+  URL from NEXT_PUBLIC_GOOGLE_REVIEW_URL env (optional).
+- /api/leads POST fires SMS auto-reply after the Supabase insert +
+  Resend emails. Fire-and-forget, won't block the response.
+- /api/jobs/[id] PATCH inserts a scheduled_sms row with send_at = +24h
+  when a job transitions to 'completed'. Silently skips customers
+  without a phone.
+- New cron route /api/cron/send-scheduled-sms drains up to 50 pending
+  rows per run, marks sent/failed, links sms_event_id. Dual-auth
+  (Bearer CRON_SECRET or Supabase cookie) matches scrape-permits.
+- vercel.json: hourly cron schedule.
+- Dashboard fetches latest sms_events per lead; LeadsTable renders a
+  second pill (📱 Sent / Delivered / Failed) below the email pill,
+  gated on `mounted` to avoid hydration drift.
+
+Env vars required post-merge: TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN,
+TWILIO_FROM, NEXT_PUBLIC_GOOGLE_REVIEW_URL (optional).
+---
+ package-lock.json                            | 337 +++++++++++++++++--
+ package.json                                 |   1 +
+ src/app/api/cron/send-scheduled-sms/route.ts |  90 +++++
+ src/app/api/jobs/[id]/route.ts               |  37 +-
+ src/app/api/leads/route.ts                   |  11 +
+ src/app/hq/components/LeadsTable.tsx         |  22 ++
+ src/app/hq/page.tsx                          |  18 +-
+ src/lib/sms-templates.ts                     |  44 +++
+ src/lib/twilio.ts                            |  71 ++++
+ supabase/migrations/007_sms_events.sql       |  62 ++++
+ vercel.json                                  |   4 +
+ 11 files changed, 673 insertions(+), 24 deletions(-)
+ create mode 100644 src/app/api/cron/send-scheduled-sms/route.ts
+ create mode 100644 src/lib/sms-templates.ts
+ create mode 100644 src/lib/twilio.ts
+ create mode 100644 supabase/migrations/007_sms_events.sql
+
+diff --git a/package-lock.json b/package-lock.json
+index dff0cdb..bc66e90 100644
+--- a/package-lock.json
++++ b/package-lock.json
+@@ -18,6 +18,7 @@
+         "react-email": "^5.2.10",
+         "recharts": "^3.8.1",
+         "resend": "^6.11.0",
++        "twilio": "^6.0.0",
+         "unpdf": "^1.6.0",
+         "zod": "^4.3.6"
+       },
+@@ -3227,6 +3228,18 @@
+         "acorn": "^6.0.0 || ^7.0.0 || ^8.0.0"
+       }
+     },
++    "node_modules/agent-base": {
++      "version": "6.0.2",
++      "resolved": "https://registry.npmjs.org/agent-base/-/agent-base-6.0.2.tgz",
++      "integrity": "sha512-RZNwNclF7+MS/8bDg70amg32dyeZGZxiDuQmZxKLAlQjr3jGyLx+4Kkk58UO7D2QdgFIQCovuSuZESne6RG6XQ==",
++      "license": "MIT",
++      "dependencies": {
++        "debug": "4"
++      },
++      "engines": {
++        "node": ">= 6.0.0"
++      }
++    },
+     "node_modules/ajv": {
+       "version": "6.14.0",
+       "resolved": "https://registry.npmjs.org/ajv/-/ajv-6.14.0.tgz",
+@@ -3505,6 +3518,12 @@
+         "node": ">= 0.4"
+       }
+     },
++    "node_modules/asynckit": {
++      "version": "0.4.0",
++      "resolved": "https://registry.npmjs.org/asynckit/-/asynckit-0.4.0.tgz",
++      "integrity": "sha512-Oei9OH4tRh0YqU3GxhX79dM/mwVgvbZJaSNaRk+bshkj0S5cfHcgYakreBjrHwatXKbz+IoIdYLxrKim2MjW0Q==",
++      "license": "MIT"
++    },
+     "node_modules/atomically": {
+       "version": "2.1.1",
+       "resolved": "https://registry.npmjs.org/atomically/-/atomically-2.1.1.tgz",
+@@ -3541,6 +3560,17 @@
+         "node": ">=4"
+       }
+     },
++    "node_modules/axios": {
++      "version": "1.15.1",
++      "resolved": "https://registry.npmjs.org/axios/-/axios-1.15.1.tgz",
++      "integrity": "sha512-WOG+Jj8ZOvR0a3rAn+Tuf1UQJRxw5venr6DgdbJzngJE3qG7X0kL83CZGpdHMxEm+ZK3seAbvFsw4FfOfP9vxg==",
++      "license": "MIT",
++      "dependencies": {
++        "follow-redirects": "^1.15.11",
++        "form-data": "^4.0.5",
++        "proxy-from-env": "^2.1.0"
++      }
++    },
+     "node_modules/axobject-query": {
+       "version": "4.1.0",
+       "resolved": "https://registry.npmjs.org/axobject-query/-/axobject-query-4.1.0.tgz",
+@@ -3637,6 +3667,12 @@
+         "node": "^6 || ^7 || ^8 || ^9 || ^10 || ^11 || ^12 || >=13.7"
+       }
+     },
++    "node_modules/buffer-equal-constant-time": {
++      "version": "1.0.1",
++      "resolved": "https://registry.npmjs.org/buffer-equal-constant-time/-/buffer-equal-constant-time-1.0.1.tgz",
++      "integrity": "sha512-zRpUiDwd/xk6ADqPMATG8vc9VPrkck7T07OIx0gnjmJAnHnTVXNQG3vfvWNuiZIkwu9KrKdA1iJKfsfTVxE6NA==",
++      "license": "BSD-3-Clause"
++    },
+     "node_modules/call-bind": {
+       "version": "1.0.9",
+       "resolved": "https://registry.npmjs.org/call-bind/-/call-bind-1.0.9.tgz",
+@@ -3660,7 +3696,6 @@
+       "version": "1.0.2",
+       "resolved": "https://registry.npmjs.org/call-bind-apply-helpers/-/call-bind-apply-helpers-1.0.2.tgz",
+       "integrity": "sha512-Sp1ablJ0ivDkSzjcaJdxEunN5/XvksFJ2sMBFfq6x0ryhQV/2b/KwFe21cMpmHtPOSij8K99/wSfoEuTObmuMQ==",
+-      "dev": true,
+       "license": "MIT",
+       "dependencies": {
+         "es-errors": "^1.3.0",
+@@ -3674,7 +3709,6 @@
+       "version": "1.0.4",
+       "resolved": "https://registry.npmjs.org/call-bound/-/call-bound-1.0.4.tgz",
+       "integrity": "sha512-+ys997U96po4Kx/ABpBCqhA9EuxJaQWDQg7295H4hBphv3IZg0boBKuwYpt4YXp6MZ5AmZQnU/tyMTlRpaSejg==",
+-      "dev": true,
+       "license": "MIT",
+       "dependencies": {
+         "call-bind-apply-helpers": "^1.0.2",
+@@ -3820,6 +3854,18 @@
+       "dev": true,
+       "license": "MIT"
+     },
++    "node_modules/combined-stream": {
++      "version": "1.0.8",
++      "resolved": "https://registry.npmjs.org/combined-stream/-/combined-stream-1.0.8.tgz",
++      "integrity": "sha512-FQN4MRfuJeHf7cBbBMJFXhKSDq+2kAArBlmRBvcvFE5BB1HZKXtSFASDhdlz9zOYwxh8lDdnvmMOe/+5cdoEdg==",
++      "license": "MIT",
++      "dependencies": {
++        "delayed-stream": "~1.0.0"
++      },
++      "engines": {
++        "node": ">= 0.8"
++      }
++    },
+     "node_modules/commander": {
+       "version": "13.1.0",
+       "resolved": "https://registry.npmjs.org/commander/-/commander-13.1.0.tgz",
+@@ -4149,6 +4195,12 @@
+         "url": "https://github.com/sponsors/ljharb"
+       }
+     },
++    "node_modules/dayjs": {
++      "version": "1.11.20",
++      "resolved": "https://registry.npmjs.org/dayjs/-/dayjs-1.11.20.tgz",
++      "integrity": "sha512-YbwwqR/uYpeoP4pu043q+LTDLFBLApUP6VxRihdfNTqu4ubqMlGDLd6ErXhEgsyvY0K6nCs7nggYumAN+9uEuQ==",
++      "license": "MIT"
++    },
+     "node_modules/debounce": {
+       "version": "2.2.0",
+       "resolved": "https://registry.npmjs.org/debounce/-/debounce-2.2.0.tgz",
+@@ -4251,6 +4303,15 @@
+         "url": "https://github.com/sponsors/ljharb"
+       }
+     },
++    "node_modules/delayed-stream": {
++      "version": "1.0.0",
++      "resolved": "https://registry.npmjs.org/delayed-stream/-/delayed-stream-1.0.0.tgz",
++      "integrity": "sha512-ZySD7Nf91aLB0RxL4KGrKHBXl7Eds1DAmEdcoVawXnLD7SDhpNgtuII2aAkg7a7QS41jxPSZ17p4VdGnMHk3MQ==",
++      "license": "MIT",
++      "engines": {
++        "node": ">=0.4.0"
++      }
++    },
+     "node_modules/detect-libc": {
+       "version": "2.1.2",
+       "resolved": "https://registry.npmjs.org/detect-libc/-/detect-libc-2.1.2.tgz",
+@@ -4348,7 +4409,6 @@
+       "version": "1.0.1",
+       "resolved": "https://registry.npmjs.org/dunder-proto/-/dunder-proto-1.0.1.tgz",
+       "integrity": "sha512-KIN/nDJBQRcXw0MLVhZE9iQHmG68qAVIBg9CqmUYjmQIhgij9U5MFvrqkUL5FbtyyzZuOeOt0zdeRe4UY7ct+A==",
+-      "dev": true,
+       "license": "MIT",
+       "dependencies": {
+         "call-bind-apply-helpers": "^1.0.1",
+@@ -4359,6 +4419,15 @@
+         "node": ">= 0.4"
+       }
+     },
++    "node_modules/ecdsa-sig-formatter": {
++      "version": "1.0.11",
++      "resolved": "https://registry.npmjs.org/ecdsa-sig-formatter/-/ecdsa-sig-formatter-1.0.11.tgz",
++      "integrity": "sha512-nagl3RYrbNv6kQkeJIpt6NJZy8twLB/2vtz6yN9Z4vRKHN4/QZJIEbqohALSgwKdnksuY3k5Addp5lg8sVoVcQ==",
++      "license": "Apache-2.0",
++      "dependencies": {
++        "safe-buffer": "^5.0.1"
++      }
++    },
+     "node_modules/electron-to-chromium": {
+       "version": "1.5.336",
+       "resolved": "https://registry.npmjs.org/electron-to-chromium/-/electron-to-chromium-1.5.336.tgz",
+@@ -4544,7 +4613,6 @@
+       "version": "1.0.1",
+       "resolved": "https://registry.npmjs.org/es-define-property/-/es-define-property-1.0.1.tgz",
+       "integrity": "sha512-e3nRfgfUZ4rNGL232gUgX06QNyyez04KdjFrF+LTRoOXmrOgFKDg4BCdsjW8EnT69eqdYGmRpJwiPVYNrCaW3g==",
+-      "dev": true,
+       "license": "MIT",
+       "engines": {
+         "node": ">= 0.4"
+@@ -4554,7 +4622,6 @@
+       "version": "1.3.0",
+       "resolved": "https://registry.npmjs.org/es-errors/-/es-errors-1.3.0.tgz",
+       "integrity": "sha512-Zf5H2Kxt2xjTvbJvP2ZWLEICxA6j+hAmMzIlypy4xcBg1vKVnx89Wy0GbS+kf5cwCVFFzdCFh2XSCFNULS6csw==",
+-      "dev": true,
+       "license": "MIT",
+       "engines": {
+         "node": ">= 0.4"
+@@ -4592,7 +4659,6 @@
+       "version": "1.1.1",
+       "resolved": "https://registry.npmjs.org/es-object-atoms/-/es-object-atoms-1.1.1.tgz",
+       "integrity": "sha512-FGgH2h8zKNim9ljj7dankFPcICIK9Cp5bm+c2gQSYePhpaG5+esrLODihIorn+Pe6FGJzWhXQotPv73jTaldXA==",
+-      "dev": true,
+       "license": "MIT",
+       "dependencies": {
+         "es-errors": "^1.3.0"
+@@ -4605,7 +4671,6 @@
+       "version": "2.1.0",
+       "resolved": "https://registry.npmjs.org/es-set-tostringtag/-/es-set-tostringtag-2.1.0.tgz",
+       "integrity": "sha512-j6vWzfrGVfyXxge+O0x5sh6cvxAog0a/4Rdd2K36zCMV5eJ+/+tOAngRO8cODMNWbVRdVlmGZQL2YS3yR8bIUA==",
+-      "dev": true,
+       "license": "MIT",
+       "dependencies": {
+         "es-errors": "^1.3.0",
+@@ -5286,6 +5351,26 @@
+       "dev": true,
+       "license": "ISC"
+     },
++    "node_modules/follow-redirects": {
++      "version": "1.16.0",
++      "resolved": "https://registry.npmjs.org/follow-redirects/-/follow-redirects-1.16.0.tgz",
++      "integrity": "sha512-y5rN/uOsadFT/JfYwhxRS5R7Qce+g3zG97+JrtFZlC9klX/W5hD7iiLzScI4nZqUS7DNUdhPgw4xI8W2LuXlUw==",
++      "funding": [
++        {
++          "type": "individual",
++          "url": "https://github.com/sponsors/RubenVerborgh"
++        }
++      ],
++      "license": "MIT",
++      "engines": {
++        "node": ">=4.0"
++      },
++      "peerDependenciesMeta": {
++        "debug": {
++          "optional": true
++        }
++      }
++    },
+     "node_modules/for-each": {
+       "version": "0.3.5",
+       "resolved": "https://registry.npmjs.org/for-each/-/for-each-0.3.5.tgz",
+@@ -5302,11 +5387,47 @@
+         "url": "https://github.com/sponsors/ljharb"
+       }
+     },
++    "node_modules/form-data": {
++      "version": "4.0.5",
++      "resolved": "https://registry.npmjs.org/form-data/-/form-data-4.0.5.tgz",
++      "integrity": "sha512-8RipRLol37bNs2bhoV67fiTEvdTrbMUYcFTiy3+wuuOnUog2QBHCZWXDRijWQfAkhBj2Uf5UnVaiWwA5vdd82w==",
++      "license": "MIT",
++      "dependencies": {
++        "asynckit": "^0.4.0",
++        "combined-stream": "^1.0.8",
++        "es-set-tostringtag": "^2.1.0",
++        "hasown": "^2.0.2",
++        "mime-types": "^2.1.12"
++      },
++      "engines": {
++        "node": ">= 6"
++      }
++    },
++    "node_modules/form-data/node_modules/mime-db": {
++      "version": "1.52.0",
++      "resolved": "https://registry.npmjs.org/mime-db/-/mime-db-1.52.0.tgz",
++      "integrity": "sha512-sPU4uV7dYlvtWJxwwxHD0PuihVNiE7TyAbQ5SWxDCB9mUYvOgroQOwYQQOKPJ8CIbE+1ETVlOoK1UC2nU3gYvg==",
++      "license": "MIT",
++      "engines": {
++        "node": ">= 0.6"
++      }
++    },
++    "node_modules/form-data/node_modules/mime-types": {
++      "version": "2.1.35",
++      "resolved": "https://registry.npmjs.org/mime-types/-/mime-types-2.1.35.tgz",
++      "integrity": "sha512-ZDY+bPm5zTTF+YpCrAU9nK0UgICYPT0QtT1NZWFv4s++TNkcgVaT0g6+4R2uI4MjQjzysHB1zxuWL50hzaeXiw==",
++      "license": "MIT",
++      "dependencies": {
++        "mime-db": "1.52.0"
++      },
++      "engines": {
++        "node": ">= 0.6"
++      }
++    },
+     "node_modules/function-bind": {
+       "version": "1.1.2",
+       "resolved": "https://registry.npmjs.org/function-bind/-/function-bind-1.1.2.tgz",
+       "integrity": "sha512-7XHNxH7qX9xG5mIwxkhumTox/MIRNcOgDrxWsMt2pAr23WHp6MrRlN7FBSFpCpr+oVO0F744iUgR82nJMfG2SA==",
+-      "dev": true,
+       "license": "MIT",
+       "funding": {
+         "url": "https://github.com/sponsors/ljharb"
+@@ -5379,7 +5500,6 @@
+       "version": "1.3.0",
+       "resolved": "https://registry.npmjs.org/get-intrinsic/-/get-intrinsic-1.3.0.tgz",
+       "integrity": "sha512-9fSjSaos/fRIVIp+xSJlE6lfwhES7LNtKaCBIamHsjr2na1BiABJPo0mOjjz8GJDURarmCPGqaiVg5mfjb98CQ==",
+-      "dev": true,
+       "license": "MIT",
+       "dependencies": {
+         "call-bind-apply-helpers": "^1.0.2",
+@@ -5404,7 +5524,6 @@
+       "version": "1.0.1",
+       "resolved": "https://registry.npmjs.org/get-proto/-/get-proto-1.0.1.tgz",
+       "integrity": "sha512-sTSfBjoXBp89JvIKIefqw7U2CCebsc74kiY6awiGogKtoSGbgjYE/G/+l9sF3MWFPNc9IcoOC4ODfKHfxFmp0g==",
+-      "dev": true,
+       "license": "MIT",
+       "dependencies": {
+         "dunder-proto": "^1.0.1",
+@@ -5545,7 +5664,6 @@
+       "version": "1.2.0",
+       "resolved": "https://registry.npmjs.org/gopd/-/gopd-1.2.0.tgz",
+       "integrity": "sha512-ZUKRh6/kUFoAiTAtTYPZJ3hw9wNxx+BIBOijnlG9PnrJsCcSjs1wyyD6vJpaYtgnzDrKYRSqf3OO6Rfa93xsRg==",
+-      "dev": true,
+       "license": "MIT",
+       "engines": {
+         "node": ">= 0.4"
+@@ -5617,7 +5735,6 @@
+       "version": "1.1.0",
+       "resolved": "https://registry.npmjs.org/has-symbols/-/has-symbols-1.1.0.tgz",
+       "integrity": "sha512-1cDNdwJ2Jaohmb3sg4OmKaMBwuC48sYni5HUw2DvsC8LjGTLK9h+eb1X6RyuOHe4hT0ULCW68iomhjUoKUqlPQ==",
+-      "dev": true,
+       "license": "MIT",
+       "engines": {
+         "node": ">= 0.4"
+@@ -5630,7 +5747,6 @@
+       "version": "1.0.2",
+       "resolved": "https://registry.npmjs.org/has-tostringtag/-/has-tostringtag-1.0.2.tgz",
+       "integrity": "sha512-NqADB8VjPFLM2V0VvHUewwwsw0ZWBaIdgo+ieHtK3hasLz4qeCRjYcqfB6AQrBggRKppKF8L52/VqdVsO47Dlw==",
+-      "dev": true,
+       "license": "MIT",
+       "dependencies": {
+         "has-symbols": "^1.0.3"
+@@ -5646,7 +5762,6 @@
+       "version": "2.0.2",
+       "resolved": "https://registry.npmjs.org/hasown/-/hasown-2.0.2.tgz",
+       "integrity": "sha512-0hJU9SCPvmMzIBdZFqNPXWa6dqh7WdH0cII9y+CyS8rG3nL48Bclra9HmKhVVUHyPWNH5Y7xDwAB7bfgSjkUMQ==",
+-      "dev": true,
+       "license": "MIT",
+       "dependencies": {
+         "function-bind": "^1.1.2"
+@@ -5707,6 +5822,19 @@
+         "entities": "^4.4.0"
+       }
+     },
++    "node_modules/https-proxy-agent": {
++      "version": "5.0.1",
++      "resolved": "https://registry.npmjs.org/https-proxy-agent/-/https-proxy-agent-5.0.1.tgz",
++      "integrity": "sha512-dFcAjpTQFgoLMzC2VwU+C/CbS7uRL0lWmxDITmqm7C+7F0Odmj6s9l6alZc6AELXhrnggM2CeWSXHGOdX2YtwA==",
++      "license": "MIT",
++      "dependencies": {
++        "agent-base": "6",
++        "debug": "4"
++      },
++      "engines": {
++        "node": ">= 6"
++      }
++    },
+     "node_modules/iceberg-js": {
+       "version": "0.8.1",
+       "resolved": "https://registry.npmjs.org/iceberg-js/-/iceberg-js-0.8.1.tgz",
+@@ -6351,6 +6479,40 @@
+         "node": ">=6"
+       }
+     },
++    "node_modules/jsonwebtoken": {
++      "version": "9.0.3",
++      "resolved": "https://registry.npmjs.org/jsonwebtoken/-/jsonwebtoken-9.0.3.tgz",
++      "integrity": "sha512-MT/xP0CrubFRNLNKvxJ2BYfy53Zkm++5bX9dtuPbqAeQpTVe0MQTFhao8+Cp//EmJp244xt6Drw/GVEGCUj40g==",
++      "license": "MIT",
++      "dependencies": {
++        "jws": "^4.0.1",
++        "lodash.includes": "^4.3.0",
++        "lodash.isboolean": "^3.0.3",
++        "lodash.isinteger": "^4.0.4",
++        "lodash.isnumber": "^3.0.3",
++        "lodash.isplainobject": "^4.0.6",
++        "lodash.isstring": "^4.0.1",
++        "lodash.once": "^4.0.0",
++        "ms": "^2.1.1",
++        "semver": "^7.5.4"
++      },
++      "engines": {
++        "node": ">=12",
++        "npm": ">=6"
++      }
++    },
++    "node_modules/jsonwebtoken/node_modules/semver": {
++      "version": "7.7.4",
++      "resolved": "https://registry.npmjs.org/semver/-/semver-7.7.4.tgz",
++      "integrity": "sha512-vFKC2IEtQnVhpT78h1Yp8wzwrf8CM+MzKMHGJZfBtzhZNycRFnXsHk6E5TxIkkMsgNS7mdX3AGB7x2QM2di4lA==",
++      "license": "ISC",
++      "bin": {
++        "semver": "bin/semver.js"
++      },
++      "engines": {
++        "node": ">=10"
++      }
++    },
+     "node_modules/jsx-ast-utils": {
+       "version": "3.3.5",
+       "resolved": "https://registry.npmjs.org/jsx-ast-utils/-/jsx-ast-utils-3.3.5.tgz",
+@@ -6367,6 +6529,27 @@
+         "node": ">=4.0"
+       }
+     },
++    "node_modules/jwa": {
++      "version": "2.0.1",
++      "resolved": "https://registry.npmjs.org/jwa/-/jwa-2.0.1.tgz",
++      "integrity": "sha512-hRF04fqJIP8Abbkq5NKGN0Bbr3JxlQ+qhZufXVr0DvujKy93ZCbXZMHDL4EOtodSbCWxOqR8MS1tXA5hwqCXDg==",
++      "license": "MIT",
++      "dependencies": {
++        "buffer-equal-constant-time": "^1.0.1",
++        "ecdsa-sig-formatter": "1.0.11",
++        "safe-buffer": "^5.0.1"
++      }
++    },
++    "node_modules/jws": {
++      "version": "4.0.1",
++      "resolved": "https://registry.npmjs.org/jws/-/jws-4.0.1.tgz",
++      "integrity": "sha512-EKI/M/yqPncGUUh44xz0PxSidXFr/+r0pA70+gIYhjv+et7yxM+s29Y+VGDkovRofQem0fs7Uvf4+YmAdyRduA==",
++      "license": "MIT",
++      "dependencies": {
++        "jwa": "^2.0.1",
++        "safe-buffer": "^5.0.1"
++      }
++    },
+     "node_modules/keyv": {
+       "version": "4.5.4",
+       "resolved": "https://registry.npmjs.org/keyv/-/keyv-4.5.4.tgz",
+@@ -6706,6 +6889,42 @@
+         "url": "https://github.com/sponsors/sindresorhus"
+       }
+     },
++    "node_modules/lodash.includes": {
++      "version": "4.3.0",
++      "resolved": "https://registry.npmjs.org/lodash.includes/-/lodash.includes-4.3.0.tgz",
++      "integrity": "sha512-W3Bx6mdkRTGtlJISOvVD/lbqjTlPPUDTMnlXZFnVwi9NKJ6tiAk6LVdlhZMm17VZisqhKcgzpO5Wz91PCt5b0w==",
++      "license": "MIT"
++    },
++    "node_modules/lodash.isboolean": {
++      "version": "3.0.3",
++      "resolved": "https://registry.npmjs.org/lodash.isboolean/-/lodash.isboolean-3.0.3.tgz",
++      "integrity": "sha512-Bz5mupy2SVbPHURB98VAcw+aHh4vRV5IPNhILUCsOzRmsTmSQ17jIuqopAentWoehktxGd9e/hbIXq980/1QJg==",
++      "license": "MIT"
++    },
++    "node_modules/lodash.isinteger": {
++      "version": "4.0.4",
++      "resolved": "https://registry.npmjs.org/lodash.isinteger/-/lodash.isinteger-4.0.4.tgz",
++      "integrity": "sha512-DBwtEWN2caHQ9/imiNeEA5ys1JoRtRfY3d7V9wkqtbycnAmTvRRmbHKDV4a0EYc678/dia0jrte4tjYwVBaZUA==",
++      "license": "MIT"
++    },
++    "node_modules/lodash.isnumber": {
++      "version": "3.0.3",
++      "resolved": "https://registry.npmjs.org/lodash.isnumber/-/lodash.isnumber-3.0.3.tgz",
++      "integrity": "sha512-QYqzpfwO3/CWf3XP+Z+tkQsfaLL/EnUlXWVkIk5FUPc4sBdTehEqZONuyRt2P67PXAk+NXmTBcc97zw9t1FQrw==",
++      "license": "MIT"
++    },
++    "node_modules/lodash.isplainobject": {
++      "version": "4.0.6",
++      "resolved": "https://registry.npmjs.org/lodash.isplainobject/-/lodash.isplainobject-4.0.6.tgz",
++      "integrity": "sha512-oSXzaWypCMHkPC3NvBEaPHf0KsA5mvPrOPgQWDsbg8n7orZ290M0BmC/jgRZ4vcJ6DTAhjrsSYgdsW/F+MFOBA==",
++      "license": "MIT"
++    },
++    "node_modules/lodash.isstring": {
++      "version": "4.0.1",
++      "resolved": "https://registry.npmjs.org/lodash.isstring/-/lodash.isstring-4.0.1.tgz",
++      "integrity": "sha512-0wJxfxH1wgO3GrbuP+dTTk7op+6L41QCXbGINEmD+ny/G/eCqGzxyCsh7159S+mgDDcoarnBw6PC1PS5+wUGgw==",
++      "license": "MIT"
++    },
+     "node_modules/lodash.merge": {
+       "version": "4.6.2",
+       "resolved": "https://registry.npmjs.org/lodash.merge/-/lodash.merge-4.6.2.tgz",
+@@ -6713,6 +6932,12 @@
+       "dev": true,
+       "license": "MIT"
+     },
++    "node_modules/lodash.once": {
++      "version": "4.1.1",
++      "resolved": "https://registry.npmjs.org/lodash.once/-/lodash.once-4.1.1.tgz",
++      "integrity": "sha512-Sb487aTOCr9drQVL8pIxOzVhafOjZN9UU54hiN8PU3uAiSV7lx1yYNpbNmex2PK6dSJoNTSJUUswT651yww3Mg==",
++      "license": "MIT"
++    },
+     "node_modules/log-symbols": {
+       "version": "7.0.1",
+       "resolved": "https://registry.npmjs.org/log-symbols/-/log-symbols-7.0.1.tgz",
+@@ -6778,7 +7003,6 @@
+       "version": "1.1.0",
+       "resolved": "https://registry.npmjs.org/math-intrinsics/-/math-intrinsics-1.1.0.tgz",
+       "integrity": "sha512-/IXtbwEk5HTPyEwyKX6hGkYXxM9nbj64B+ilVJnC/R6B0pH5G4V3b0pVbL7DBj4tkhBAppbQUlf6F6Xl9LHu1g==",
+-      "dev": true,
+       "license": "MIT",
+       "engines": {
+         "node": ">= 0.4"
+@@ -7080,7 +7304,6 @@
+       "version": "1.13.4",
+       "resolved": "https://registry.npmjs.org/object-inspect/-/object-inspect-1.13.4.tgz",
+       "integrity": "sha512-W67iLl4J2EXEGTbfeHCffrjDfitvLANg0UlX3wFUUSTx92KXRFegMHUVgSqE+wvhAbi4WqjGg9czysTV2Epbew==",
+-      "dev": true,
+       "license": "MIT",
+       "engines": {
+         "node": ">= 0.4"
+@@ -7562,6 +7785,15 @@
+         "react-is": "^16.13.1"
+       }
+     },
++    "node_modules/proxy-from-env": {
++      "version": "2.1.0",
++      "resolved": "https://registry.npmjs.org/proxy-from-env/-/proxy-from-env-2.1.0.tgz",
++      "integrity": "sha512-cJ+oHTW1VAEa8cJslgmUZrc+sjRKgAKl3Zyse6+PV38hZe/V6Z14TbCuXcan9F9ghlz4QrFr2c92TNF82UkYHA==",
++      "license": "MIT",
++      "engines": {
++        "node": ">=10"
++      }
++    },
+     "node_modules/punycode": {
+       "version": "2.3.1",
+       "resolved": "https://registry.npmjs.org/punycode/-/punycode-2.3.1.tgz",
+@@ -7572,6 +7804,21 @@
+         "node": ">=6"
+       }
+     },
++    "node_modules/qs": {
++      "version": "6.15.1",
++      "resolved": "https://registry.npmjs.org/qs/-/qs-6.15.1.tgz",
++      "integrity": "sha512-6YHEFRL9mfgcAvql/XhwTvf5jKcOiiupt2FiJxHkiX1z4j7WL8J/jRHYLluORvc1XxB5rV20KoeK00gVJamspg==",
++      "license": "BSD-3-Clause",
++      "dependencies": {
++        "side-channel": "^1.1.0"
++      },
++      "engines": {
++        "node": ">=0.6"
++      },
++      "funding": {
++        "url": "https://github.com/sponsors/ljharb"
++      }
++    },
+     "node_modules/queue-microtask": {
+       "version": "1.2.3",
+       "resolved": "https://registry.npmjs.org/queue-microtask/-/queue-microtask-1.2.3.tgz",
+@@ -7992,6 +8239,26 @@
+         "url": "https://github.com/sponsors/ljharb"
+       }
+     },
++    "node_modules/safe-buffer": {
++      "version": "5.2.1",
++      "resolved": "https://registry.npmjs.org/safe-buffer/-/safe-buffer-5.2.1.tgz",
++      "integrity": "sha512-rp3So07KcdmmKbGvgaNxQSJr7bGVSVk5S9Eq1F+ppbRo70+YeaDxkw5Dd8NPN+GD6bjnYm2VuPuCXmpuYvmCXQ==",
++      "funding": [
++        {
++          "type": "github",
++          "url": "https://github.com/sponsors/feross"
++        },
++        {
++          "type": "patreon",
++          "url": "https://www.patreon.com/feross"
++        },
++        {
++          "type": "consulting",
++          "url": "https://feross.org/support"
++        }
++      ],
++      "license": "MIT"
++    },
+     "node_modules/safe-push-apply": {
+       "version": "1.0.0",
+       "resolved": "https://registry.npmjs.org/safe-push-apply/-/safe-push-apply-1.0.0.tgz",
+@@ -8033,6 +8300,13 @@
+       "integrity": "sha512-eNv+WrVbKu1f3vbYJT/xtiF5syA5HPIMtf9IgY/nKg0sWqzAUEvqY/xm7OcZc/qafLx/iO9FgOmeSAp4v5ti/Q==",
+       "license": "MIT"
+     },
++    "node_modules/scmp": {
++      "version": "2.1.0",
++      "resolved": "https://registry.npmjs.org/scmp/-/scmp-2.1.0.tgz",
++      "integrity": "sha512-o/mRQGk9Rcer/jEEw/yw4mwo3EU/NvYvp577/Btqrym9Qy5/MdWGBqipbALgd2lrdWTJ5/gqDusxfnQBxOxT2Q==",
++      "deprecated": "Just use Node.js's crypto.timingSafeEqual()",
++      "license": "BSD-3-Clause"
++    },
+     "node_modules/selderee": {
+       "version": "0.11.0",
+       "resolved": "https://registry.npmjs.org/selderee/-/selderee-0.11.0.tgz",
+@@ -8189,7 +8463,6 @@
+       "version": "1.1.0",
+       "resolved": "https://registry.npmjs.org/side-channel/-/side-channel-1.1.0.tgz",
+       "integrity": "sha512-ZX99e6tRweoUXqR+VBrslhda51Nh5MTQwou5tnUDgbtyM0dBgmhEDtWGP/xbKn6hqfPRHujUNwz5fy/wbbhnpw==",
+-      "dev": true,
+       "license": "MIT",
+       "dependencies": {
+         "es-errors": "^1.3.0",
+@@ -8209,7 +8482,6 @@
+       "version": "1.0.1",
+       "resolved": "https://registry.npmjs.org/side-channel-list/-/side-channel-list-1.0.1.tgz",
+       "integrity": "sha512-mjn/0bi/oUURjc5Xl7IaWi/OJJJumuoJFQJfDDyO46+hBWsfaVM65TBHq2eoZBhzl9EchxOijpkbRC8SVBQU0w==",
+-      "dev": true,
+       "license": "MIT",
+       "dependencies": {
+         "es-errors": "^1.3.0",
+@@ -8226,7 +8498,6 @@
+       "version": "1.0.1",
+       "resolved": "https://registry.npmjs.org/side-channel-map/-/side-channel-map-1.0.1.tgz",
+       "integrity": "sha512-VCjCNfgMsby3tTdo02nbjtM/ewra6jPHmpThenkTYh8pG9ucZ/1P8So4u4FGBek/BjpOVsDCMoLA/iuBKIFXRA==",
+-      "dev": true,
+       "license": "MIT",
+       "dependencies": {
+         "call-bound": "^1.0.2",
+@@ -8245,7 +8516,6 @@
+       "version": "1.0.2",
+       "resolved": "https://registry.npmjs.org/side-channel-weakmap/-/side-channel-weakmap-1.0.2.tgz",
+       "integrity": "sha512-WPS/HvHQTYnHisLo9McqBHOJk2FkHO/tlpvldyrnem4aeQp4hai3gythswg6p01oSoTl58rcpiFAjF2br2Ak2A==",
+-      "dev": true,
+       "license": "MIT",
+       "dependencies": {
+         "call-bound": "^1.0.2",
+@@ -8799,6 +9069,24 @@
+       "integrity": "sha512-oJFu94HQb+KVduSUQL7wnpmqnfmLsOA/nAh6b6EH0wCEoK0/mPeXU6c3wKDV83MkOuHPRHtSXKKU99IBazS/2w==",
+       "license": "0BSD"
+     },
++    "node_modules/twilio": {
++      "version": "6.0.0",
++      "resolved": "https://registry.npmjs.org/twilio/-/twilio-6.0.0.tgz",
++      "integrity": "sha512-MAie5DJ3KLpcKlDaYtNzsKMQXcCi+YHWKvZjuSpm27vJAO/l8PanJA0LkkJ03sbh+Kwe5NeL0Q2+y6IjNUYeUA==",
++      "license": "MIT",
++      "dependencies": {
++        "axios": "^1.13.5",
++        "dayjs": "^1.11.9",
++        "https-proxy-agent": "^5.0.0",
++        "jsonwebtoken": "^9.0.3",
++        "qs": "^6.14.1",
++        "scmp": "^2.1.0",
++        "xmlbuilder": "^13.0.2"
++      },
++      "engines": {
++        "node": ">=20.0.0"
++      }
++    },
+     "node_modules/type-check": {
+       "version": "0.4.0",
+       "resolved": "https://registry.npmjs.org/type-check/-/type-check-0.4.0.tgz",
+@@ -9265,6 +9553,15 @@
+         }
+       }
+     },
++    "node_modules/xmlbuilder": {
++      "version": "13.0.2",
++      "resolved": "https://registry.npmjs.org/xmlbuilder/-/xmlbuilder-13.0.2.tgz",
++      "integrity": "sha512-Eux0i2QdDYKbdbA6AM6xE4m6ZTZr4G4xF9kahI2ukSEMCzwce2eX9WlTI5J3s+NU7hpasFsr8hWIONae7LluAQ==",
++      "license": "MIT",
++      "engines": {
++        "node": ">=6.0"
++      }
++    },
+     "node_modules/yallist": {
+       "version": "3.1.1",
+       "resolved": "https://registry.npmjs.org/yallist/-/yallist-3.1.1.tgz",
+diff --git a/package.json b/package.json
+index 742f7e5..8102a9d 100644
+--- a/package.json
++++ b/package.json
+@@ -19,6 +19,7 @@
+     "react-email": "^5.2.10",
+     "recharts": "^3.8.1",
+     "resend": "^6.11.0",
++    "twilio": "^6.0.0",
+     "unpdf": "^1.6.0",
+     "zod": "^4.3.6"
+   },
+diff --git a/src/app/api/cron/send-scheduled-sms/route.ts b/src/app/api/cron/send-scheduled-sms/route.ts
+new file mode 100644
+index 0000000..01fa81e
+--- /dev/null
++++ b/src/app/api/cron/send-scheduled-sms/route.ts
+@@ -0,0 +1,90 @@
++import { NextRequest, NextResponse } from 'next/server'
++
++import { createClient } from '@/lib/supabase/server'
++import { getAdminClient } from '@/lib/supabase/admin'
++import { sendSms } from '@/lib/twilio'
++import { renderTemplate, type SmsTemplate } from '@/lib/sms-templates'
++
++export const dynamic = 'force-dynamic'
++export const maxDuration = 60
++
++type ScheduledRow = {
++  id: string
++  template: string
++  variables: Record<string, unknown> | null
++  to_phone: string
++  lead_id: string | null
++  customer_id: string | null
++  job_id: string | null
++}
++
++async function drain() {
++  const db = getAdminClient()
++  const nowIso = new Date().toISOString()
++
++  const { data, error } = await db
++    .from('scheduled_sms')
++    .select('id, template, variables, to_phone, lead_id, customer_id, job_id')
++    .eq('status', 'pending')
++    .lte('send_at', nowIso)
++    .order('send_at', { ascending: true })
++    .limit(50)
++
++  if (error) return { ok: false, error: error.message }
++
++  const rows = (data ?? []) as ScheduledRow[]
++  let sent = 0
++  let failed = 0
++
++  for (const row of rows) {
++    try {
++      const body = renderTemplate(row.template as SmsTemplate, row.variables ?? {})
++      const res = await sendSms(row.to_phone, body, {
++        tags: {
++          leadId: row.lead_id ?? undefined,
++          customerId: row.customer_id ?? undefined,
++          jobId: row.job_id ?? undefined,
++          template: row.template,
++        },
++      })
++      await db
++        .from('scheduled_sms')
++        .update({
++          status: 'sent',
++          sent_at: new Date().toISOString(),
++          sms_event_id: res.eventId,
++          last_error: null,
++        })
++        .eq('id', row.id)
++      sent += 1
++    } catch (err) {
++      const msg = err instanceof Error ? err.message : String(err)
++      await db
++        .from('scheduled_sms')
++        .update({ status: 'failed', last_error: msg })
++        .eq('id', row.id)
++      failed += 1
++      console.error('[send-scheduled-sms] row failed:', row.id, msg)
++    }
++  }
++
++  return { ok: true, considered: rows.length, sent, failed }
++}
++
++export async function GET(request: NextRequest) {
++  // Dual auth: Bearer CRON_SECRET for Vercel Cron, Supabase cookie for manual /hq runs.
++  const auth = request.headers.get('authorization')
++  if (auth && auth === `Bearer ${process.env.CRON_SECRET}`) {
++    return NextResponse.json(await drain())
++  }
++
++  const supabase = await createClient()
++  const { data: { user } } = await supabase.auth.getUser()
++  if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
++
++  return NextResponse.json(await drain())
++}
++
++export async function POST(request: NextRequest) {
++  return GET(request)
++}
+diff --git a/src/app/api/jobs/[id]/route.ts b/src/app/api/jobs/[id]/route.ts
+index 537e399..37c574d 100644
+--- a/src/app/api/jobs/[id]/route.ts
++++ b/src/app/api/jobs/[id]/route.ts
+@@ -25,16 +25,47 @@ export async function PATCH(
+     return NextResponse.json({ error: parsed.error.issues }, { status: 400 })
+   }
+ 
+-  const { data, error } = await getAdminClient()
++  const db = getAdminClient()
++
++  const { data: prev } = await db
++    .from('jobs')
++    .select('id, status')
++    .eq('id', id)
++    .single()
++
++  const { data, error } = await db
+     .from('jobs')
+     .update({ status: parsed.data.status, updated_at: new Date().toISOString() })
+     .eq('id', id)
+-    .select('id, status')
++    .select('id, status, customer_id, customers(name, phone)')
+     .single()
+ 
+   if (error || !data) {
+     return NextResponse.json({ error: 'Job not found' }, { status: 404 })
+   }
+ 
+-  return NextResponse.json(data)
++  // When a job flips to 'completed', schedule a review-request SMS for 24h out.
++  // Customer must have a phone; otherwise silently skip.
++  const justCompleted =
++    parsed.data.status === 'completed' && prev?.status !== 'completed'
++  const customerRaw = data.customers as
++    | { name: string; phone: string | null }
++    | { name: string; phone: string | null }[]
++    | null
++  const customer = Array.isArray(customerRaw) ? customerRaw[0] ?? null : customerRaw
++
++  if (justCompleted && customer?.phone) {
++    const sendAt = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString()
++    await db.from('scheduled_sms').insert({
++      send_at: sendAt,
++      template: 'review_request',
++      variables: { customerName: customer.name },
++      to_phone: customer.phone,
++      customer_id: data.customer_id,
++      job_id: data.id,
++      status: 'pending',
++    })
++  }
++
++  return NextResponse.json({ id: data.id, status: data.status })
+ }
+diff --git a/src/app/api/leads/route.ts b/src/app/api/leads/route.ts
+index e9c28de..fa17c4d 100644
+--- a/src/app/api/leads/route.ts
++++ b/src/app/api/leads/route.ts
+@@ -5,6 +5,8 @@ import { getAdminClient } from '@/lib/supabase/admin'
+ import { Resend } from 'resend'
+ import LeadOwnerAlert, { leadOwnerAlertText } from '@/emails/LeadOwnerAlert'
+ import LeadCustomerConfirmation, { leadCustomerConfirmationText } from '@/emails/LeadCustomerConfirmation'
++import { sendSms } from '@/lib/twilio'
++import { leadAutoReply } from '@/lib/sms-templates'
+ 
+ export const dynamic = 'force-dynamic'
+ 
+@@ -181,6 +183,15 @@ export async function POST(request: NextRequest) {
+       })
+     }
+ 
++    // ── SMS auto-reply (fire-and-forget, same pattern as Resend) ─────────
++    if (process.env.TWILIO_ACCOUNT_SID && process.env.TWILIO_FROM) {
++      void sendSms(
++        data.phone,
++        leadAutoReply({ name: data.name, service: data.service_type }),
++        { tags: { leadId: lead.id, template: 'lead_auto_reply' } }
++      ).catch(err => console.error('[Twilio] lead auto-reply failed:', err))
++    }
++
+     return NextResponse.json({ success: true, id: lead.id })
+   } catch (error) {
+     if (error instanceof z.ZodError) {
+diff --git a/src/app/hq/components/LeadsTable.tsx b/src/app/hq/components/LeadsTable.tsx
+index 7e8fd3a..d1a442c 100644
+--- a/src/app/hq/components/LeadsTable.tsx
++++ b/src/app/hq/components/LeadsTable.tsx
+@@ -43,6 +43,7 @@ const TIMELINE_LABELS: Record<string, string> = {
+ }
+ 
+ type EmailEvent = { event_type: string; occurred_at: string }
++type SmsEvent = { status: string; occurred_at: string }
+ 
+ function relativeTime(iso: string): string {
+   const ms = Date.now() - new Date(iso).getTime()
+@@ -63,12 +64,23 @@ function emailIndicator(event?: EmailEvent) {
+   return null
+ }
+ 
++function smsIndicator(event?: SmsEvent) {
++  if (!event) return null
++  const s = event.status
++  if (s === 'delivered') return { emoji: '📱', label: 'Delivered', color: 'text-green-700 bg-green-50' }
++  if (s === 'sent' || s === 'queued') return { emoji: '📱', label: 'Sent', color: 'text-blue-700 bg-blue-50' }
++  if (s === 'failed' || s === 'undelivered') return { emoji: '📱', label: 'Failed', color: 'text-red-700 bg-red-50' }
++  return { emoji: '📱', label: s, color: 'text-gray-600 bg-gray-50' }
++}
++
+ export default function LeadsTable({
+   initialLeads,
+   emailEvents = {},
++  smsEvents = {},
+ }: {
+   initialLeads: Lead[]
+   emailEvents?: Record<string, EmailEvent>
++  smsEvents?: Record<string, SmsEvent>
+ }) {
+   const [leads, setLeads] = useState(initialLeads)
+   const [updating, setUpdating] = useState<string | null>(null)
+@@ -186,6 +198,16 @@ export default function LeadsTable({
+                     </div>
+                   )
+                 })()}
++                {mounted && (() => {
++                  const ind = smsIndicator(smsEvents[lead.id])
++                  if (!ind) return null
++                  return (
++                    <div className={`mt-1 inline-flex items-center gap-1 text-[10px] font-medium px-1.5 py-0.5 rounded ${ind.color}`}>
++                      <span>{ind.emoji}</span>
++                      <span>{ind.label} {relativeTime(smsEvents[lead.id].occurred_at)}</span>
++                    </div>
++                  )
++                })()}
+               </td>
+               <td className="px-4 py-3">
+                 <a href={`tel:${lead.phone}`} className="text-blue-600 hover:underline font-mono whitespace-nowrap">
+diff --git a/src/app/hq/page.tsx b/src/app/hq/page.tsx
+index b1894ea..f2b886b 100644
+--- a/src/app/hq/page.tsx
++++ b/src/app/hq/page.tsx
+@@ -63,6 +63,7 @@ export default async function DashboardPage() {
+     { data: permitLeads },
+     { data: recentLeadsForTable },
+     { data: recentEmailEvents },
++    { data: recentSmsEvents },
+   ] = await Promise.all([
+     db.from('leads').select('status, timeline, created_at'),
+     db.from('customers').select('created_at, lead_id'),
+@@ -77,6 +78,12 @@ export default async function DashboardPage() {
+       .in('event_type', ['email.opened', 'email.clicked', 'email.delivered'])
+       .order('occurred_at', { ascending: false })
+       .limit(500),
++    db
++      .from('sms_events')
++      .select('lead_id, status, occurred_at')
++      .not('lead_id', 'is', null)
++      .order('occurred_at', { ascending: false })
++      .limit(500),
+   ])
+ 
+   const latestEventByLead: Record<string, { event_type: string; occurred_at: string }> = {}
+@@ -84,6 +91,11 @@ export default async function DashboardPage() {
+     if (!latestEventByLead[e.lead_id]) latestEventByLead[e.lead_id] = { event_type: e.event_type, occurred_at: e.occurred_at }
+   }
+ 
++  const latestSmsByLead: Record<string, { status: string; occurred_at: string }> = {}
++  for (const s of (recentSmsEvents ?? []) as { lead_id: string; status: string; occurred_at: string }[]) {
++    if (!latestSmsByLead[s.lead_id]) latestSmsByLead[s.lead_id] = { status: s.status, occurred_at: s.occurred_at }
++  }
++
+   const L = (leads ?? []) as Lead[]
+   const C = (customers ?? []) as Customer[]
+   const Q = (quotes ?? []) as Quote[]
+@@ -286,7 +298,11 @@ export default async function DashboardPage() {
+         <div className="text-[11px] font-bold tracking-[0.2em] uppercase text-[color:var(--color-ink-400)] mb-3">
+           Recent leads
+         </div>
+-        <LeadsTable initialLeads={recentLeadsForTable ?? []} emailEvents={latestEventByLead} />
++        <LeadsTable
++          initialLeads={recentLeadsForTable ?? []}
++          emailEvents={latestEventByLead}
++          smsEvents={latestSmsByLead}
++        />
+       </section>
+     </div>
+   )
+diff --git a/src/lib/sms-templates.ts b/src/lib/sms-templates.ts
+new file mode 100644
+index 0000000..e24d992
+--- /dev/null
++++ b/src/lib/sms-templates.ts
+@@ -0,0 +1,44 @@
++// Outbound SMS templates. Every template ends with "Reply STOP to opt out."
++// to stay TCPA-compliant. Tune copy post-merge — Julian owns the voice.
++
++export const SMS_TEMPLATES = {
++  lead_auto_reply: 'lead_auto_reply',
++  review_request: 'review_request',
++} as const
++
++export type SmsTemplate = (typeof SMS_TEMPLATES)[keyof typeof SMS_TEMPLATES]
++
++export function leadAutoReply(params: { name: string; service?: string | null }) {
++  const firstName = (params.name ?? '').trim().split(/\s+/)[0] || 'there'
++  const service = (params.service ?? '').replace(/_/g, ' ').trim()
++  const serviceClause = service ? `your ${service} request` : 'your inquiry'
++  return (
++    `Hi ${firstName} — Julian with Triple J Metal. Got ${serviceClause}. ` +
++    `I'll call you shortly. Reply STOP to opt out.`
++  )
++}
++
++export function reviewRequest(params: { customerName: string }) {
++  const firstName = (params.customerName ?? '').trim().split(/\s+/)[0] || 'there'
++  const reviewUrl = process.env.NEXT_PUBLIC_GOOGLE_REVIEW_URL
++  const link = reviewUrl ? ` ${reviewUrl}` : ''
++  return (
++    `Hi ${firstName}, Julian with Triple J. Hope you love the new build. ` +
++    `If you have 30 seconds, a Google review means the world:${link}. ` +
++    `Reply STOP to opt out.`
++  )
++}
++
++export function renderTemplate(template: SmsTemplate, variables: Record<string, unknown>): string {
++  switch (template) {
++    case 'lead_auto_reply':
++      return leadAutoReply({
++        name: String(variables.name ?? ''),
++        service: variables.service as string | null | undefined,
++      })
++    case 'review_request':
++      return reviewRequest({
++        customerName: String(variables.customerName ?? ''),
++      })
++  }
++}
+diff --git a/src/lib/twilio.ts b/src/lib/twilio.ts
+new file mode 100644
+index 0000000..9300479
+--- /dev/null
++++ b/src/lib/twilio.ts
+@@ -0,0 +1,71 @@
++import twilio from 'twilio'
++
++import { getAdminClient } from '@/lib/supabase/admin'
++
++type SendTags = {
++  leadId?: string
++  customerId?: string
++  jobId?: string
++  template?: string
++}
++
++type SmsResult = { twilioSid?: string; status: string; eventId: string | null }
++
++let cached: ReturnType<typeof twilio> | null = null
++
++function client() {
++  if (cached) return cached
++  const sid = process.env.TWILIO_ACCOUNT_SID
++  const token = process.env.TWILIO_AUTH_TOKEN
++  if (!sid || !token) {
++    throw new Error('Twilio credentials missing (TWILIO_ACCOUNT_SID / TWILIO_AUTH_TOKEN)')
++  }
++  cached = twilio(sid, token)
++  return cached
++}
++
++export async function sendSms(
++  to: string,
++  body: string,
++  { tags = {} }: { tags?: SendTags } = {}
++): Promise<SmsResult> {
++  const from = process.env.TWILIO_FROM
++  if (!from) throw new Error('TWILIO_FROM env var missing')
++
++  const db = getAdminClient()
++
++  let twilioSid: string | undefined
++  let status: string = 'queued'
++  let errorMessage: string | null = null
++
++  try {
++    const msg = await client().messages.create({ to, from, body })
++    twilioSid = msg.sid
++    status = msg.status
++  } catch (err) {
++    status = 'failed'
++    errorMessage = err instanceof Error ? err.message : String(err)
++  }
++
++  const { data: event } = await db
++    .from('sms_events')
++    .insert({
++      twilio_sid: twilioSid ?? null,
++      status,
++      to_phone: to,
++      body,
++      template: tags.template ?? null,
++      lead_id: tags.leadId ?? null,
++      customer_id: tags.customerId ?? null,
++      job_id: tags.jobId ?? null,
++      raw: errorMessage ? { error: errorMessage } : null,
++    })
++    .select('id')
++    .single()
++
++  if (errorMessage) {
++    throw new Error(`[Twilio] ${errorMessage}`)
++  }
++
++  return { twilioSid, status, eventId: event?.id ?? null }
++}
+diff --git a/supabase/migrations/007_sms_events.sql b/supabase/migrations/007_sms_events.sql
+new file mode 100644
+index 0000000..b1df26c
+--- /dev/null
++++ b/supabase/migrations/007_sms_events.sql
+@@ -0,0 +1,62 @@
++-- SMS delivery events from Twilio + scheduled outbound SMS queue.
++-- Mirrors the email_events shape so the dashboard can surface both next to
++-- each other on the Leads/Jobs tables.
++
++create table if not exists public.sms_events (
++  id uuid primary key default uuid_generate_v4(),
++  created_at timestamptz not null default now(),
++  twilio_sid text,
++  status text not null,
++  to_phone text not null,
++  body text,
++  template text,
++  lead_id uuid references public.leads(id) on delete set null,
++  customer_id uuid references public.customers(id) on delete set null,
++  job_id uuid references public.jobs(id) on delete set null,
++  occurred_at timestamptz not null default now(),
++  raw jsonb
++);
++
++create index if not exists sms_events_lead_id_idx on public.sms_events (lead_id);
++create index if not exists sms_events_customer_id_idx on public.sms_events (customer_id);
++create index if not exists sms_events_job_id_idx on public.sms_events (job_id);
++create index if not exists sms_events_occurred_at_idx on public.sms_events (occurred_at desc);
++create index if not exists sms_events_twilio_sid_idx on public.sms_events (twilio_sid);
++
++alter table public.sms_events enable row level security;
++
++create policy "Owner full access to sms_events"
++  on public.sms_events
++  for all
++  using (auth.role() = 'authenticated')
++  with check (auth.role() = 'authenticated');
++
++-- Deferred/scheduled outbound SMS. Cron drains rows where send_at <= now().
++create table if not exists public.scheduled_sms (
++  id uuid primary key default uuid_generate_v4(),
++  created_at timestamptz not null default now(),
++  send_at timestamptz not null,
++  template text not null,
++  variables jsonb not null default '{}'::jsonb,
++  to_phone text not null,
++  lead_id uuid references public.leads(id) on delete set null,
++  customer_id uuid references public.customers(id) on delete set null,
++  job_id uuid references public.jobs(id) on delete cascade,
++  status text not null default 'pending',
++  sent_at timestamptz,
++  sms_event_id uuid references public.sms_events(id) on delete set null,
++  last_error text
++);
++
++create index if not exists scheduled_sms_pending_idx
++  on public.scheduled_sms (status, send_at)
++  where status = 'pending';
++create index if not exists scheduled_sms_job_id_idx on public.scheduled_sms (job_id);
++
++alter table public.scheduled_sms enable row level security;
++
++create policy "Owner full access to scheduled_sms"
++  on public.scheduled_sms
++  for all
++  using (auth.role() = 'authenticated')
++  with check (auth.role() = 'authenticated');
+diff --git a/vercel.json b/vercel.json
+index ad7d835..030f572 100644
+--- a/vercel.json
++++ b/vercel.json
+@@ -3,6 +3,10 @@
+     {
+       "path": "/api/cron/scrape-permits",
+       "schedule": "0 14 * * *"
++    },
++    {
++      "path": "/api/cron/send-scheduled-sms",
++      "schedule": "0 * * * *"
+     }
+   ]
+ }
+-- 
+2.43.0
+

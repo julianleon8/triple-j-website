@@ -1,0 +1,96 @@
+From d7d9497198018f1af5116d0c5101f60f76886758 Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Wed, 6 May 2026 21:17:13 +0000
+Subject: [PATCH] feat(pricing): lock roll-up door prices from Freddy/Juan
+ handwritten sheet
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Replaces the placeholder ladder in quote-pricing.ts with the canonical
+2026-05-06 office sheet:
+
+  8x8   $1,000
+  10x10 $1,900
+  12x12 $1,800
+  14x14 $2,200
+  16x16 $2,600
+
+RollupSize type updated (9x8 and 16x14 dropped — not on the canonical
+sheet — and 8x8 + 16x16 added). CalculatorStep.tsx ROLLUP_SIZES array
+updated to match.
+
+Anomaly preserved as-written: 10x10 ($1,900) sits above 12x12 ($1,800)
+on the sheet; flagged inline + in Decisions.md for the next price-sheet
+pass.
+---
+ Decisions.md                                  |  1 +
+ .../quotes/new/_components/CalculatorStep.tsx |  2 +-
+ src/lib/quote-pricing.ts                      | 20 +++++++++++--------
+ 3 files changed, 14 insertions(+), 9 deletions(-)
+
+diff --git a/Decisions.md b/Decisions.md
+index 14a0ec4..a00e2a6 100644
+--- a/Decisions.md
++++ b/Decisions.md
+@@ -133,3 +133,4 @@ _Maintained by Claude Code_
+ | 2026-05-02 | **Homepage redesign — Claude Design handoff `T3xTdERm9wlM8SFyWYpaJw` shipped to `main`** | Three structural changes landed against the marketing homepage. **Hero** rebuilt as "loud sales-mode version C": red `Family-Owned · Temple, TX` eyebrow → Barlow `Welded right. / Up by Friday.` headline with brand-blue accent on the promise word → generic `Welded · Central Texas` verified chip top-right (no fabricated build dates) → 4-up form-chip ribbon (Carport / Garage / Barn / Lean-to) linking to `/#quote` → "Scroll for the full quote" cue → 4-up proof strip (`150+ Central TX builds / 24h Quote reply / ★★★★★ Local on Google / In-house Welders & installers`) sharing the same dark ground. **Services** refactored to Editorial Split treatment (option C in the design's `components-card-photo.html`): photo on top with no overlay text, brand-700 magazine eyebrow, Barlow display headline, body, hairline rule capping a `From $X · steel + install` + `See builds →` row. Section ground switched to warm paper `#fbf9f5`, grid 4-up at lg. **Header** got a 1-line tweak — `-mt-1` on the lion image to optically align the lion's bottom-weighted face with the cap-line of "Triple". **TrustBar** dropped from homepage (proof strip absorbs it); component file retained for service-detail / location pages. Three new CSS gradient utilities added to `globals.css` (`.hero-scrim`, `.hero-bottom-fade`, `.hero-chip-overlay`) since 4-stop gradients can't be expressed in Tailwind's `from/via/to`. Out of scope: WhyTripleJ, HowItWorks, Gallery, Testimonials, ServiceAreas, QuoteForm, Footer (design transcript explicitly preserved them). Commits: `207f35c` (homepage redesign) + `5560e74` (services pricing realignment). |
+ | 2026-05-02 | **Homepage Services pricing realigned to Marketplace anchors + steel-install framing** | First pass of the homepage redesign listed Garage from $9,400 (extrapolated 20×20 + 4 walls + roll-up door). That silently bundled walls + door — exactly the misrepresentation the 2026-05-02 unbundling sweep was correcting on Marketplace. Followed up immediately: Garage card now reads `From $5,500 · steel + install` (matches Marketplace listing B's 30×30 shell anchor), with headline + blurb rewritten to make the shell-only scope explicit ("Enclosed shop space — your spec, our crew. 30×30 welded shell starts here. Walls, roll-up doors, walk-throughs, and insulation are quoted on top per your spec."). All four cards now use the consistent `From $X · steel + install` meta line: Carports $3,000 / Garages $5,500 / Barns $6,500 / RV & Boat $3,800. Cross-channel pricing parity with Marketplace is now intact — a buyer arriving from listing B sees the same anchor on the homepage. Concrete, walls, doors, and windows remain quoted on top per spec. Memory: `feedback_ad_pricing_accuracy.md` Rule 3 (steel + install only) governs all four cards. |
+ | 2026-05-02 | **Turnkey-as-offering vs. turnkey-as-price-label clarified — over-correction reverted** | Mid-session I read Julian's 2026-05-02 unbundling sweep too aggressively and stripped "turnkey" from the homepage metadata + Services section lede (commit `d3a7cd6`). Julian flagged: turnkey IS a real Triple J offering (single contract: site prep + concrete + structure), the only problem is attaching the steel+install floor prices ($3,000 / $5,500 / $6,500 / $3,800) to the word "turnkey" — those prices are shell-only. The fix: keep "turnkey" wherever it describes the service offering with no specific price attached (metadata, About, Military, blog posts, schema.org descriptions, the `/services/turnkey-carports-with-concrete` route slug, SEO keyword arrays); only police the cases where a shell-only price is being labeled "turnkey." Reverted `d3a7cd6` (`2cf5250`). The Services *cards* keep the "From $X · steel + install" framing from `5560e74` because those numbers ARE the steel+install floors. New durable rule logged to memory `feedback_turnkey_vs_steel_install.md`. |
++| 2026-05-06 | **Roll-up door price list LOCKED from Freddy/Juan handwritten sheet** | Julian shared the office price sheet for roll-up doors and asked to lock it in. Canonical installed prices: **8×8 = $1,000 · 10×10 = $1,900 · 12×12 = $1,800 · 14×14 = $2,200 · 16×16 = $2,600**. Replaces the placeholder ladder in `src/lib/quote-pricing.ts` (`9x8 850 / 10x10 1100 / 12x12 1450 / 14x14 1900 / 16x14 2200`). `RollupSize` type updated to `'8x8' \| '10x10' \| '12x12' \| '14x14' \| '16x16'` — `9x8` and `16x14` dropped (not stocked on the canonical sheet); 8×8 and 16×16 added. `CalculatorStep.tsx` `ROLLUP_SIZES` array updated to match. **Anomaly flagged:** 10×10 ($1,900) is priced ABOVE 12×12 ($1,800) on the sheet — preserved as written but called out in a code comment + here for Julian's next price-sheet pass; if it's a transcription slip, swap 10×10 to ~$1,400 (likely intended) on the next pass. Done on branch `claude/quote-rollup-door-pricing-jB54p`. |
+diff --git a/src/app/hq/quotes/new/_components/CalculatorStep.tsx b/src/app/hq/quotes/new/_components/CalculatorStep.tsx
+index 888471b..045033d 100644
+--- a/src/app/hq/quotes/new/_components/CalculatorStep.tsx
++++ b/src/app/hq/quotes/new/_components/CalculatorStep.tsx
+@@ -38,7 +38,7 @@ const ROOF_STYLES: { value: RoofStyle; label: string }[] = [
+   { value: 'flat',   label: 'Flat' },
+ ]
+ 
+-const ROLLUP_SIZES: RollupSize[] = ['9x8', '10x10', '12x12', '14x14', '16x14']
++const ROLLUP_SIZES: RollupSize[] = ['8x8', '10x10', '12x12', '14x14', '16x16']
+ 
+ const MARGIN_BUFFERS: { value: MarginBuffer; label: string }[] = [
+   { value: 0.10, label: '10%' },
+diff --git a/src/lib/quote-pricing.ts b/src/lib/quote-pricing.ts
+index fa92245..72e5fda 100644
+--- a/src/lib/quote-pricing.ts
++++ b/src/lib/quote-pricing.ts
+@@ -18,7 +18,7 @@
+ export type BuildingType = 'carport' | 'garage' | 'barn' | 'rv_cover'
+ export type RoofStyle = 'flat' | 'gabled'
+ export type ColumnTier = '6_inch' | '8_inch' | '10_inch'
+-export type RollupSize = '9x8' | '10x10' | '12x12' | '14x14' | '16x14'
++export type RollupSize = '8x8' | '10x10' | '12x12' | '14x14' | '16x16'
+ export type MarginBuffer = 0.10 | 0.15 | 0.20
+ 
+ export type WallSection = {
+@@ -164,15 +164,19 @@ const HEIGHT_SURCHARGE_STARTS_AT_FT = 12   // CONFIRMED from prompt
+ const HEIGHT_SURCHARGE_PER_FT = 400        // CONFIRMED from prompt
+ 
+ /**
+- * Roll-up door pricing by size.
+- * TODO_PRICING: replace with real numbers.
++ * Roll-up door pricing by size. Locked from the 2026-05-06 handwritten
++ * Triple J price sheet (Freddy/Juan estimator). Prices are installed,
++ * customer-facing — buffer is NOT re-applied at calc time for these.
++ *
++ * Note: 10x10 ($1,900) sits above 12x12 ($1,800) on the sheet — kept
++ * as written; flagged for review by Julian on next price-sheet pass.
+  */
+ const ROLLUP_DOOR_PRICE: Record<RollupSize, number> = {
+-  '9x8':   850,
+-  '10x10': 1100,
+-  '12x12': 1450,
+-  '14x14': 1900,
+-  '16x14': 2200,
++  '8x8':   1000,
++  '10x10': 1900,
++  '12x12': 1800,
++  '14x14': 2200,
++  '16x16': 2600,
+ }
+ 
+ /** Walk-through door (3'×7' standard). TODO_PRICING. */
+-- 
+2.43.0
+

@@ -266,13 +266,13 @@ Known gaps between what is locked above and what is actually shipped. `scripts/c
 reports these on every run. Delete an entry the moment it is closed.
 
 - **Roll-up door prices conflict; owner to confirm.** `dev/sales-pack-2026-04-30.md` says $800 per roll-up
-  door. A 2026-05-06 branch (`claude/quote-rollup-door-pricing-jB54p`, never merged, lost in the 2026-09-06
-  restart) recorded Freddy and Juan's handwritten sheet: 8×8 $1,000 · 10×10 $1,900 · 12×12 $1,800 ·
+  door. A 2026-05-06 pre-restart branch, never merged (deleted 2026-09-30; its change is kept as
+  `archive/pre-restart-branches/rollup-door-pricing-d7d9497.patch`), recorded Freddy and Juan's handwritten sheet: 8×8 $1,000 · 10×10 $1,900 · 12×12 $1,800 ·
   14×14 $2,200 · 16×16 $2,600. `src/lib/quote-pricing.ts` still carries older placeholder sizes. No price
   was changed. (2026-09-30)
 - **Automatic texting to leads and customers was built but never shipped; owner to decide.** Two
-  pre-restart branches (`claude/fix-sms-gIPzp`, `claude/setup-new-project-wA6jt`) built a Twilio auto-reply
-  to new leads and a post-job review request. Neither is on `main`, and the one-tap reply rule above sends
+  pre-restart branches built a Twilio auto-reply to new leads and a post-job review request; the branches were
+  deleted 2026-09-30 and the work is kept as patches in `archive/pre-restart-branches/`. Neither is on `main`, and the one-tap reply rule above sends
   from Julian's own phone instead. Automated business texting in the US also needs A2P 10DLC registration.
   (2026-09-30)
 

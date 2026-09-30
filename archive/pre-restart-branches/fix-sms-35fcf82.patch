@@ -1,0 +1,383 @@
+From 35fcf8265911406cad4964ef5cf321fd582c6b89 Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Sat, 25 Apr 2026 23:14:46 +0000
+Subject: [PATCH] feat(phase 2): SMS speed-to-response + review-ask + env chart
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Closes Phase 2 Twilio milestone. Two automated SMS paths, both gated on
+isTwilioConfigured() — no-op silently until env vars land.
+
+- notifyNewLead: fire-and-forget Twilio SMS to the lead after email + push;
+  shared by website form + FB Lead Ads + Messenger DMs. <160 GSM-7 chars
+  for 1-segment cost. Logs failures, never blocks lead insert.
+- /api/customers/[id]/review action=asked: sends review-ask SMS alongside
+  the DB stamp. DB stamp lands even if SMS fails. Outcome returned in
+  response payload; ReviewActions surfaces failure reasons inline.
+- .env.example: added Twilio trio, ANTHROPIC_API_KEY, Meta webhook trio,
+  QBO_ENVIRONMENT, SETUP_KEY, GOOGLE_REVIEW_URL with provisioning notes
+  + [REQUIRED]/[OPTIONAL] legend. Removed unused VAPID_PUBLIC_KEY.
+- Fix: nowMs() infinite recursion in ReviewSection (latent — would have
+  crashed /hq/customers/[id] the moment the new ask flow ran).
+---
+ .env.example                                  | 89 +++++++++++++++----
+ Decisions.md                                  |  3 +
+ src/app/api/customers/[id]/review/route.ts    | 56 +++++++++++-
+ .../[id]/components/ReviewActions.tsx         | 15 ++++
+ .../[id]/components/ReviewSection.tsx         |  2 +-
+ src/lib/lead-notifications.ts                 | 52 +++++++++++
+ 6 files changed, 198 insertions(+), 19 deletions(-)
+
+diff --git a/.env.example b/.env.example
+index 29e799b..90129c1 100644
+--- a/.env.example
++++ b/.env.example
+@@ -2,70 +2,127 @@
+ # Triple J Metal — env template
+ # Copy to `.env.local` and fill in. `.env.local` is git-ignored.
+ # Vercel Production reads from its own dashboard, not this file.
++#
++# Legend:
++#   [REQUIRED] site/HQ won't function without it
++#   [OPTIONAL] feature stays gracefully disabled until configured
+ # ──────────────────────────────────────────────────────────────────────────────
+ 
+ # ── Supabase ──────────────────────────────────────────────────────────────────
+-# From supabase.com → Project Settings → API
++# [REQUIRED] From supabase.com → Project Settings → API
+ NEXT_PUBLIC_SUPABASE_URL="https://xxxxxxxxxxxxxxxxxxxx.supabase.co"
+ NEXT_PUBLIC_SUPABASE_ANON_KEY="eyJhbGciOi..."
+ SUPABASE_SERVICE_ROLE_KEY="eyJhbGciOi..."
+ # ⚠️  service_role is admin-level, never expose client-side
+ 
+ # ── Site URL ──────────────────────────────────────────────────────────────────
+-# Used to build quote accept links. No trailing slash.
++# [REQUIRED] Used to build quote accept links + SMS deep links. No trailing slash.
+ # Local: http://localhost:3000 · Production: https://triplejmetaltx.com
+ NEXT_PUBLIC_SITE_URL="http://localhost:3000"
+ 
+ # ── Resend (outbound email) ───────────────────────────────────────────────────
+-# From resend.com → API Keys. Domain `triplejmetaltx.com` must be verified.
++# [REQUIRED] From resend.com → API Keys. Domain `triplejmetaltx.com` must be verified.
+ RESEND_API_KEY="re_..."
+-# From resend.com → Webhooks → endpoint signing secret
++# [REQUIRED] From resend.com → Webhooks → endpoint signing secret
+ RESEND_WEBHOOK_SECRET="whsec_..."
+ 
+ # ── Owner alert recipient ─────────────────────────────────────────────────────
+-# Where new-lead + quote-accepted alerts are sent.
++# [REQUIRED] Where new-lead + quote-accepted alerts are sent.
+ # Comma-separated, no spaces, for multiple recipients.
+ OWNER_EMAIL="julianleon@triplejmetaltx.com"
+ 
++# ── Twilio (SMS — speed-to-response, review ask, quote send) ─────────────────
++# [OPTIONAL] All three must be set or the SMS layer no-ops silently.
++# When configured, these endpoints start shipping SMS without code changes:
++#   - POST /api/leads          → 60-sec auto-reply to new leads (Phase 2.A)
++#   - POST /api/customers/[id]/review action=asked → review-ask SMS (Phase 2.B)
++#   - POST /api/quotes/[id]/send-sms                → quote summary + accept link
++# Provision: twilio.com → Console → Account info (SID + auth token) → Phone
++# Numbers → buy a US local number → drop in TWILIO_FROM_NUMBER as +1XXXXXXXXXX.
++# Cost: ~$1.15/mo number rental + $0.0079/SMS (≈$25/mo at projected lead volume).
++TWILIO_ACCOUNT_SID=""
++TWILIO_AUTH_TOKEN=""
++TWILIO_FROM_NUMBER=""
++
++# ── Google review link (post-job review-ask SMS body) ────────────────────────
++# [OPTIONAL] The GBP "leave a review" deep link. Without it, the review-ask
++# SMS still sends but with a generic "search Triple J Metal on Google" line.
++# Get it from business.google.com → Reviews → Get more reviews → copy the URL
++# (looks like https://g.page/r/CXXXXXXXXXXXXXXX/review).
++GOOGLE_REVIEW_URL=""
++
+ # ── QuickBooks Online ─────────────────────────────────────────────────────────
+-# From developer.intuit.com → your app → Keys & OAuth
++# [OPTIONAL] From developer.intuit.com → your app → Keys & OAuth
+ QBO_CLIENT_ID=""
+ QBO_CLIENT_SECRET=""
+ QBO_REDIRECT_URI="http://localhost:3000/api/qbo/callback"
+ # Local: use the localhost redirect above · Production: https://triplejmetaltx.com/api/qbo/callback
++# QBO_ENVIRONMENT toggles which Intuit API the app talks to:
++#   - "sandbox"    → developer test company (no real books touched)
++#   - "production" → real Triple J Metal books — flip only after sandbox is wired.
++QBO_ENVIRONMENT="sandbox"
+ 
+ # ── Permit scrape cron ────────────────────────────────────────────────────────
+-# Shared secret the daily Vercel Cron uses to hit /api/cron/scrape-permits.
++# [OPTIONAL — required if Vercel Cron is enabled] Shared secret the daily
++# Vercel Cron uses to hit /api/cron/scrape-permits and /api/cron/review-followups.
+ # Generate any random string, e.g. `openssl rand -hex 32`.
+ CRON_SECRET=""
+ 
++# ── Setup key (one-time admin seed endpoint) ─────────────────────────────────
++# [OPTIONAL] Bearer token for /api/setup. Used once during initial deploy
++# to seed the first admin user; can be left blank or rotated after.
++# Generate with `openssl rand -hex 32`.
++SETUP_KEY=""
++
+ # ── Web Push (B4 — owner device notifications) ───────────────────────────────
+-# Generate once with: npx web-push generate-vapid-keys
+-# Paste public key into BOTH VAPID_PUBLIC_KEY and NEXT_PUBLIC_VAPID_PUBLIC_KEY.
++# [OPTIONAL] Generate once with: npx web-push generate-vapid-keys
++# Paste public key into NEXT_PUBLIC_VAPID_PUBLIC_KEY (the only one the code reads).
+ # VAPID_SUBJECT is the contact URL Apple/Google use if they need to reach you.
+-VAPID_PUBLIC_KEY=""
+ NEXT_PUBLIC_VAPID_PUBLIC_KEY=""
+ VAPID_PRIVATE_KEY=""
+ VAPID_SUBJECT="mailto:julianleon@triplejmetaltx.com"
+ 
+ # ── Google Maps (HQ job-detail map hero) ─────────────────────────────────────
+-# Server-only — used to render Static Maps images for job addresses.
++# [OPTIONAL] Server-only — used to render Static Maps images for job addresses.
+ # Enable "Maps Static API" at console.cloud.google.com. If blank, the HQ Job
+ # detail page falls back to a typography-only address card (no broken image).
+ GOOGLE_MAPS_STATIC_KEY=""
+ 
+ # ── hCaptcha (form spam protection) ──────────────────────────────────────────
+-# Sign up at hcaptcha.com — free for unlimited verifications. Site key is
+-# public (rendered in the widget HTML). Secret is server-side only.
++# [OPTIONAL in dev / REQUIRED in prod] Sign up at hcaptcha.com — free for
++# unlimited verifications. Site key is public (rendered in the widget HTML).
++# Secret is server-side only.
+ # In dev: leave HCAPTCHA_SECRET_KEY blank to skip captcha verification —
+ # /api/leads + /api/partner-inquiries POSTs will succeed without a token.
+ NEXT_PUBLIC_HCAPTCHA_SITE_KEY=""
+ HCAPTCHA_SECRET_KEY=""
+ 
+ # ── OpenAI (voice memo → lead transcription) ─────────────────────────────────
+-# Phase 4: hold the + button in HQ → MediaRecorder → /api/hq/voice-lead →
+-# OpenAI Whisper transcribes the audio → Claude Sonnet 4.6 extracts
+-# {name, phone, zip, service_type, …} → leads insert with source='voice_memo'.
++# [OPTIONAL] Phase 4: hold the + button in HQ → MediaRecorder → /api/hq/voice-lead →
++# OpenAI Whisper transcribes the audio. Claude Sonnet (see ANTHROPIC_API_KEY
++# below) then extracts {name, phone, zip, service_type, …} for the leads insert.
+ # Cost: ~$0.006/min = $0.30/mo at ~100 memos. From platform.openai.com → API keys.
+ # If blank, /api/hq/voice-lead returns a 503 explaining setup.
+ OPENAI_API_KEY=""
++
++# ── Anthropic (Claude — voice/receipt/permit structured extraction) ──────────
++# [OPTIONAL] Used by:
++#   - src/lib/voice-lead-extractor.ts  → voice-memo transcript → structured lead
++#   - src/lib/receipt-extractor.ts     → receipt photo → vendor/total/category
++#   - src/lib/permit-extractor.ts      → scraped permit blob → contact + scope
++# Cost: ~$0.001-0.005 per call (Sonnet 4.6 vision). From console.anthropic.com.
++# If blank, the three features above 503 with a setup hint; nothing else breaks.
++ANTHROPIC_API_KEY=""
++
++# ── Meta (Facebook Lead Ads + Messenger DMs → /api/webhooks/facebook) ────────
++# [OPTIONAL] Wires FB Lead Ads form submissions and Page Messenger DMs into
++# the leads table (source='facebook_lead_ads' or 'facebook_messenger').
++# Setup walkthrough: developers.facebook.com → your app → Webhooks subscription.
++#   - META_VERIFY_TOKEN     — any random string; you choose it, paste the same
++#                             one into the Meta dashboard's webhook setup.
++#   - META_APP_SECRET       — App Settings → Basic → App Secret (used to verify
++#                             X-Hub-Signature-256 on incoming POSTs).
++#   - META_PAGE_ACCESS_TOKEN — long-lived Page token from Graph API Explorer.
++META_VERIFY_TOKEN=""
++META_APP_SECRET=""
++META_PAGE_ACCESS_TOKEN=""
+diff --git a/Decisions.md b/Decisions.md
+index b777178..280e286 100644
+--- a/Decisions.md
++++ b/Decisions.md
+@@ -114,3 +114,6 @@ _Maintained by Claude Code_
+ | 2026-04-25 | **SEO criticals from 2026-04-24 audit closed** | (1) `/military` title double-brand: was shipping "...Same-Week Installs \| Triple J Metal \| Triple J Metal" because the page-level title already included the suffix and the root layout's `%s \| Triple J Metal` template appended another. Fixed via `title: { absolute: '...' }`. Same fix on Waco / Georgetown / Round Rock `metaTitle` strings in `src/lib/locations.ts` (stripped trailing brand from each, let template add it once). (2) `src/app/not-found.tsx` shipped — slim brand bar + apologetic H1 + 3 explicit recovery links to `/services`, `/locations`, `/contact`. Replaces Next's default unstyled 404. (3) `BreadcrumbList` JSON-LD now on `/blog/[slug]` (was only on `/services/[slug]` + `/locations/[slug]`). (4) Per-page Twitter cards on `/military`, `/services/[slug]`, `/locations/[slug]`, `/blog/[slug]`. (5) Per-page OG image for `/military` via Next file-based ImageResponse API at `src/app/(marketing)/military/opengraph-image.tsx`. (6) `heroImageAlt` filled on all 22 location entries (was 6/22). (7) Five over-60-char titles trimmed: `/services`, `/partners`, `/services/hybrid-projects`, `/service-areas`, `/services/pbr-vs-pbu-panels`. |
+ | 2026-04-25 | **Migration 021 — HQ perf indexes** | `supabase/migrations/021_hq_perf_indexes.sql`. Additive, idempotent. Seven indexes: `leads (created_at desc)`, `leads (status)`, `leads (status, created_at desc)`, `jobs (status, scheduled_date)`, `jobs (completed_date desc) where completed_date is not null`, `quotes (customer_id, created_at desc)`, `job_receipts (job_id, created_at desc)`. Apply manually in Supabase SQL editor before traffic hits the new `/hq/leads` paginated flow — without it, the `select status` count query falls back to seq scan and is slow but functional. EXPLAIN ANALYZE verification snippets in the migration body. |
+ | 2026-04-25 | **Data-model audit — 7 proposed migrations 014-020 (NOT YET APPLIED)** | `docs/DATA-MODEL-AUDIT-2026-04-24.md` proposes seven additive migrations to unblock ad-ROI + flywheel reporting: 014 (leads UTM/gclid/fbclid + intent_stage + budget bracket + referring_customer_id + first_response_at), 015 (leads outcomes — won_at/lost_at/lost_reason + status-change trigger), 016 (jobs.contract_signed_date + cached gross_profit/gross_margin), 017 (`job_costs` unified ledger), 018 (`time_entries` labor table), 019 (customers compounding flags — review_asked, review_left, feature_permission, repeat_contact_permission), 020 (`job_receipts.cost_category` enum + auto-roll into job_costs). All written as code blocks in the audit doc; not committed as SQL files. **Need user sign-off before shipping.** |
++| 2026-04-25 | **Phase 2 SMS shipped — speed-to-response auto-reply + post-job review-ask** | Closes the Phase 2 Twilio milestone (originally locked 2026-04-21). Two new automated SMS paths, both gated on `isTwilioConfigured()` so they no-op silently until env vars land. (1) **Speed-to-response** — `notifyNewLead` in `src/lib/lead-notifications.ts` now fires a fire-and-forget Twilio SMS to the lead immediately after the email + push. One body shape covers all three lead sources (website QuoteForm, FB Lead Ads, FB Messenger DMs). Body keeps under 160 GSM-7 chars (1 segment, $0.0079/send). Failures are logged, not thrown — never blocks lead-insert. (2) **Review-ask** — `POST /api/customers/[id]/review` action=`asked` now sends a Google review SMS to the customer alongside stamping `review_asked_at`. DB stamp lands even if SMS fails so the follow-up cron keeps working. SMS outcome is returned in the response payload; `ReviewActions.tsx` surfaces failure reasons as a non-blocking inline note ("Saved — SMS skipped (Twilio not configured)" etc.) so Julian can fall back to a manual text. Uses `GOOGLE_REVIEW_URL` env var when set, falls back to "search Triple J Metal Temple TX" copy when blank. |
++| 2026-04-25 | **`.env.example` brought in sync with code** | The chart was missing 7 entries actually referenced in source: `TWILIO_ACCOUNT_SID` / `TWILIO_AUTH_TOKEN` / `TWILIO_FROM_NUMBER`, `ANTHROPIC_API_KEY`, `META_VERIFY_TOKEN` / `META_APP_SECRET` / `META_PAGE_ACCESS_TOKEN`, `QBO_ENVIRONMENT`, `SETUP_KEY`, and the new `GOOGLE_REVIEW_URL`. Each grouped into its own commented block with provisioning instructions + cost notes + a `[REQUIRED]` / `[OPTIONAL]` legend. Removed unused plain `VAPID_PUBLIC_KEY` (only `NEXT_PUBLIC_VAPID_PUBLIC_KEY` is read). Now Julian can copy → fill → see exactly what's missing. |
++| 2026-04-25 | **Bugfix — `nowMs` infinite recursion in ReviewSection** | `src/app/hq/customers/[id]/components/ReviewSection.tsx` had `function nowMs() { return nowMs() }` — calling itself instead of `Date.now()`. Latent because the only render branches that call it require `review_asked_at` or `review_left_at` to be non-null, and no customer had been through that flow yet. Would have crashed `/hq/customers/[id]` the first time Julian tapped "Ask for review" — exactly the moment the new Phase 2.B flow goes live. Fixed before it could ship. |
+diff --git a/src/app/api/customers/[id]/review/route.ts b/src/app/api/customers/[id]/review/route.ts
+index 649aaeb..b8be919 100644
+--- a/src/app/api/customers/[id]/review/route.ts
++++ b/src/app/api/customers/[id]/review/route.ts
+@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
+ import { z } from 'zod'
+ import { createClient } from '@/lib/supabase/server'
+ import { getAdminClient } from '@/lib/supabase/admin'
++import { sendSms, isTwilioConfigured, toE164 } from '@/lib/twilio'
+ 
+ export const dynamic = 'force-dynamic'
+ 
+@@ -18,11 +19,16 @@ const bodySchema = z.discriminatedUnion('action', [
+  * POST /api/customers/[id]/review
+  *
+  * Drives the customer-flywheel review-ask flow (migration 019).
+- *   - asked   → stamp review_asked_at = now, review_followup_due_at = +7d
++ *   - asked   → stamp review_asked_at = now, review_followup_due_at = +7d,
++ *               and (Phase 2.B) ship the review-ask SMS via Twilio.
+  *   - snoozed → bump review_followup_due_at by another 7d
+  *   - left    → stamp review_left_at = now, persist optional review_url,
+  *               clear review_followup_due_at
+  *   - reset   → clear all four fields (in case Julian asked the wrong customer)
++ *
++ * SMS is fire-and-forget — DB stamp lands even if Twilio fails, so the
++ * follow-up calendar is never blocked. The SMS outcome is returned in
++ * the response so HQ UI can surface the failure with a toast.
+  */
+ export async function POST(
+   request: NextRequest,
+@@ -67,5 +73,51 @@ export async function POST(
+   if (error) {
+     return NextResponse.json({ error: 'Failed to update review' }, { status: 500 })
+   }
+-  return NextResponse.json({ success: true })
++
++  // Phase 2.B — review-ask SMS. Only on the 'asked' transition; snooze/left/reset
++  // are HQ-side state changes that don't message the customer.
++  let sms: { sent: boolean; reason?: string } | undefined
++  if (parsed.data.action === 'asked') {
++    sms = await sendReviewAskSms(id)
++  }
++
++  return NextResponse.json({ success: true, ...(sms ? { sms } : {}) })
++}
++
++/**
++ * Sends the review-ask SMS to the customer. Returns a small status object
++ * for the response payload — never throws. Swallowing failures is intentional:
++ * the DB ask-stamp is the source of truth for the follow-up cron, and a
++ * Twilio outage shouldn't block Julian from advancing the customer state.
++ */
++async function sendReviewAskSms(customerId: string): Promise<{ sent: boolean; reason?: string }> {
++  if (!isTwilioConfigured()) {
++    return { sent: false, reason: 'twilio_not_configured' }
++  }
++
++  const { data: customer } = await getAdminClient()
++    .from('customers')
++    .select('name, phone')
++    .eq('id', customerId)
++    .single<{ name: string; phone: string | null }>()
++
++  if (!customer?.phone) return { sent: false, reason: 'no_phone' }
++  const e164 = toE164(customer.phone)
++  if (!e164) return { sent: false, reason: 'invalid_phone' }
++
++  const firstName = customer.name.split(/\s+/)[0] || customer.name
++  const reviewUrl = process.env.GOOGLE_REVIEW_URL?.trim()
++  const linkLine = reviewUrl
++    ? `Quick favor — would you leave a Google review? ${reviewUrl}`
++    : `Quick favor — would you leave a Google review? Search "Triple J Metal Temple TX" on Google.`
++  const body =
++    `Triple J Metal: thanks for choosing us, ${firstName}! ` +
++    `${linkLine} Means the world. Reply STOP to opt out.`
++
++  const result = await sendSms({ to: e164, body })
++  if (!result.ok) {
++    console.error(`[reviewAsk] customer ${customerId} SMS failed:`, result.message)
++    return { sent: false, reason: result.reason }
++  }
++  return { sent: true }
+ }
+diff --git a/src/app/hq/customers/[id]/components/ReviewActions.tsx b/src/app/hq/customers/[id]/components/ReviewActions.tsx
+index aa24570..98f017b 100644
+--- a/src/app/hq/customers/[id]/components/ReviewActions.tsx
++++ b/src/app/hq/customers/[id]/components/ReviewActions.tsx
+@@ -31,6 +31,21 @@ export function ReviewActions({ customerId, state }: Props) {
+         body: JSON.stringify(body),
+       })
+       if (!res.ok) throw new Error('Failed to update')
++      const json = (await res.json().catch(() => ({}))) as {
++        sms?: { sent: boolean; reason?: string }
++      }
++      // DB write succeeded; surface SMS outcome non-blockingly so Julian
++      // can fall back to a manual text if Twilio is unconfigured or choked.
++      if (action === 'asked' && json.sms && !json.sms.sent) {
++        const reasonLabel: Record<string, string> = {
++          twilio_not_configured: 'Saved — SMS skipped (Twilio not configured)',
++          no_phone: 'Saved — SMS skipped (no phone on file)',
++          invalid_phone: 'Saved — SMS skipped (phone not a US number)',
++          not_configured: 'Saved — SMS skipped (Twilio not configured)',
++          send_failed: 'Saved — SMS send failed (check Twilio console)',
++        }
++        setError(reasonLabel[json.sms.reason ?? ''] ?? 'Saved — SMS not sent')
++      }
+       haptics.success()
+       setPasteOpen(false)
+       setUrl('')
+diff --git a/src/app/hq/customers/[id]/components/ReviewSection.tsx b/src/app/hq/customers/[id]/components/ReviewSection.tsx
+index 9b0db4e..d68b172 100644
+--- a/src/app/hq/customers/[id]/components/ReviewSection.tsx
++++ b/src/app/hq/customers/[id]/components/ReviewSection.tsx
+@@ -6,7 +6,7 @@ import { ReviewActions } from './ReviewActions'
+ // /hq/more/stats nowMs(). Server components re-render per request so
+ // "now" resolves freshly each time.
+ function nowMs() {
+-  return nowMs()
++  return Date.now()
+ }
+ 
+ type Props = {
+diff --git a/src/lib/lead-notifications.ts b/src/lib/lead-notifications.ts
+index 862b85a..28f8ed5 100644
+--- a/src/lib/lead-notifications.ts
++++ b/src/lib/lead-notifications.ts
+@@ -2,6 +2,7 @@ import { Resend } from 'resend'
+ import LeadOwnerAlert, { leadOwnerAlertText } from '@/emails/LeadOwnerAlert'
+ import LeadCustomerConfirmation, { leadCustomerConfirmationText } from '@/emails/LeadCustomerConfirmation'
+ import { sendPushBackground } from '@/lib/push'
++import { sendSms, isTwilioConfigured, toE164 } from '@/lib/twilio'
+ 
+ let _resend: Resend | null = null
+ function resend(): Resend {
+@@ -150,4 +151,55 @@ export async function notifyNewLead({ lead, sizeLine = null }: NotifyNewLeadInpu
+     url: '/hq',
+     tag: `lead-${lead.id}`,
+   })
++
++  // Speed-to-response (Phase 2): 60-sec SMS auto-reply to the lead. Studies
++  // peg sub-5-min replies at ~2× close rate. No-ops silently when Twilio
++  // env vars are unset, so this ships safely before provisioning.
++  void sendLeadAutoReplyBackground(lead, city, serviceType)
++}
++
++function firstName(full: string): string {
++  return full.split(/\s+/)[0] || full
++}
++
++const SERVICE_PHRASE: Record<string, string> = {
++  carport: 'carport',
++  garage: 'metal garage',
++  barn: 'barn',
++  rv_cover: 'RV cover',
++  other: 'project',
++}
++
++/**
++ * Fire-and-forget Twilio SMS to the lead's phone confirming receipt.
++ * Never throws — logs failures so notifyNewLead's caller is not impacted.
++ *
++ * Skips when:
++ *   - Twilio env vars are unset (CallRail-style stub stays inert)
++ *   - Phone is missing or doesn't normalize to a US E.164 number
++ *
++ * Body keeps under 160 GSM-7 chars to stay 1-segment ($0.0079 per send).
++ */
++async function sendLeadAutoReplyBackground(
++  lead: LeadRecord,
++  city: string,
++  serviceType: string,
++): Promise<void> {
++  if (!isTwilioConfigured()) return
++  if (!lead.phone) return
++  const e164 = toE164(lead.phone)
++  if (!e164) {
++    console.warn(`[autoReply] lead ${lead.id} phone "${lead.phone}" not E.164-able`)
++    return
++  }
++  const phrase = SERVICE_PHRASE[serviceType] ?? 'project'
++  const inCity = city && city !== 'Unknown' ? ` in ${city}` : ''
++  const body =
++    `Triple J Metal: thanks ${firstName(lead.name)} — got your ${phrase} request${inCity}. ` +
++    `Julian will call within 1 business hour. — 254-346-7764. Reply STOP to opt out.`
++
++  const result = await sendSms({ to: e164, body })
++  if (!result.ok) {
++    console.error(`[autoReply] lead ${lead.id} SMS failed:`, result.message)
++  }
+ }
+-- 
+2.43.0
+
