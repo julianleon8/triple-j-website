@@ -112,6 +112,60 @@ Added metal privacy, pipe/ranch, ornamental metal fencing and gates at `/service
 
 Validation: typecheck, lint, 373 tests; production build with placeholder local database configuration; desktop/mobile browser checks of page, fencing prefill and two-step state. No real customer lead or owner email generated. Paid ads and Business Profile edits not performed. Built from current origin/main in a separate `fencing-launch` checkout; unrelated local property-photo work remains untouched in `website-review`.
 
+## 2026-09-11 — Shared business database: audit and research, nothing built
+
+Julian asked for one database across Triple J, Mesa and El Mexicano — *"my own Jarvis business
+knower and the rule warden"* — then sharpened it three times: **exact rows**, not an index pointing
+at markdown; a cheap **local model must answer from the DB alone**, "down to the T"; and **briefs**
+for him and eventually his employees. Audited both repos and all three Supabase projects before
+designing anything, which was the right call — two findings inverted the obvious build.
+
+**The databases are nearly empty; the knowledge is all prose.** Exact counts, not `reltuples`
+estimates: 7 leads, 3 customers, 1 quote here, with `jobs`, `job_costs`, `time_entries` and
+`job_receipts` at zero; 14 loyalty members, 6 transactions, 2 redemptions on Mesa, with
+`billing_accounts` and `orders` at zero (independently confirming the finish-line tracker — Stripe
+has not gone live). Against that: 271 markdown files, 5.87 MB, ~850K live tokens and ~618K
+archived. Roughly 95% of what Julian knows is written, not recorded, so a metrics-first "business
+knower" would return zeros for months. The document corpus is the product; metrics are a thin
+later layer.
+
+**Text-to-SQL is a trap.** The intuitive design — point a model at the schema and let it query —
+fails on published numbers: 33.4–35.6% execution accuracy for Qwen-1.5B, 41.3–42.5% Phi-3-mini,
+43.4–45.6% Qwen-2.5B, ~52.5% for GPT-4o on BIRD. Mesa alone has 42 tables, both projects 62. A
+local model writing its own SQL would be wrong about money roughly half the time, silently and
+fluently. The model must never compute a figure it can look up: pre-computed metric rows and
+canonical fact rows, with the definition stored in words beside the value.
+
+Also established: copying owned facts is mandatory under "exact rows" and contradicts both repos'
+one-owner rule, so every mirrored row carries the **sha256 of its exact source block** and a sync
+check fails loudly when the markdown moves — drift detectable rather than prevented. Audience is a
+**column, not a convention**, because briefs reach employees and *"never publish per-sqft concrete
+pricing"* has to survive into them. Julian chose a schema inside this project over a fourth $10/mo
+Supabase project; the mitigation is scoped PostgreSQL roles with rights in the new schema and none
+in `public`, which is stronger than project separation under a shared service key. Schema stays
+plain PostgreSQL so `pg_dump --schema=` lifts it to his own server later — an unguarded
+`revoke … from anon` already caught that, since `anon` is Supabase's role, not PostgreSQL's.
+
+Late research on retrieval changed four things in the draft: **Contextual Retrieval** (an
+LLM-written context line prepended per chunk before embedding) is the single biggest win at −49%
+failed retrievals alone and −67% with reranking; hybrid pgvector + BM25 fused by Reciprocal Rank
+Fusion takes recall@10 from ~78% to ~91%; metadata filters must sit in `WHERE` **before**
+`ORDER BY` so pgvector 0.8.0's HNSW iterative scan engages; and ColBERT-style late interaction is
+deliberately skipped, since pgvector has no native support and adding Qdrant costs more than it
+returns at this scale.
+
+Shipped: `docs/BUSINESS-OS-AUDIT-2026-09-07.md` (figures read 2026-09-07, reproducible) and
+`dev/business-os-schema.draft.sql` — deliberately **not** in `supabase/migrations/`, since a file
+there is one push away from production. Eight design checks pass against a throwaway PostgreSQL 16
+cluster, including that the grokbot writer role can insert a journal row but cannot `UPDATE` or
+`DELETE` it and cannot read `public.leads`, and that a staff-clearance reader cannot retrieve
+owner-only pricing through either the unified view or the search function. `pgvector` was
+unavailable locally, so the semantic path degraded to keyword-only as designed and is untested.
+Nothing applied to any database, nothing on `main`. Also published as a shared page:
+https://claude.ai/code/artifact/a63c142f-0ff8-4ae2-8f4c-c83cba3405d5
+
+Validation: check-vault, check-secrets, typecheck, lint, 274 tests across 21 files pass.
+
 ## 2026-09-08 — HQ redesign Tracks 3 + 4, and six contrast bugs
 
 Seven commits, all live: `5d35082` contrast hotfix, `36f4243` CalculatorStep move, `ba7f744`
