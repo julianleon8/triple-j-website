@@ -35,7 +35,8 @@
 ## Services
 - Carports (welded + bolted), Metal garages, Metal barns
 - RV and boat covers, Equipment covers, Metal porches
-- Ranch structures, Barndominiums (via ToolBelt/PlanHub GC connections)
+- Ranch structures
+- Barndominiums (via ToolBelt/PlanHub GC connections): **paused until 2027** (see `Locked Decisions.md`)
 
 ## Suppliers
 - Regional Texas steel suppliers — multi-source by design (do NOT name specific suppliers in customer-facing copy; see Decisions.md 2026-04-23)
