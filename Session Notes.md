@@ -2,7 +2,8 @@
 
 ## 2026-09-30 — Keyword openings tool (`scripts/serp-steal.mjs`)
 
-Owner shared a "find every keyword we can steal" video and said: "Start it use opus then sonnet 5.5 for analysis."
+Owner shared a "find every keyword we can steal" video and said: "Start it use opus then sonnet 5.5 for analysis." Clarified: "Of webpages", meaning
+Sonnet 5.5 reads the web pages and Opus 5.5 judges each search. That split is the default.
 
 Shipped (scripts and vault only; no `src/` change, nothing user-facing):
 - `scripts/serp-steal.mjs` with `plan` / `run` / `report`, and modules in `scripts/lib/serp/`:

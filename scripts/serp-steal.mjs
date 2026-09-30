@@ -12,7 +12,9 @@
 //   node scripts/serp-steal.mjs report [flags]    rebuild the report from cache; no network, no Claude
 //
 // Flags
-//   --model <id>        Claude model for both judgments (default claude-sonnet-5-5)
+//   --page-model <id>   Claude model that reads and classifies each web page (default claude-sonnet-5-5)
+//   --judge-model <id>  Claude model that judges each results page (default claude-opus-5-5)
+//   --model <id>        one model for both
 //   --provider <name>   dataforseo | serper (default: whichever key is set, DataForSEO first)
 //   --cities all        every /locations page instead of SERVICE_CITIES
 //   --city <slug>       one city only
@@ -57,7 +59,10 @@ import { renderHtml, renderMarkdown } from './lib/serp/report.mjs'
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
 const CACHE = path.join(ROOT, '.serp-cache')
 const OUT_DIR = path.join(ROOT, 'research/keywords')
-const DEFAULT_MODEL = 'claude-sonnet-5-5'
+// Owner, 2026-09-30: Sonnet 5.5 for the analysis of web pages (the high-volume
+// step, one call per ranking page), Opus 5.5 for the rest (one call per search).
+const DEFAULT_PAGE_MODEL = 'claude-sonnet-5-5'
+const DEFAULT_JUDGE_MODEL = 'claude-opus-5-5'
 
 // ── args + env ──────────────────────────────────────────────────────────────
 
@@ -74,7 +79,8 @@ for (const f of ['.env.local', '.env']) {
 }
 
 const opts = {
-  model: flag('model', DEFAULT_MODEL),
+  pageModel: flag('page-model') ?? flag('model') ?? DEFAULT_PAGE_MODEL,
+  judgeModel: flag('judge-model') ?? flag('model') ?? DEFAULT_JUDGE_MODEL,
   provider: flag('provider'),
   cities: flag('cities'),
   city: flag('city'),
@@ -179,10 +185,12 @@ function plan(grid) {
   const outTok = pages * 400 + grid.length * 1500
   log('Estimated cost for a full run (rough, before caching):')
   log(`  search results: DataForSEO ~$${(grid.length * 0.002).toFixed(2)} · Serper ${grid.length} credits`)
-  for (const m of ['claude-sonnet-5-5', 'claude-opus-5-5']) {
-    const p = PRICES[m]
-    log(`  Claude ${m}: ~$${((inTok * p.input + outTok * p.output) / 1e6).toFixed(2)}`)
-  }
+  const est = (model, i, o) => ((i * (PRICES[model]?.input ?? 0) + o * (PRICES[model]?.output ?? 0)) / 1e6)
+  const pageUsd = est(opts.pageModel, pages * 3500, pages * 400)
+  const judgeUsd = est(opts.judgeModel, grid.length * 5000, grid.length * 1500)
+  log(`  pages (${pages}) with ${opts.pageModel}: ~$${pageUsd.toFixed(2)}`)
+  log(`  searches (${grid.length}) with ${opts.judgeModel}: ~$${judgeUsd.toFixed(2)}`)
+  log(`  Claude total: ~$${(pageUsd + judgeUsd).toFixed(2)}`)
   log('')
   const provider = pickProvider(process.env, opts.provider)
   log(`Keys: search results ${provider ?? 'MISSING'} · Claude ${process.env.ANTHROPIC_API_KEY ? 'set' : 'MISSING'}`)
@@ -204,10 +212,9 @@ async function execute(grid, site, { offline }) {
     console.error('ANTHROPIC_API_KEY is not set.')
     process.exit(1)
   }
-  if (!PRICES[opts.model]) log(`Note: no price on file for ${opts.model}; cost will show as $0.`)
+  for (const m of new Set([opts.pageModel, opts.judgeModel])) if (!PRICES[m]) log(`Note: no price on file for ${m}; its cost will show as $0.`)
 
   const monthDir = path.join(CACHE, opts.month)
-  const judgeDir = path.join(CACHE, 'judgments', opts.model)
   const client = offline ? null : new Anthropic({ maxRetries: 4 })
   // claude: spent by this invocation. analysis: what every judgment in the
   // report cost when it was made, cached ones included.
@@ -255,27 +262,27 @@ async function execute(grid, site, { offline }) {
   log(`  read ${fetchedOk} pages; ${[...templates.values()].filter((t) => t.similarity >= 0.8).length} are copy-paste city pages`)
 
   const budgetLeft = () => spend.claude < opts.maxUsd
-  const callJudge = async (kind, system, user, schema, effort, maxTokens) => {
-    const file = path.join(judgeDir, `${kind}-${sha(`${PROMPT_VERSION}\n${system}\n${user}`)}.json`)
+  const callJudge = async (kind, model, system, user, schema, effort, maxTokens) => {
+    const file = path.join(CACHE, 'judgments', model, `${kind}-${sha(`${PROMPT_VERSION}\n${system}\n${user}`)}.json`)
     const hit = cached(file)
     if (hit) {
       spend.cachedCalls++
-      spend.analysis += usageCost(opts.model, hit.usage)
+      spend.analysis += usageCost(model, hit.usage)
       return hit
     }
     if (offline) return null
     if (!budgetLeft()) return { ok: false, error: 'budget reached' }
-    const res = await judge(client, { model: opts.model, system, user, schema, effort, maxTokens })
+    const res = await judge(client, { model, system, user, schema, effort, maxTokens })
     spend.calls++
-    spend.claude += usageCost(opts.model, res.usage)
-    spend.analysis += usageCost(opts.model, res.usage)
+    spend.claude += usageCost(model, res.usage)
+    spend.analysis += usageCost(model, res.usage)
     // Only successes are cached; a failure is retried next run.
     return res.ok ? store(file, { ok: true, data: res.data, usage: res.usage }) : res
   }
 
   // 3. What each page is
   const toJudge = [...hits.values()].filter((h) => !(pages.get(h.url)?.knownType && !pages.get(h.url)?.fetched))
-  log(`3/4 classifying ${toJudge.length} pages with ${opts.model}`)
+  log(`3/4 classifying ${toJudge.length} pages with ${opts.pageModel}`)
   const pageInfo = new Map()
   for (const [url, p] of pages) {
     pageInfo.set(url, { verdict: null, facts: p.fetched?.ok ? p.fetched.facts : null, knownType: p.knownType, template: templates.get(url) })
@@ -284,7 +291,7 @@ async function execute(grid, site, { offline }) {
   await mapLimit(toJudge, opts.concurrency, async (h) => {
     const info = pageInfo.get(h.url)
     try {
-      const res = await callJudge('page', PAGE_SYSTEM, pageUserPrompt(h, pages.get(h.url).fetched, info.template), PageVerdict, 'low', 4000)
+      const res = await callJudge('page', opts.pageModel, PAGE_SYSTEM, pageUserPrompt(h, pages.get(h.url).fetched, info.template), PageVerdict, 'low', 4000)
       if (res?.ok) info.verdict = res.data
       else if (res) {
         pageFailures++
@@ -298,11 +305,11 @@ async function execute(grid, site, { offline }) {
   log(`  ${toJudge.length - pageFailures} classified · Claude so far $${spend.claude.toFixed(2)}`)
 
   // 4. What each results page offers
-  log(`4/4 judging ${withSerp.length} results pages with ${opts.model}`)
+  log(`4/4 judging ${withSerp.length} results pages with ${opts.judgeModel}`)
   const infoFor = (url) => pageInfo.get(url) ?? { verdict: null, facts: null }
   const verdicts = await mapLimit(withSerp, opts.concurrency, async ({ k, serp }) => {
     try {
-      const res = await callJudge('keyword', KEYWORD_SYSTEM, keywordUserPrompt(k, serp, infoFor, site.ownDomain), KeywordVerdict, 'medium', 8000)
+      const res = await callJudge('keyword', opts.judgeModel, KEYWORD_SYSTEM, keywordUserPrompt(k, serp, infoFor, site.ownDomain), KeywordVerdict, 'medium', 8000)
       if (res && !res.ok && res.error !== 'budget reached') log(`  ! ${k.query} (${k.city}): ${res.error}`)
       return res?.ok ? res.data : null
     } catch (err) {
@@ -320,7 +327,8 @@ async function execute(grid, site, { offline }) {
     date,
     month: new Date(`${opts.month}-15`).toLocaleString('en-US', { month: 'long', year: 'numeric' }),
     provider,
-    model: opts.model,
+    pageModel: opts.pageModel,
+    judgeModel: opts.judgeModel,
     searches: scored.length,
     cities: [...new Set(scored.map((k) => k.city))],
     serpCost: spend.serpCostKnown ? spend.serp : null,
@@ -361,6 +369,6 @@ if (command === 'plan') plan(grid)
 else if (command === 'run') await execute(grid, site, { offline: false })
 else if (command === 'report') await execute(grid, site, { offline: true })
 else {
-  console.log('Usage: node scripts/serp-steal.mjs plan | run | report [--model id] [--provider dataforseo|serper] [--cities all] [--city slug] [--limit n] [--max-usd n] [--concurrency n] [--month YYYY-MM]')
+  console.log('Usage: node scripts/serp-steal.mjs plan | run | report [--page-model id] [--judge-model id] [--model id] [--provider dataforseo|serper] [--cities all] [--city slug] [--limit n] [--max-usd n] [--concurrency n] [--month YYYY-MM]')
   process.exit(command ? 1 : 0)
 }

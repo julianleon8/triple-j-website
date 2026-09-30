@@ -5,10 +5,9 @@ in the build environment. To run it, put `ANTHROPIC_API_KEY` plus `SERPER_API_KE
 `DATAFORSEO_LOGIN`/`DATAFORSEO_PASSWORD` in `.env.local`, then:
 
 ```
-node scripts/serp-steal.mjs plan                                        # list + cost estimate, free
-node scripts/serp-steal.mjs run --limit 5 --model claude-opus-5-5       # trial, well under $1
-node scripts/serp-steal.mjs run --model claude-opus-5-5                 # first full run, ~$19 + search results
-node scripts/serp-steal.mjs run                                         # later runs: Sonnet 5.5, ~$9
+node scripts/serp-steal.mjs plan              # list + cost estimate, free
+node scripts/serp-steal.mjs run --limit 5     # trial, well under $1
+node scripts/serp-steal.mjs run               # full run: Sonnet 5.5 reads pages, Opus 5.5 judges searches, ~$12 + search results
 ```
 
 **On the first live run, check:**

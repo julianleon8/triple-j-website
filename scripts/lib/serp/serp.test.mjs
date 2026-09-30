@@ -315,11 +315,12 @@ describe('summarize', () => {
 
   it('renders both reports with user text escaped in the HTML', () => {
     const evil = [{ ...scored[0], query: '<script>alert(1)</script>' }]
-    const run = { date: '2026-10-01', month: 'October 2026', provider: 'dataforseo', model: 'claude-sonnet-5-5', searches: 1, cities: ['Killeen'], serpCost: 0.002, serpCostLabel: '$0.002', claudeCost: 0.05, analysisCost: 0.05, claudeCalls: 4, cachedCalls: 0 }
+    const run = { date: '2026-10-01', month: 'October 2026', provider: 'dataforseo', pageModel: 'claude-sonnet-5-5', judgeModel: 'claude-opus-5-5', searches: 1, cities: ['Killeen'], serpCost: 0.002, serpCostLabel: '$0.002', claudeCost: 0.05, analysisCost: 0.05, claudeCalls: 4, cachedCalls: 0 }
     const html = renderHtml(run, summarize(evil, pageInfo), evil)
     expect(html).toContain('<title>Keyword Openings October 2026</title>')
     expect(html).toContain('&lt;script&gt;alert(1)&lt;/script&gt;')
     expect(html).not.toMatch(/<html|<body/i)
+    expect(html).toContain('pages read by claude-sonnet-5-5 · searches judged by claude-opus-5-5')
     expect(renderMarkdown(run, s)).toContain('## Take (1)')
   })
 })
