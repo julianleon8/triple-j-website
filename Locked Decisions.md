@@ -63,6 +63,11 @@ Do not copy anything from this file into `AGENTS.md`. That duplication is what p
   their own cover photo. (2026-09-28)
 - **No `AggregateRating` or `Review` JSON-LD anywhere** — and none may be added while the GBP is unverified.
   Google treats reviews an entity controls about itself as ineligible regardless. (2026-09-07)
+- **A link to an in-page section (`#quote`, `/#quote`) is a plain `<a>`, never `<Link>`.** `ButtonLink`
+  does this for any href containing `#`. Android in-app browsers (Messenger, Marketplace) swallow `<Link>`'s
+  router-driven scroll, so the tap does nothing; a Marketplace lead hit it on 2026-05-11. The closed mobile
+  drawer is `invisible pointer-events-none`, and decorative hero overlays are `pointer-events-none`, so
+  neither can eat a tap. `src/components/ui/Button.test.ts` guards the button. (2026-09-30)
 
 ## Project inquiries
 
@@ -83,6 +88,11 @@ Do not copy anything from this file into `AGENTS.md`. That duplication is what p
   claim a text was sent. Blank-field definitions live in `missingCaptureFields()` in
   `src/lib/hq/capture-draft.ts` and are shared with the capture checklist. Note `needs_concrete` is
   a string enum (`yes` / `already_have` / `unsure`), not a boolean. (2026-09-08)
+- **A lead's phone becomes a `tel:` or `sms:` link only through `dialablePhone()`** (`src/lib/lead-contact.ts`).
+  `leads.phone` is NOT NULL, so phoneless sources store placeholders ("messenger", "Not provided",
+  pre-April "FB-PSID-…") that must never be dialed. A Messenger lead (`isMessengerLead()`) gets
+  **Reply on Messenger**, linking to the Meta Business Suite inbox, on its HQ screen and in the owner alert;
+  Meta's webhook carries no thread id, so the inbox is the closest link. (2026-09-30)
 
 - **Today holds four blocks and nothing else:** Capture a call (full-width gold, → `/hq/capture`),
   the call-next card, "N drafts to finish", and quotes waiting on an answer. Revenue, win rate and
@@ -254,6 +264,17 @@ Do not copy anything from this file into `AGENTS.md`. That duplication is what p
 
 Known gaps between what is locked above and what is actually shipped. `scripts/check-vault.mjs`
 reports these on every run. Delete an entry the moment it is closed.
+
+- **Roll-up door prices conflict; owner to confirm.** `dev/sales-pack-2026-04-30.md` says $800 per roll-up
+  door. A 2026-05-06 branch (`claude/quote-rollup-door-pricing-jB54p`, never merged, lost in the 2026-09-06
+  restart) recorded Freddy and Juan's handwritten sheet: 8×8 $1,000 · 10×10 $1,900 · 12×12 $1,800 ·
+  14×14 $2,200 · 16×16 $2,600. `src/lib/quote-pricing.ts` still carries older placeholder sizes. No price
+  was changed. (2026-09-30)
+- **Automatic texting to leads and customers was built but never shipped; owner to decide.** Two
+  pre-restart branches (`claude/fix-sms-gIPzp`, `claude/setup-new-project-wA6jt`) built a Twilio auto-reply
+  to new leads and a post-job review request. Neither is on `main`, and the one-tap reply rule above sends
+  from Julian's own phone instead. Automated business texting in the US also needs A2P 10DLC registration.
+  (2026-09-30)
 
 - **The keyword tool has not run on live data yet.** It needs `ANTHROPIC_API_KEY` plus `DATAFORSEO_LOGIN`/`DATAFORSEO_PASSWORD` or `SERPER_API_KEY` wherever it runs. It was verified against real dealer pages and a stand-in for the Claude API only. (2026-09-30)
 - **Google Business Profile verification remains unresolved.** Owner reported on 2026-09-26 that Google keeps removing the profile. Cause has not been diagnosed. Profile verification/reinstatement remains owner follow-up; do not mark verified or add a Google review URL until confirmed.

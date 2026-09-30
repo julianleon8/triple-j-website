@@ -1,3 +1,24 @@
+# Google Ads + branch cleanup — 2026-09-30 · CAMPAIGN NOT PUBLISHED
+
+**Campaign.** Built in the Google Ads UI from `marketing/google-ads-campaign-build.md`, start date 2026-10-01,
+but the owner's Review screen showed "Changes failed to save" and **no Publish button**. Likely causes, in
+order: wrong Google account or a manager account, Read-only/Billing access level, an expired session, a
+blocked payment method (the same card is failing everywhere). **Step 2 before it spends:** ad group 2
+(Garages & shops, copy in the build sheet) and the full negative list from the lead plan. Then the tracking
+tasks in the lead plan: phone-call conversion label, enhanced conversions on, call asset, one test lead.
+
+**Owner's calls, all open:**
+- roll-up door prices: $800 flat vs the 2026-05-06 handwritten sheet (`Locked Decisions.md` → Outstanding);
+- automatic texting (lead auto-reply, review request): built pre-restart, never shipped;
+- the one-session primer rule on `claude/memory-systems-repo-rules-t9dzyb`;
+- the barns page still mentions barndominium projects through GCs, though builds are paused until 2027;
+- Temple Generation (Scott Smith): insurance, stamped drawings, site-walk attendees.
+
+**Billing, urgent:** Google Workspace suspends 2026-10-02; GitHub metered Actions are restricted until the
+card is fixed. Both trace to one declining card.
+
+---
+
 # Keyword openings tool — 2026-09-30 · BUILT, NOT RUN LIVE
 
 `scripts/serp-steal.mjs` is on `main` and has never seen real Google results: no search or Claude key existed

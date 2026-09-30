@@ -1,5 +1,37 @@
 # Session Notes
 
+## 2026-09-30 — Google Ads campaign build, branch cleanup, two lost fixes ported
+
+Sessions of 2026-09-29 and 09-30 (one conversation).
+
+- **Temple Generation lead.** Scott Smith, maintenance manager at the Temple power plant, emailed on 2026-09-04
+  asking Triple J to quote 2027 projects (open-sided equipment canopies like the 7 he photographed) and covered
+  parking. It went unseen. A reply asking for a site walk was sent to the Triple J inbox for the owner to paste
+  into Scott's thread. Open for the owner: insurance limits, an engineer for stamped drawings, who walks the site.
+- **Google Ads.** The old campaign ("Campaign #1", paused) spent $372.87 for 221 clicks and **1 conversion**;
+  its search terms show most visible clicks wanted houses, kits or statewide shopping. Findings, 16 new
+  negatives and a lower lead estimate are in `marketing/lead-plan-2026-09-29.md`; every setting and line of ad
+  text is in `marketing/google-ads-campaign-build.md`. The owner built the campaign twice in the UI; the first
+  attempt was lost ("Changes failed to save") and the second showed **no Publish button**. Not published yet.
+- **Barndominium builds paused until 2027** and excluded from ads (owner decision; ledgers updated).
+- **CI was red since 2026-09-26 because GitHub billing failed**, not because of code: the 2,000 free Actions
+  minutes ran out on 2026-09-07 and the card was declined on 09-12, 09-19 and 09-27, so jobs never got a runner.
+  A re-run on 09-30 ran and passed. The same card is failing Google Workspace (suspension **2026-10-02**) and
+  the domain renewal.
+- **Branches.** Merged into `main`: this session's docs, the September 7 secret-scan fix (cherry-picked; the
+  same branch's one-session primer check was left out because it fails today's primer 25 times), and the
+  September 7–11 business-database audit. The 14 pre-restart branches share no history with `main`; all 203
+  commits were audited (`Decisions.md`, 2026-09-30). Two lost fixes were ported:
+  - **Android in-app browsers can tap `#quote` again.** `ButtonLink` renders a plain `<a>` for hash links, the
+    call bar and footer quote links are plain `<a>`, the closed mobile drawer ignores taps, and the hero
+    overlays are `pointer-events-none`. Original report: a Marketplace lead's tap did nothing (2026-05-11).
+  - **Messenger leads get Reply on Messenger.** `src/lib/lead-contact.ts` keeps the "messenger" / "Not
+    provided" placeholders out of every `tel:`/`sms:` link (lead screen, inbox swipe, Today's call-next card,
+    owner alert email).
+- Verified: typecheck, lint, 455 tests (16 new; the new ones fail on the old code), vault and secret checks.
+  `next build --webpack` compiles and type-checks, then stops at page-data collection for want of Supabase
+  keys in this container.
+
 ## 2026-09-30 — Keyword openings tool (`scripts/serp-steal.mjs`)
 
 Owner shared a "find every keyword we can steal" video and said: "Start it use opus then sonnet 5.5 for analysis." Clarified: "Of webpages", meaning
