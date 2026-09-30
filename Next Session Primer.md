@@ -37,6 +37,10 @@ node scripts/serp-steal.mjs run               # full run: Sonnet 5.5 reads pages
 - 20 of Claude's "beatable" calls by hand;
 - then publish `research/keywords/serp-steal-<date>.html` as a private Artifact and share it.
 
+**Scheduled:** routine "Triple J keyword openings — monthly" fires on the 1st at 5:52 am Central (first run
+2026-10-01) and sends an Excel workbook plus a dashboard link. Until the keys are in the cloud environment's settings, it stops
+at the key check and spends nothing.
+
 **Open (owner's call):** which search-results provider to pay for, if any.
 
 ---
