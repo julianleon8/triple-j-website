@@ -181,8 +181,6 @@ function plan(grid) {
   // Rough: ~5 new pages per search after de-duplication, ~3.5k tokens in and
   // ~0.4k out per page call, ~5k in and ~1.5k out per search call.
   const pages = grid.length * 5
-  const inTok = pages * 3500 + grid.length * 5000
-  const outTok = pages * 400 + grid.length * 1500
   log('Estimated cost for a full run (rough, before caching):')
   log(`  search results: DataForSEO ~$${(grid.length * 0.002).toFixed(2)} · Serper ${grid.length} credits`)
   const est = (model, i, o) => ((i * (PRICES[model]?.input ?? 0) + o * (PRICES[model]?.output ?? 0)) / 1e6)
