@@ -1,5 +1,3 @@
-import Link from "next/link";
-
 import { PhoneIcon, ArrowRightIcon } from "@/components/ui/icons";
 import { TrackedPhoneLink } from "@/components/site/TrackedPhone";
 
@@ -26,13 +24,14 @@ export function MobileCallBar() {
             English · Español
           </span>
         </TrackedPhoneLink>
-        <Link
+        {/* eslint-disable-next-line @next/next/no-html-link-for-pages -- deliberate: Android in-app browsers swallow <Link>'s router-driven hash scroll (see ButtonLink in ui/Button.tsx) */}
+        <a
           href="/#quote"
           className="flex items-center justify-center gap-2 h-12 rounded-md bg-white/10 hover:bg-white/20 text-white font-semibold tracking-tight transition-colors"
         >
           <span>Free Quote</span>
           <ArrowRightIcon className="h-4 w-4" />
-        </Link>
+        </a>
       </div>
     </div>
   );

@@ -194,12 +194,13 @@ export function Footer() {
                 </Link>
               </li>
               <li className="pt-1">
-                <Link
+                {/* eslint-disable-next-line @next/next/no-html-link-for-pages -- deliberate: Android in-app browsers swallow <Link>'s hash scroll (see ButtonLink in ui/Button.tsx) */}
+                <a
                   href="/#quote"
                   className="inline-flex items-center gap-1 text-[color:var(--color-brand-300)] font-bold text-xs uppercase tracking-wider hover:text-white"
                 >
                   Get a Free Quote →
-                </Link>
+                </a>
               </li>
             </ul>
           </div>

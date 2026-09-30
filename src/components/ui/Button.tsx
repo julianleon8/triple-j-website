@@ -60,11 +60,9 @@ export function ButtonLink({
   children,
   ...props
 }: LinkButtonProps) {
-  return (
-    <Link
-      className={`${base} ${variants[variant]} ${sizes[size]} ${className}`}
-      {...props}
-    >
+  const cls = `${base} ${variants[variant]} ${sizes[size]} ${className}`;
+  const content = (
+    <>
       {icon && iconPosition === "left" ? (
         <span aria-hidden="true" className="shrink-0">
           {icon}
@@ -76,8 +74,48 @@ export function ButtonLink({
           {icon}
         </span>
       ) : null}
+    </>
+  );
+
+  // Hash anchors ("#quote", "/#quote") render a plain <a>. <Link> intercepts
+  // the tap and scrolls through the router, which doesn't reliably fire inside
+  // Android in-app WebViews (Facebook Messenger, Marketplace): the tap lands
+  // and nothing moves. A Marketplace lead hit exactly this on 2026-05-11. A
+  // plain <a> hands the jump back to the browser, and "/#quote" still
+  // navigates to the homepage form from any other page.
+  const { href } = props;
+  if (typeof href === "string" && href.includes("#")) {
+    return (
+      <a className={cls} {...anchorProps(props)}>
+        {content}
+      </a>
+    );
+  }
+
+  return (
+    <Link className={cls} {...props}>
+      {content}
     </Link>
   );
+}
+
+/** Drops the props only <Link> understands, so the rest can go on a plain <a>. */
+function anchorProps(props: Omit<LinkButtonProps, keyof CommonProps>): ComponentProps<"a"> {
+  const {
+    href,
+    as: _as,
+    replace: _replace,
+    scroll: _scroll,
+    shallow: _shallow,
+    passHref: _passHref,
+    prefetch: _prefetch,
+    locale: _locale,
+    legacyBehavior: _legacyBehavior,
+    onNavigate: _onNavigate,
+    transitionTypes: _transitionTypes,
+    ...rest
+  } = props;
+  return { ...rest, href: String(href) };
 }
 
 // --- Native <button> variant -----------------------------------------------

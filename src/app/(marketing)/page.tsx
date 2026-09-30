@@ -32,8 +32,8 @@ export default function HomePage() {
           alt="Red iron framing on a Triple J Metal construction site in Central Texas"
           fill priority sizes="100vw" className="object-cover object-center"
         />
-        <div aria-hidden="true" className="absolute inset-0 hero-scrim" />
-        <div aria-hidden="true" className="absolute inset-0 bg-linear-to-t from-black/60 to-transparent" />
+        <div aria-hidden="true" className="pointer-events-none absolute inset-0 hero-scrim" />
+        <div aria-hidden="true" className="pointer-events-none absolute inset-0 bg-linear-to-t from-black/60 to-transparent" />
         <Container size="wide" className="relative pt-36 pb-16 sm:pt-44 sm:pb-24 lg:pt-48 lg:pb-28">
           <div className="max-w-3xl">
             <p className="text-sm font-semibold uppercase tracking-[0.18em] text-white/80">Family-owned · Temple, Texas</p>

@@ -206,10 +206,13 @@ export function Header() {
         </Container>
       </div>
 
-      {/* Mobile drawer */}
+      {/* Mobile drawer. Closed, it is also invisible and ignores taps: Android
+          in-app browsers size 100vh around the address bar unreliably, so
+          -translate-y-full alone can leave a sliver of drawer over the page
+          eating taps. Visibility is in the transition so closing still slides. */}
       <div
-        className={`xl:hidden fixed inset-x-0 top-0 bottom-0 z-40 bg-[color:var(--color-ink-900)] pt-20 transition-transform duration-300 ease-out ${
-          mobileOpen ? "translate-y-0" : "-translate-y-full"
+        className={`xl:hidden fixed inset-x-0 top-0 bottom-0 z-40 bg-[color:var(--color-ink-900)] pt-20 transition-[transform,visibility] duration-300 ease-out ${
+          mobileOpen ? "translate-y-0" : "-translate-y-full invisible pointer-events-none"
         }`}
         aria-hidden={!mobileOpen}
       >
