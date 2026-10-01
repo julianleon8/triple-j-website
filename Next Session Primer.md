@@ -13,12 +13,20 @@ Cinzel. The header is lean: 5 links, phone, quote button; Blog and Partners go t
 quotes, collected with permission and shown with their build. Scope: **site + emails + quote PDF + HQ**.
 Motion is subtle. Review happens on a **Vercel preview link** before anything merges to `main`.
 
+**Full homepage mockup:** `docs/redesign-2026-10/homepage-mockup.html` (header, hero, builds, services,
+quote form, footer, with real gallery content), renders `homepage-{desktop,phone}.jpg`. Reference sites
+were rejected; the mockups are the reference. The 7 duplicate Grille photo rows are deleted.
+
 **Waiting on the owner:**
-1. Reactions to the 9 reference sites (`docs/redesign-2026-10/reference-sites.md` + `.jpg`). Log what they like.
+1. Feedback on the homepage mockup.
 2. **The whole site plan.** No `src/` change until they lay it out (other pages, order of work).
 3. Customer quotes into `testimonials.md` (3–5, with permission, from jobs in the gallery).
-4. 7 of the 13 Mexicano Grille photos uploaded 10-01 are byte-identical duplicates (sort orders 20/18,
-   21/19, 26/12, 27/16, 28/08, 29/06, 33/13). Delete the copies or leave them. Not changed.
+4. **Live copy breaks a lock:** the homepage Services intro says every structure is "delivered turnkey —
+   site prep, concrete pad, and installation all under one contract", a blanket turnkey label above priced
+   cards (2026-09-28 lock). The mockup carries draft wording; the owner approves the fix.
+5. 7 orphaned storage files from the deleted duplicates (5.9 MB, listed in `Decisions.md`) can be removed
+   in the Supabase dashboard. `/gallery/[id]` is static and never revalidated, so HQ gallery edits show
+   only after a deploy. A task card was offered for that fix.
 
 **Found while specifying (not built):**
 - **HQ is in scope**, so `brand-*` / `--brand-fg` (44 marketing + 61 HQ files) and `--font-display` (35

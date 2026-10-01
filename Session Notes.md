@@ -14,6 +14,10 @@
   quote PDF and HQ; subtle motion; Vercel preview before `main`. 16 rows in `Decisions.md`.
 - Reference sites: a subagent found 9 (about 139k tokens). Screenshots and notes are in
   `docs/redesign-2026-10/reference-sites.*`. Waiting on the owner's reactions.
+- Deleted the 7 duplicate Mexicano Grille photo rows (owner's call); their storage files remain. The owner
+  rejected all reference sites. Built the full homepage mockup (`homepage-mockup.html`, desktop + phone
+  renders) from the logged decisions and real gallery data. Found the live Services intro breaking the
+  turnkey lock; flagged, not fixed.
 - No `src/` change.
 
 ## 2026-10-01 — Visual redesign: hero specified
