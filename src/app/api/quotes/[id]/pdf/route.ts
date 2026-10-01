@@ -80,7 +80,7 @@ export async function GET(
     [quote.customers.state, quote.customers.zip].filter(Boolean).join(' '),
   ]
     .filter(Boolean)
-    .join(' · ') || null
+    .join(', ') || null
 
   const pdfBuffer = await renderToBuffer(
     QuotePdfDocument({

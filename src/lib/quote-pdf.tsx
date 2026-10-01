@@ -17,6 +17,7 @@ import {
   StyleSheet,
 } from '@react-pdf/renderer'
 
+import { formatUsPhone } from '@/lib/pipeline'
 import { SITE } from '@/lib/site'
 
 export type QuoteLineItem = {
@@ -49,6 +50,11 @@ const INK_700 = '#334155'
 const INK_500 = '#64748b'
 const INK_200 = '#e2e8f0'
 
+// lineHeight gotcha: react-pdf resolves a unitless lineHeight against the
+// font size of the style that DECLARES it, then children inherit the result
+// in points. The page's 1.4 becomes a flat 14pt, so any text larger than the
+// 10pt body must set its own lineHeight or it overprints the line below —
+// which is exactly how the address ended up on top of the brand title.
 const styles = StyleSheet.create({
   page: {
     paddingTop: 48,
@@ -72,14 +78,28 @@ const styles = StyleSheet.create({
   brandStack: { flexDirection: 'column' },
   brandTitle: {
     fontSize: 24,
+    lineHeight: 1.15,
     fontFamily: 'Helvetica-Bold',
     letterSpacing: -0.5,
     color: INK_900,
   },
   brandAccent: { color: BRAND_BLUE },
-  brandSub: { marginTop: 4, fontSize: 9, color: INK_500 },
+  brandSub: { marginTop: 2, fontSize: 9, color: INK_500 },
   quoteMeta: { flexDirection: 'column', alignItems: 'flex-end' },
-  quoteNumber: { fontSize: 16, fontFamily: 'Helvetica-Bold', color: BRAND_BLUE },
+  quoteLabel: {
+    fontSize: 8,
+    color: INK_500,
+    textTransform: 'uppercase',
+    letterSpacing: 1.2,
+    fontFamily: 'Helvetica-Bold',
+  },
+  quoteNumber: {
+    marginTop: 2,
+    fontSize: 16,
+    lineHeight: 1.2,
+    fontFamily: 'Helvetica-Bold',
+    color: BRAND_BLUE,
+  },
   quoteValidity: { marginTop: 4, fontSize: 9, color: INK_500 },
   customerBlock: { marginBottom: 24 },
   customerLabel: {
@@ -90,7 +110,7 @@ const styles = StyleSheet.create({
     marginBottom: 4,
     fontFamily: 'Helvetica-Bold',
   },
-  customerName: { fontSize: 14, fontFamily: 'Helvetica-Bold', color: INK_900 },
+  customerName: { fontSize: 14, lineHeight: 1.25, fontFamily: 'Helvetica-Bold', color: INK_900 },
   customerLine: { marginTop: 2, fontSize: 10, color: INK_700 },
   table: { marginTop: 12 },
   tableHeader: {
@@ -126,14 +146,15 @@ const styles = StyleSheet.create({
   totalsGrandRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
+    alignItems: 'center',
     paddingTop: 8,
     marginTop: 4,
     borderTopWidth: 1,
     borderTopColor: INK_900,
     borderTopStyle: 'solid',
   },
-  totalsGrandLabel: { fontSize: 12, fontFamily: 'Helvetica-Bold', color: INK_900 },
-  totalsGrandValue: { fontSize: 14, fontFamily: 'Helvetica-Bold', color: BRAND_BLUE },
+  totalsGrandLabel: { fontSize: 12, lineHeight: 1.2, fontFamily: 'Helvetica-Bold', color: INK_900 },
+  totalsGrandValue: { fontSize: 16, lineHeight: 1.2, fontFamily: 'Helvetica-Bold', color: BRAND_BLUE },
   notesBlock: {
     marginTop: 28,
     padding: 12,
@@ -169,10 +190,15 @@ function fmtUSD(n: number): string {
   return `$${n.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
 }
 
+// valid_until is a bare date ("2026-05-21"), which JS parses as UTC
+// midnight. Formatting it in UTC keeps it from printing as the day before
+// on any machine west of Greenwich. generatedAt is a real instant, so it is
+// shown in Central time — the shop's clock, whatever the server's is.
 function fmtDate(iso: string): string {
   const d = new Date(iso)
   if (Number.isNaN(d.getTime())) return iso
-  return d.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })
+  const timeZone = /^\d{4}-\d{2}-\d{2}$/.test(iso) ? 'UTC' : 'America/Chicago'
+  return d.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric', timeZone })
 }
 
 export function QuotePdfDocument(props: QuotePdfProps) {
@@ -208,7 +234,8 @@ export function QuotePdfDocument(props: QuotePdfProps) {
             <Text style={styles.brandSub}>{SITE.phone} · triplejmetaltx.com</Text>
           </View>
           <View style={styles.quoteMeta}>
-            <Text style={styles.quoteNumber}>Quote #{quoteNumber}</Text>
+            <Text style={styles.quoteLabel}>Quote</Text>
+            <Text style={styles.quoteNumber}>{quoteNumber}</Text>
             <Text style={styles.quoteValidity}>Valid until {fmtDate(validUntil)}</Text>
           </View>
         </View>
@@ -219,7 +246,7 @@ export function QuotePdfDocument(props: QuotePdfProps) {
           <Text style={styles.customerName}>{customerName}</Text>
           {customerAddress ? <Text style={styles.customerLine}>{customerAddress}</Text> : null}
           {customerEmail ? <Text style={styles.customerLine}>{customerEmail}</Text> : null}
-          {customerPhone ? <Text style={styles.customerLine}>{customerPhone}</Text> : null}
+          {customerPhone ? <Text style={styles.customerLine}>{formatUsPhone(customerPhone)}</Text> : null}
         </View>
 
         {/* Line items */}
@@ -268,7 +295,7 @@ export function QuotePdfDocument(props: QuotePdfProps) {
 
         {/* Footer */}
         <View style={styles.footer} fixed>
-          <Text>Triple J Metal LLC · Built right, built fast, built by Triple J.</Text>
+          <Text>{SITE.legalName} · {SITE.tagline}</Text>
           <Text>Generated {fmtDate(generatedAt)}</Text>
         </View>
       </Page>

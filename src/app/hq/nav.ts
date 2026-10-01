@@ -62,6 +62,7 @@ const DETAIL_TITLES: [RegExp, string][] = [
   [/^\/hq\/jobs\/[^/]+$/, 'Job'],
   [/^\/hq\/customers\/[^/]+$/, 'Customer'],
   [/^\/hq\/quotes\/[^/]+$/, 'Quote'],
+  [/^\/hq\/quotes\/[^/]+\/pdf$/, 'Quote PDF'],
 ]
 
 /**

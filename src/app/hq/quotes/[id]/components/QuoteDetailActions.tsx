@@ -1,8 +1,9 @@
 'use client'
 
 import { useState } from 'react'
+import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { CheckCircle2, FileDown, MessageSquare, Send, Undo2 } from 'lucide-react'
+import { CheckCircle2, FileText, MessageSquare, Send, Undo2 } from 'lucide-react'
 import { useHaptics } from '@/lib/hq/haptics'
 
 type Props = {
@@ -134,17 +135,14 @@ export function QuoteDetailActions({ id, status, customerHasEmail, customerHasPh
         />
       )}
 
-      {/* PDF — opens the real PDF in a new tab; browser saves with the
-          server-suggested filename. Generated via @react-pdf/renderer in
-          the /api/quotes/[id]/pdf route. */}
-      <a
-        href={`/api/quotes/${id}/pdf`}
-        target="_blank"
-        rel="noopener noreferrer"
+      {/* PDF — opens the in-app viewer, never the raw file: a bare PDF in
+          the installed app has no back button and traps the user on it. */}
+      <Link
+        href={`/hq/quotes/${id}/pdf`}
         className="inline-flex items-center justify-center gap-2 rounded-xl border border-(--border-subtle) bg-(--surface-2) px-3 py-3 text-[14px] font-semibold text-(--text-primary) tap-list hover:bg-(--surface-3)"
       >
-        <FileDown size={16} strokeWidth={2} /> PDF
-      </a>
+        <FileText size={16} strokeWidth={2} /> View PDF
+      </Link>
 
       {error && (
         <p className="col-span-2 text-[13px] text-red-500">{error}</p>

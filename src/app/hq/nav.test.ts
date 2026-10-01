@@ -52,6 +52,7 @@ describe('titleForPath', () => {
     ['/hq/customers/abc', 'Customer'],
     ['/hq/quotes', 'Quotes'],
     ['/hq/quotes/abc', 'Quote'],
+    ['/hq/quotes/abc/pdf', 'Quote PDF'],
     ['/hq/capture', 'New Lead'],
     ['/hq/permit-leads', 'Permits'],
     ['/hq/gallery', 'Gallery'],

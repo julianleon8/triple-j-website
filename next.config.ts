@@ -1,6 +1,40 @@
 import type { NextConfig } from "next";
 import withSerwistInit from "@serwist/next";
 
+// Just the slice of webpack's compilation the precache filter below reads.
+// webpack itself is vendored inside Next, so its types aren't importable here.
+type BuildAsset = { name: string };
+type BuildCompilation = {
+  chunks: Iterable<{ files: Set<string> }>;
+  chunkGraph: {
+    getChunkModulesIterable(chunk: unknown): Iterable<{ nameForCondition(): string | null }>;
+  };
+};
+
+/**
+ * Every emitted file that carries pdf.js — matched by contents, not by name.
+ * Next's splitChunks lifts big libraries into hash-named chunks, so a name
+ * pattern can't find pdf.js's 490 KB main chunk; its worker is a plain asset
+ * that keeps its own name. Computed once per compilation.
+ */
+const pdfJsAssets = new WeakMap<BuildCompilation, Set<string>>();
+function isPdfJsAsset({ asset, compilation }: { asset: BuildAsset; compilation: BuildCompilation }) {
+  let files = pdfJsAssets.get(compilation);
+  if (!files) {
+    files = new Set();
+    for (const chunk of compilation.chunks) {
+      for (const m of compilation.chunkGraph.getChunkModulesIterable(chunk)) {
+        if (/[\\/]pdfjs-dist[\\/]/.test(m.nameForCondition() ?? "")) {
+          for (const f of chunk.files) files.add(f);
+          break;
+        }
+      }
+    }
+    pdfJsAssets.set(compilation, files);
+  }
+  return files.has(asset.name) || /pdf\.worker/.test(asset.name);
+}
+
 const withSerwist = withSerwistInit({
   // Service worker source file — compiled by Serwist into /sw.js
   swSrc: "src/app/sw.ts",
@@ -9,6 +43,12 @@ const withSerwist = withSerwistInit({
   reloadOnOnline: false,
   // Disable the generated SW in dev — it caches broken HMR chunks
   disable: process.env.NODE_ENV === "development",
+  // The SW registers on every page, public site included, and precaches every
+  // build asset under 2 MB. pdf.js (~1.7 MB with its worker) is only ever used
+  // by the HQ quote PDF viewer, so it stays out: website visitors must not
+  // download it in the background. The first two entries are Serwist's own
+  // defaults, which setting `exclude` would otherwise drop.
+  exclude: [/\.map$/, /^manifest.*\.js$/, isPdfJsAsset],
 });
 
 // Files the OG cards read from disk at render time (src/lib/og-card.tsx).

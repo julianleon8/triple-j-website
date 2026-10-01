@@ -232,6 +232,11 @@ Do not copy anything from this file into `AGENTS.md`. That duplication is what p
 - **Public endpoints carry no session check and must not gain one:** `POST /api/leads` and
   `POST /api/partner-inquiries` (hCaptcha + rate limit), `POST /api/quotes/[id]/accept` (bearer is the
   `accept_token`), `GET /api/gallery`, `/api/setup` (`SETUP_KEY`), and both webhooks (HMAC). (2026-09-07)
+- **HQ never navigates to a raw file** (PDF, blob URL, download link). In the installed app there is no
+  browser chrome, so a bare file strands the user with no way back. Files open in an HQ page that keeps the
+  header, a back link and the tab bar; the quote PDF's is `/hq/quotes/[id]/pdf` (pdf.js). Sharing goes through
+  `navigator.share`; a plain download is offered only outside the installed app or where there is no share
+  sheet. (2026-10-01)
 
 ## HQ automation
 

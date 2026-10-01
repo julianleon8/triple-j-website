@@ -1,5 +1,23 @@
 # Session Notes
 
+## 2026-10-01 — Quote PDF: in-app viewer, layout fixed
+
+- **Trapped in the PDF.** HQ's PDF button opened the raw file in a new tab; in the installed app that
+  replaced the screen with a bare PDF and no way back. It now opens `/hq/quotes/[id]/pdf`: HQ header, tab bar,
+  a "Back to quote" link, and the PDF drawn with pdf.js (`pdfjs-dist` legacy build). Share opens the phone's
+  share sheet; Download shows only where it can't strand anyone. pdf.js (~1.7 MB) loads only on that page and
+  is excluded from the service worker precache by contents (`isPdfJsAsset` in `next.config.ts`), so website
+  visitors never fetch it.
+- **Badly formatted PDF.** The shop address printed on top of the "TRIPLE J METAL" title: react-pdf turned
+  the page's `lineHeight: 1.4` into a flat 14pt that the 24pt title inherited. Large text now sets its own
+  line height. Also: phone printed as `(254) 931-5225` instead of raw digits, city line `Temple, TX 76502`
+  instead of `Temple · TX 76502`, the grand total aligned with its label, dates no longer able to slip a day,
+  and the footer reads the legal name and tagline from `SITE`.
+- Verified: rendered JJM-2026-001 before/after; viewer tested in headless Chromium at phone and desktop width
+  (render, Share, error + retry). Not tested on a real iPhone.
+- Found, not fixed: `npm run dev` fails on `main` (Turbopack refuses Serwist's webpack config); `next dev
+  --webpack` is the workaround.
+
 ## 2026-10-01 — Google Ads campaign published
 
 - The owner retried the campaign. With the Google Ads payment method fixed, changes saved and
