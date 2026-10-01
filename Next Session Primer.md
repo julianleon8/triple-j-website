@@ -7,12 +7,14 @@ publishing, and $16 can bill about $486/month, over the $400 Google share of the
 
 **Owner's to-do, in order:**
 1. Negative keywords at campaign level (the list in `marketing/lead-plan-2026-09-29.md` → Negative keywords).
-2. Keywords tab: match type must read Phrase or Exact, not Broad.
+2. ~~Match types~~ confirmed Phrase/Exact (2026-10-01).
 3. Ad group 2 (Garages & shops) from the build sheet.
-4. Next day: ads read "Eligible", not "Disapproved" or "Under review".
-5. Phone-call conversion: Goals → Conversions → New → Website → "Phone call clicks". The owner sends the
-   label; set `NEXT_PUBLIC_GOOGLE_ADS_CALL_CONVERSION_LABEL` in Vercel (Production) and redeploy. Turn on
-   enhanced conversions in the same screen.
+4. ~~Ads eligible~~ (2026-10-01); first click $1.59 on `[carport builders near me]`.
+   **Sitelinks:** the ad shows "Metal Garages", "Carports + Concrete Pad", "Custom Metal Carports", not from the
+   build sheet, probably account-level leftovers from the old campaign. Check their final URLs still exist (site
+   rebuilt 2026-09) or replace them with the build sheet's six.
+5. ~~Phone-call conversion~~ **live 2026-10-01**: "Click to call", label `70OWCOzvvowdELGK9rxD` in Vercel,
+   verified in the production bundle. Enhanced conversions still to turn on.
 6. One test lead from a phone on `/quote?utm_source=test`; confirm HQ, push and email.
 7. ~~Daily report script~~ **installed and verified 2026-10-01** (Preview log: "Sent: … 1 warning"). The
    first report with real spend arrives 2026-10-02 at 6 AM; the 10-01 one covers 09-30, before the start date.
