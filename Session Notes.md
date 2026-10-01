@@ -11,7 +11,7 @@
 - Subhead settled as the mockup's one sentence, reversing the earlier log row. Then questions 14–25:
   no red; alternating navy bands; lion + Cinzel wordmark; lean header; homepage Hero, Builds, Services,
   Quote; card prices kept; real customer quotes with their build; inline form kept; scope includes emails,
-  quote PDF and HQ; subtle motion; Vercel preview before `main`. 15 rows in `Decisions.md`.
+  quote PDF and HQ; subtle motion; Vercel preview before `main`. 16 rows in `Decisions.md`.
 - Reference sites: a subagent found 9 (about 139k tokens). Screenshots and notes are in
   `docs/redesign-2026-10/reference-sites.*`. Waiting on the owner's reactions.
 - No `src/` change.
