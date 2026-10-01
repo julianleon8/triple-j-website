@@ -37,13 +37,14 @@ h1 .acc{background:linear-gradient(180deg,#e9eef2 0%,#9fb0c0 45%,#788a9c 55%,#c9
 <div class="ticker"><b>Latest builds</b><span>Horse stables + 50×50 equipment warehouse <em>Temple</em></span><span class="dot"></span><span>Restaurant rebuild, Mexicano Grille <em>Belton</em></span><span class="dot"></span><span>23×35 carport with gutters <em>Rogers</em></span><span class="dot"></span><span>25×55 lean-to patio <em>Copperas Cove</em></span><span class="dot"></span><span>50×40 garage, 4 roll-up doors <em>Palestine</em></span></div>
 </section>
 <script>
-// Hero photo options from the live gallery (2026-10-01). Open with ?photo=grille | stables | rogers.
+// Hero photo options from the live gallery (2026-10-01). Chosen: grille (option A). Compare with ?photo=grille | stables | rogers.
 const PHOTOS={
   grille:{src:"https://idrbgxlvvnqduvbqtaei.supabase.co/storage/v1/object/public/gallery/items/9babfa50-9af7-470c-af06-a3b52cb4ef61/1790437038609.jpg",pos:"50% 40%",phonePos:"18% 50%",label:"A · Mexicano Grille rebuild, Belton"},
   stables:{src:"https://idrbgxlvvnqduvbqtaei.supabase.co/storage/v1/object/public/gallery/items/e83d6a82-6138-40e1-a60b-c4fe4b7d8a30/1790826947095.jpg",pos:"50% 45%",phonePos:"24% 50%",label:"B · Horse stables + 50×50 warehouse, Temple"},
   rogers:{src:"https://idrbgxlvvnqduvbqtaei.supabase.co/storage/v1/object/public/gallery/items/f548bede-4068-4f8a-9f45-541bec33c5c4/1790436675921.jpg",pos:"50% 50%",phonePos:"40% 50%",label:"C · 23×35 carport with gutters, Rogers"}
 };
-const pick=PHOTOS[new URLSearchParams(location.search).get("photo")];
-if(pick){const bg=document.getElementById("bg");bg.src=pick.src;bg.style.objectPosition=matchMedia("(max-width:600px)").matches?pick.phonePos:pick.pos;document.getElementById("note").textContent=pick.label}
+const param=new URLSearchParams(location.search).get("photo"),pick=PHOTOS[param]||PHOTOS.grille;
+const bg=document.getElementById("bg");bg.src=pick.src;bg.style.objectPosition=matchMedia("(max-width:600px)").matches?pick.phonePos:pick.pos;
+const note=document.getElementById("note");if(PHOTOS[param])note.textContent=pick.label;else note.remove();
 </script>
 </body></html>
