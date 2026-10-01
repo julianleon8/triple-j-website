@@ -1,3 +1,11 @@
+# SEO action plan — 2026-10-01 · A1–A3 CLOSED
+
+`docs/ACTION-PLAN.md` dates from April. A1 (doubled brand in titles) and A2 (`metadataBase`) were already
+live. A3 shipped: the homepage Services cards describe their photos in alt text. Before working A4 onward,
+check the live site: other items may also be done already.
+
+---
+
 # Permit leads — 2026-10-01 · 2026 ONLY, BUILDER LIST SENT
 
 - The scraper reads 2026 reports only (`REPORT_FLOOR`). First run under it: 2026-10-01 14:00 UTC. Expect zero

@@ -26,6 +26,7 @@ const SERVICE_CARDS = [
     blurb:
       "Single, double, triple, custom spans. Built and installed by our crew — usually within the week.",
     image: "/images/carport-gable-residential.jpg",
+    alt: "Gable-roof metal carport with a red iron frame over a residential driveway",
     priceFrom: "3,000",
   },
   {
@@ -35,6 +36,7 @@ const SERVICE_CARDS = [
     blurb:
       "30×30 bolted steel-and-install base starts here. Walls, roll-up doors, walk-throughs, and insulation are quoted on top per your spec.",
     image: "/images/metal-garage-green.jpg",
+    alt: "Green enclosed metal garage with three roll-up doors and a walk-in door",
     priceFrom: "5,500",
   },
   {
@@ -47,6 +49,7 @@ const SERVICE_CARDS = [
     // closest thing in the gallery to a true ranch barn.
     image:
       "https://idrbgxlvvnqduvbqtaei.supabase.co/storage/v1/object/public/gallery/items/e83d6a82-6138-40e1-a60b-c4fe4b7d8a30/1777195267509.jpg",
+    alt: "Red iron ranch building under construction in Temple, TX",
     priceFrom: "6,500",
   },
   {
@@ -58,6 +61,7 @@ const SERVICE_CARDS = [
     // RV Cover 20×35 (Double-Wide) — Copperas Cove TX bolted build.
     image:
       "https://idrbgxlvvnqduvbqtaei.supabase.co/storage/v1/object/public/gallery/1777251893180.jpg",
+    alt: "Bolted 20×35 RV cover over a travel trailer on a concrete pad in Copperas Cove, TX",
     priceFrom: "6,500",
   },
 ] as const;
@@ -110,7 +114,7 @@ export function Services() {
                 <div className="relative aspect-[5/4] overflow-hidden rounded-2xl shadow-md group-hover:shadow-xl transition-shadow duration-300">
                   <Image
                     src={service.image}
-                    alt={service.headline}
+                    alt={service.alt}
                     fill
                     sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
                     className="object-cover transition-transform duration-700 ease-out group-hover:scale-105"

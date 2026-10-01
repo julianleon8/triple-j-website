@@ -2,6 +2,7 @@
 
 **Updated:** 2026-04-24
 **Source:** FULL-AUDIT-REPORT.md (health score 73/100)
+**Status 2026-10-01:** A1–A3 are closed (see each). The rest of this plan is from April — check the live site before working any item.
 **Context:** Triple J's confirmed bottleneck is **lead volume**, not capacity. Every item is weighted by how much it moves real demand — not abstract score points.
 
 ---
@@ -9,6 +10,8 @@
 ## Critical — do this week
 
 ### A1. Fix title brand duplication (20 pages)
+> **Done before 2026-10-01.** All 46 sitemap URLs checked live: one brand mention per `<title>`. The template is now `%s | ${SITE.name}` ("Triple J Metal").
+
 **Score impact:** +4 points on-page SEO. **Lead impact:** every SERP listing currently shows "| Triple J Metal LLC | Triple J Metal LLC" — reads as spam, hurts CTR.
 
 **Where to fix (exhaustive):**
@@ -32,6 +35,8 @@
 **Verify:** `curl -s https://www.triplejmetaltx.com/about | grep -oE '<title[^>]*>[^<]*</title>'` should show exactly one brand mention after redeploy.
 
 ### A2. Add `metadataBase` so canonicals resolve absolute
+> **Done before 2026-10-01.** `metadataBase` is in `src/app/layout.tsx`; all 46 sitemap URLs return an absolute canonical.
+
 **Score impact:** +2 technical. **Lead impact:** hardens canonical signal against edge-case crawlers and duplicate-content risk.
 
 **Fix:** [src/app/layout.tsx](src/app/layout.tsx) — add `metadataBase: new URL(siteUrl)` at the top of the `metadata` export.
@@ -50,6 +55,8 @@ All per-page `alternates: { canonical: '/slug' }` will then render as absolute U
 **Verify:** `curl -s https://www.triplejmetaltx.com/about | grep canonical` should return `href="https://www.triplejmetaltx.com/about"`.
 
 ### A3. Add alt text to the homepage hero + features
+> **Done 2026-10-01.** Every homepage image already had alt text. The four Services cards used their taglines as alt; they now describe the photo. The quote-form tile images are `alt=""` (the visible label names the button), as are the header lion (next to the wordmark) and the quote form's background photo.
+
 **Score impact:** +8 images. **Lead impact:** accessibility + image search; the hero is likely LCP so Google cares about semantics.
 
 **Homepage images needing alt:**

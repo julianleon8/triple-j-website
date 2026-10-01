@@ -1,5 +1,16 @@
 # Session Notes
 
+## 2026-10-01 — SEO action plan A1–A3
+
+- **A1 (doubled brand in titles) and A2 (`metadataBase`) were already fixed.** Checked all 46 sitemap URLs on
+  the live site: each `<title>` names the brand once, and each canonical is absolute. No code change.
+- **A3 (homepage alt text).** Every homepage image already had alt text. The four Services cards
+  (`src/components/sections/Services.tsx`) used their taglines ("Pole, equipment, hay — built to span.") as
+  alt; each card now has an `alt` describing the photo. The quote-form tile images are now `alt=""`: the
+  button's visible label already names them, and screen readers were reading it twice.
+- `docs/ACTION-PLAN.md` marks A1–A3 closed. The rest of that plan dates from April; check the live site
+  before working any item. Not viewed in a browser.
+
 ## 2026-10-01 — Fencing photo, permit scraper limited to 2026, builder call list
 
 - **Fencing photo.** `public/images/metal-fence-ranch-wire.webp` (owner-supplied) now fills the Metal Fencing

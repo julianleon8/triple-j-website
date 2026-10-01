@@ -153,7 +153,8 @@ function ServiceChipCard({
       <div className="relative aspect-[5/4] overflow-hidden">
         {chip.image ? <Image
           src={chip.image}
-          alt={`${chip.label} — ${chip.sublabel}`}
+          // Decorative: the label + sublabel below already name the button.
+          alt=""
           fill
           sizes="(max-width: 640px) 50vw, 25vw"
           className={`object-cover transition-all duration-500 ${
