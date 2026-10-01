@@ -1,5 +1,20 @@
 # Session Notes
 
+## 2026-10-01 — Offline demo backend (`scripts/demo-server/`)
+
+- **What.** A zero-dependency local mock of the Supabase surface this app uses (password auth, PostgREST incl.
+  embeds, in-memory writes), seeded with a 7-project gallery, 5 customers, 8 leads, 5 quotes and 3 jobs. Run
+  `npm run demo:backend`, point `.env.local` at `http://127.0.0.1:54321`, sign in as `owner@triplejmetal.test`.
+  Setup, limits and how to add data: `scripts/demo-server/README.md`.
+- **Why.** Client demos and screenshots with clean data, no production leads at risk, and UI work in environments
+  without Docker or the Supabase CLI. Ported from the engine built for `frescos-operating-system`; `engine.js` and
+  `index.js` are app-agnostic and kept identical there, only `seed.js` is Triple J-specific.
+- **Verified.** Public gallery (list + detail), services, locations and the HQ Today / Leads / Quotes / Jobs /
+  Customers screens render from the seed. Passkey sign-in, Storage uploads, QBO, Twilio and Resend are not
+  mocked; `permit_leads`, receipts and costs are empty tables.
+- **Lint.** `scripts/demo-server/**` is ignored in `eslint.config.mjs` (plain CommonJS dev tool).
+- Pushed on branch `claude/demo-backend`, **not** `main`, because `main` auto-deploys to production.
+
 ## 2026-09-30 — Google Ads campaign build, branch cleanup, two lost fixes ported
 
 Sessions of 2026-09-29 and 09-30 (one conversation).

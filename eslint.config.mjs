@@ -97,6 +97,8 @@ const eslintConfig = defineConfig([
     // whichever build ran last.
     "public/sw.js",
     "public/sw.js.map",
+    // Plain-CommonJS local dev tool (see scripts/demo-server/README.md).
+    "scripts/demo-server/**",
   ]),
 ]);
 
