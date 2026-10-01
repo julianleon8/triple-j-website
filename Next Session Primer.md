@@ -1,3 +1,15 @@
+# Permit leads — 2026-10-01 · 2026 ONLY, BUILDER LIST SENT
+
+- The scraper reads 2026 reports only (`REPORT_FLOOR`). First run under it: 2026-10-01 14:00 UTC. Expect zero
+  backfill; a new report appears only when the City posts Sept 25–Oct 1. Check `permit_reports`, not yield.
+- The 693 leads read from 2025 reports are deleted.
+- The owner has the builder call list (39 builders, 31 phones) as an Excel file. It is not in the repo, and HQ
+  does not store phone numbers.
+- **Open, owner's call:** the 195 homeowner-only accessory leads have no phone. A mailing or door-hanger list
+  from their addresses was offered, not built. Calls to builders are tracked in the workbook, not in HQ.
+
+---
+
 # Quote PDF viewer — 2026-10-01 · LIVE ON `main` (8763d62)
 
 HQ's PDF button now opens an in-app viewer (`/hq/quotes/[id]/pdf`) instead of trapping the installed app on a

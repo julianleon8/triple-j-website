@@ -1,5 +1,22 @@
 # Session Notes
 
+## 2026-10-01 — Fencing photo, permit scraper limited to 2026, builder call list
+
+- **Fencing photo.** `public/images/metal-fence-ranch-wire.webp` (owner-supplied) now fills the Metal Fencing
+  tile on the quote form, the `/services` card and the city-page service cards. Both `SERVICE_PHOTOS` maps were
+  updated together; the city page's hard-coded striped placeholder for `metal-fencing` is gone. Not viewed in
+  a browser.
+- **Permit scraper read 2025.** The backfill finished 2026 on 09-21 and spent 09-22 → 09-30 on 24 reports from
+  2025. `REPORT_FLOOR = '2026-01-01'` in `src/lib/jobs/scrape-permits.ts`: nothing uploaded before it is
+  picked, and a report printed before it (latest date stamp in the text) is recorded with zero leads. All 55
+  unread reports on the City page were uploaded in 2025, so the backfill is over. 4 tests added.
+- **693 leads from 2025 reports deleted** (owner's call). 2 kept that were first found in 2026 reports.
+- **Builder call list.** The City reports carry no phone numbers. 48 builder spellings on 2026 new-home
+  permits merged to 39 companies; published business phones found for 31, from company sites and builder
+  directories (each row links its source). Sent to the owner as `Triple J builder call list Oct 2026.xlsx`;
+  **not committed**, lead data stays out of the repo. The phone lookups used about 530k subagent tokens. The
+  workbook's five summary formulas were not recalculated before sending: LibreOffice would not start in the
+  container. They are set to calculate when the file is opened.
 ## 2026-10-01 — Quote PDF: in-app viewer, layout fixed
 
 - **Trapped in the PDF.** HQ's PDF button opened the raw file in a new tab; in the installed app that
