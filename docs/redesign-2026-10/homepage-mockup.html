@@ -51,7 +51,12 @@ nav{display:flex;gap:30px;font-size:15px;font-weight:500;color:rgba(255,255,255,
 .hero h1{font-size:clamp(36px,7.4vw,104px);margin:22px 0 0}
 .acc{background:var(--steel-grad);-webkit-background-clip:text;background-clip:text;color:transparent}
 .hero .sub{max-width:560px;margin:22px auto 0;font-size:18px;line-height:1.55;color:rgba(255,255,255,.86)}
-.ctas{display:flex;gap:12px;margin-top:30px;flex-wrap:wrap;justify-content:center}
+.start{margin-top:32px;display:flex;flex-direction:column;align-items:center}
+.start-lbl{margin:0 0 14px;font-size:13px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;color:#fff}
+.shortcuts{display:flex;gap:12px;justify-content:center}
+.shortcuts .btn{min-width:150px}
+.shortcuts .btn span{color:var(--slate)}
+.see-builds{margin-top:18px;font-size:15px;font-weight:500;color:var(--silver);border-bottom:1px solid rgba(201,211,220,.35);padding-bottom:2px}
 .ticker{position:relative;border-top:1px solid rgba(201,211,220,.22);background:rgba(0,24,42,.72);backdrop-filter:blur(6px);display:flex;align-items:center;overflow:hidden;font-size:14px;color:rgba(255,255,255,.88)}
 .ticker b{flex:none;font:700 12px Inter;letter-spacing:.2em;text-transform:uppercase;color:var(--silver);padding:14px 22px 14px 40px;border-right:1px solid var(--slate);background:var(--navy);position:relative;z-index:1}
 .ticker .track{display:flex;gap:44px;padding-left:28px;white-space:nowrap;animation:tick 60s linear infinite}
@@ -147,11 +152,19 @@ footer ul{list-style:none;margin:0;padding:0;line-height:2.05;font-size:14.5px}
   .hero h1{font-size:35px}
   .hero .eyebrow{font-size:11px;letter-spacing:.16em}.eyebrow:before,.eyebrow:after{width:20px}
   .hero .sub{font-size:16px}
-  .ctas{width:100%;max-width:340px}.ctas .btn{width:100%}
+  .start{width:100%;max-width:360px}.shortcuts{width:100%;gap:8px}.shortcuts .btn{min-width:0;flex:1;padding:14px 4px;font-size:14.5px}.shortcuts .btn span{display:none}
+  .start-lbl{font-size:12px}
   .ticker b{padding:12px 16px 12px 20px}
   section.band{padding:72px 0}
   .sec-head{flex-direction:column;align-items:flex-start;margin-bottom:30px}
-  .builds,.cards{grid-template-columns:1fr;gap:20px}
+  .builds{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;gap:14px;margin:0 -20px;padding:0 20px 6px;scrollbar-width:none}
+  .build{flex:0 0 80%;scroll-snap-align:start}
+  .build h3{font-size:18px}
+  .cards{grid-template-columns:1fr;gap:12px}
+  .card .ph,.card p{display:none}
+  .card .body{padding:16px 18px 14px}
+  .card h3{font-size:17px;margin-top:6px}
+  .card .row{margin-top:12px;padding-top:12px}
   .tiles{grid-template-columns:repeat(2,1fr)}
   .two{grid-template-columns:1fr;gap:14px}
   .form{padding:22px 18px}
@@ -184,7 +197,15 @@ footer ul{list-style:none;margin:0;padding:0;line-height:2.05;font-size:14.5px}
     <div class="eyebrow">Family-owned · Temple, Texas</div>
     <h1 class="display">Built right.<br>Built fast.<br><span class="acc">Built by Triple J.</span></h1>
     <p class="sub">Carports, garages, barns and patios, welded or bolted on your property by our own Central Texas crew.</p>
-    <div class="ctas"><a class="btn white" href="#quote">Get a Free Quote</a><a class="btn outline" href="#builds">See Our Builds</a></div>
+    <div class="start">
+      <p class="start-lbl">Start Your Free Quote</p>
+      <div class="shortcuts">
+        <a class="btn white" href="/quote?service=carport">Carport <span aria-hidden="true">→</span></a>
+        <a class="btn white" href="/quote?service=barn">Barn <span aria-hidden="true">→</span></a>
+        <a class="btn white" href="/quote?service=fencing">Metal Fencing <span aria-hidden="true">→</span></a>
+      </div>
+      <a class="see-builds" href="#builds">or see our builds ↓</a>
+    </div>
   </div>
   <!-- Real active gallery_items, newest first; titles verbatim, city shortened from the stored value. -->
   <div class="ticker"><b>Latest builds</b><div class="track">
@@ -205,9 +226,6 @@ footer ul{list-style:none;margin:0;padding:0;line-height:2.05;font-size:14.5px}
         <div class="quote-slot note">Customer quote sits here once collected — never a placeholder</div></div></a>
       <a class="build"><div class="ph"><img src="https://idrbgxlvvnqduvbqtaei.supabase.co/storage/v1/object/public/gallery/items/e83d6a82-6138-40e1-a60b-c4fe4b7d8a30/1790826948228.jpg" alt=""></div><div class="meta"><div class="city">Temple, Texas</div><h3>Hybrid Block X Metal Horse Stables</h3></div></a>
       <a class="build"><div class="ph"><img src="https://idrbgxlvvnqduvbqtaei.supabase.co/storage/v1/object/public/gallery/items/9babfa50-9af7-470c-af06-a3b52cb4ef61/1777195480002.jpg" alt=""></div><div class="meta"><div class="city">Belton, Texas</div><h3>Restaurant Re-Build! Mexicano Grille</h3></div></a>
-      <a class="build"><div class="ph"><img src="https://idrbgxlvvnqduvbqtaei.supabase.co/storage/v1/object/public/gallery/1777252105588.jpg" alt=""></div><div class="meta"><div class="city">Copperas Cove, Texas</div><h3>25 X 55 Lean-To Patio</h3></div></a>
-      <a class="build"><div class="ph"><img src="../../public/images/carport-residential-completed.jpg" alt=""></div><div class="meta"><div class="city">Temple, Texas</div><h3>20 x 20 Gabled Car-Port</h3></div></a>
-      <a class="build"><div class="ph"><img src="../../public/images/porch-cover-lean-to.jpg" alt=""></div><div class="meta"><div class="city">Central Texas</div><h3>Lean-To Porch Cover</h3></div></a>
     </div>
   </div>
 </section>
@@ -224,8 +242,8 @@ footer ul{list-style:none;margin:0;padding:0;line-height:2.05;font-size:14.5px}
     </div>
     <div class="cards">
       <a class="card"><div class="ph"><img src="../../public/images/carport-gable-residential.jpg" alt=""></div><div class="body"><div class="kicker">Carports</div><h3>Welded or bolted, residential or ranch.</h3><p>Single, double, triple, custom spans. Built and installed by our crew — usually within the week.</p><div class="row"><span>From <strong>$3,000</strong> · same-week start</span><span class="more">See builds →</span></div></div></a>
-      <a class="card"><div class="ph"><img src="../../public/images/metal-garage-green.jpg" alt=""></div><div class="body"><div class="kicker">Garages</div><h3>Enclosed shop space — your spec, our crew.</h3><p>30×30 bolted steel-and-install base starts here. Walls, roll-up doors, walk-throughs, and insulation are quoted on top per your spec.</p><div class="row"><span>From <strong>$5,500</strong> · same-week start</span><span class="more">See builds →</span></div></div></a>
-      <a class="card"><div class="ph"><img src="https://idrbgxlvvnqduvbqtaei.supabase.co/storage/v1/object/public/gallery/items/e83d6a82-6138-40e1-a60b-c4fe4b7d8a30/1777195267509.jpg" alt=""></div><div class="body"><div class="kicker">Barns</div><h3>Pole, equipment, hay — built to span.</h3><p>Long clear-spans for ag and ranch use. Welded red-iron primary, sheet on the skin.</p><div class="row"><span>From <strong>$6,500</strong> · same-week start</span><span class="more">See builds →</span></div></div></a>
+      <a class="card"><div class="ph"><img src="https://idrbgxlvvnqduvbqtaei.supabase.co/storage/v1/object/public/gallery/items/162e4b86-b8d7-4bbb-b828-bc23f90d256d/1777252148271.jpg" alt=""></div><div class="body"><div class="kicker">Garages</div><h3>Enclosed shop space — your spec, our crew.</h3><p>30×30 bolted steel-and-install base starts here. Walls, roll-up doors, walk-throughs, and insulation are quoted on top per your spec.</p><div class="row"><span>From <strong>$5,500</strong> · same-week start</span><span class="more">See builds →</span></div></div></a>
+      <a class="card"><div class="ph"><img src="https://idrbgxlvvnqduvbqtaei.supabase.co/storage/v1/object/public/gallery/items/e83d6a82-6138-40e1-a60b-c4fe4b7d8a30/1777195271116.jpg" alt=""></div><div class="body"><div class="kicker">Barns</div><h3>Pole, equipment, hay — built to span.</h3><p>Long clear-spans for ag and ranch use. Welded red-iron primary, sheet on the skin.</p><div class="row"><span>From <strong>$6,500</strong> · same-week start</span><span class="more">See builds →</span></div></div></a>
       <a class="card"><div class="ph"><img src="https://idrbgxlvvnqduvbqtaei.supabase.co/storage/v1/object/public/gallery/1777251893180.jpg" alt=""></div><div class="body"><div class="kicker">RV &amp; Boat</div><h3>Tall clearance for trucks, RVs, and boats.</h3><p>Extra-tall clearance structures for RVs, boats, trailers, and oversize equipment storage.</p><div class="row"><span>From <strong>$6,500</strong> · same-week start</span><span class="more">See builds →</span></div></div></a>
     </div>
   </div>
