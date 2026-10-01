@@ -121,7 +121,7 @@ const inputCls =
 type ServiceChip = { value: ServiceType; label: string; sublabel: string; image?: string };
 
 const SERVICE_CHIPS: readonly ServiceChip[] = [
-  { value: "fencing", label: "Metal Fencing", sublabel: "Privacy, ranch, ornamental & gates" },
+  { value: "fencing", label: "Metal Fencing", sublabel: "Privacy, ranch, ornamental & gates", image: "/images/metal-fence-ranch-wire.webp" },
   { value: "lean_to", label: "Lean-To / Patio", sublabel: "Attached or freestanding", image: "/images/porch-cover-lean-to.jpg" },
   { value: "other", label: "Other / Custom", sublabel: "Tell us what you need", image: "/images/red-iron-frame-hero.jpg" },
   { value: "carport",  label: "Carport",     sublabel: "Welded or bolted",  image: "/images/carport-gable-residential.jpg" },
