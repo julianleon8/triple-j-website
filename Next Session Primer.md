@@ -17,9 +17,9 @@ publishing, and $16 can bill about $486/month, over the $400 Google share of the
 7. ~~Daily report script~~ **installed and verified 2026-10-01** (Preview log: "Sent: … 1 warning"). The
    first report with real spend arrives 2026-10-02 at 6 AM; the 10-01 one covers 09-30, before the start date.
 8. Every Monday: search-terms report, new negatives.
-9. **Gmail DKIM is missing** (`Connectors.md` → Verifying a connector): Yahoo blocked the daily report, and
-   the same applies to any Gmail reply to a customer at Yahoo. The owner turns it on in Google Admin and adds
-   the TXT record in Vercel DNS.
+9. **Gmail DKIM key is missing from DNS** (`Connectors.md` → Verifying a connector): Google already signs, but
+   `google._domainkey` is not published, so Yahoo blocked the daily report, and would block any Gmail reply to a
+   Yahoo customer. The owner adds the TXT record in Vercel DNS; then verify it resolves.
 
 **Owner's calls, all open:**
 - roll-up door prices: $800 flat vs the 2026-05-06 handwritten sheet (`Locked Decisions.md` → Outstanding);
