@@ -1,3 +1,46 @@
+# Visual redesign — 2026-10-01 · HERO SPECIFIED, NOTHING BUILT
+
+The owner is redesigning the **whole public site**, one section at a time. The hero is decided except for its
+photo. **No `src/` file has changed.** The decisions are in `Locked Decisions.md` (the Tagline, Marketing
+headline face and Brand colour lines) and in the 2026-10-01 rows of `Decisions.md`. Mockups and a CSS
+reference are in `docs/redesign-2026-10/` (`hero-mockup.html`, `hero-desktop.jpg`, `hero-phone.jpg`,
+`font-options.jpg`, `strip-options.jpg`). These commits are on branch `claude/youthful-hypatia-28pf1o`,
+not `main`. Merge that branch first.
+
+**Do first:**
+1. **Hero photo.** The owner asked for three options from the gallery (`gallery_items` → `gallery_photos`,
+   `is_active`). New on 2026-10-01: the Mexicano Grille rebuild in Belton (13 photos) and the horse stables
+   plus 50×50 warehouse in Temple (7). Also the Rogers 23×35 carport with gutters (11, from 09-26). Mock each
+   photo into `hero-mockup.html` and send the three renders. This needs network access to
+   `idrbgxlvvnqduvbqtaei.supabase.co`; the previous sandbox was denied.
+2. **Confirm the subhead wording.** The owner said "keep both lines as they are" in answer to a question that
+   quoted the mockup's sentence ("Carports, garages, barns and patios, welded or bolted on your property by
+   our own Central Texas crew."). The ledger logged the live two-sentence version. Ask which one, and log a
+   new row if it is the mockup's.
+3. **The questions still open** (numbered as in the original 25): red as a second accent (14), light or dark
+   site overall (15), new logo lockup, since the file still says "Metal Buildings" (16), header changes (17),
+   homepage section order (18), prices on service cards (19), trust without reviews (20), keeping the inline
+   quote form (21), scope: whole site, plus whether HQ, emails and the quote PDF follow (22), reference sites
+   (23), motion (24), mockups or a preview link before `main` (25).
+
+**Found while specifying (not built):**
+- **Tokens are shared with HQ.** `brand-*` / `--brand-fg` appear in 44 marketing files and 61 HQ files, and
+  `font-display` in 35 files, HQ headings included. Rewriting the raw brand scale or `--font-display`
+  restyles HQ too. Scope the new navy, slate and Cinzel to marketing unless the owner puts HQ in scope.
+- **`#1e6bd6` is hard-coded** in `src/app/layout.tsx` (theme colour), `src/emails/BrandLayout.tsx`,
+  `src/emails/PartnerInquiryConfirmation.tsx`, `src/lib/quote-pdf.tsx` and HQ charts.
+- **Fonts load with `display: "optional"`.** A slow first visit shows the system fallback for the whole view,
+  which is probably why the owner saw the "wrong" typeface. Prefer `swap` for Cinzel.
+- **Cinzel's lowercase are small caps.** Write headlines in sentence case and never apply `uppercase`.
+  The OG cards (`src/lib/og-fonts`) need Cinzel too.
+- **Hero CSS values** are in `hero-mockup.html`: a navy radial scrim, the steel-gradient stops, the white
+  primary button and the outline secondary. The live hero sits under a transparent header (`-mt-20`).
+- **The ticker** is real active gallery titles plus city, never invented. It must respect
+  `prefers-reduced-motion`, and decorative overlays stay `pointer-events-none`.
+- `npm run dev` fails on `main` (Turbopack vs Serwist). Use `next dev --webpack`.
+
+---
+
 # Quote PDF viewer — 2026-10-01 · LIVE ON `main` (8763d62)
 
 HQ's PDF button now opens an in-app viewer (`/hq/quotes/[id]/pdf`) instead of trapping the installed app on a

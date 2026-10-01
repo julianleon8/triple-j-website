@@ -1,0 +1,38 @@
+<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Inter:wght@400;600&display=swap" rel="stylesheet"><title>Hero Mockup</title><style>
+:root{--navy:#00182a;--navy-2:#0a2236;--slate:#546678;--steel:#788a9c;--silver:#c9d3dc;--eye:#12729c}
+*{box-sizing:border-box}body{margin:0;font-family:Inter,sans-serif;background:var(--navy)}
+.hero{position:relative;height:100vh;min-height:640px;display:flex;flex-direction:column;color:#fff;overflow:hidden}
+.hero img.bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.scrim{position:absolute;inset:0;background:radial-gradient(ellipse at center,rgba(0,24,42,.55) 0%,rgba(0,24,42,.82) 60%,rgba(0,24,42,.94) 100%)}
+header{position:relative;display:flex;align-items:center;justify-content:space-between;padding:18px 40px}
+.brand{display:flex;align-items:center;gap:12px;font:900 22px Cinzel}.brand img{width:44px}
+nav{display:flex;gap:28px;font-size:15px;color:rgba(255,255,255,.85)}
+.call{border:1px solid rgba(255,255,255,.35);padding:10px 16px;border-radius:6px;font-weight:600;font-size:14px}
+.center{position:relative;flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:40px 20px 30px}
+.eyebrow{font-size:13px;font-weight:600;letter-spacing:.22em;text-transform:uppercase;color:var(--silver);display:flex;align-items:center;gap:14px}
+.eyebrow:before,.eyebrow:after{content:"";width:48px;height:2px;background:linear-gradient(90deg,transparent,var(--steel))}.eyebrow:after{transform:scaleX(-1)}
+h1{font-family:Cinzel;font-weight:900;font-size:clamp(36px,7.4vw,104px);line-height:1.02;margin:22px 0 0;letter-spacing:.01em}
+h1 .acc{background:linear-gradient(180deg,#e9eef2 0%,#9fb0c0 45%,#788a9c 55%,#c9d3dc 100%);-webkit-background-clip:text;background-clip:text;color:transparent}
+.sub{max-width:560px;margin:22px auto 0;font-size:18px;line-height:1.55;color:rgba(255,255,255,.85)}
+.ctas{display:flex;gap:12px;margin-top:30px;flex-wrap:wrap;justify-content:center}
+.btn{padding:15px 26px;border-radius:6px;font-weight:600;font-size:16px}
+.btn.p{background:#fff;color:var(--navy)}.btn.s{border:1px solid rgba(255,255,255,.45);color:#fff}
+.ticker{margin-top:auto;position:relative;border-top:1px solid rgba(201,211,220,.22);background:rgba(0,24,42,.72);backdrop-filter:blur(6px);display:flex;align-items:center;gap:22px;padding:14px 40px;white-space:nowrap;overflow:hidden;font-size:14px;color:rgba(255,255,255,.88)}
+.ticker b{font:700 12px Inter;letter-spacing:.2em;text-transform:uppercase;color:var(--silver);padding-right:22px;border-right:1px solid var(--slate)}
+.ticker .dot{width:6px;height:6px;border-radius:50%;background:var(--steel);display:inline-block;margin:0 4px 2px}
+.ticker em{font-style:normal;color:var(--steel)}
+.note{position:absolute;right:16px;top:86px;font:600 11px Inter;letter-spacing:.1em;text-transform:uppercase;background:rgba(0,0,0,.55);color:#fbd38d;padding:6px 10px;border-radius:4px}
+@media(max-width:600px){h1{font-size:35px}.eyebrow{font-size:11px;letter-spacing:.16em}.eyebrow:before,.eyebrow:after{width:20px}nav,.call{display:none}header{padding:16px 18px}.ticker{padding:12px 18px}.sub{font-size:16px}.btn{width:100%;text-align:center}.ctas{width:100%;max-width:340px}.note{top:70px}}
+</style></head><body><section class="hero">
+<img class="bg" src="../../public/images/red-iron-frame-hero.jpg">
+<div class="scrim"></div>
+<header><div class="brand"><img src="../../public/images/logo-lion.png">Triple J Metal</div><nav><span>Services</span><span>Fencing</span><span>Gallery</span><span>About</span><span>Contact</span></nav><div class="call">254-346-7764</div></header>
+<div class="note">Photo placeholder — final pick from gallery</div>
+<div class="center">
+<div class="eyebrow">Family-owned · Temple, Texas</div>
+<h1>Built right.<br>Built fast.<br><span class="acc">Built by Triple J.</span></h1>
+<p class="sub">Carports, garages, barns and patios, welded or bolted on your property by our own Central Texas crew.</p>
+<div class="ctas"><span class="btn p">Get a Free Quote</span><span class="btn s">See Our Builds</span></div>
+</div>
+<div class="ticker"><b>Latest builds</b><span>Horse stables + 50×50 equipment warehouse <em>Temple</em></span><span class="dot"></span><span>Restaurant rebuild, Mexicano Grille <em>Belton</em></span><span class="dot"></span><span>23×35 carport with gutters <em>Rogers</em></span><span class="dot"></span><span>25×55 lean-to patio <em>Copperas Cove</em></span><span class="dot"></span><span>50×40 garage, 4 roll-up doors <em>Palestine</em></span></div>
+</section></body></html>
