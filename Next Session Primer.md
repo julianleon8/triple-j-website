@@ -24,8 +24,8 @@ publishing, and $16 can bill about $486/month, over the $400 Google share of the
 - the barns page still mentions barndominium projects through GCs, though builds are paused until 2027;
 - Temple Generation (Scott Smith): insurance, stamped drawings, site-walk attendees.
 
-**Billing:** Google Ads payment is fixed (2026-10-01). Google Workspace was due to suspend 2026-10-02 and
-GitHub metered Actions were restricted, both on the declining card; not confirmed fixed.
+**Billing:** Google Ads payment and Google Workspace are both fixed (owner, 2026-10-01). GitHub metered
+Actions were restricted on the same declining card; not confirmed fixed.
 
 ---
 
