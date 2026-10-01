@@ -1,9 +1,8 @@
-# Quote PDF viewer — 2026-10-01 · ON BRANCH, NOT YET ON `main`
+# Quote PDF viewer — 2026-10-01 · LIVE ON `main` (8763d62)
 
-Branch `claude/happy-fermat-2kcleo`. HQ's PDF button now opens an in-app viewer (`/hq/quotes/[id]/pdf`)
-instead of trapping the installed app on a bare PDF, and the PDF's header overprint is fixed. Once it is on
-`main`, the owner checks on the iPhone: open quote JJM-2026-001 → View PDF → the PDF draws, Back returns,
-Share opens the share sheet. The owner was mid-list ("first of all…") — more HQ fixes are coming.
+HQ's PDF button now opens an in-app viewer (`/hq/quotes/[id]/pdf`) instead of trapping the installed app on a
+bare PDF, and the PDF's header overprint is fixed. Not yet checked on a real iPhone: open quote JJM-2026-001 →
+View PDF → the PDF draws, Back returns, Share opens the share sheet. The owner was mid-list ("first of all…") — more HQ fixes are coming.
 
 ---
 
