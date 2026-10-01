@@ -1,5 +1,21 @@
 # Session Notes
 
+## 2026-10-01 — Visual redesign: hero specified
+
+- The owner started a full visual redesign of the public site. The hero headline "Your land. Your plans.
+  Our steel." is retired, and the hero now reads "Built right. Built fast. Built by Triple J." The last line
+  is a brushed-steel gradient. The layout is centred, the primary button white and the secondary an outline,
+  and the old proof strip becomes a latest-builds ticker fed from the gallery.
+- "The original typography" turned out to mean the lion logo's lettering. Cinzel Black was chosen after four
+  faces were rendered against it. The brand colour moves from royal blue `#1e6bd6` to the logo's navy
+  `#00182a` and slate `#546678`/`#788a9c`, which reverses the 2026-04-14 lock.
+- Mockups (desktop, phone, font comparison, three strip options) and a CSS reference were saved to
+  `docs/redesign-2026-10/`.
+- Not done: the hero photo. The sandbox's network policy denied the gallery storage host
+  (`idrbgxlvvnqduvbqtaei.supabase.co`) and `triplejmetaltx.com`, so the new uploads could not be viewed.
+  The subhead wording also needs the owner's confirmation; see `Next Session Primer.md`.
+- No `src/` change. All commits are on `claude/youthful-hypatia-28pf1o`.
+
 ## 2026-10-01 — Fencing photo, permit scraper limited to 2026, builder call list
 
 - **Fencing photo.** `public/images/metal-fence-ranch-wire.webp` (owner-supplied) now fills the Metal Fencing
