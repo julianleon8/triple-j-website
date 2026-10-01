@@ -28,6 +28,7 @@ const SERVICE_PHOTOS: Record<string, string> = {
   barns: "https://idrbgxlvvnqduvbqtaei.supabase.co/storage/v1/object/public/gallery/1777195257805.jpg",
   "rv-covers": "https://idrbgxlvvnqduvbqtaei.supabase.co/storage/v1/object/public/gallery/1777195863079.jpg",
   "hoa-compliant-structures": "https://idrbgxlvvnqduvbqtaei.supabase.co/storage/v1/object/public/gallery/1777194918087.jpg",
+  "metal-fencing": "/images/metal-fence-ranch-wire.webp",
 };
 
 /* Default hero photo when a city doesn't yet have a landmark photo sourced. */
@@ -430,13 +431,13 @@ export default async function LocationPage(
                   className="group relative flex flex-col h-full overflow-hidden rounded-2xl bg-[color:var(--color-ink-900)] shadow-md hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 ease-out"
                 >
                   <div className="relative aspect-[4/3] overflow-hidden">
-                    {svc.slug !== "metal-fencing" ? <Image
+                    <Image
                       src={SERVICE_PHOTOS[svc.slug] ?? FALLBACK_HERO}
                       alt={svc.title}
                       fill
                       sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                       className="object-cover transition-transform duration-700 ease-out group-hover:scale-110"
-                    /> : <div aria-hidden="true" className="absolute inset-0 bg-brand-900 bg-[repeating-linear-gradient(90deg,transparent_0px,transparent_35px,#64748b_35px,#64748b_42px)]" />}
+                    />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/40 to-black/20" />
                     <div className="absolute inset-x-0 bottom-0 p-5">
                       <h3 className="font-display font-extrabold uppercase tracking-tight leading-none text-white text-2xl md:text-3xl">

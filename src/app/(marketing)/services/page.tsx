@@ -43,6 +43,7 @@ const FLAGSHIP_SLUG = "carports";
  *   barns                            → Temple Custom Ranch Build (horse stalls + 50x50 warehouse)
  *   rv-covers                        → Waco Tractor Cover (Welded, Galvalume)
  *   hoa-compliant-structures         → Taylor Custom Slanted Roof Carport (Bolted, Taupe)
+ *   metal-fencing                    → Black-post welded-wire ranch fence (/images, not a gallery build)
  *
  * When better photos land in the gallery, run this query in Supabase MCP
  * to find candidate cover URLs:
@@ -57,6 +58,7 @@ const SERVICE_PHOTOS: Record<string, string> = {
   barns: "https://idrbgxlvvnqduvbqtaei.supabase.co/storage/v1/object/public/gallery/1777195257805.jpg",
   "rv-covers": "https://idrbgxlvvnqduvbqtaei.supabase.co/storage/v1/object/public/gallery/1777195863079.jpg",
   "hoa-compliant-structures": "https://idrbgxlvvnqduvbqtaei.supabase.co/storage/v1/object/public/gallery/1777194918087.jpg",
+  "metal-fencing": "/images/metal-fence-ranch-wire.webp",
 };
 
 export default function ServicesPage() {
