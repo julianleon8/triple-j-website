@@ -16,7 +16,8 @@ Motion is subtle. Review happens on a **Vercel preview link** before anything me
 **Narrowed to the hero (owner, end of session):** the full homepage mockup was withdrawn and deleted.
 Only the **header, hero, Latest builds ticker and typography** stay: `docs/redesign-2026-10/hero-mockup.html`
 and its renders (`hero-rogers-{desktop,phone}.jpg` are the approved state). They were published as a
-reference page for the owner, who will build a design system from it **in Figma** and design the rest of
+private design canvas, "Triple J Hero" (https://claude.ai/artifact/VsYi1MwUophTohKwBKQcmB: desktop hero,
+phone hero, type-and-colour sheet), for the owner, who will build a design system from it **in Figma** and design the rest of
 the site there, in an interactive session. The homepage-section answers stay logged as preferences; the
 Figma design overrides them.
 
