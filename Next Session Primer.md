@@ -14,7 +14,8 @@ publishing, and $16 can bill about $486/month, over the $400 Google share of the
    label; set `NEXT_PUBLIC_GOOGLE_ADS_CALL_CONVERSION_LABEL` in Vercel (Production) and redeploy. Turn on
    enhanced conversions in the same screen.
 6. One test lead from a phone on `/quote?utm_source=test`; confirm HQ, push and email.
-7. Paste `marketing/google-ads-daily-report.js` into Google Ads.
+7. ~~Daily report script~~ **installed and verified 2026-10-01** (Preview log: "Sent: … 1 warning"). The
+   first report with real spend arrives 2026-10-02 at 6 AM; the 10-01 one covers 09-30, before the start date.
 8. Every Monday: search-terms report, new negatives.
 
 **Owner's calls, all open:**
