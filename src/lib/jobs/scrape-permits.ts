@@ -131,14 +131,57 @@ export function listReports(html: string, source: PermitSource): ReportLink[] {
 export const DEFAULT_MAX_REPORTS = 3
 export const MAX_REPORTS_CEILING = 20
 
-/** Reports not yet in permit_reports, newest first, capped. */
+/**
+ * Oldest report worth reading, as YYYY-MM-DD. The backfill drains newest
+ * first, so once it finished 2026 (2026-09-21) it kept walking the ~115-report
+ * page back into 2025 — permits for structures already built a year ago.
+ * Raise this to narrow the window; nothing older is fetched or sent to Claude.
+ */
+export const REPORT_FLOOR = '2026-01-01'
+
+/** Upload time as YYYY-MM-DD in UTC, matching how `uploadStampOf()` reads it. */
+function isoDay(d: Date): string {
+  return d.toISOString().slice(0, 10)
+}
+
+/**
+ * Reports not yet in permit_reports, newest first, capped, and none uploaded
+ * before the floor: a report cannot be uploaded before it is printed, so an
+ * upload before the floor means a print date before it too. Unstamped links
+ * are kept — their age is unknown until the text is read.
+ */
 export function pickUnseen(
   reports: ReportLink[],
   seenUrls: Iterable<string>,
   max: number = DEFAULT_MAX_REPORTS,
+  floor: string = REPORT_FLOOR,
 ): ReportLink[] {
   const seen = new Set(seenUrls)
-  return reports.filter((r) => !seen.has(r.url)).slice(0, Math.max(0, max))
+  return reports
+    .filter((r) => !seen.has(r.url))
+    .filter((r) => !r.uploadedAt || isoDay(r.uploadedAt) >= floor)
+    .slice(0, Math.max(0, max))
+}
+
+/**
+ * The City's print date: the latest M/D/YYYY stamp in a report's text
+ * ("8/22/2026 9:14:02 AM"), as YYYY-MM-DD. Null when the text carries none.
+ *
+ * The upload stamp alone is not enough — Temple re-uploaded its whole 2025
+ * run on 2026-03-20, so those PDFs carry 2026 stamps. Taking the latest date
+ * fails open: a stray future date in a description lets an old report
+ * through, never shuts a current one out.
+ */
+export function reportPrintedOn(text: string): string | null {
+  let latest: string | null = null
+  for (const m of text.matchAll(/\b(\d{1,2})\/(\d{1,2})\/(\d{4})\b/g)) {
+    const mo = Number(m[1])
+    const d = Number(m[2])
+    if (mo < 1 || mo > 12 || d < 1 || d > 31) continue
+    const iso = `${m[3]}-${String(mo).padStart(2, '0')}-${String(d).padStart(2, '0')}`
+    if (!latest || iso > latest) latest = iso
+  }
+  return latest
 }
 
 /** Parses the optional `maxReports` a manual POST may carry. */

@@ -12,6 +12,8 @@ import {
 import {
   listReports,
   pickUnseen,
+  reportPrintedOn,
+  REPORT_FLOOR,
   clampMaxReports,
   DEFAULT_MAX_REPORTS,
   RUN_CUTOFF_MS,
@@ -65,6 +67,8 @@ type ReportSummary = {
   label: string;
   url: string;
   uploadedAt: string | null;
+  /** Latest date stamp in the report text — the City's print date. */
+  printedOn: string | null;
   /** Rows in the PDF, rows sent to Claude, rows stored (either way), rows skipped. */
   permits: number;
   kept: number;
@@ -258,6 +262,7 @@ async function processReport(
     label: report.label,
     url: report.url,
     uploadedAt: report.uploadedAt?.toISOString() ?? null,
+    printedOn: null,
     permits: 0,
     kept: 0,
     leads: 0,
@@ -287,7 +292,11 @@ async function processReport(
       return out;
     }
 
-    const kept = preFilter(rows);
+    // Printed before REPORT_FLOOR: recorded below as read, so it is never
+    // fetched again, but none of its rows reach Claude or permit_leads.
+    out.printedOn = reportPrintedOn(text);
+    const tooOld = out.printedOn !== null && out.printedOn < REPORT_FLOOR;
+    const kept = tooOld ? [] : preFilter(rows);
     out.kept = kept.length;
     const leads = kept.length > 0 ? await extractLeadsFromRows(kept, source) : [];
 

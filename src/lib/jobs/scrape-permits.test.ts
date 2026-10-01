@@ -9,6 +9,8 @@ import {
   reportLabel,
   listReports,
   pickUnseen,
+  REPORT_FLOOR,
+  reportPrintedOn,
   clampMaxReports,
   DEFAULT_MAX_REPORTS,
   MAX_REPORTS_CEILING,
@@ -174,6 +176,32 @@ describe('pickUnseen / clampMaxReports', () => {
     expect(clampMaxReports(0)).toBe(1)
     expect(clampMaxReports('7')).toBe(7)
     expect(clampMaxReports(999)).toBe(MAX_REPORTS_CEILING)
+  })
+})
+
+describe('report floor', () => {
+  const reports = listReports(INDEX_HTML, TEMPLE)
+
+  it('never picks a report uploaded before the floor, and keeps unstamped ones', () => {
+    const picked = pickUnseen(reports, [], 20).map((r) => r.label)
+    expect(picked).not.toContain('3.7.25 - 3.13.25')
+    expect(picked).toContain('Feb 20-26')
+    expect(REPORT_FLOOR).toBe('2026-01-01')
+  })
+
+  it('lets the floor be moved', () => {
+    const picked = pickUnseen(reports, [], 20, '2026-08-01').map((r) => r.label)
+    expect(picked).toEqual(['Aug 21-27', 'Aug 14-20', 'Aug 7 -13', 'Feb 20-26'])
+  })
+
+  it('reads the print date as the latest stamp in the text', () => {
+    expect(reportPrintedOn(REPORT_TEXT)).toBe('2026-08-27')
+    expect(reportPrintedOn('FY-25-9- ACRS shed 12x16 Applicant: A 6/23/2025 9:14:02 AM')).toBe('2025-06-23')
+  })
+
+  it('returns null without a stamp and ignores impossible dates', () => {
+    expect(reportPrintedOn('no dates here')).toBeNull()
+    expect(reportPrintedOn('13/40/2026 and 2/3/2026')).toBe('2026-02-03')
   })
 })
 
