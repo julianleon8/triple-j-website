@@ -76,21 +76,16 @@ const TIMELINE_STEPS = [
 ] as const
 
 export const metadata: Metadata = {
-  // Use `absolute` to bypass the root layout's `%s | Triple J Metal`
-  // title template — this string already includes the brand suffix in the
-  // intended position. Without `absolute` the template would append a
-  // second " | Triple J Metal" and ship a double-branded title.
-  title: {
-    absolute:
-      'Fort Cavazos Carports & Metal Buildings | PCS Same-Week Installs | Triple J Metal',
-  },
+  // The root layout's `%s | Triple J Metal` template adds the brand — never
+  // put it in this string too.
+  title: 'Fort Cavazos Carports & Metal Buildings',
   description:
-    'Welded or bolted carports, RV covers, and garages for Fort Cavazos active-duty, retired, and Reserve/Guard families. Same-week installs across Killeen, Harker Heights, Copperas Cove, Nolanville, Belton. 7% military discount honored. Hablamos español.',
+    'Welded or bolted carports, RV covers and garages for Fort Cavazos families. Same-week installs near Killeen and Harker Heights. 7% military discount.',
   alternates: { canonical: '/military' },
   openGraph: {
     title: 'Fort Cavazos Carports — Same-Week Installs for PCS Families',
     description:
-      'Local Temple-based crew. Welded or bolted carports + RV covers + garages built around PCS timelines, not 12-week wait lists. 7% military discount. Hablamos español.',
+      'Local Temple-based crew. Welded or bolted carports + RV covers + garages built around PCS timelines. 7% military discount. Hablamos español.',
     type: 'website',
   },
   twitter: {
@@ -224,8 +219,8 @@ export default function MilitaryPage() {
               PCS Families
             </h1>
             <p className="mt-6 text-lg md:text-xl text-white/80 max-w-2xl leading-relaxed">
-              Welded or bolted carports, RV covers, and garages built around your orders — not a
-              12-week wait list. Local Temple crew, 25 minutes from the Cavazos main gate. Hablamos
+              Welded or bolted carports, RV covers, and garages built around your orders, with
+              same-week scheduling. Local Temple crew, 25 minutes from the Cavazos main gate. Hablamos
               español con Juan y Freddy.
             </p>
             <div className="mt-8 flex flex-wrap items-center gap-3">
@@ -265,9 +260,8 @@ export default function MilitaryPage() {
                 PCS orders don&apos;t wait. Neither do we.
               </h2>
               <p className="mt-6 text-lg leading-relaxed text-[color:var(--color-ink-700)]">
-                Most national carport companies quote 8 to 12 weeks. By then your household goods
-                have shown up, the truck&apos;s sat in a Texas summer, and the spouse is improvising
-                shade with a tarp.
+                Wait in a long build queue and your household goods show up first. The truck&apos;s
+                sat through a Texas summer, and the spouse is improvising shade with a tarp.
               </p>
               <p className="mt-4 text-lg leading-relaxed text-[color:var(--color-ink-700)]">
                 Triple J Metal is a local Temple crew, 25 minutes from the Cavazos main gate. Most

@@ -1,3 +1,4 @@
+import { BreadcrumbJsonLd } from '@/components/seo/BreadcrumbJsonLd'
 import { Crew } from "@/components/sections/Crew"
 import type { Metadata } from 'next'
 import { Container } from '@/components/ui/Container'
@@ -42,6 +43,7 @@ export default function AboutPage() {
   const baseUrl = getSiteUrl()
   return (
     <>
+      <BreadcrumbJsonLd items={[{ name: 'About', path: '/about' }]} />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd(baseUrl)).replace(/</g, '\\u003c') }}

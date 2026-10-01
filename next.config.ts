@@ -173,9 +173,16 @@ const nextConfig: NextConfig = {
       "style-src 'self' 'unsafe-inline' https:",
       "script-src 'self' 'unsafe-inline' 'unsafe-eval' https:",
       "connect-src 'self' https:",
+      // Google Maps on /contact, the hCaptcha widget on every form, and the
+      // Google Ads tag's frames. Without this, frame-src falls back to
+      // default-src 'self' and enforcing would break all three.
+      "frame-src 'self' https:",
       "frame-ancestors 'self'",
       "object-src 'none'",
       "upgrade-insecure-requests",
+      // Violations are logged as `[csp]` lines in the Vercel runtime logs.
+      // Review a week of them before switching this header to enforce.
+      "report-uri /api/csp-report",
     ].join("; ");
 
     return [

@@ -1,3 +1,4 @@
+import { BreadcrumbJsonLd } from "@/components/seo/BreadcrumbJsonLd";
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
@@ -9,9 +10,9 @@ import { SERVICES, SERVICE_SLUGS } from "@/lib/services";
 import { SITE } from "@/lib/site";
 
 export const metadata: Metadata = {
-  title: "Metal Buildings, Fencing & Gates in Central Texas",
+  title: "Metal Buildings, Fences & Gates, Central TX",
   description:
-    `${SITE.name} builds custom metal carports, garages, barns, RV covers, metal fencing, and gates across Central Texas. Welded or bolted, concrete available. Call ${SITE.phone}.`,
+    `Custom metal carports, garages, barns, RV covers, fencing and gates across Central Texas. Welded or bolted, concrete available. Call ${SITE.phone}.`,
   alternates: { canonical: "/services" },
 };
 
@@ -67,6 +68,7 @@ export default function ServicesPage() {
 
   return (
     <>
+      <BreadcrumbJsonLd items={[{ name: "Services", path: "/services" }]} />
       {/* ── Hero — full-bleed photo + dark gradient ────────────────── */}
       <section className="relative overflow-hidden bg-black text-white">
         <div className="absolute inset-0">

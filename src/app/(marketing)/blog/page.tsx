@@ -1,3 +1,4 @@
+import { BreadcrumbJsonLd } from '@/components/seo/BreadcrumbJsonLd'
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { Container } from '@/components/ui/Container'
@@ -38,6 +39,7 @@ export default function BlogPage() {
 
   return (
     <>
+      <BreadcrumbJsonLd items={[{ name: 'Blog', path: '/blog' }]} />
       {/* ── Hero ── */}
       <section className="relative bg-ink-900 text-white py-20 md:py-28 overflow-hidden">
         <div className="hero-glow absolute inset-0 pointer-events-none" aria-hidden="true" />

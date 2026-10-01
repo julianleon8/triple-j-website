@@ -16,7 +16,8 @@ type Props = {
  *
  * Renders inline in the page hero section, below the H1+subhead.
  * Per Decisions.md / locked answers — Juan Luis Leon fronts the brand
- * for SEO authorship purposes; he's the LLC's registered owner.
+ * for SEO authorship purposes; he's the LLC's registered owner. Freddy is
+ * the foreman (AGENTS.md), so Juan's title is Owner, never Foreman.
  */
 export function AuthorByline({ asOf }: Props) {
   const baseUrl = getSiteUrl()
@@ -30,7 +31,7 @@ export function AuthorByline({ asOf }: Props) {
     '@context': 'https://schema.org',
     '@type': 'Person',
     name: 'Juan Luis Leon',
-    jobTitle: 'Foreman & Founder',
+    jobTitle: 'Owner',
     worksFor: { '@id': `${baseUrl}/#organization`, name: SITE.name },
     address: {
       '@type': 'PostalAddress',
@@ -58,7 +59,7 @@ export function AuthorByline({ asOf }: Props) {
               Reviewed by Juan Luis Leon
             </div>
             <div className="text-[12px] text-white/55">
-              Foreman & founder · Triple J Metal · Temple, TX
+              Owner · {SITE.name} · Temple, TX
             </div>
           </div>
         </div>

@@ -1,3 +1,4 @@
+import { BreadcrumbJsonLd } from '@/components/seo/BreadcrumbJsonLd'
 import type { Metadata } from 'next'
 import { Container } from '@/components/ui/Container'
 import { ButtonLink } from '@/components/ui/Button'
@@ -41,6 +42,7 @@ export default function ContactPage() {
   const baseUrl = getSiteUrl()
   return (
     <>
+      <BreadcrumbJsonLd items={[{ name: 'Contact', path: '/contact' }]} />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd(baseUrl)).replace(/</g, '\\u003c') }}

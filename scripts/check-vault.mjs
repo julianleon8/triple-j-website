@@ -48,9 +48,6 @@ const rootMd = readdirSync(ROOT).filter((f) => f.endsWith('.md')).sort()
     'dev/feedback_ad_pricing_accuracy.md',
     'dev/feedback_turnkey_vs_steel_install.md',
     'dev/feedback_no_public_pricing_yet.md',
-    // Ledger row cites src/app/llms.txt; the file actually lives at public/llms.txt.
-    // Decisions.md is append-only, so the row stands as written.
-    'src/app/llms.txt',
   ])
   for (const f of ['Decisions.md', 'Locked Decisions.md', 'AGENTS.md']) {
     if (!has(f)) continue

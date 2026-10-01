@@ -2,7 +2,7 @@
 
 **Updated:** 2026-04-24
 **Source:** FULL-AUDIT-REPORT.md (health score 73/100)
-**Status 2026-10-01:** A1–A3 are closed (see each). The rest of this plan is from April — check the live site before working any item.
+**Status 2026-10-01:** every item checked against the live site and marked. Still open: A8 (GBP, owner), A15 (blog cadence), A16 (recommend dropping), A17 (enforce CSP after a week of reports), A18 (Vercel setting, owner).
 **Context:** Triple J's confirmed bottleneck is **lead volume**, not capacity. Every item is weighted by how much it moves real demand — not abstract score points.
 
 ---
@@ -70,6 +70,8 @@ All per-page `alternates: { canonical: '/slug' }` will then render as absolute U
 Fix in the component(s) that render these — likely [src/components/sections/Hero.tsx](src/components/sections/Hero.tsx), [src/components/sections/Services.tsx](src/components/sections/Services.tsx), and the marquee/testimonials components. If any `<Image>` is truly decorative, use `alt=""` explicitly.
 
 ### A4. Fix the shared 7-no-alt pattern across service + blog pages
+> **Done.** Live check 2026-10-01: no `<img>` without `alt` on any of the 46 sitemap pages.
+
 **Score impact:** +5 images.
 
 87% no-alt rate across service and blog pages — same 7 images per page — strongly suggests one shared component renders images without an alt prop. Likely culprits: the PreFooterCta image strip, the "you may also like" card row, or the FeaturedImage component used in the blog template.
@@ -77,6 +79,8 @@ Fix in the component(s) that render these — likely [src/components/sections/He
 **Diagnosis:** `grep -rn '<Image' src/components/sections/ src/app/\(marketing\)/blog/` and verify every `<Image>` has an `alt` prop. Fix at the component level — changes cascade.
 
 ### A5. Trim meta descriptions (27 pages over 165 chars)
+> **Done 2026-10-01.** Every description ≤155 characters; `src/lib/meta-lengths.test.ts` enforces it for data-driven pages.
+
 **Score impact:** +3 on-page. **Lead impact:** SERP truncation currently cuts key CTA ("Call 254-…") on mobile.
 
 **Target:** ≤155 chars on every non-legal page. Front-load the city + service + differentiator, trailing sentence gets the CTA.
@@ -89,6 +93,8 @@ Fix in the component(s) that render these — likely [src/components/sections/He
 Edit in [src/lib/locations.ts](src/lib/locations.ts), [src/lib/services.ts](src/lib/services.ts), and per-page metadata.
 
 ### A6. Trim titles (28 pages over 70 chars, blog posts 120-139 chars)
+> **Done 2026-10-01.** Every title ≤60 characters including ` | Triple J Metal`; same test enforces it.
+
 **Score impact:** +3 on-page.
 
 After A1 fix (remove duplicate brand), most titles drop to 85-115 chars — still too long for most. Target ≤60 chars.
@@ -107,6 +113,8 @@ The template appends `| Triple J Metal LLC` (19 chars + separator) — leaves ~4
 ## High — do this month
 
 ### A7. Add `sameAs` to LocalBusiness schema
+> **Done** for Instagram + Facebook (`SITE.social`). The GBP URL waits for verification — Locked Decisions forbids adding it before.
+
 **Blocked on:** Need Facebook + Instagram page URLs. Once GBP verifies, add GBP URL too.
 
 ```ts
@@ -121,6 +129,8 @@ sameAs: [
 This is the single best schema-level signal linking the site entity to external profiles — critical for Knowledge Panel eligibility once GBP is live.
 
 ### A8. GBP verification follow-up (not a code task)
+> **Open — owner.** GBP still unverified; on 2026-09-26 the owner reported Google keeps removing the profile.
+
 **Status:** Video submitted 2026-04-22, pending Google review (typically 5-14 days).
 
 **Action:** if no response by 2026-05-06 (14-day mark), escalate via GBP support chat. Absolute priority — without GBP there's no Maps / Local Pack presence.
@@ -133,6 +143,8 @@ This is the single best schema-level signal linking the site entity to external 
 - Start review outreach — text Google review link to the 50+ past clients
 
 ### A9. Personalize the 11 remaining city pages
+> **Done 2026-10-01.** All 14 city pages personalized; Harker Heights and Copperas Cove were the last two, rebuilt with cited local sources.
+
 **Score impact:** +5 content + local. **Lead impact:** each city page is a direct ranking surface for `metal carports [city]` queries. Currently 11 of 14 fall back to a legacy template.
 
 **Cities to personalize** (in order of probable lead value):
@@ -149,16 +161,22 @@ This is the single best schema-level signal linking the site entity to external 
 Target word count per page: 800-1,200 words.
 
 ### A10. Add BreadcrumbList schema site-wide
+> **Done 2026-10-01.** `BreadcrumbList` on every public page except home, privacy and terms (gallery project pages included).
+
 **Score impact:** +3 schema.
 
 Missing on ~15 pages (blog + hub pages + a few service pages). Add a `Breadcrumbs` component that auto-generates from the URL path + page title, and include it in the default layouts for `/services/*`, `/locations/*`, `/blog/*`, and hub pages.
 
 ### A11. Add FAQ schema to blog posts
+> **Won't do.** Locked Decisions: no `FAQPage` markup — Google retired the FAQ rich result on 2026-05-07.
+
 **Score impact:** +2 schema + 3 GEO.
 
 Each blog post already uses Q&A structure in the body. Wrap the existing Q&A as FAQPage schema in the per-post metadata. Directly citable by Google AI Overviews and Perplexity.
 
 ### A12. Fix image sitemap 404
+> **Done 2026-10-01.** The real gap: `sitemap.ts` selected `gallery_items.updated_at`, a column that does not exist, so every gallery project page and photo silently dropped out of the sitemap. Fixed; adds 13 project pages and 91 photos. No separate `/sitemap-images.xml` is needed.
+
 **Score impact:** +2 technical.
 
 [src/app/sitemap.ts:20](src/app/sitemap.ts) references `/sitemap-images.xml` — but the route is not resolving. Either:
@@ -166,6 +184,8 @@ Each blog post already uses Q&A structure in the body. Wrap the existing Q&A as 
 - OR fold image entries into the main sitemap using the `images` array on each URL entry
 
 ### A13. Resolve /service-areas vs /locations duplication
+> **Done.** `/service-areas` permanently redirects to `/locations`.
+
 **Score impact:** +1 local.
 
 Per earlier codebase-lean proposal: delete [src/app/(marketing)/service-areas/](src/app/(marketing)/service-areas/), remove its Footer link + sitemap entry. /locations is the data-driven successor.
@@ -173,6 +193,8 @@ Per earlier codebase-lean proposal: delete [src/app/(marketing)/service-areas/](
 **Alt path (if keeping /service-areas for existing SEO):** set `alternates: { canonical: '/locations' }` on /service-areas and 301 redirect it.
 
 ### A14. Add visible author bylines + publish dates to blog posts
+> **Done 2026-10-01.** "By the Triple J Metal crew · Temple, TX · Published <date>" under each H1. A named author waits on the owner saying who writes or reviews posts.
+
 **Score impact:** +3 content (E-E-A-T).
 
 Blog posts have BlogPosting schema with author info but no visible byline. Add a small block below each H1:
@@ -189,6 +211,8 @@ Link the author name to an `/about#team` anchor or a dedicated `/authors/julian-
 ## Medium — do this quarter
 
 ### A15. Write the remaining blog posts (research already done)
+> **Open — ongoing cadence**, not a one-off. Note brief 3's premise is wrong: Holland is in Bell County.
+
 5 posts shipped. The `research_keyword_gaps.md` insights already list direct post briefs. Candidates:
 - "Turnkey vs. Hire-Your-Own-Concrete: the real cost math for Central TX carports"
 - "What $500 per month BAH buys near Fort Cavazos in 2026"
@@ -197,20 +221,30 @@ Link the author name to an `/about#team` anchor or a dedicated `/authors/julian-
 Cadence: 1 post every 3 weeks while lead volume is the bottleneck.
 
 ### A16. Add HowTo schema to /services/carports install process
+> **Not done — recommend dropping.** Google removed HowTo rich results from Search in 2023; same reasoning that retired FAQPage (A11). Owner's call.
+
 **Score impact:** +2 GEO.
 
 "How is a metal carport installed in Texas" is a natural AI-search query. Mark up the install steps (site prep → concrete pour → cure → frame → panels → trim) as HowTo with duration + tools.
 
 ### A17. Promote CSP from Report-Only to enforced
+> **In progress.** The Report-Only header had no `report-uri` (no stream existed) and no `frame-src` (enforcing would have blocked Maps, hCaptcha and the Ads tag). Both added 2026-10-01; `[csp]` lines land in Vercel runtime logs. Enforce after reviewing ~a week of them (from 2026-10-08).
+
 Requires: validate the report stream has no false positives in prod for ~1 week. Tighten script-src directives (remove `'unsafe-inline'` with nonces) before enforcing.
 
 ### A18. Change apex→www redirect from 307 to 301
+> **Open — owner, one setting.** Apex `https://triplejmetaltx.com` still 307s to `www`. Vercel → Project → Settings → Domains → `triplejmetaltx.com` → Edit → redirect status 308. No API tool edits an existing domain's redirect code.
+
 Handled in Vercel project settings or [next.config.ts](next.config.ts) redirects. Pure hygiene.
 
 ### A19. Add llms-full.txt
+> **Done 2026-10-01.** `/llms.txt` and `/llms-full.txt` are generated from site data by `src/lib/llms.ts`; the stale hand-kept `public/llms.txt` is gone.
+
 Longer companion to llms.txt with full page content dumps. Let Perplexity/ChatGPT ground deeper.
 
 ### A20. Audit WebP/AVIF delivery
+> **Done.** `/_next/image` serves `image/webp`.
+
 Open DevTools Network tab on `/gallery` and confirm `/_next/image?url=…` responses have `content-type: image/avif` (or webp fallback). If they're still `image/jpeg`, something is wrong with Vercel image optimization config.
 
 ---

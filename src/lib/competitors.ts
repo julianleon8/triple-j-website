@@ -371,7 +371,7 @@ export const ALTERNATIVES_CONTENT: Record<AlternativesSlug, AlternativesPageCont
       "eagle-carports",
       "triple-j-metal"
     ],
-    "metaTitle": "Eagle Carports Alternatives in Central Texas",
+    "metaTitle": "Eagle Carports Alternatives in Central TX",
     "metaDescription": "Compare Eagle Carports with Triple J Metal in Central Texas. Review installation, concrete, design options and scheduling in a written quote.",
     "h1": "Eagle Carports Alternatives in Central Texas",
     "heroSubhead": "Compare complete project scopes. Triple J Metal offers welded or bolted structures installed by our Temple-based crew, with site preparation and concrete available in the same contract.",
@@ -449,7 +449,7 @@ export const ALTERNATIVES_CONTENT: Record<AlternativesSlug, AlternativesPageCont
       "carport-central",
       "triple-j-metal"
     ],
-    "metaTitle": "Carport Central Alternatives in Central Texas",
+    "metaTitle": "Carport Central Alternatives in Central TX",
     "metaDescription": "Compare Carport Central with Triple J Metal in Central Texas. Review installation, concrete, design options and scheduling in a written quote.",
     "h1": "Carport Central Alternatives in Central Texas",
     "heroSubhead": "Compare complete project scopes. Triple J Metal offers welded or bolted structures installed by our Temple-based crew, with site preparation and concrete available in the same contract.",
@@ -492,8 +492,8 @@ export const ALTERNATIVES_CONTENT: Record<AlternativesSlug, AlternativesPageCont
       "infinity-carports",
       "triple-j-metal"
     ],
-    "metaTitle": "National Metal Carport Kit Alternatives in Central Texas",
-    "metaDescription": "Compare national metal building providers with Triple J Metal in Central Texas. Review installation, concrete, design options and scheduling in a written quote.",
+    "metaTitle": "Carport Kit Dealer Alternatives, Central TX",
+    "metaDescription": "Compare national metal building providers with Triple J Metal in Central Texas. Review installation, concrete, design and scheduling in a written quote.",
     "h1": "National Metal Carport Kit Alternatives in Central Texas",
     "heroSubhead": "Compare complete project scopes. Triple J Metal offers welded or bolted structures installed by our Temple-based crew, with site preparation and concrete available in the same contract.",
     "tldr": "Compare the design, installation, foundation, and total scope before choosing a builder. Triple J Metal offers a direct relationship with a local crew. Ask each provider to confirm what is included for your address and project.",

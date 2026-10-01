@@ -17,9 +17,9 @@ import { SITE } from '@/lib/site'
 import { getSiteUrl } from '@/lib/site-url'
 
 export const metadata: Metadata = {
-  title: { absolute: 'Best Metal Carport Builders in Temple, TX (2026 Roundup) | Triple J Metal' },
+  title: 'Best Metal Carport Builders, Temple TX 2026',
   description:
-    'Honest roundup of Bell County metal carport builders. Triple J Metal, Rough Country, L&E Metal, Texas Custom Carports, A+ Sheds, Premier Portables — compared side-by-side.',
+    'Honest roundup of Bell County metal carport builders: Triple J Metal, Rough Country, L&E Metal, Texas Custom Carports, A+ Sheds and Premier Portables.',
   alternates: { canonical: '/best-metal-carport-builders-temple-tx' },
   openGraph: {
     title: 'Best Metal Carport Builders in Temple, TX (2026)',

@@ -1,3 +1,4 @@
+import { BreadcrumbJsonLd } from '@/components/seo/BreadcrumbJsonLd'
 import type { Metadata } from 'next'
 import { Container } from '@/components/ui/Container'
 import { ButtonLink } from '@/components/ui/Button'
@@ -77,6 +78,12 @@ const COMPARISON_ROWS = [
 export default function PbrVsPbuPage() {
   return (
     <>
+      <BreadcrumbJsonLd
+        items={[
+          { name: 'Services', path: '/services' },
+          { name: 'PBR vs PBU Panels', path: '/services/pbr-vs-pbu-panels' },
+        ]}
+      />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, '\\u003c') }}

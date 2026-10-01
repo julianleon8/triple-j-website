@@ -1,3 +1,4 @@
+import { BreadcrumbJsonLd } from '@/components/seo/BreadcrumbJsonLd'
 import type { Metadata } from 'next'
 import Image from 'next/image'
 import { Container } from '@/components/ui/Container'
@@ -68,6 +69,12 @@ function ColorCard({ color }: { color: PanelColor }) {
 export default function ColorsPage() {
   return (
     <>
+      <BreadcrumbJsonLd
+        items={[
+          { name: 'Services', path: '/services' },
+          { name: 'Panel Colors', path: '/services/colors' },
+        ]}
+      />
       {/* ── Hero ── */}
       <section className="relative bg-ink-900 text-white py-20 md:py-28 overflow-hidden">
         <div className="hero-glow absolute inset-0 pointer-events-none" aria-hidden="true" />

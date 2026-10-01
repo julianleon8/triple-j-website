@@ -54,7 +54,7 @@ export const SERVICES: Record<string, ServiceData> = {
     title: 'Metal Fencing & Gates',
     shortTitle: 'Metal Fencing & Gates',
     keywordGap: null,
-    metaTitle: 'Metal Fencing & Gates in Temple, Belton & Killeen TX',
+    metaTitle: 'Metal Fencing & Gates in Bell County, TX',
     metaDescription: 'Metal privacy fences, pipe and ranch fencing, ornamental metal fences and gates. Temple-based Triple J Metal serves Bell County. Request a free quote.',
     heroHeadline: 'Metal Fencing & Gates in Temple, Belton & Killeen',
     heroCopy: 'More privacy at home. A defined boundary for your land. An entrance that fits your property. Triple J Metal builds metal privacy fencing, pipe and ranch fencing, ornamental metal fences, and gates for Central Texas properties. Tell our Temple-based crew what you need, and we’ll work through the layout with you.',
@@ -91,7 +91,7 @@ export const SERVICES: Record<string, ServiceData> = {
     title: 'Custom Metal Carports',
     shortTitle: 'Carports',
     keywordGap: 2,
-    metaTitle: 'Custom Metal Carports Temple TX | Welded & Bolted',
+    metaTitle: 'Welded & Bolted Metal Carports, Temple TX',
     metaDescription:
       "Welded or bolted metal carports in Temple, Belton, Killeen & Central Texas. Same-week installs, concrete available.",
     heroHeadline: 'Custom Metal Carports — Welded or Bolted, Same-Week Installs',
@@ -156,7 +156,7 @@ export const SERVICES: Record<string, ServiceData> = {
     title: 'Turnkey Carports with Concrete',
     shortTitle: 'Turnkey + Concrete',
     keywordGap: 1,
-    metaTitle: 'Carports With Concrete Pads Central Texas | One Contract',
+    metaTitle: 'Carports With Concrete Pads, Central Texas',
     metaDescription:
       "Carports with site prep, concrete and steel installation in one contract. Temple-based Triple J Metal serves Central Texas. Request an itemized quote.",
     heroHeadline: 'Carports with Concrete — One Contract, Start to Finish',
@@ -235,7 +235,7 @@ export const SERVICES: Record<string, ServiceData> = {
       'Fully-enclosed custom metal garages in Temple, Belton, Killeen & Central Texas. Single and multi-bay, welded or bolted, concrete available.',
     heroHeadline: 'Custom Metal Garages — Fully Enclosed, Built to Order',
     heroCopy:
-      'A metal garage from Triple J Metal isn\'t a shed from a big-box store. It\'s a fully-enclosed red iron steel structure, custom-welded or bolted to your exact dimensions, installed on your property with site prep and concrete pad included if needed. Single-bay, double-bay, or multi-car — we build every configuration in Central Texas.',
+      'A metal garage from Triple J Metal isn\'t a shed from a big-box store. It\'s a fully-enclosed red iron steel structure, custom-welded or bolted to your exact dimensions, installed on your property, with site prep and a concrete pad available in the same contract. Single-bay, double-bay, or multi-car — we build every configuration in Central Texas.',
     mainBenefit: 'Fully-enclosed custom metal garage built to your dimensions — welded or bolted, with concrete pad available in the same contract.',
     features: [
       {
@@ -297,7 +297,7 @@ export const SERVICES: Record<string, ServiceData> = {
     title: 'Metal Barns & Ranch Structures',
     shortTitle: 'Barns',
     keywordGap: null,
-    metaTitle: 'Metal Barns Central Texas | Ranch & Ag Structures',
+    metaTitle: 'Metal Barns & Ag Buildings, Central Texas',
     metaDescription:
       'Metal barns and ranch structures across Bell and Coryell counties. Welded or bolted red iron, concrete available, same-week installs.',
     heroHeadline: 'Metal Barns Built for Central Texas Ranch Life',
@@ -364,7 +364,7 @@ export const SERVICES: Record<string, ServiceData> = {
     title: 'RV & Boat Covers',
     shortTitle: 'RV & Boat Covers',
     keywordGap: 3,
-    metaTitle: 'RV Covers Central Texas | Same-Week Installs | Fort Cavazos Military Discount',
+    metaTitle: 'RV Covers in Central TX | Military Discount',
     metaDescription:
       "Custom RV and boat covers across Central Texas — same-week scheduling, military discount, concrete available.",
     heroHeadline: 'RV & Boat Covers — Same-Week Installs, Texas Hail Won\'t Wait',
@@ -389,8 +389,8 @@ export const SERVICES: Record<string, ServiceData> = {
     "description": "Custom welded red iron for a permanent installation, or bolted for a more budget-friendly option. Both built and installed by our crew."
   },
   {
-    "title": "Concrete Pad Included if Needed",
-    "description": "Pull your RV onto a fresh concrete pad — no gravel, no ruts. We pour the slab and install the cover in the same contract."
+    "title": "Concrete Pad Available",
+    "description": "Pull your RV onto a fresh concrete pad — no gravel, no ruts. We can pour the slab and install the cover in the same contract."
   },
   {
     "title": "Side Curtains & Enclosures",
@@ -428,9 +428,9 @@ export const SERVICES: Record<string, ServiceData> = {
     title: 'HOA-Compliant Metal Structures',
     shortTitle: 'HOA Structures',
     keywordGap: 4,
-    metaTitle: 'HOA-Compliant Metal Carports & Porches | Heritage Oaks Bella Charca',
+    metaTitle: 'HOA-Compliant Metal Carports & Porches',
     metaDescription:
-      'HOA-compliant metal carports, garages, and porches with architectural panel finishes for Heritage Oaks, Bella Charca, and Central Texas luxury subdivisions.',
+      'HOA-compliant metal carports, garages and porches with architectural panel finishes for Heritage Oaks, Bella Charca and Central Texas luxury subdivisions.',
     heroHeadline: 'HOA-Compliant Metal Structures for Central Texas Luxury Subdivisions',
     heroCopy:
       "Planning a carport, detached garage, or cover for a property with architectural guidelines? Share those requirements before choosing a design. We offer finish, profile, and color options to help you prepare a proposal for review, including Board & Batten and concealed-fastener systems. Approval rests with the reviewing authority; concrete and site prep can be quoted in the same contract.",

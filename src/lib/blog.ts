@@ -25,7 +25,7 @@ export const BLOG_POSTS: BlogPost[] = [
   {
     slug: 'welded-vs-bolted-metal-buildings-central-texas',
     title: 'Welded vs Bolted Metal Buildings in Central Texas: What the Storm Data Reveals',
-    metaTitle: 'Welded vs Bolted Metal Buildings: Storm Data',
+    metaTitle: 'Welded vs Bolted Metal Buildings in Storms',
     metaDescription:
       'Central Texas sees 130+ MPH gusts and baseball-sized hail. What welded vs bolted actually means when those storms hit Bell County.',
     excerpt:
@@ -38,7 +38,7 @@ export const BLOG_POSTS: BlogPost[] = [
   {
     slug: 'bell-county-metal-building-permit-guide-2025',
     title: 'Bell County Metal Building Permit Guide 2025: Temple, Belton & Killeen Requirements',
-    metaTitle: 'Bell County Metal Building Permit Guide 2025',
+    metaTitle: 'Bell County Metal Building Permit Guide',
     metaDescription:
       'Who pulls the permit, what size triggers one in Temple vs Killeen, what it costs, and how long it takes. A local contractor\'s walkthrough.',
     excerpt:
@@ -51,7 +51,7 @@ export const BLOG_POSTS: BlogPost[] = [
   {
     slug: 'fort-cavazos-pcs-metal-carport',
     title: 'Fort Cavazos PCS Season: How Military Families Get a Metal Carport on Military Timelines',
-    metaTitle: 'Fort Cavazos PCS: Metal Carports on Military Timelines',
+    metaTitle: 'Fort Cavazos PCS: Metal Carport Timelines',
     metaDescription:
       'PCS orders don\'t wait. Here\'s how Triple J Metal installs carports on military timelines — from site approval to keys in hand the same week.',
     excerpt:
@@ -64,7 +64,7 @@ export const BLOG_POSTS: BlogPost[] = [
   {
     slug: 'blackland-prairie-soil-metal-building-foundation',
     title: 'Blackland Prairie Soil and Metal Building Foundations: What Central Texas Homeowners Need to Know',
-    metaTitle: 'Blackland Prairie Soil & Metal Building Foundations',
+    metaTitle: 'Metal Buildings on Blackland Prairie Soil',
     metaDescription:
       'Central Texas black clay heaves, cracks, and shifts slabs if you don\'t account for it. Here\'s how we engineer anchors and pads for this soil.',
     excerpt:
@@ -77,7 +77,7 @@ export const BLOG_POSTS: BlogPost[] = [
   {
     slug: 'hoa-compliant-metal-buildings-heritage-oaks-bella-charca',
     title: 'HOA-Compliant Metal Buildings in Heritage Oaks and Bella Charca: What\'s Actually Allowed',
-    metaTitle: 'HOA-Compliant Metal Buildings: Heritage Oaks & Bella Charca',
+    metaTitle: 'HOA Rules: Heritage Oaks & Bella Charca',
     metaDescription:
       'Standard utility sheds fail HOA review in Central Texas luxury neighborhoods. What panel types, finishes, and fastener systems actually pass.',
     excerpt:

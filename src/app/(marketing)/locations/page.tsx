@@ -1,3 +1,4 @@
+import { BreadcrumbJsonLd } from '@/components/seo/BreadcrumbJsonLd'
 import type { Metadata } from 'next'
 import Link from 'next/link'
 
@@ -8,13 +9,13 @@ import { TrackedPhoneLink, TrackedPhoneNumber } from '@/components/site/TrackedP
 import { LOCATIONS, LOCATION_SLUGS } from '@/lib/locations'
 
 export const metadata: Metadata = {
-  title: 'Metal Building Service Areas in Central Texas',
+  title: 'Metal Building Service Areas, Central TX',
   description:
-    'Triple J Metal serves 14 cities and 8 counties across Central Texas — Bell, McLennan, Coryell, Williamson, Lampasas, Falls, Milam, and Burnet. Welded or bolted carports, garages, RV covers, and barns. Same-week installs.',
+    `Welded or bolted carports, garages, RV covers and barns in ${LOCATION_SLUGS.length} Central Texas cities, from Waco to Round Rock. Same-week installs from our Temple shop.`,
   alternates: { canonical: '/locations' },
   openGraph: {
     title: 'Service Areas | Triple J Metal',
-    description: 'Metal building installation across 8 Central Texas counties. Temple-based crew.',
+    description: 'Metal building installation across Central Texas. Temple-based crew.',
     type: 'website',
   },
 }
@@ -53,6 +54,7 @@ export default function LocationsPage() {
 
   return (
     <>
+      <BreadcrumbJsonLd items={[{ name: 'Service Areas', path: '/locations' }]} />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{

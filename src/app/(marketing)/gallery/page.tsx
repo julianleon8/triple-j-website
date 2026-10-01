@@ -1,3 +1,4 @@
+import { BreadcrumbJsonLd } from '@/components/seo/BreadcrumbJsonLd'
 import type { Metadata } from 'next'
 import Image from 'next/image'
 import Link from 'next/link'
@@ -95,6 +96,7 @@ export default async function GalleryPage({ searchParams }: {
 
   return (
     <>
+      <BreadcrumbJsonLd items={[{ name: 'Gallery', path: '/gallery' }]} />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{

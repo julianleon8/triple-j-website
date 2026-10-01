@@ -1,8 +1,11 @@
-# SEO action plan — 2026-10-01 · A1–A3 CLOSED
+# SEO action plan — 2026-10-01 · WORKED THROUGH, 3 ITEMS LEFT
 
-`docs/ACTION-PLAN.md` dates from April. A1 (doubled brand in titles) and A2 (`metadataBase`) were already
-live. A3 shipped: the homepage Services cards describe their photos in alt text. Before working A4 onward,
-check the live site: other items may also be done already.
+`docs/ACTION-PLAN.md` now carries a live status line under every item. Left open:
+- **A17 CSP:** from about 2026-10-08, read the `[csp]` lines in Vercel runtime logs (`/api/csp-report`),
+  allow what is legitimate, then switch `Content-Security-Policy-Report-Only` to enforcing in `next.config.ts`.
+- **A18 (owner, one click):** Vercel → Domains → `triplejmetaltx.com` → redirect 307 → 308.
+- **A15 blog cadence** and **A16 HowTo** (recommended dropped) are the owner's call; A8 GBP is still blocked.
+- Ask the owner about two Killeen claims (retirees → Round Rock jobs; cleared HOA review boards).
 
 ---
 

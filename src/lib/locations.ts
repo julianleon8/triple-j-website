@@ -102,43 +102,64 @@ export type LocationData = {
 export const LOCATIONS: Record<string, LocationData> = {
   'harker-heights': {
     slug: 'harker-heights',
-    heroImageAlt: 'Welded metal carport on a Harker Heights, Texas residential property near Fort Cavazos',
+    heroImageAlt: 'Red iron framing on a Triple J Metal construction site in Central Texas',
     name: 'Harker Heights',
     county: 'Bell County',
     zip: '76548',
     lat: 31.0804,
     lng: -97.6477,
-    metaTitle: 'Metal Carports Harker Heights TX | Same-Week Install',
+    metaTitle: 'Metal Carports in Harker Heights, TX',
     metaDescription:
-      'Welded or bolted metal carports in Harker Heights, TX — same-week installs, concrete available, Fort Cavazos military discount.',
-    heroHeadline: 'Metal Carports in Harker Heights, TX — Same-Week Installs',
+      'Welded or bolted carports, garages and RV covers in Harker Heights, TX. Temple-based crew, concrete available, 7% Fort Cavazos military discount.',
+    heroHeadline: 'Metal Carports & Buildings in Harker Heights, TX',
     heroCopy:
-      "Harker Heights homeowners trust Triple J Metal for durable metal carports installed fast. We're a local Central Texas company — not a national kit seller — which means we show up, weld it, and stand behind our work. PCS'ing to Fort Cavazos? We'll protect your vehicles before your household goods arrive.",
+      "Plan a carport, garage, or RV cover with our Temple-based crew. Tell us your dimensions and timing; we’ll confirm the design, scope, and schedule for your property.",
     areaContext:
-      "We serve all of Harker Heights and the surrounding Bell County area, including neighborhoods near Fort Cavazos, Clear Creek Road, and the Killeen-Fort Hood Regional Airport corridor. Whether you're in an established neighborhood or a rural property on the outskirts, we come to you.",
+      "Harker Heights sits on US-190 just east of Killeen. Pinckney R. Cox and Harley Kern began selling lots here in 1957, and the city, named for Kern, incorporated in 1960. Many residents work at Fort Cavazos or in Killeen. We take project inquiries for covered parking, RV and boat storage, and garages across Harker Heights.",
     whyLocal:
-      "Every national company targeting Harker Heights ships a kit and leaves you to figure out installation. Triple J Metal is based in Temple — 15 minutes away — and we handle everything: site prep, concrete pad pouring, welding or bolting, and cleanup. One call, one company, done.",
+      "Work directly with our Temple-based crew on your Harker Heights project: welded or bolted red iron, English and Spanish communication, and concrete available in the same contract.",
     services: [
-      'Welded or bolted red iron carports',
-      'Bolted metal carports',
+      'Welded or bolted carports',
       'Metal garages',
       'RV and boat covers',
-      'Metal barns',
-      'Concrete pad pouring',
       'Lean-to patios',
-      'House additions',
+      'Metal fencing and gates',
+      'Site prep and separately priced concrete',
     ],
     military: {
       headline: 'Fort Cavazos Military Discount — Harker Heights',
-      copy: "Fort Cavazos is minutes from Harker Heights, and we know what PCS season looks like. Military families need vehicle and equipment protection fast — not in 12 weeks. Triple J Metal builds RV covers, carports, and garages same-week, and we offer a 7% Fort Cavazos military and first responder discount on every install. Mention your service when you call or check the military box on the quote form.",
+      copy: "Fort Cavazos is next door, and a PCS move rarely leaves much time. Triple J Metal builds RV covers, carports, and garages with same-week scheduling, and offers a 7% Fort Cavazos military and first-responder discount. Mention your service when you call, or check the military box on the quote form.",
       keywords: ['Fort Cavazos carport', 'military carport Harker Heights', 'PCS vehicle protection Bell County'],
     },
+    customHeadline: {
+      line1: 'Built for Harker Heights.',
+      line2: 'Covered parking, garages and RV storage.',
+    },
+    heroSubhead:
+      "Plan a carport, garage, or RV cover with our Temple-based crew. Tell us your dimensions and timing; we’ll confirm the design, scope, and schedule for your property.",
+    localIntro:
+      "Harker Heights sits on US-190 just east of Killeen. Pinckney R. Cox and Harley Kern began selling lots here in 1957, and the city, named for Kern, incorporated in 1960. Many residents work at Fort Cavazos or in Killeen. We take project inquiries for covered parking, RV and boat storage, and garages across Harker Heights.",
+    habla: true,
+    topServices: ['carports', 'rv-covers', 'metal-garages'],
+    landmarks: [
+      {
+        name: 'Stillhouse Hollow Lake',
+        blurb:
+          "Harker Heights residents have Stillhouse Hollow Lake close by, and boats, trailers and RVs need covered storage. Tell us the length and height of what you’re parking and we’ll size the clearance to it.",
+      },
+    ],
+    whyLocalBullets: [
+      'Bring the length and height of the vehicles, boats, or trailers you need to cover.',
+      'Welded or bolted red iron — your choice, priced in a written scope.',
+      'Site conditions and drainage guide the foundation discussion; concrete is available in the same contract.',
+      'Our Temple-based team can discuss the project in English or Spanish.',
+    ],
     callouts: [
       {
         eyebrow: 'Fort Cavazos PCS',
-        headline: '7% military discount + same-week installs.',
+        headline: '7% military discount + same-week scheduling.',
         blurb:
-          "Active-duty, retired, Reserve/Guard, and first responders get 7% off every install — welded, bolted, or turnkey. Built around PCS calendars, deployment dates, and TDY blocks instead of 12-week franchise wait lists. Hablamos español.",
+          "Active-duty, retired, Reserve/Guard, and first responders get 7% off every install — welded, bolted, or turnkey. Tell us your report date and we’ll plan the build week around it. Hablamos español.",
         ctaLabel: 'See Fort Cavazos page',
         ctaHref: '/military',
       },
@@ -148,6 +169,10 @@ export const LOCATIONS: Record<string, LocationData> = {
       'bell-county-metal-building-permit-guide-2025',
       'hoa-compliant-metal-buildings-heritage-oaks-bella-charca',
     ],
+    localSource: {
+      label: 'Harker Heights history (Handbook of Texas)',
+      url: 'https://www.tshaonline.org/handbook/entries/harker-heights-tx',
+    },
   },
 
   killeen: {
@@ -157,9 +182,9 @@ export const LOCATIONS: Record<string, LocationData> = {
     zip: '76541',
     lat: 31.1171,
     lng: -97.7278,
-    metaTitle: 'Metal Carports Killeen TX | Built for Fort Cavazos Timelines',
+    metaTitle: 'Metal Carports Killeen TX | Fort Cavazos',
     metaDescription:
-      "Killeen's local metal building crew — welded or bolted carports, RV covers, and garages built same-week for Fort Cavazos PCS timelines. Concrete available. Hablamos español.",
+      "Welded or bolted carports, RV covers and garages in Killeen, built same-week around Fort Cavazos PCS timelines. Concrete available. Hablamos español.",
     // Legacy fallbacks (used if new fields below aren't populated)
     heroHeadline: "Built in Killeen. Built for Fort Cavazos.",
     heroCopy:
@@ -180,7 +205,7 @@ export const LOCATIONS: Record<string, LocationData> = {
     ],
     military: {
       headline: 'Fort Cavazos Timelines — Built In',
-      copy: "Fort Cavazos drives a constant flow of PCS moves through Killeen. Military families arrive on short notice and need vehicle protection immediately — not after a 12-week wait list. Triple J Metal builds RV covers and carports same-week and honors a 7% Fort Cavazos military and first-responder discount. We speak the language: BAH, VA loans, PCS timelines, base-area HOA rules.",
+      copy: "Fort Cavazos drives a constant flow of PCS moves through Killeen. Military families arrive on short notice and need vehicle protection fast. Triple J Metal builds RV covers and carports same-week and honors a 7% Fort Cavazos military and first-responder discount. We speak the language: BAH, VA loans, PCS timelines, base-area HOA rules.",
       keywords: ['turnkey carports Killeen', 'carports Fort Cavazos', 'military carport Killeen TX'],
     },
 
@@ -224,7 +249,7 @@ export const LOCATIONS: Record<string, LocationData> = {
       '25 minutes from Temple HQ — a real local crew, not a national kit shipped from out of state',
       "Welded OR bolted red-iron — your choice for Texas wind, hail, and Fort Cavazos timelines",
       "Concrete poured and engineered for Bell County's expansive clay soils — in the same contract",
-      'Same-week scheduling — built around PCS arrivals and hail-season urgency, not a 12-week wait list',
+      'Same-week scheduling — built around PCS arrivals and hail-season urgency',
     ],
     callouts: [
       {
@@ -252,50 +277,79 @@ export const LOCATIONS: Record<string, LocationData> = {
 
   'copperas-cove': {
     slug: 'copperas-cove',
-    heroImageAlt: 'Welded metal carport on a Copperas Cove, Texas property in Coryell County',
+    heroImageAlt: 'Red iron framing on a Triple J Metal construction site in Central Texas',
     name: 'Copperas Cove',
     county: 'Coryell County',
     zip: '76522',
     lat: 31.1224,
     lng: -97.907,
-    metaTitle: 'Metal Carports Copperas Cove TX',
+    metaTitle: 'Metal Carports in Copperas Cove, TX',
     metaDescription:
-      'Affordable metal carports in Copperas Cove, TX — welded or bolted red iron steel, concrete pad available, same-week installs. Call for a free quote.',
-    heroHeadline: 'Affordable Metal Carports in Copperas Cove, TX',
+      'Welded or bolted carports, garages and RV covers in Copperas Cove, TX. Temple-based crew, concrete available, 7% Fort Cavazos military discount.',
+    heroHeadline: 'Metal Carports & Buildings in Copperas Cove, TX',
     heroCopy:
-      "Copperas Cove homeowners searching for a carport builder get hit with national kit companies that ship a package and walk away. Triple J Metal is different — we're a local Central Texas crew that installs everything ourselves. Welded or bolted, residential or ranch, concrete pad included if needed.",
+      "Plan a carport, garage, RV cover, or barn with our Temple-based crew. Tell us your dimensions and timing; we’ll confirm the design, scope, and schedule for your property.",
     areaContext:
-      "We serve all of Copperas Cove and Coryell County, including neighborhoods near FM 116, the US-190 corridor, and rural properties heading toward Lampasas. We also regularly work in the neighboring communities of Kempner and Lampasas.",
+      "Copperas Cove began in the 1870s as a ranching and farming community, named for a nearby spring with a mineral taste. The railroad in the late 1880s and Camp Hood in 1942 grew it into the largest city in Coryell County. We take project inquiries for covered parking, garages, RV storage, and ranch buildings in and around Cove.",
     whyLocal:
-      "Viking Steel, The Carport Co., and Get Carports all target Copperas Cove with location pages — but they're all national dealers. Triple J Metal is based in Temple, 30 minutes away, and sends a real crew to build and install your structure from start to finish.",
+      "Work directly with our Temple-based crew on your Copperas Cove project: welded or bolted red iron, English and Spanish communication, and concrete available in the same contract.",
     services: [
-      'Welded or bolted red iron carports',
-      'Bolted metal carports',
-      'Turnkey carports with concrete pads',
+      'Welded or bolted carports',
       'Metal garages',
       'RV and boat covers',
-      'Metal barns',
-      'Lean-to patios',
-      'House additions',
+      'Barns and equipment covers',
+      'Metal fencing and gates',
+      'Site prep and separately priced concrete',
+    ],
+    customHeadline: {
+      line1: 'Built for Copperas Cove.',
+      line2: 'Steel for Coryell County homes and land.',
+    },
+    heroSubhead:
+      "Plan a carport, garage, RV cover, or barn with our Temple-based crew. Tell us your dimensions and timing; we’ll confirm the design, scope, and schedule for your property.",
+    localIntro:
+      "Copperas Cove began in the 1870s as a ranching and farming community, named for a nearby spring with a mineral taste. The railroad in the late 1880s and Camp Hood in 1942 grew it into the largest city in Coryell County. We take project inquiries for covered parking, garages, RV storage, and ranch buildings in and around Cove.",
+    habla: true,
+    topServices: ['carports', 'rv-covers', 'barns'],
+    landmarks: [
+      {
+        name: 'A spring, a railroad, and Camp Hood',
+        blurb:
+          "The City of Copperas Cove traces its name to a mineral-tasting spring and its growth to the railroad and Camp Hood. Your own property’s access, slope, and drainage are reviewed on their own merits.",
+      },
+    ],
+    whyLocalBullets: [
+      'Bring approximate dimensions for vehicles, RVs, equipment, and storage bays.',
+      'On rural lots, include gate openings and the route trucks will use to reach the site.',
+      'Site conditions and drainage guide the foundation discussion; concrete is available in the same contract.',
+      'Our Temple-based team can discuss the project in English or Spanish.',
     ],
     callouts: [
       {
         eyebrow: 'Fort Cavazos PCS',
-        headline: 'Back-gate access — same-week installs.',
+        headline: '7% military discount + same-week scheduling.',
         blurb:
-          "Cove sits at the back gate of Fort Cavazos. Triple J Metal serves Cove military families on the same same-week timeline and 7% Fort Cavazos military and first-responder discount we offer in Killeen and Harker Heights. PCS in, structure built before household goods land. Hablamos español.",
+          "Active-duty, retired, Reserve/Guard, and first responders get 7% off every install — welded, bolted, or turnkey. Tell us your report date and we’ll plan the build week around it. Hablamos español.",
         ctaLabel: 'See Fort Cavazos page',
         ctaHref: '/military',
       },
       {
-        eyebrow: 'Coryell County reach',
-        headline: 'From Cove out through Kempner + Lampasas.',
+        eyebrow: 'West of Cove',
+        headline: 'Kempner and Lampasas, same crew.',
         blurb:
-          "We work the FM 116 corridor and the US-190 stretch heading west — Kempner ranches, Lampasas county lines, the rural properties along Lampasas River. Same crew, same week, same turnkey concrete option.",
-        ctaLabel: 'See Lampasas builds',
+          "We also take projects west along US-190 toward Kempner and Lampasas. Share your location and what the building needs to do, and we’ll confirm the scope and schedule.",
+        ctaLabel: 'See Lampasas',
         ctaHref: '/locations/lampasas',
       },
     ],
+    relatedPosts: [
+      'fort-cavazos-pcs-metal-carport',
+      'welded-vs-bolted-metal-buildings-central-texas',
+    ],
+    localSource: {
+      label: 'About Copperas Cove (City of Copperas Cove)',
+      url: 'https://www.copperascovetx.gov/269/About-Copperas-Cove',
+    },
   },
 
   temple: {
@@ -305,9 +359,9 @@ export const LOCATIONS: Record<string, LocationData> = {
     zip: '76501',
     lat: 31.0982,
     lng: -97.3428,
-    metaTitle: 'Metal Carports Temple TX | HQ · 3319 Tem-Bel Ln',
+    metaTitle: 'Metal Carports & Buildings in Temple, TX',
     metaDescription:
-      "Triple J's home shop in Temple, TX. Welded or bolted carports, garages, RV covers — same-week across Western Hills, Lake Belton, and all of Temple. Hablamos español.",
+      "Our home shop is in Temple, TX. Welded or bolted carports, garages and RV covers, same-week across Western Hills, Lake Belton and all of Temple.",
     // Legacy fallbacks (used if new fields below aren't populated)
     heroHeadline: "Built in Temple. Built where we live.",
     heroCopy:
@@ -410,9 +464,9 @@ export const LOCATIONS: Record<string, LocationData> = {
     zip: '76513',
     lat: 31.0557,
     lng: -97.4641,
-    metaTitle: "Metal Carports Belton TX | Bell County's Home Crew",
+    metaTitle: "Metal Carports & Buildings in Belton, TX",
     metaDescription:
-      "Belton's local metal building crew — 15 min from our Temple shop. Welded or bolted carports, ranch barns, and lakeside RV covers. Permits handled. Hablamos español.",
+      "Belton's metal building crew, 15 min from our Temple shop. Welded or bolted carports, ranch barns and lakeside RV covers. Hablamos español.",
     // Legacy fallbacks (used if new fields below aren't populated)
     heroHeadline: "Built in Belton. Bell County's home crew.",
     heroCopy:
@@ -583,9 +637,9 @@ export const LOCATIONS: Record<string, LocationData> = {
     zip: '76701',
     lat: 31.5493,
     lng: -97.1467,
-    metaTitle: 'Metal Carports & Buildings in Waco, TX | Same-Week Welded Installs',
+    metaTitle: 'Metal Carports & Buildings in Waco, TX',
     metaDescription:
-      "Metal carport Waco TX — welded or bolted red iron, turnkey concrete, same-week installs across McLennan County. Magnolia-inspired residential, ranch barns for Hewitt, Woodway, Robinson, China Spring. Hablamos español.",
+      "Welded or bolted metal carports in Waco, TX. Concrete available, same-week installs and ranch barns for Hewitt, Woodway, Robinson and China Spring.",
     // Legacy fallbacks (used if new fields below aren't populated)
     heroHeadline: "Built for Waco. McLennan County's welded crew.",
     heroCopy:
@@ -689,7 +743,7 @@ export const LOCATIONS: Record<string, LocationData> = {
     zip: '78626',
     lat: 30.6333,
     lng: -97.6779,
-    metaTitle: 'Metal Carports & Buildings in Georgetown, TX | Same-Week Welded Installs',
+    metaTitle: 'Metal Carports & Buildings, Georgetown TX',
     metaDescription:
       "Welded or bolted carports, garages and RV covers in Georgetown, TX. Temple-based crew; concrete available in the same contract. Request a quote.",
     // Legacy fallbacks (used if new fields below aren't populated)
@@ -788,9 +842,9 @@ export const LOCATIONS: Record<string, LocationData> = {
     zip: '78664',
     lat: 30.5083,
     lng: -97.6789,
-    metaTitle: 'Metal Carports & Buildings in Round Rock, TX | Same-Week Welded Installs',
+    metaTitle: 'Metal Carports & Buildings, Round Rock TX',
     metaDescription:
-      "Metal carport Round Rock TX — welded or bolted red iron, turnkey concrete, same-week installs. HOA-compliant builds for Brushy Creek, Forest Creek, Teravista, Cedar Park, and Pflugerville. Hablamos español.",
+      "Welded or bolted metal carports in Round Rock, TX. Concrete available, same-week installs, HOA-compliant builds for Brushy Creek and Teravista.",
     // Legacy fallbacks (used if new fields below aren't populated)
     heroHeadline: "Built for Round Rock. Welded or bolted, same-week.",
     heroCopy:

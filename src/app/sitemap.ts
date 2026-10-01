@@ -41,11 +41,19 @@ export const dynamic = "force-dynamic";
 const CONTENT_REVISED = new Date("2026-09-07T00:00:00.000Z");
 
 const COPY_REVISED = new Date("2026-09-26T00:00:00.000Z");
-const REVISED_CITIES = new Set(["salado", "lampasas", "holland", "taylor", "troy", "nolanville", "georgetown", "belton", "killeen"]);
+const CITY_REVISED: Record<string, Date> = {
+  ...Object.fromEntries(
+    ["salado", "lampasas", "holland", "taylor", "troy", "nolanville", "georgetown", "belton", "killeen"].map((slug) => [slug, COPY_REVISED]),
+  ),
+  "harker-heights": new Date("2026-10-01T00:00:00.000Z"),
+  "copperas-cove": new Date("2026-10-01T00:00:00.000Z"),
+};
 
+// `gallery_items` has no `updated_at` column. Selecting one made PostgREST
+// reject the whole query, and because the result's `error` went unread, every
+// gallery project page and photo silently dropped out of the sitemap.
 type GalleryItemRow = {
   id: string;
-  updated_at: string | null;
   created_at: string | null;
   gallery_photos: { image_url: string; sort_order: number; is_cover: boolean }[] | null;
 };
@@ -81,7 +89,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   for (const slug of Object.keys(LOCATIONS)) {
     entries.push({
       url: `${base}/locations/${slug}`,
-      lastModified: REVISED_CITIES.has(slug) ? COPY_REVISED : CONTENT_REVISED,
+      lastModified: CITY_REVISED[slug] ?? CONTENT_REVISED,
       changeFrequency: "monthly",
       priority: 0.8,
     });
@@ -110,17 +118,18 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // Best-effort: if Supabase fails (build-time, key missing, etc.) we just
   // ship the static portion of the sitemap.
   try {
-    const { data: items } = await getAdminClient()
+    const { data: items, error } = await getAdminClient()
       .from("gallery_items")
       .select(
         `
-        id, updated_at, created_at,
+        id, created_at,
         gallery_photos ( image_url, sort_order, is_cover )
         `,
       )
       .eq("is_active", true)
       .order("created_at", { ascending: false })
       .limit(500);
+    if (error) throw error;
 
     for (const item of (items ?? []) as GalleryItemRow[]) {
       const photos = item.gallery_photos ?? [];
@@ -133,14 +142,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       });
       entries.push({
         url: `${base}/gallery/${item.id}`,
-        lastModified: item.updated_at
-          ? new Date(item.updated_at)
-          : item.created_at
-            ? new Date(item.created_at)
-            : now,
+        lastModified: item.created_at ? new Date(item.created_at) : now,
         changeFrequency: "monthly",
         priority: 0.6,
-        images: ordered.map((p) => p.image_url),
+        // Sitemap image locations must be absolute; seeded rows store
+        // site-relative paths like `/images/porch-cover-lean-to.jpg`.
+        images: ordered.map((p) => (p.image_url.startsWith("/") ? `${base}${p.image_url}` : p.image_url)),
       });
     }
   } catch (err) {

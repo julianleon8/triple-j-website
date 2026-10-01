@@ -116,11 +116,15 @@ export default async function BlogPostPage({ params }: Props) {
               {post.category}
             </span>
             <span className="text-white/40 text-xs">·</span>
-            <span className="text-xs text-white/50">{formatDate(post.date)}</span>
-            <span className="text-white/40 text-xs">·</span>
             <span className="text-xs text-white/50">{post.readTime}</span>
           </div>
           <h1 className="text-white leading-tight">{post.title}</h1>
+          {/* Credits the crew, matching BlogPosting.author (the organization) —
+              no post records an individual author or reviewer. */}
+          <p className="mt-4 text-sm text-white/60">
+            By the {SITE.name} crew · Temple, TX · Published{' '}
+            <time dateTime={post.date}>{formatDate(post.date)}</time>
+          </p>
           <p className="mt-5 text-lg text-white/70 leading-relaxed">{post.excerpt}</p>
           <div className="mt-6 flex flex-wrap gap-2">
             {post.tags.map((tag) => (
@@ -154,8 +158,8 @@ export default async function BlogPostPage({ params }: Props) {
             <div>
               <p className="font-bold text-ink-900 text-sm">Triple J Metal — Temple, TX</p>
               <p className="text-xs text-ink-500 mt-0.5 leading-relaxed">
-                Local metal building contractor serving Central Texas since {SITE.established}. Welded red iron structures,
-                turnkey concrete, same-week scheduling. This guide was written by our crew from first-hand experience
+                Local metal building contractor serving Central Texas since {SITE.established}. Welded or bolted red iron,
+                concrete available, same-week scheduling. This guide was written by our crew from first-hand experience
                 in Bell County.
               </p>
             </div>

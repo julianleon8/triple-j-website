@@ -10,7 +10,7 @@ Do not copy anything from this file into `AGENTS.md`. That duplication is what p
 
 ## Product
 
-- **Website claims and city-page cleanup:** Removed unsupported competitor installation/lead-time/exclusivity claims and the unverifiable Temple Steel Buildings listing. Concrete is separately priced; service pricing uses the approved steel-and-install basis. Salado, Lampasas, Holland, Taylor, Troy and Nolanville now have researched local context, planning guidance and service links. City galleries show only active projects with matching city labels. (2026-09-26)
+- **Website claims and city-page cleanup:** Removed unsupported competitor installation/lead-time/exclusivity claims and the unverifiable Temple Steel Buildings listing. Concrete is separately priced; service pricing uses the approved steel-and-install basis. Salado, Lampasas, Holland, Taylor, Troy, Nolanville, Harker Heights and Copperas Cove now have researched local context, planning guidance, service links and a cited local source. City galleries show only active projects with matching city labels. (2026-09-26; Harker Heights and Copperas Cove 2026-10-01)
 
 - **Fencing launch:** Metal privacy, pipe/ranch, ornamental metal fencing and gates approved. Dedicated page and quote intake; project-specific price and schedule, with no invented rankings. Fencing is stored as `other` with explicit scope in lead notes. Campaign spend comes out of the paid-ad cap below. (2026-09-26)
 
@@ -61,6 +61,10 @@ Do not copy anything from this file into `AGENTS.md`. That duplication is what p
   beside it — Next drops the parent's images otherwise — and `src/app/og-coverage.test.ts` fails the build if
   one does not. Card text is the page's own H1 and description, never new claims; gallery project pages share
   their own cover photo. (2026-09-28)
+- **`/llms.txt` and `/llms-full.txt` are generated** by `src/lib/llms.ts` from `SITE`, `SERVICES`, `LOCATIONS` and `BLOG_POSTS` — never a hand-kept file in `public/`, which the vault checker cannot see. Its Key facts list may only restate lines from this file. (2026-10-01)
+- **Search snippets:** titles ≤60 characters including the ` | Triple J Metal` suffix the template adds; descriptions ≤155. `src/lib/meta-lengths.test.ts` enforces it for data-driven pages. (2026-10-01)
+- **Bylines:** comparison and alternatives pages say "Reviewed by Juan Luis Leon" with the title **Owner** — Freddy is the foreman. Blog posts credit "the Triple J Metal crew"; name a person only once the owner says who writes or reviews them. (2026-10-01)
+- **CSP stays Report-Only** until about a week of `[csp]` lines from `/api/csp-report` (Vercel runtime logs) has been reviewed. (2026-10-01)
 - **No `AggregateRating` or `Review` JSON-LD anywhere** — and none may be added while the GBP is unverified.
   Google treats reviews an entity controls about itself as ineligible regardless. (2026-09-07)
 - **A link to an in-page section (`#quote`, `/#quote`) is a plain `<a>`, never `<Link>`.** `ButtonLink`

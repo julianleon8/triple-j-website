@@ -1,3 +1,4 @@
+import { BreadcrumbJsonLd } from '@/components/seo/BreadcrumbJsonLd'
 import type { Metadata } from 'next'
 import Image from 'next/image'
 
@@ -14,9 +15,9 @@ import { SITE } from '@/lib/site'
 import { getSiteUrl } from '@/lib/site-url'
 
 export const metadata: Metadata = {
-  title: 'Get a Free Quote | Metal Buildings & Fencing',
+  title: 'Free Quote: Metal Buildings & Fencing',
   description:
-    `Free quote on a welded or bolted metal carport, garage, barn, RV cover, or metal fence. Temple, TX crew — same day, guaranteed within 24 hours. Call ${SITE.phone}.`,
+    `Free quote on a welded or bolted metal carport, garage, barn, RV cover or metal fence. Temple, TX crew — same day, guaranteed within 24 hours.`,
   // Bare canonical on purpose: this page is the target of every ad variant, and
   // they all arrive with a different query string (?src=fb, ?service=, ?city=).
   // Without this each one would look like a separate URL.
@@ -97,6 +98,7 @@ export default async function QuotePage({ searchParams }: PageProps<'/quote'>) {
 
   return (
     <>
+      <BreadcrumbJsonLd items={[{ name: 'Free Quote', path: '/quote' }]} />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{

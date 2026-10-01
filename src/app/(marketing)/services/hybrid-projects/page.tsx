@@ -1,3 +1,4 @@
+import { BreadcrumbJsonLd } from '@/components/seo/BreadcrumbJsonLd'
 import type { Metadata } from 'next'
 import Image from 'next/image'
 import Link from 'next/link'
@@ -58,6 +59,12 @@ export default async function HybridProjectsPage() {
 
   return (
     <>
+      <BreadcrumbJsonLd
+        items={[
+          { name: 'Services', path: '/services' },
+          { name: 'Hybrid Projects', path: '/services/hybrid-projects' },
+        ]}
+      />
       {/* ── Hero ── */}
       <section className="relative bg-ink-900 text-white py-20 md:py-28 overflow-hidden">
         <div className="hero-glow absolute inset-0 pointer-events-none" aria-hidden="true" />

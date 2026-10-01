@@ -10,9 +10,9 @@ import { Container } from "@/components/ui/Container";
 import { ButtonLink } from "@/components/ui/Button";
 
 export const metadata: Metadata = {
-  title: "Metal Carports, Garages & Barns in Temple, Central Texas",
+  title: "Metal Carports, Garages & Barns, Temple TX",
   description:
-    `Metal buildings welded or bolted on-site by ${SITE.name} — Temple, TX. Carports, garages, barns, RV covers, concrete available. Same-week scheduling across Bell, Coryell, and McLennan counties. Call ${SITE.phone}.`,
+    `Welded or bolted metal carports, garages, barns and RV covers from ${SITE.name}, Temple TX. Concrete available, same-week scheduling. Call ${SITE.phone}.`,
   alternates: { canonical: "/" },
   openGraph: {
     title: "Metal Carports, Garages & Barns in Central Texas — Triple J Metal",
