@@ -1,42 +1,39 @@
-# Visual redesign — 2026-10-01 · HERO SPECIFIED, NOTHING BUILT
+# Visual redesign — 2026-10-01 · ALL 25 QUESTIONS ANSWERED, NOTHING BUILT
 
-The owner is redesigning the **whole public site**, one section at a time. The hero is decided except for its
-photo. **No `src/` file has changed.** The decisions are in `Locked Decisions.md` (the Tagline, Marketing
-headline face and Brand colour lines) and in the 2026-10-01 rows of `Decisions.md`. Mockups and a CSS
-reference are in `docs/redesign-2026-10/` (`hero-mockup.html`, `hero-desktop.jpg`, `hero-phone.jpg`,
-`font-options.jpg`, `strip-options.jpg`). These commits are on branch `claude/youthful-hypatia-28pf1o`,
-not `main`. Merge that branch first.
+All work is on branch `claude/focused-gates-iu172r` (the previous `claude/youthful-hypatia-28pf1o` is merged
+into it), not `main`. **No `src/` file has changed.** Every answer is in `Locked Decisions.md` (Tagline,
+Marketing headline face, Brand colour, Light/dark, Homepage order, Header, Service-card prices, Trust before
+reviews, Motion, Redesign review) and in the 2026-10-01 rows of `Decisions.md`.
 
-**Do first:**
-1. **Hero photo.** The owner asked for three options from the gallery (`gallery_items` → `gallery_photos`,
-   `is_active`). New on 2026-10-01: the Mexicano Grille rebuild in Belton (13 photos) and the horse stables
-   plus 50×50 warehouse in Temple (7). Also the Rogers 23×35 carport with gutters (11, from 09-26). Mock each
-   photo into `hero-mockup.html` and send the three renders. This needs network access to
-   `idrbgxlvvnqduvbqtaei.supabase.co`; the previous sandbox was denied.
-2. **Confirm the subhead wording.** The owner said "keep both lines as they are" in answer to a question that
-   quoted the mockup's sentence ("Carports, garages, barns and patios, welded or bolted on your property by
-   our own Central Texas crew."). The ledger logged the live two-sentence version. Ask which one, and log a
-   new row if it is the mockup's.
-3. **The questions still open** (numbered as in the original 25): red as a second accent (14), light or dark
-   site overall (15), new logo lockup, since the file still says "Metal Buildings" (16), header changes (17),
-   homepage section order (18), prices on service cards (19), trust without reviews (20), keeping the inline
-   quote form (21), scope: whole site, plus whether HQ, emails and the quote PDF follow (22), reference sites
-   (23), motion (24), mockups or a preview link before `main` (25).
+**Settled this session:** the hero photo is the **Rogers 23×35 carport** (the Mexicano Grille frame was
+picked, then dropped as too wide on phones). The subhead is the mockup's one sentence. No red. Bands go Hero
+navy, Builds light, Services navy, Quote light, Footer navy. The logo is the lion + "Triple J Metal" in
+Cinzel. The header is lean: 5 links, phone, quote button; Blog and Partners go to the footer. The homepage is
+**Hero, Builds, Services, Quote** (inline form kept). Card prices stay. Trust comes from real customer
+quotes, collected with permission and shown with their build. Scope: **site + emails + quote PDF + HQ**.
+Motion is subtle. Review happens on a **Vercel preview link** before anything merges to `main`.
+
+**Waiting on the owner:**
+1. Reactions to the 9 reference sites (`docs/redesign-2026-10/reference-sites.md` + `.jpg`). Log what they like.
+2. **The whole site plan.** No `src/` change until they lay it out (other pages, order of work).
+3. Customer quotes into `testimonials.md` (3–5, with permission, from jobs in the gallery).
+4. 7 of the 13 Mexicano Grille photos uploaded 10-01 are byte-identical duplicates (sort orders 20/18,
+   21/19, 26/12, 27/16, 28/08, 29/06, 33/13). Delete the copies or leave them. Not changed.
 
 **Found while specifying (not built):**
-- **Tokens are shared with HQ.** `brand-*` / `--brand-fg` appear in 44 marketing files and 61 HQ files, and
-  `font-display` in 35 files, HQ headings included. Rewriting the raw brand scale or `--font-display`
-  restyles HQ too. Scope the new navy, slate and Cinzel to marketing unless the owner puts HQ in scope.
+- **HQ is in scope**, so `brand-*` / `--brand-fg` (44 marketing + 61 HQ files) and `--font-display` (35
+  files) can be rewritten globally. HQ headings use `uppercase` Barlow; with Cinzel, drop `uppercase`.
 - **`#1e6bd6` is hard-coded** in `src/app/layout.tsx` (theme colour), `src/emails/BrandLayout.tsx`,
-  `src/emails/PartnerInquiryConfirmation.tsx`, `src/lib/quote-pdf.tsx` and HQ charts.
-- **Fonts load with `display: "optional"`.** A slow first visit shows the system fallback for the whole view,
-  which is probably why the owner saw the "wrong" typeface. Prefer `swap` for Cinzel.
-- **Cinzel's lowercase are small caps.** Write headlines in sentence case and never apply `uppercase`.
-  The OG cards (`src/lib/og-fonts`) need Cinzel too.
-- **Hero CSS values** are in `hero-mockup.html`: a navy radial scrim, the steel-gradient stops, the white
-  primary button and the outline secondary. The live hero sits under a transparent header (`-mt-20`).
-- **The ticker** is real active gallery titles plus city, never invented. It must respect
-  `prefers-reduced-motion`, and decorative overlays stay `pointer-events-none`.
+  `src/emails/PartnerInquiryConfirmation.tsx`, `src/lib/quote-pdf.tsx` and HQ charts. Emails need a serif
+  fallback (Gmail ignores web fonts). The PDF must register a Cinzel font file. OG cards (`src/lib/og-fonts`)
+  need Cinzel.
+- **Fonts load with `display: "optional"`.** Use `swap` for Cinzel. Write headlines in sentence case.
+- **Quotes tied to builds** need a link from a quote to a `gallery_items` row; `testimonials.md` has no
+  such field yet.
+- **Hero CSS + photo crops** are in `docs/redesign-2026-10/hero-mockup.html` (`?photo=rogers|grille|stables`).
+- **Rendering mockups here:** the sandbox's headless Chromium rejects the proxy's TLS certificate. Route
+  requests through Node with Playwright's `route.fetch()`; never disable TLS checks. Global Playwright
+  is at `/opt/node22/lib/node_modules`.
 - `npm run dev` fails on `main` (Turbopack vs Serwist). Use `next dev --webpack`.
 
 ---

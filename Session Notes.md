@@ -1,5 +1,21 @@
 # Session Notes
 
+## 2026-10-01 — Visual redesign: hero photo, questions 14–25, reference sites
+
+- Merged `claude/youthful-hypatia-28pf1o` into `claude/focused-gates-iu172r`, keeping both sides of
+  the vault conflicts (permit cleanup on `main`, hero spec on the branch).
+- Read the 13 active gallery items (95 photos) from Supabase and rendered three hero options at
+  1440×900 and 390×844: Mexicano Grille frame, horse stables aisle, Rogers carport. The owner picked the
+  Grille frame, then switched to the **Rogers carport** because the Grille photo is too wide on phones.
+  Found 7 byte-identical duplicate photos in the Mexicano Grille item; reported, not changed.
+- Subhead settled as the mockup's one sentence, reversing the earlier log row. Then questions 14–25:
+  no red; alternating navy bands; lion + Cinzel wordmark; lean header; homepage Hero, Builds, Services,
+  Quote; card prices kept; real customer quotes with their build; inline form kept; scope includes emails,
+  quote PDF and HQ; subtle motion; Vercel preview before `main`. 15 rows in `Decisions.md`.
+- Reference sites: a subagent found 9 (about 139k tokens). Screenshots and notes are in
+  `docs/redesign-2026-10/reference-sites.*`. Waiting on the owner's reactions.
+- No `src/` change.
+
 ## 2026-10-01 — Visual redesign: hero specified
 
 - The owner started a full visual redesign of the public site. The hero headline "Your land. Your plans.
