@@ -1,11 +1,21 @@
-# Google Ads + branch cleanup — 2026-09-30 · CAMPAIGN NOT PUBLISHED
+# Google Ads — 2026-10-01 · CAMPAIGN LIVE
 
-**Campaign.** Built in the Google Ads UI from `marketing/google-ads-campaign-build.md`, start date 2026-10-01,
-but the owner's Review screen showed "Changes failed to save" and **no Publish button**. Likely causes, in
-order: wrong Google account or a manager account, Read-only/Billing access level, an expired session, a
-blocked payment method (the same card is failing everywhere). **Step 2 before it spends:** ad group 2
-(Garages & shops, copy in the build sheet) and the full negative list from the lead plan. Then the tracking
-tasks in the lead plan: phone-call conversion label, enhanced conversions on, call asset, one test lead.
+**Published** `Search | Temple Area | Oct 2026`, ad group 1 (Carports & RV covers), six sitelinks, account
+callouts, all from `marketing/google-ads-campaign-build.md`. Yesterday's failure cleared once the owner fixed
+the Google Ads payment method. **Confirm the daily budget is $13.00**: the owner had typed $16.00 before
+publishing, and $16 can bill about $486/month, over the $400 Google share of the $500 cap.
+
+**Owner's to-do, in order:**
+1. Negative keywords at campaign level (the list in `marketing/lead-plan-2026-09-29.md` → Negative keywords).
+2. Keywords tab: match type must read Phrase or Exact, not Broad.
+3. Ad group 2 (Garages & shops) from the build sheet.
+4. Next day: ads read "Eligible", not "Disapproved" or "Under review".
+5. Phone-call conversion: Goals → Conversions → New → Website → "Phone call clicks". The owner sends the
+   label; set `NEXT_PUBLIC_GOOGLE_ADS_CALL_CONVERSION_LABEL` in Vercel (Production) and redeploy. Turn on
+   enhanced conversions in the same screen.
+6. One test lead from a phone on `/quote?utm_source=test`; confirm HQ, push and email.
+7. Paste `marketing/google-ads-daily-report.js` into Google Ads.
+8. Every Monday: search-terms report, new negatives.
 
 **Owner's calls, all open:**
 - roll-up door prices: $800 flat vs the 2026-05-06 handwritten sheet (`Locked Decisions.md` → Outstanding);
@@ -14,8 +24,8 @@ tasks in the lead plan: phone-call conversion label, enhanced conversions on, ca
 - the barns page still mentions barndominium projects through GCs, though builds are paused until 2027;
 - Temple Generation (Scott Smith): insurance, stamped drawings, site-walk attendees.
 
-**Billing, urgent:** Google Workspace suspends 2026-10-02; GitHub metered Actions are restricted until the
-card is fixed. Both trace to one declining card.
+**Billing:** Google Ads payment is fixed (2026-10-01). Google Workspace was due to suspend 2026-10-02 and
+GitHub metered Actions were restricted, both on the declining card; not confirmed fixed.
 
 ---
 

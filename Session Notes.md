@@ -1,5 +1,16 @@
 # Session Notes
 
+## 2026-10-01 — Google Ads campaign published
+
+- The owner retried the campaign. With the Google Ads payment method fixed, changes saved and
+  `Search | Temple Area | Oct 2026` published: ad group 1 (Carports & RV covers), six sitelinks, the
+  existing callouts. Ad text, final URL and sitelinks were handed over as a copy-paste file; every line was
+  checked against Google's length limits, the $3,000 price against the sales pack, and all six landing
+  pages returned 200 on the live site.
+- Budget: the owner had typed $16/day; $13/day was recommended to stay inside the $400 Google share. Which
+  value was saved is not confirmed.
+- No `src/` change. Next steps are in `Next Session Primer.md`.
+
 ## 2026-09-30 — Google Ads campaign build, branch cleanup, two lost fixes ported
 
 Sessions of 2026-09-29 and 09-30 (one conversation).

@@ -14,7 +14,7 @@ Do not copy anything from this file into `AGENTS.md`. That duplication is what p
 
 - **Fencing launch:** Metal privacy, pipe/ranch, ornamental metal fencing and gates approved. Dedicated page and quote intake; project-specific price and schedule, with no invented rankings. Fencing is stored as `other` with explicit scope in lead notes. Campaign spend comes out of the paid-ad cap below. (2026-09-26)
 
-- **Paid-ad cap and split:** **$500/month total across every paid channel.** October: $400 Google Search + $100 one-time (truck magnets, yard signs). November onward: $400 Google Search + $100 Facebook boosted post. Facebook Marketplace, the Page and groups stay free. Owner-approved; plan in `marketing/lead-plan-2026-09-29.md`. No campaign is live yet. (2026-09-29)
+- **Paid-ad cap and split:** **$500/month total across every paid channel.** October: $400 Google Search + $100 one-time (truck magnets, yard signs). November onward: $400 Google Search + $100 Facebook boosted post. Facebook Marketplace, the Page and groups stay free. Owner-approved; plan in `marketing/lead-plan-2026-09-29.md`. **Google Search campaign `Search | Temple Area | Oct 2026` published 2026-10-01**, ad group 1 (Carports & RV covers) only; planned budget $13/day (about $395/month). Ad text: `marketing/google-ads-campaign-build.md`. (2026-10-01)
 
 - **Timeline:** "**same-week**", never say "48-hour build". 48 hrs = materials arrival, not build time. Saying otherwise is misleading. (2026-04-15)
 - **Frame:** "**welded or bolted**" everywhere. Triple J does both. Never "custom welded" alone. (2026-04-15)
