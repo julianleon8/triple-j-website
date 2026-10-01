@@ -1,4 +1,4 @@
-# Visual redesign — 2026-10-01 · ALL 25 QUESTIONS ANSWERED, NOTHING BUILT
+# Visual redesign — 2026-10-01 · HERO PUBLISHED FOR FIGMA, NOTHING BUILT
 
 All work is on branch `claude/focused-gates-iu172r` (the previous `claude/youthful-hypatia-28pf1o` is merged
 into it), not `main`. **No `src/` file has changed.** Every answer is in `Locked Decisions.md` (Tagline,
@@ -13,20 +13,23 @@ Cinzel. The header is lean: 5 links, phone, quote button; Blog and Partners go t
 quotes, collected with permission and shown with their build. Scope: **site + emails + quote PDF + HQ**.
 Motion is subtle. Review happens on a **Vercel preview link** before anything merges to `main`.
 
-**Full homepage mockup:** `docs/redesign-2026-10/homepage-mockup.html` (header, hero, builds, services,
-quote form, footer, with real gallery content), renders `homepage-{desktop,phone}.jpg`. Reference sites
-were rejected; the mockups are the reference. The 7 duplicate Grille photo rows are deleted.
+**Narrowed to the hero (owner, end of session):** the full homepage mockup was withdrawn and deleted.
+Only the **header, hero, Latest builds ticker and typography** stay: `docs/redesign-2026-10/hero-mockup.html`
+and its renders (`hero-rogers-{desktop,phone}.jpg` are the approved state). They were published as a
+reference page for the owner, who will build a design system from it **in Figma** and design the rest of
+the site there, in an interactive session. The homepage-section answers stay logged as preferences; the
+Figma design overrides them.
 
 **Waiting on the owner:**
-1. Feedback on the homepage mockup.
-2. **The whole site plan.** No `src/` change until they lay it out (other pages, order of work).
-3. Customer quotes into `testimonials.md` (3–5, with permission, from jobs in the gallery).
-4. **Live copy breaks a lock:** the homepage Services intro says every structure is "delivered turnkey —
+1. The Figma design system and the rest-of-site design. Then the whole site plan; no `src/` change before it.
+2. Customer quotes into `testimonials.md` (3–5, with permission, from jobs in the gallery).
+3. **Live copy breaks a lock:** the homepage Services intro says every structure is "delivered turnkey —
    site prep, concrete pad, and installation all under one contract", a blanket turnkey label above priced
-   cards (2026-09-28 lock). The mockup carries draft wording; the owner approves the fix.
-5. 7 orphaned storage files from the deleted duplicates (5.9 MB, listed in `Decisions.md`) can be removed
-   in the Supabase dashboard. `/gallery/[id]` is static and never revalidated, so HQ gallery edits show
-   only after a deploy. A task card was offered for that fix.
+   cards (2026-09-28 lock). Proposed fix: "Every structure is sold welded, bolted, or turnkey — with turnkey,
+   site prep, concrete and installation sit on one contract. No kits, no subcontractors." Owner approves.
+4. 7 orphaned storage files from the deleted duplicate Grille photos (5.9 MB, listed in `Decisions.md`) can
+   be removed in the Supabase dashboard. `/gallery/[id]` is static and never revalidated, so HQ gallery
+   edits show only after a deploy; a task card was offered for that fix.
 
 **Found while specifying (not built):**
 - **HQ is in scope**, so `brand-*` / `--brand-fg` (44 marketing + 61 HQ files) and `--font-display` (35

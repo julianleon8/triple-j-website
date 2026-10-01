@@ -15,9 +15,11 @@
 - Reference sites: a subagent found 9 (about 139k tokens). Screenshots and notes are in
   `docs/redesign-2026-10/reference-sites.*`. Waiting on the owner's reactions.
 - Deleted the 7 duplicate Mexicano Grille photo rows (owner's call); their storage files remain. The owner
-  rejected all reference sites. Built the full homepage mockup (`homepage-mockup.html`, desktop + phone
-  renders) from the logged decisions and real gallery data. Found the live Services intro breaking the
-  turnkey lock; flagged, not fixed.
+  rejected all reference sites. Built a full homepage mockup from the logged decisions, then changed the
+  hero call to action to "Start Your Free Quote" with Carport / Barn / Metal Fencing shortcuts (owner). The
+  owner then withdrew the homepage mockup and kept only the header, hero, ticker and type, published as a
+  reference page for a Figma design system. Found the live Services intro breaking the turnkey lock;
+  flagged, not fixed.
 - No `src/` change.
 
 ## 2026-10-01 — Visual redesign: hero specified
