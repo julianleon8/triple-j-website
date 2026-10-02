@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Barlow_Condensed, Inter } from "next/font/google";
+import { Barlow_Condensed, Cinzel, Inter } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 
@@ -19,8 +19,17 @@ const barlowCondensed = Barlow_Condensed({
 const inter = Inter({
   variable: "--font-inter",
   subsets: ["latin"],
-  weight: ["400", "500", "600"],
+  weight: ["400", "500", "600", "700"],
   display: "optional",
+});
+
+// Forge headline face (2026-10 redesign). `swap`, not `optional`: Cinzel is the
+// brand lettering, and `optional` would leave first visits on Georgia.
+const cinzel = Cinzel({
+  variable: "--font-cinzel",
+  subsets: ["latin"],
+  weight: ["700", "900"],
+  display: "swap",
 });
 
 const siteUrl = getSiteUrl();
@@ -95,7 +104,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${barlowCondensed.variable} ${inter.variable} h-full antialiased`}
+      className={`${barlowCondensed.variable} ${inter.variable} ${cinzel.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
         {children}

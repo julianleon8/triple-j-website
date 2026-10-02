@@ -118,6 +118,61 @@
   --urgent-bg:      #dc2626;
 }
 
+/* =========================================================
+   Forge — the 2026-10 public-site design system.
+   ---------------------------------------------------------
+   Navy/slate/steel/silver from the lion logo, Cinzel headlines, alternating
+   light and navy bands. Spec: docs/redesign-2026-10/forge-handoff/.
+   Additive: brand-* / ink-* still drive HQ and every un-migrated page.
+   Utilities are `forge-` prefixed (bg-forge-navy, text-forge-slate…) so they
+   cannot collide with Tailwind's own slate scale.
+   ========================================================= */
+:root {
+  --color-navy: #00182a;
+  --color-navy-raised: #0c2538;
+  --color-slate: #546678;
+  --color-steel: #788a9c;
+  --color-steel-light: #9fb0c0;
+  --color-silver: #c9d3dc;
+  --color-mist: #e3e9ee;
+  --color-fog: #f4f6f8;
+  --color-highlight: #e9eef2;
+  --color-olive: #4b5320;
+  --color-tan: #c5b481;
+  --color-tan-light: #e2d6ae;
+  /* The one royal-blue exception: service-page "Related" buttons (2026-10-02). */
+  --color-link-accent: #1e6bd6;
+  --color-link-accent-hover: #1851b5;
+
+  --gradient-steel: linear-gradient(180deg, #e9eef2 0%, #9fb0c0 45%, #788a9c 55%, #c9d3dc 100%);
+  --scrim-hero-home: radial-gradient(ellipse at center, rgba(0,24,42,.55) 0%, rgba(0,24,42,.82) 60%, rgba(0,24,42,.94) 100%);
+  --scrim-hero-page: linear-gradient(100deg, rgba(0,24,42,.96) 0%, rgba(0,24,42,.84) 42%, rgba(0,24,42,.40) 100%);
+  --scrim-hero-military: linear-gradient(110deg, rgba(0,24,42,.97) 0%, rgba(0,24,42,.86) 45%, rgba(75,83,32,.55) 100%);
+  --scrim-photo-card: linear-gradient(to top, rgba(0,24,42,.94) 0%, rgba(0,24,42,.55) 55%, rgba(0,24,42,.10) 100%);
+  --scrim-photo-card-strong: linear-gradient(to top, rgba(0,24,42,.97) 0%, rgba(0,24,42,.72) 50%, rgba(0,24,42,.25) 100%);
+  --scrim-chip-photo: linear-gradient(to top, rgba(0,24,42,.55) 0%, rgba(0,24,42,0) 60%);
+  --scrim-caption: linear-gradient(to top, rgba(0,24,42,.9) 0%, rgba(0,24,42,0) 100%);
+  --scrim-mega-military: linear-gradient(to top, rgba(0,24,42,.96) 0%, rgba(0,24,42,.7) 45%, rgba(75,83,32,.35) 100%);
+  --scrim-footer: linear-gradient(to bottom, #00182a 0%, rgba(0,24,42,.72) 30%, rgba(0,24,42,.42) 70%, rgba(0,24,42,.30) 100%);
+
+  --shadow-lifted: 0 24px 48px -24px rgba(0,24,42,.30);
+  --shadow-card-hover: 0 18px 36px -20px rgba(0,24,42,.40);
+  --shadow-cta: 0 10px 24px -12px rgba(0,24,42,.45);
+  --shadow-mega: 0 30px 60px -20px rgba(0,10,20,.70);
+  --shadow-float-dark: 0 12px 28px -10px rgba(0,10,20,.55);
+  --shadow-lightbox: 0 30px 80px -20px rgba(0,0,0,.6);
+  --shadow-curtain: 0 30px 60px -10px rgba(0,10,20,.35);
+
+  --forge-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --forge-container: 1360px;
+  --forge-gutter: clamp(20px, 3vw, 40px);
+  --forge-section-y: clamp(64px, 7vw, 104px);
+  --forge-header-h: 72px;
+}
+@media (min-width: 900px) {
+  :root { --forge-header-h: 84px; }
+}
+
 @media (prefers-color-scheme: dark) {
   :root {
     /* Surfaces — true black-ish for OLED, slightly lifted for cards */
@@ -281,6 +336,32 @@ html:has(.hq-ui) {
   --font-display: var(--font-barlow), ui-sans-serif, system-ui, sans-serif;
   --font-ios: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro", system-ui, sans-serif;
   --font-mono: ui-monospace, monospace;
+
+  /* Forge utilities (bg-forge-navy, text-forge-slate, border-forge-silver…) */
+  --color-forge-navy: var(--color-navy);
+  --color-forge-navy-raised: var(--color-navy-raised);
+  --color-forge-slate: var(--color-slate);
+  --color-forge-steel: var(--color-steel);
+  --color-forge-steel-light: var(--color-steel-light);
+  --color-forge-silver: var(--color-silver);
+  --color-forge-mist: var(--color-mist);
+  --color-forge-fog: var(--color-fog);
+  --color-forge-highlight: var(--color-highlight);
+  --color-forge-olive: var(--color-olive);
+  --color-forge-tan: var(--color-tan);
+  --color-forge-tan-light: var(--color-tan-light);
+  --color-forge-link: var(--color-link-accent);
+  --color-forge-link-hover: var(--color-link-accent-hover);
+
+  /* next/font in src/app/layout.tsx loads Cinzel 700/900 as --font-cinzel. */
+  --font-forge-display: var(--font-cinzel), Georgia, serif;
+
+  --radius-forge-control: 6px;
+  --radius-forge-icon: 8px;
+  --radius-forge-tile: 10px;
+  --radius-forge-card: 12px;
+
+  --ease-forge: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 /* Base reset / typography */
@@ -306,21 +387,22 @@ body {
    (font-(family-name:--font-display) + an explicit text-[Npx]), never through
    a bare .hq-ui h1/h2/h3 rule — that rule would be unlayered and would outrank
    the very text-[Npx] utilities the HQ screens rely on.
-   Anything outside (marketing) must not rely on these clamp sizes. */
-.marketing h1,
-.marketing h2,
-.marketing h3 {
+   Anything outside (marketing) must not rely on these clamp sizes.
+   These rules are unlayered, so they beat every Tailwind utility. Forge
+   surfaces carry `data-forge` on their root and step out of them; the
+   :where() keeps the escape at zero added specificity. */
+.marketing :is(h1, h2, h3):not(:where([data-forge], [data-forge] *)) {
   font-family: var(--font-display);
   letter-spacing: -0.01em;
   line-height: 1.05;
   font-weight: 800;
 }
 
-.marketing h1 { font-size: clamp(2.25rem, 5vw + 1rem, 4.5rem); }
-.marketing h2 { font-size: clamp(1.75rem, 2.5vw + 1rem, 2.75rem); }
-.marketing h3 { font-size: clamp(1.25rem, 1vw + 1rem, 1.75rem); letter-spacing: -0.015em; }
+.marketing h1:not(:where([data-forge], [data-forge] *)) { font-size: clamp(2.25rem, 5vw + 1rem, 4.5rem); }
+.marketing h2:not(:where([data-forge], [data-forge] *)) { font-size: clamp(1.75rem, 2.5vw + 1rem, 2.75rem); }
+.marketing h3:not(:where([data-forge], [data-forge] *)) { font-size: clamp(1.25rem, 1vw + 1rem, 1.75rem); letter-spacing: -0.015em; }
 
-p { line-height: 1.6; }
+p:not(:where([data-forge] *)) { line-height: 1.6; }
 
 /* Thin scrollbar on dark surfaces */
 .dark-surface::-webkit-scrollbar-thumb {
@@ -338,6 +420,71 @@ p { line-height: 1.6; }
   outline: 2px solid var(--color-brand-600);
   outline-offset: 2px;
   border-radius: 4px;
+}
+
+/* Forge-scoped focus + selection (the global ones above are royal blue).
+   data-tone="dark" marks navy/photo surfaces, where the ring turns silver. */
+[data-forge] :focus-visible,
+[data-forge]:focus-visible {
+  outline: 2px solid var(--color-navy);
+  outline-offset: 2px;
+}
+[data-forge] [data-tone="dark"] :focus-visible,
+[data-forge][data-tone="dark"] :focus-visible,
+[data-forge] [data-tone="dark"]:focus-visible,
+[data-tone="dark"][data-forge] :focus-visible {
+  outline-color: var(--color-silver);
+}
+[data-forge] ::selection { background: var(--color-slate); color: #fff; }
+
+/* Forge helpers that Tailwind can't express cleanly. Layered, so a utility
+   on the same element still wins. */
+@layer components {
+  /* 2nd headline line on navy / photo */
+  .forge-steel-text {
+    background: var(--gradient-steel);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  /* 12px Inter 600, .22em, uppercase, 32×2 rule before (and after when centred) */
+  .forge-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 14px;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: .22em;
+    line-height: 1.4;
+    text-transform: uppercase;
+  }
+  .forge-eyebrow::before {
+    content: "";
+    width: 32px;
+    height: 2px;
+    flex: none;
+    background: linear-gradient(90deg, transparent, #788a9c);
+  }
+  .forge-eyebrow--center::after {
+    content: "";
+    width: 32px;
+    height: 2px;
+    flex: none;
+    background: linear-gradient(90deg, #788a9c, transparent);
+  }
+  .forge-eyebrow--military::before { background: linear-gradient(90deg, transparent, #c5b481); }
+  .forge-eyebrow--military.forge-eyebrow--center::after { background: linear-gradient(90deg, #c5b481, transparent); }
+
+  .forge-no-scrollbar { scrollbar-width: none; }
+  .forge-no-scrollbar::-webkit-scrollbar { display: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .forge-motion,
+  .forge-motion * {
+    transition: none !important;
+    animation: none !important;
+  }
 }
 
 /* Quote section — brand blue radial glow behind the dark background */
