@@ -1,6 +1,6 @@
 import Link from 'next/link'
 
-import { Container } from '@/components/ui/Container'
+import { SectionHeading } from '@/components/forge/SectionHeading'
 import { COMPETITORS, type ComparisonRow, type CompetitorSlug } from '@/lib/competitors'
 
 type Props = {
@@ -16,6 +16,8 @@ type Props = {
   heading: string
   /** Sub-heading shown under the heading. */
   subheading?: string
+  /** Band background, so the host page can keep the white/fog rhythm. */
+  tone?: 'white' | 'fog'
 }
 
 // TODO(hearth): once Hearth Financial Services integrates, the
@@ -23,23 +25,28 @@ type Props = {
 // competitor. Add a "Monthly financing" row to the rows array on each
 // page so the comparison table renders an "as low as $X/mo" cell.
 
+// Forge status marks. The glyph carries the meaning (✓ ✗ ~ —), so no
+// red/green is needed; Triple J's "yes" is the only filled navy mark.
 const STATUS_STYLES = {
-  yes: { icon: '✓', cls: 'bg-emerald-50 text-emerald-700 border-emerald-200', label: 'Yes' },
-  no: { icon: '✗', cls: 'bg-red-50 text-red-700 border-red-200', label: 'No' },
-  partial: { icon: '~', cls: 'bg-amber-50 text-amber-700 border-amber-200', label: 'Partial' },
-  unknown: { icon: '—', cls: 'bg-ink-50 text-ink-400 border-ink-100', label: 'Unknown' },
+  yes: { icon: '✓', cls: 'border-forge-slate bg-forge-slate text-white', label: 'Yes' },
+  no: { icon: '✗', cls: 'border-forge-steel bg-white text-forge-slate', label: 'No' },
+  partial: { icon: '~', cls: 'border-forge-steel-light bg-forge-mist text-forge-slate', label: 'Partial' },
+  unknown: { icon: '—', cls: 'border-forge-mist bg-white text-forge-steel', label: 'Unknown' },
 } as const
+
+const SELF_YES = 'border-forge-navy bg-forge-navy text-white'
 
 /**
  * Comparison matrix used on /alternatives/[slug] and the local roundup.
  *
- * Renders Triple J's column with a brand-blue accent border so it visually
- * pops without disparaging the other columns. All cells include short text
- * notes when supplied so the reader gets context, not just an icon.
+ * Forge: navy header row, white/fog zebra rows inside a silver 12px frame,
+ * navy row headers, slate cells. Triple J's column is emphasised in navy 600
+ * so it pops without disparaging the other columns. All cells include short
+ * text notes when supplied so the reader gets context, not just an icon.
  *
- * Mobile: the table scrolls horizontally inside the container — competitor
+ * Mobile: the table scrolls horizontally inside its frame — competitor
  * column widths are min-w-[140px] so multiple columns fit on phones without
- * shrinking text below readability.
+ * shrinking text below readability, and the page itself never scrolls sideways.
  */
 export function ComparisonTable({
   competitorSlugs,
@@ -47,38 +54,41 @@ export function ComparisonTable({
   eyebrow,
   heading,
   subheading,
+  tone = 'white',
 }: Props) {
   const competitors = competitorSlugs
     .map((slug) => COMPETITORS[slug])
     .filter(Boolean)
+  // A two-column head-to-head reads badly stretched across 1360px.
+  const frameMax = competitors.length <= 3 ? 'max-w-[1000px]' : ''
 
   return (
     <section
       aria-labelledby="comparison-table-heading"
-      className="py-14 md:py-20 bg-white"
+      data-forge=""
+      data-tone="light"
+      className={`${tone === 'fog' ? 'bg-forge-fog' : 'bg-white'} py-[clamp(64px,7vw,104px)] text-forge-navy`}
     >
-      <Container>
-        <div className="max-w-3xl mb-8">
-          {eyebrow && (
-            <span className="text-xs font-bold uppercase tracking-[0.18em] text-(--color-brand-700)">
-              {eyebrow}
-            </span>
-          )}
-          <h2 id="comparison-table-heading" className="mt-2">
-            {heading}
-          </h2>
-          {subheading && (
-            <p className="mt-3 text-ink-600 text-base leading-relaxed">{subheading}</p>
-          )}
-        </div>
+      <div className="mx-auto w-full max-w-[1360px] px-[clamp(20px,3vw,40px)]">
+        <SectionHeading
+          eyebrow={eyebrow}
+          line1={heading}
+          lede={subheading}
+          ledeMax="max-w-[760px]"
+          size="compact"
+          headingId="comparison-table-heading"
+          className="max-w-[860px]"
+        />
 
-        <div className="overflow-x-auto -mx-4 sm:mx-0">
+        <div
+          className={`mt-10 overflow-x-auto rounded-[12px] border border-forge-silver bg-white ${frameMax}`}
+        >
           <table className="w-full min-w-[640px] border-collapse">
             <thead>
-              <tr>
+              <tr className="bg-forge-navy text-white">
                 <th
                   scope="col"
-                  className="text-left text-[11px] font-bold uppercase tracking-wider text-ink-500 px-4 py-3 border-b border-ink-200 align-bottom"
+                  className="min-w-[180px] px-5 py-4 text-left align-bottom text-[11px] font-bold uppercase tracking-[.2em] text-forge-steel-light"
                 >
                   Feature
                 </th>
@@ -88,17 +98,11 @@ export function ComparisonTable({
                     <th
                       key={c.slug}
                       scope="col"
-                      className={`text-left px-4 py-3 border-b align-bottom min-w-[140px] ${
-                        isSelf
-                          ? 'border-(--color-brand-400) bg-(--color-brand-50)'
-                          : 'border-ink-200'
+                      className={`min-w-[140px] px-5 py-4 text-left align-bottom ${
+                        isSelf ? 'bg-forge-navy-raised shadow-[inset_0_3px_0_var(--color-silver)]' : ''
                       }`}
                     >
-                      <div
-                        className={`text-sm font-bold leading-tight ${
-                          isSelf ? 'text-(--color-brand-700)' : 'text-ink-900'
-                        }`}
-                      >
+                      <div className="text-[14px] font-semibold leading-tight text-white">
                         {isSelf ? (
                           c.name
                         ) : (
@@ -106,13 +110,17 @@ export function ComparisonTable({
                             href={c.homeUrl}
                             target="_blank"
                             rel="nofollow noopener"
-                            className="hover:underline"
+                            className="border-b border-white/30 transition-colors hover:border-white"
                           >
                             {c.name}
                           </a>
                         )}
                       </div>
-                      <div className="text-[10px] uppercase tracking-wider text-ink-400 mt-1">
+                      <div
+                        className={`mt-1.5 text-[10px] font-semibold uppercase tracking-[.16em] ${
+                          isSelf ? 'text-forge-silver' : 'text-forge-steel-light'
+                        }`}
+                      >
                         {c.type === 'self' ? 'This is us' : c.type === 'national-kit' ? 'National kit' : 'Local builder'}
                       </div>
                     </th>
@@ -121,71 +129,79 @@ export function ComparisonTable({
               </tr>
             </thead>
             <tbody>
-              {rows.map((row, rowIdx) => (
-                <tr
-                  key={row.label}
-                  className={rowIdx % 2 === 0 ? 'bg-white' : 'bg-ink-50/40'}
-                >
-                  <th
-                    scope="row"
-                    className="text-left align-top px-4 py-4 border-b border-ink-100"
+              {rows.map((row, rowIdx) => {
+                const last = rowIdx === rows.length - 1
+                return (
+                  <tr
+                    key={row.label}
+                    className={rowIdx % 2 === 0 ? 'bg-white' : 'bg-forge-fog'}
                   >
-                    <div className="text-[14px] font-semibold text-ink-900 leading-snug">
-                      {row.label}
-                    </div>
-                    {row.description && (
-                      <div className="text-[12px] text-ink-500 mt-1 leading-snug max-w-[260px]">
-                        {row.description}
+                    <th
+                      scope="row"
+                      className={`px-5 py-4 text-left align-top font-normal ${last ? '' : 'border-b border-forge-mist'}`}
+                    >
+                      <div className="text-[14px] font-semibold leading-snug text-forge-navy">
+                        {row.label}
                       </div>
-                    )}
-                  </th>
-                  {competitors.map((c) => {
-                    const cell = row.cells[c.slug]
-                    const status =
-                      typeof cell === 'string' ? cell : cell?.status ?? 'unknown'
-                    const note = typeof cell === 'object' && cell !== null ? cell.note : null
-                    const style = STATUS_STYLES[status]
-                    const isSelf = c.type === 'self'
-                    return (
-                      <td
-                        key={c.slug}
-                        className={`align-top px-4 py-4 border-b border-ink-100 ${
-                          isSelf ? 'bg-(--color-brand-50)/60 border-l border-r border-(--color-brand-100)' : ''
-                        }`}
-                      >
-                        <span
-                          aria-label={style.label}
-                          className={`inline-flex items-center justify-center h-6 w-6 rounded-full border text-[13px] font-bold leading-none ${style.cls}`}
+                      {row.description && (
+                        <div className="mt-1 max-w-[260px] text-[13px] leading-snug text-forge-slate">
+                          {row.description}
+                        </div>
+                      )}
+                    </th>
+                    {competitors.map((c) => {
+                      const cell = row.cells[c.slug]
+                      const status =
+                        typeof cell === 'string' ? cell : cell?.status ?? 'unknown'
+                      const note = typeof cell === 'object' && cell !== null ? cell.note : null
+                      const style = STATUS_STYLES[status]
+                      const isSelf = c.type === 'self'
+                      const mark = isSelf && status === 'yes' ? SELF_YES : style.cls
+                      return (
+                        <td
+                          key={c.slug}
+                          className={`px-5 py-4 align-top ${last ? '' : 'border-b border-forge-mist'} ${
+                            isSelf
+                              ? 'border-x border-x-forge-silver font-semibold text-forge-navy'
+                              : 'text-forge-slate'
+                          }`}
                         >
-                          {style.icon}
-                        </span>
-                        {note && (
-                          <div className="mt-1.5 text-[12px] text-ink-700 leading-snug max-w-[180px]">
-                            {note}
+                          <div className="flex items-start gap-2.5">
+                            <span
+                              aria-label={style.label}
+                              className={`inline-flex h-6 w-6 flex-none items-center justify-center rounded-full border text-[13px] font-bold leading-none ${mark}`}
+                            >
+                              {style.icon}
+                            </span>
+                            {note && (
+                              <div className="max-w-[200px] pt-[3px] text-[13px] leading-snug">
+                                {note}
+                              </div>
+                            )}
                           </div>
-                        )}
-                      </td>
-                    )
-                  })}
-                </tr>
-              ))}
+                        </td>
+                      )
+                    })}
+                  </tr>
+                )
+              })}
             </tbody>
           </table>
         </div>
 
-        <p className="mt-6 text-[11px] text-ink-400 leading-relaxed max-w-3xl">
+        <p className="mt-6 max-w-[760px] text-[12px] leading-[1.6] text-forge-slate">
           Comparison based on each company&rsquo;s public website information as of the date below.
           Where a competitor&rsquo;s public materials don&rsquo;t document a feature, the cell shows
           &ldquo;—&rdquo; (unknown). We update this comparison quarterly or when competitors ship
           significant changes. Sources cited above link to each company&rsquo;s public site.{' '}
           <Link
             href="/contact"
-            className="text-(--color-brand-700) underline underline-offset-2"
+            className="border-b border-forge-silver font-semibold text-forge-navy transition-colors hover:border-forge-navy"
           >
             Spot something inaccurate? Let us know.
           </Link>
         </p>
-      </Container>
+      </div>
     </section>
   )
 }

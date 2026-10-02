@@ -2,9 +2,15 @@ import { BreadcrumbJsonLd } from '@/components/seo/BreadcrumbJsonLd'
 import type { Metadata } from 'next'
 import Link from 'next/link'
 
-import { Container } from '@/components/ui/Container'
-import { ButtonLink } from '@/components/ui/Button'
-import { QuoteForm } from '@/components/sections/QuoteForm'
+import { Breadcrumb } from '@/components/forge/Breadcrumb'
+import { Chip } from '@/components/forge/Chip'
+import { ForgeButtonLink } from '@/components/forge/ForgeButton'
+import { ForgeReveal } from '@/components/forge/ForgeReveal'
+import { PageHero } from '@/components/forge/PageHero'
+import { QuoteSection } from '@/components/forge/QuoteSection'
+import { SectionHeading } from '@/components/forge/SectionHeading'
+import { buttonClass } from '@/components/forge/styles'
+import { PinIcon } from '@/components/ui/icons'
 import { TrackedPhoneLink, TrackedPhoneNumber } from '@/components/site/TrackedPhone'
 import { LOCATIONS, LOCATION_SLUGS } from '@/lib/locations'
 
@@ -29,7 +35,8 @@ export const metadata: Metadata = {
  * individual /locations/[slug] pages.
  *
  * Page order: hero → stats strip → cities grid → counties grid →
- * how-far-we-travel → QuoteForm.
+ * how-far-we-travel → QuoteSection. Forge: navy hero + fact strip, then
+ * white / fog / white bands into the fog quote band.
  */
 export default function LocationsPage() {
   // Split LOCATIONS into city slugs (no '-county' suffix) and county slugs.
@@ -53,7 +60,7 @@ export default function LocationsPage() {
   }
 
   return (
-    <>
+    <div data-forge="">
       <BreadcrumbJsonLd items={[{ name: 'Service Areas', path: '/locations' }]} />
       <script
         type="application/ld+json"
@@ -63,62 +70,68 @@ export default function LocationsPage() {
       />
 
       {/* ── Hero ── */}
-      <section className="relative bg-ink-900 text-white py-20 md:py-28 overflow-hidden">
-        <div className="hero-glow absolute inset-0 pointer-events-none" aria-hidden="true" />
-        <Container className="relative">
-          <div className="max-w-3xl">
-            <span className="text-xs font-semibold uppercase tracking-[0.15em] text-brand-400">
-              Where We Build
-            </span>
-            <h1 className="mt-3 text-white">Metal Building Installation Across Central Texas</h1>
-            <p className="mt-5 text-lg text-white/75 leading-relaxed max-w-2xl">
-              Triple J Metal is based in Temple, TX. We build welded or bolted carports, garages,
-              barns, and RV covers across the entire Killeen–Temple–Belton corridor and surrounding
-              counties. If you&rsquo;re within 90 minutes of Temple, we come to you.
-            </p>
-            <div className="mt-8 flex flex-wrap gap-4">
-              <ButtonLink href="#quote" variant="primary" size="lg">
-                Get a Free Quote
-              </ButtonLink>
-              <TrackedPhoneLink
-                surface="locations_index_hero"
-                className="inline-flex items-center gap-2 h-12 px-6 rounded-lg border-2 border-white/30 text-white font-semibold hover:border-white/60 transition-colors text-sm"
-              >
-                Call&nbsp;
-              </TrackedPhoneLink>
-            </div>
-          </div>
-        </Container>
-      </section>
+      <PageHero
+        variant="plain"
+        breadcrumb={<Breadcrumb trail={[]} current="Service areas" jsonLd={false} />}
+        contentMax="w-full max-w-[860px]"
+        eyebrow="Where We Build"
+        h1a="Metal building installation across Central Texas"
+        lede={
+          <>
+            Triple J Metal is based in Temple, TX. We build welded or bolted carports, garages,
+            barns, and RV covers across the entire Killeen–Temple–Belton corridor and surrounding
+            counties. If you&rsquo;re within 90 minutes of Temple, we come to you.
+          </>
+        }
+        ledeMax="max-w-[660px]"
+        actions={
+          <>
+            <ForgeButtonLink href="#quote" variant="white" size="lg" arrow>
+              Get a Free Quote
+            </ForgeButtonLink>
+            <TrackedPhoneLink
+              surface="locations_index_hero"
+              className={buttonClass('outlineDark', 'lg')}
+            >
+              Call&nbsp;
+            </TrackedPhoneLink>
+          </>
+        }
+      />
 
-      {/* ── Stats strip ── */}
-      <section className="bg-(--color-brand-600) text-white py-5">
-        <Container>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
-            {[
-              { stat: String(citySlugs.length), label: 'Cities Served' },
-              { stat: String(countiesServed.length), label: 'Counties Covered' },
-              { stat: 'Same-Week', label: 'On-Site After Approval' },
-              { stat: 'Zero', label: 'Subcontractors — Ever' },
-            ].map(({ stat, label }) => (
-              <div key={label}>
-                <div className="text-xl font-extrabold">{stat}</div>
-                <div className="text-xs text-white/75 mt-0.5 uppercase tracking-wide">{label}</div>
-              </div>
-            ))}
-          </div>
-        </Container>
-      </section>
+      {/* ── Stats strip ── (the hero fact-strip look, 2×2 on phones) */}
+      <div data-forge="" data-tone="dark" className="border-t border-forge-silver/20 bg-forge-navy text-white">
+        <dl className="mx-auto grid w-full max-w-[1360px] grid-cols-2 px-[clamp(20px,3vw,40px)] md:grid-cols-4">
+          {[
+            { stat: String(citySlugs.length), label: 'Cities Served' },
+            { stat: String(countiesServed.length), label: 'Counties Covered' },
+            { stat: 'Same-Week', label: 'On-Site After Approval' },
+            { stat: 'Zero', label: 'Subcontractors — Ever' },
+          ].map(({ stat, label }, i) => (
+            <div
+              key={label}
+              className={`border-l border-forge-silver/[.18] px-[clamp(12px,1.4vw,18px)] pt-[18px] pb-5 ${
+                i > 1 ? 'max-md:border-t' : ''
+              }`}
+            >
+              <dt className="text-[11px] font-semibold uppercase tracking-[.2em] text-forge-steel-light">{label}</dt>
+              <dd className="m-0 mt-1.5 font-forge-display text-[19px] font-bold leading-[1.2] text-white">{stat}</dd>
+            </div>
+          ))}
+        </dl>
+      </div>
 
       {/* ── Cities grid ── */}
-      <section className="py-16 md:py-24 bg-white">
-        <Container>
-          <h2 className="mb-4">Cities We Serve</h2>
-          <p className="text-ink-500 text-lg mb-10 max-w-2xl">
-            Click any city to see a dedicated page with local service details, pricing context,
-            and area-specific information for your project.
-          </p>
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+      <section data-forge="" data-tone="light" className="bg-white py-[clamp(64px,7vw,104px)] text-forge-navy">
+        <div className="mx-auto w-full max-w-[1360px] px-[clamp(20px,3vw,40px)]">
+          <ForgeReveal className="max-w-[760px]">
+            <SectionHeading
+              line1="Cities we serve"
+              lede="Click any city to see a dedicated page with local service details, pricing context, and area-specific information for your project."
+              ledeMax="max-w-[640px]"
+            />
+          </ForgeReveal>
+          <div className="mt-10 grid grid-cols-2 gap-3 md:grid-cols-3 md:gap-4 lg:grid-cols-4">
             {citySlugs.map((slug) => {
               const loc = LOCATIONS[slug]
               const isHomeBase = slug === 'temple'
@@ -126,46 +139,58 @@ export default function LocationsPage() {
                 <Link
                   key={slug}
                   href={`/locations/${slug}`}
-                  className={`group flex flex-col rounded-xl border p-5 hover:shadow-lg hover:-translate-y-0.5 transition-all ${
+                  data-tone={isHomeBase ? 'dark' : undefined}
+                  className={`group flex flex-col rounded-[12px] border p-[clamp(16px,1.6vw,22px)] transition-colors duration-200 ${
                     isHomeBase
-                      ? 'border-(--color-brand-300) bg-brand-50 hover:border-(--color-brand-500)'
-                      : 'border-ink-100 bg-ink-50 hover:border-(--color-brand-300) hover:bg-brand-50'
+                      ? 'border-forge-navy bg-forge-navy text-white hover:bg-forge-navy-raised'
+                      : 'border-forge-silver bg-forge-fog hover:border-forge-navy hover:bg-white'
                   }`}
                 >
-                  <div className="flex items-start justify-between mb-3">
-                    <svg
-                      className="w-4 h-4 text-(--color-brand-600) shrink-0 mt-0.5"
-                      fill="currentColor"
-                      viewBox="0 0 20 20"
+                  <div className="mb-3 flex items-start justify-between gap-2">
+                    <PinIcon
+                      width={16}
+                      height={16}
                       aria-hidden="true"
-                    >
-                      <path
-                        fillRule="evenodd"
-                        d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z"
-                        clipRule="evenodd"
-                      />
-                    </svg>
+                      className={`mt-0.5 flex-none ${isHomeBase ? 'text-forge-silver' : 'text-forge-slate'}`}
+                    />
                     {isHomeBase && (
-                      <span className="text-[10px] font-bold uppercase tracking-wider text-(--color-brand-600) bg-(--color-brand-100) px-2 py-0.5 rounded-full">
+                      <span className="rounded-full border border-forge-silver/40 px-2 py-0.5 text-[10px] font-bold uppercase tracking-[.14em] text-forge-silver">
                         Home Base
                       </span>
                     )}
                   </div>
-                  <div className="font-bold text-ink-900 text-base leading-tight">
+                  <div
+                    className={`font-forge-display text-[clamp(16px,.4vw_+_13px,19px)] font-bold leading-[1.2] ${
+                      isHomeBase ? 'text-white' : 'text-forge-navy'
+                    }`}
+                  >
                     {loc.name}, TX
                   </div>
-                  <div className="text-xs text-ink-400 mt-0.5">{loc.county}</div>
-                  <div className="text-xs text-ink-500 mt-2 font-medium line-clamp-2">
+                  <div className={`mt-1 text-[12px] ${isHomeBase ? 'text-forge-steel-light' : 'text-forge-slate'}`}>
+                    {loc.county}
+                  </div>
+                  <div
+                    className={`mt-2 line-clamp-2 text-[13px] leading-[1.45] ${
+                      isHomeBase ? 'text-white/80' : 'text-forge-slate'
+                    }`}
+                  >
                     {loc.distanceFromTemple ?? loc.heroHeadline}
                   </div>
-                  <div className="mt-4 text-xs font-semibold text-(--color-brand-600) group-hover:underline">
-                    View details →
+                  <div
+                    className={`mt-auto pt-4 text-[13px] font-semibold ${
+                      isHomeBase ? 'text-forge-silver group-hover:text-white' : 'text-forge-navy'
+                    }`}
+                  >
+                    View details{' '}
+                    <span aria-hidden="true" className="inline-block transition-transform duration-200 group-hover:translate-x-1">
+                      →
+                    </span>
                   </div>
                 </Link>
               )
             })}
           </div>
-        </Container>
+        </div>
       </section>
 
       {/* ── Counties served ──
@@ -176,53 +201,55 @@ export default function LocationsPage() {
           member city as of 2026-09-06 — see next.config.ts. The coverage claim
           is still worth stating, so it is derived from the cities we do have
           rather than from eight thin pages. */}
-      <section className="py-16 md:py-24 bg-ink-50 border-y border-ink-100">
-        <Container>
-          <h2 className="mb-4">Counties We Serve</h2>
-          <p className="text-ink-500 text-lg mb-8 max-w-2xl">
-            Our Temple-based crew covers these counties in full — including
-            towns and rural ag properties not listed individually above.
-          </p>
-          <ul className="flex flex-wrap gap-3">
+      <section data-forge="" data-tone="light" className="bg-forge-fog py-[clamp(64px,7vw,104px)] text-forge-navy">
+        <div className="mx-auto w-full max-w-[1360px] px-[clamp(20px,3vw,40px)]">
+          <ForgeReveal className="max-w-[760px]">
+            <SectionHeading
+              line1="Counties we serve"
+              lede="Our Temple-based crew covers these counties in full — including towns and rural ag properties not listed individually above."
+              ledeMax="max-w-[640px]"
+            />
+          </ForgeReveal>
+          <ul className="mt-8 flex list-none flex-wrap gap-2 p-0">
             {countiesServed.map((county) => (
-              <li
-                key={county}
-                className="rounded-full border border-ink-200 bg-white px-4 py-2 text-sm font-semibold text-ink-700"
-              >
-                {county}
+              <li key={county}>
+                <Chip>{county}</Chip>
               </li>
             ))}
           </ul>
-        </Container>
+        </div>
       </section>
 
       {/* ── How far we travel ── */}
-      <section className="py-16 md:py-20 bg-white">
-        <Container size="narrow">
-          <h2 className="mb-6">How Far Do We Travel?</h2>
-          <p className="text-ink-600 text-lg leading-relaxed mb-6">
-            Our Temple-based crew regularly builds within a 90-minute radius. That covers most of
-            Bell, Coryell, McLennan, Lampasas, and Williamson counties. For larger commercial jobs
-            or unique projects, we&rsquo;ll travel further — just call and ask.
-          </p>
-          <p className="text-ink-600 text-lg leading-relaxed">
-            Not sure if you&rsquo;re in our range? Call <TrackedPhoneNumber /> — we&rsquo;ll tell you
-            immediately. We don&rsquo;t charge a travel fee for most residential projects within the
-            service area.
-          </p>
-          <div className="mt-8">
-            <TrackedPhoneLink
-              surface="locations_index_inline"
-              className="inline-flex items-center gap-2 h-12 px-6 rounded-lg bg-ink-900 text-white font-semibold hover:bg-ink-800 transition-colors text-sm"
-            >
-              Call to confirm your area —&nbsp;
-            </TrackedPhoneLink>
-          </div>
-        </Container>
+      <section data-forge="" data-tone="light" className="bg-white py-[clamp(64px,7vw,104px)] text-forge-navy">
+        <div className="mx-auto w-full max-w-[1360px] px-[clamp(20px,3vw,40px)]">
+          <ForgeReveal className="max-w-[760px]">
+            <SectionHeading line1="How far do we travel?" size="compact" />
+            <p className="mt-5 text-[clamp(16px,.3vw_+_14px,18px)] leading-[1.65] text-forge-slate [text-wrap:pretty]">
+              Our Temple-based crew regularly builds within a 90-minute radius. That covers most of
+              Bell, Coryell, McLennan, Lampasas, and Williamson counties. For larger commercial jobs
+              or unique projects, we&rsquo;ll travel further — just call and ask.
+            </p>
+            <p className="mt-4 text-[clamp(16px,.3vw_+_14px,18px)] leading-[1.65] text-forge-slate [text-wrap:pretty]">
+              Not sure if you&rsquo;re in our range? Call{' '}
+              <TrackedPhoneNumber className="whitespace-nowrap font-semibold text-forge-navy tabular-nums" />{' '}— we&rsquo;ll tell you
+              immediately. We don&rsquo;t charge a travel fee for most residential projects within the
+              service area.
+            </p>
+            <div className="mt-8">
+              <TrackedPhoneLink
+                surface="locations_index_inline"
+                className={buttonClass('navy', 'lg', false, 'max-w-full flex-wrap justify-start')}
+              >
+                Call to confirm your area —&nbsp;
+              </TrackedPhoneLink>
+            </div>
+          </ForgeReveal>
+        </div>
       </section>
 
       {/* ── Quote form ── */}
-      <QuoteForm />
-    </>
+      <QuoteSection />
+    </div>
   )
 }

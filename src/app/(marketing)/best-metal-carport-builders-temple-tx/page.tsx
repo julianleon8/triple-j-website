@@ -1,8 +1,13 @@
 import type { Metadata } from 'next'
 
-import { ButtonLink } from '@/components/ui/Button'
-import { Container } from '@/components/ui/Container'
-import { QuoteForm } from '@/components/sections/QuoteForm'
+import { Breadcrumb } from '@/components/forge/Breadcrumb'
+import { ForgeButtonLink } from '@/components/forge/ForgeButton'
+import { ForgeReveal } from '@/components/forge/ForgeReveal'
+import { PageHero } from '@/components/forge/PageHero'
+import { QuoteSection } from '@/components/forge/QuoteSection'
+import { SectionHeading } from '@/components/forge/SectionHeading'
+import { numeral } from '@/components/forge/cards'
+import { buttonClass } from '@/components/forge/styles'
 import { ComparisonTable } from '@/components/sections/ComparisonTable'
 import { AuthorByline } from '@/components/sections/AuthorByline'
 import { RelatedComparisons } from '@/components/sections/RelatedComparisons'
@@ -82,7 +87,7 @@ export default function BestBuildersRoundupPage() {
   }
 
   return (
-    <>
+    <div data-forge="">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, '\\u003c') }}
@@ -94,106 +99,130 @@ export default function BestBuildersRoundupPage() {
       />
 
       {/* ── Hero ─────────────────────────────────────────────────────── */}
-      <section className="relative bg-ink-900 text-white py-20 md:py-28 overflow-hidden">
-        <div className="hero-glow absolute inset-0 pointer-events-none" aria-hidden="true" />
-        <Container className="relative">
-          <div className="max-w-3xl">
-            <span className="text-xs font-semibold uppercase tracking-[0.15em] text-brand-400">
-              Local Roundup · 2026
-            </span>
-            <h1 className="mt-3 text-white">
-              Best Metal Carport Builders in Temple, TX (2026 Roundup)
-            </h1>
-            <p className="mt-5 text-lg text-white/75 leading-relaxed">
-              An honest comparison of Bell County metal building contractors. We&rsquo;re Triple J
-              Metal — yes, we&rsquo;re on this list. We also list the five other local builders
-              we know about so you can compare. No paid placements, no sponsored slots.
-            </p>
-            <div className="mt-8 flex flex-wrap gap-4">
-              <ButtonLink href="#quote" variant="primary" size="lg">
-                Get a Free Quote from Triple J
-              </ButtonLink>
-              <TrackedPhoneLink
-                surface="best_builders_roundup_hero"
-                className="inline-flex items-center gap-2 h-12 px-6 rounded-lg border-2 border-white/30 text-white font-semibold hover:border-white/60 transition-colors text-sm"
-              >
-                Call&nbsp;
-              </TrackedPhoneLink>
-            </div>
-            <AuthorByline asOf={COMPETITORS['triple-j-metal'].asOf} />
-          </div>
-        </Container>
-      </section>
+      <PageHero
+        variant="plain"
+        breadcrumb={<Breadcrumb trail={[]} current="Best builders" jsonLd={false} />}
+        contentMax="w-full max-w-[920px]"
+        eyebrow="Local Roundup · 2026"
+        h1a="Best metal carport builders in Temple, TX (2026 roundup)"
+        lede={
+          <>
+            An honest comparison of Bell County metal building contractors. We&rsquo;re Triple J
+            Metal — yes, we&rsquo;re on this list. We also list the five other local builders
+            we know about so you can compare. No paid placements, no sponsored slots.
+          </>
+        }
+        ledeMax="max-w-[680px]"
+        actions={
+          <>
+            <ForgeButtonLink href="#quote" variant="white" size="lg" arrow>
+              Get a Free Quote from Triple J
+            </ForgeButtonLink>
+            <TrackedPhoneLink
+              surface="best_builders_roundup_hero"
+              className={buttonClass('outlineDark', 'lg')}
+            >
+              Call&nbsp;
+            </TrackedPhoneLink>
+          </>
+        }
+        after={<AuthorByline asOf={COMPETITORS['triple-j-metal'].asOf} />}
+      />
 
       {/* ── Disclosure ──────────────────────────────────────────────── */}
-      <section className="py-8 md:py-10 bg-(--color-brand-600) text-white">
-        <Container size="narrow">
-          <p className="text-sm leading-relaxed">
-            <strong className="text-white">Disclosure:</strong> This is Triple J Metal&rsquo;s website.
+      <section
+        data-forge=""
+        data-tone="light"
+        className="border-b border-forge-mist bg-forge-fog py-[clamp(36px,4vw,56px)] text-forge-navy"
+      >
+        <div className="mx-auto w-full max-w-[1360px] px-[clamp(20px,3vw,40px)]">
+          <p className="m-0 max-w-[820px] border-l-2 border-forge-navy pl-[clamp(18px,2vw,28px)] text-[15px] leading-[1.65] text-forge-slate [text-wrap:pretty]">
+            <strong className="font-semibold text-forge-navy">Disclosure:</strong>{' '}This is Triple J Metal&rsquo;s website.
             Triple J appears first because we publish this list; the order is not an independent ranking. The other listed builders are
             real Bell County companies sourced from Yelp searches as of April 2026. We don&rsquo;t earn
             referrals if you choose a competitor — but we want you to be able to compare us fairly.
           </p>
-        </Container>
+        </div>
       </section>
 
       {/* ── Why this list exists ──────────────────────────────────── */}
-      <section className="py-14 md:py-20 bg-white">
-        <Container size="narrow">
-          <h2 className="mb-5">Why a Bell County builder usually beats a national kit</h2>
-          <p className="text-ink-700 text-base leading-relaxed mb-4">
-            Metal carport buyers can compare local builders with national providers. Installation may be included in either model. Ask who will do the work, whether concrete is included, and what the written scope covers.
-          </p>
-          <p className="text-ink-700 text-base leading-relaxed">
-            For most homeowners, the local-builder path produces a better outcome: someone you can
-            actually call back, faster scheduling, and (in most cases) a real concrete pad poured by
-            the same company. That&rsquo;s why this roundup focuses on the local Central Texas
-            builders we know about — including us.
-          </p>
-        </Container>
+      <section data-forge="" data-tone="light" className="bg-white py-[clamp(64px,7vw,104px)] text-forge-navy">
+        <div className="mx-auto w-full max-w-[1360px] px-[clamp(20px,3vw,40px)]">
+          <ForgeReveal className="max-w-[760px]">
+            <SectionHeading line1="Why a Bell County builder usually beats a national kit" size="compact" balance />
+            <p className="mt-5 text-[clamp(16px,.3vw_+_14px,18px)] leading-[1.65] text-forge-slate [text-wrap:pretty]">
+              Metal carport buyers can compare local builders with national providers. Installation may be included in either model. Ask who will do the work, whether concrete is included, and what the written scope covers.
+            </p>
+            <p className="mt-4 text-[clamp(16px,.3vw_+_14px,18px)] leading-[1.65] text-forge-slate [text-wrap:pretty]">
+              For most homeowners, the local-builder path produces a better outcome: someone you can
+              actually call back, faster scheduling, and (in most cases) a real concrete pad poured by
+              the same company. That&rsquo;s why this roundup focuses on the local Central Texas
+              builders we know about — including us.
+            </p>
+          </ForgeReveal>
+        </div>
       </section>
 
       {/* ── Builder profiles ─────────────────────────────────────────── */}
-      <section className="py-14 md:py-20 bg-ink-50">
-        <Container>
-          <h2 className="mb-8">Local builders to compare</h2>
-          <ol className="space-y-6">
+      <section data-forge="" data-tone="light" className="bg-forge-fog py-[clamp(64px,7vw,104px)] text-forge-navy">
+        <div className="mx-auto w-full max-w-[1360px] px-[clamp(20px,3vw,40px)]">
+          <SectionHeading line1="Local builders to compare" size="compact" />
+          <ol className="mt-9 flex list-none flex-col gap-4 p-0">
             {builders.map((c, i) => {
               const isSelf = c.type === 'self'
               return (
                 <li
                   key={c.slug}
-                  className={`relative rounded-2xl p-6 md:p-7 border ${
+                  data-tone={isSelf ? 'dark' : undefined}
+                  className={`rounded-[12px] border p-[clamp(20px,2.2vw,28px)] ${
                     isSelf
-                      ? 'bg-(--color-brand-50) border-(--color-brand-300) border-2'
-                      : 'bg-white border-ink-100'
+                      ? 'border-forge-navy bg-forge-navy text-white'
+                      : 'border-forge-silver bg-white'
                   }`}
                 >
                   <div className="flex items-start gap-4">
                     <div
-                      className={`flex h-10 w-10 items-center justify-center rounded-full text-white font-extrabold text-sm shrink-0 ${
-                        isSelf ? 'bg-(--color-brand-600)' : 'bg-ink-400'
+                      className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full border font-forge-display text-[15px] font-bold ${
+                        isSelf
+                          ? 'border-white bg-white text-forge-navy'
+                          : 'border-forge-silver bg-forge-fog text-forge-navy'
                       }`}
                     >
                       {i + 1}
                     </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-baseline gap-3 flex-wrap">
-                        <h3 className="text-lg font-bold text-ink-900">{c.name}</h3>
+                    <div className="min-w-0 flex-1">
+                      <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1.5">
+                        <h3
+                          className={`m-0 font-forge-display text-[clamp(19px,.4vw_+_16px,22px)] font-bold leading-[1.2] ${
+                            isSelf ? 'text-white' : 'text-forge-navy'
+                          }`}
+                        >
+                          {c.name}
+                        </h3>
                         {isSelf && (
-                          <span className="text-[10px] font-bold uppercase tracking-wider text-(--color-brand-700) bg-(--color-brand-100) px-2 py-0.5 rounded-full">
+                          <span className="rounded-full border border-forge-silver/40 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-[.16em] text-forge-silver">
                             That&rsquo;s us
                           </span>
                         )}
                       </div>
-                      <p className="mt-2 text-sm text-ink-700 leading-relaxed">{c.oneLiner}</p>
-                      <p className="mt-3 text-xs text-ink-500">
+                      <p
+                        className={`mt-2 text-[15px] leading-[1.6] [text-wrap:pretty] ${
+                          isSelf ? 'text-white/86' : 'text-forge-slate'
+                        }`}
+                      >
+                        {c.oneLiner}
+                      </p>
+                      <p className={`mt-3 text-[13px] ${isSelf ? 'text-forge-steel-light' : 'text-forge-slate'}`}>
                         Coverage: {c.coverage} ·{' '}
                         <a
                           href={c.homeUrl}
                           target="_blank"
                           rel="nofollow noopener"
-                          className="text-(--color-brand-700) hover:underline"
+                          className={`border-b font-semibold transition-colors ${
+                            isSelf
+                              ? 'border-white/40 text-white hover:border-white'
+                              : 'border-forge-silver text-forge-navy hover:border-forge-navy'
+                          }`}
                         >
                           {isSelf ? 'Our site' : 'Public listing'}
                         </a>
@@ -204,7 +233,7 @@ export default function BestBuildersRoundupPage() {
               )
             })}
           </ol>
-        </Container>
+        </div>
       </section>
 
       {/* ── Comparison table ─────────────────────────────────────────── */}
@@ -217,99 +246,88 @@ export default function BestBuildersRoundupPage() {
       />
 
       {/* ── How to choose ────────────────────────────────────────────── */}
-      <section className="py-14 md:py-20 bg-white">
-        <Container size="narrow">
-          <h2 className="mb-5">How to choose between local builders</h2>
-          <p className="text-ink-700 text-base leading-relaxed mb-6">
-            Most local Bell County builders deliver real value compared to national kits. The
-            differences come down to four questions:
-          </p>
-          <ul className="space-y-4 text-ink-700 leading-relaxed">
-            <li className="flex items-start gap-3">
-              <span className="text-(--color-brand-600) font-bold shrink-0 mt-0.5">1.</span>
-              <span>
-                <strong>Welded or bolted?</strong> Triple J offers both. Compare the complete design, framing, anchoring, and specifications for your site.
-              </span>
-            </li>
-            <li className="flex items-start gap-3">
-              <span className="text-(--color-brand-600) font-bold shrink-0 mt-0.5">2.</span>
-              <span>
-                <strong>Concrete in the same contract?</strong> Some builders pour the slab,
-                others expect you to hire a separate concrete contractor. The single-contract
-                version saves coordination headaches.
-              </span>
-            </li>
-            <li className="flex items-start gap-3">
-              <span className="text-(--color-brand-600) font-bold shrink-0 mt-0.5">3.</span>
-              <span>
-                <strong>How fast can they start?</strong> Same-week scheduling is rare. If the
-                builder needs 4–6 weeks, that may be fine for a planned build but bad for a
-                hailstorm-driven RV cover.
-              </span>
-            </li>
-            <li className="flex items-start gap-3">
-              <span className="text-(--color-brand-600) font-bold shrink-0 mt-0.5">4.</span>
-              <span>
-                <strong>Will the same crew do site prep, install, and cleanup?</strong> Some
-                local builders sub out portions of the work. The cleanest version is one crew,
-                start to finish.
-              </span>
-            </li>
-          </ul>
-        </Container>
+      <section data-forge="" data-tone="light" className="bg-forge-fog py-[clamp(64px,7vw,104px)] text-forge-navy">
+        <div className="mx-auto w-full max-w-[1360px] px-[clamp(20px,3vw,40px)]">
+          <ForgeReveal className="max-w-[760px]">
+            <SectionHeading line1="How to choose between local builders" size="compact" />
+            <p className="mt-5 text-[clamp(16px,.3vw_+_14px,18px)] leading-[1.65] text-forge-slate [text-wrap:pretty]">
+              Most local Bell County builders deliver real value compared to national kits. The
+              differences come down to four questions:
+            </p>
+            <ul className="mt-7 list-none border-t border-forge-silver p-0 text-[15px] leading-[1.6] text-forge-slate">
+              {[
+                <>
+                  <strong className="font-semibold text-forge-navy">Welded or bolted?</strong> Triple J offers both. Compare the complete design, framing, anchoring, and specifications for your site.
+                </>,
+                <>
+                  <strong className="font-semibold text-forge-navy">Concrete in the same contract?</strong> Some builders pour the slab,
+                  others expect you to hire a separate concrete contractor. The single-contract
+                  version saves coordination headaches.
+                </>,
+                <>
+                  <strong className="font-semibold text-forge-navy">How fast can they start?</strong> Same-week scheduling is rare. If the
+                  builder needs 4–6 weeks, that may be fine for a planned build but bad for a
+                  hailstorm-driven RV cover.
+                </>,
+                <>
+                  <strong className="font-semibold text-forge-navy">Will the same crew do site prep, install, and cleanup?</strong> Some
+                  local builders sub out portions of the work. The cleanest version is one crew,
+                  start to finish.
+                </>,
+              ].map((item, i) => (
+                <li key={i} className="grid grid-cols-[44px_minmax(0,1fr)] gap-3 border-b border-forge-silver py-5">
+                  <span aria-hidden="true" className="pt-0.5 font-forge-display text-[15px] font-bold text-forge-steel">
+                    {numeral(i)}
+                  </span>
+                  <span className="[text-wrap:pretty]">{item}</span>
+                </li>
+              ))}
+            </ul>
+          </ForgeReveal>
+        </div>
       </section>
 
-      {/* ── Why pick Triple J Metal ─────────────────────────────────── */}
-      <section className="py-14 md:py-20 bg-ink-50">
-        <Container size="narrow">
-          <div className="rounded-2xl border-2 border-(--color-brand-400) bg-(--color-brand-50) p-7 md:p-8">
-            <p className="text-xs font-bold uppercase tracking-[0.18em] text-(--color-brand-700) mb-3">
-              Why pick us
-            </p>
-            <h2 className="mb-4 text-(--color-brand-700)">
-              When Triple J Metal is the right fit
-            </h2>
-            <ul className="space-y-3 text-ink-800 leading-relaxed">
+      {/* ── Why pick Triple J Metal (navy band) ─────────────────────── */}
+      <section data-forge="" data-tone="dark" className="bg-forge-navy py-[clamp(64px,7vw,104px)] text-white">
+        <div className="mx-auto w-full max-w-[1360px] px-[clamp(20px,3vw,40px)]">
+          <ForgeReveal className="max-w-[760px]">
+            <SectionHeading tone="dark" eyebrow="Why pick us" line1="When Triple J Metal is the right fit" size="compact" />
+            <ul className="mt-8 flex list-none flex-col gap-3.5 p-0 text-[16px] leading-[1.6] text-white/86">
               <li className="flex items-start gap-3">
-                <span className="text-(--color-brand-600) font-bold shrink-0 mt-0.5">✓</span>
+                <span aria-hidden="true" className="mt-px shrink-0 font-bold text-forge-steel-light">✓</span>
                 You want to discuss welded and bolted options with the crew that will install the structure.
               </li>
               <li className="flex items-start gap-3">
-                <span className="text-(--color-brand-600) font-bold shrink-0 mt-0.5">✓</span>
+                <span aria-hidden="true" className="mt-px shrink-0 font-bold text-forge-steel-light">✓</span>
                 You want the concrete pad, engineered for Bell County clay, poured in the same
                 contract as the structure install.
               </li>
               <li className="flex items-start gap-3">
-                <span className="text-(--color-brand-600) font-bold shrink-0 mt-0.5">✓</span>
+                <span aria-hidden="true" className="mt-px shrink-0 font-bold text-forge-steel-light">✓</span>
                 You need it built same-week. We schedule within days of contract signing.
               </li>
               <li className="flex items-start gap-3">
-                <span className="text-(--color-brand-600) font-bold shrink-0 mt-0.5">✓</span>
+                <span aria-hidden="true" className="mt-px shrink-0 font-bold text-forge-steel-light">✓</span>
                 You speak Spanish or want to. Hablamos español con Juan y Freddy.
               </li>
               <li className="flex items-start gap-3">
-                <span className="text-(--color-brand-600) font-bold shrink-0 mt-0.5">✓</span>
+                <span aria-hidden="true" className="mt-px shrink-0 font-bold text-forge-steel-light">✓</span>
                 You want a local Texas phone number ({SITE.phone}) that goes to the actual
                 family running the company.
               </li>
             </ul>
-            <ButtonLink
-              href="#quote"
-              variant="primary"
-              size="lg"
-              className="mt-7"
-            >
+            <ForgeButtonLink href="#quote" variant="white" size="lg" arrow className="mt-9 max-w-full whitespace-normal! text-center">
               Get a Free Quote from {SITE.name}
-            </ButtonLink>
-          </div>
-        </Container>
+            </ForgeButtonLink>
+          </ForgeReveal>
+        </div>
       </section>
 
       {/* ── Related comparisons cluster ──────────────────────────────── */}
       <RelatedComparisons currentSlug="roundup" />
 
       {/* ── Quote form ───────────────────────────────────────────────── */}
-      <QuoteForm />
-    </>
+      <QuoteSection />
+    </div>
   )
 }

@@ -1,10 +1,14 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 
-import { ButtonLink } from '@/components/ui/Button'
-import { Container } from '@/components/ui/Container'
-import { ArrowRightIcon } from '@/components/ui/icons'
-import { QuoteForm } from '@/components/sections/QuoteForm'
+import { Breadcrumb } from '@/components/forge/Breadcrumb'
+import { ForgeButtonLink } from '@/components/forge/ForgeButton'
+import { ForgeReveal } from '@/components/forge/ForgeReveal'
+import { PageHero } from '@/components/forge/PageHero'
+import { QuoteSection } from '@/components/forge/QuoteSection'
+import { SectionHeading } from '@/components/forge/SectionHeading'
+import { numeral } from '@/components/forge/cards'
+import { buttonClass } from '@/components/forge/styles'
 import { ComparisonTable } from '@/components/sections/ComparisonTable'
 import { AuthorByline } from '@/components/sections/AuthorByline'
 import { RelatedComparisons } from '@/components/sections/RelatedComparisons'
@@ -109,7 +113,7 @@ export default async function AlternativesPage(
   }
 
   return (
-    <>
+    <div data-forge="">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, '\\u003c') }}
@@ -122,52 +126,61 @@ export default async function AlternativesPage(
       />
 
       {/* ── Hero ─────────────────────────────────────────────────────── */}
-      <section className="relative bg-ink-900 text-white py-20 md:py-28 overflow-hidden">
-        <div className="hero-glow absolute inset-0 pointer-events-none" aria-hidden="true" />
-        <Container className="relative">
-          <div className="max-w-3xl">
-            <span className="text-xs font-semibold uppercase tracking-[0.15em] text-brand-400">
-              Comparison
-            </span>
-            <h1 className="mt-3 text-white">{content.h1}</h1>
-            <p className="mt-5 text-lg text-white/75 leading-relaxed">
-              {content.heroSubhead}
-            </p>
-            <div className="mt-8 flex flex-wrap gap-4">
-              <ButtonLink href="#quote" variant="primary" size="lg">
-                Get a Free Quote
-              </ButtonLink>
-              <TrackedPhoneLink
-                surface={`alternatives_${slug}_hero`}
-                className="inline-flex items-center gap-2 h-12 px-6 rounded-lg border-2 border-white/30 text-white font-semibold hover:border-white/60 transition-colors text-sm"
-              >
-                Call&nbsp;
-              </TrackedPhoneLink>
-            </div>
-            <AuthorByline asOf={COMPETITORS['triple-j-metal'].asOf} />
-          </div>
-        </Container>
-      </section>
+      <PageHero
+        variant="plain"
+        breadcrumb={<Breadcrumb trail={[]} current={content.h1} jsonLd={false} />}
+        contentMax="w-full max-w-[920px]"
+        eyebrow="Comparison"
+        h1a={content.h1}
+        lede={content.heroSubhead}
+        ledeMax="max-w-[680px]"
+        actions={
+          <>
+            <ForgeButtonLink href="#quote" variant="white" size="lg" arrow>
+              Get a Free Quote
+            </ForgeButtonLink>
+            <TrackedPhoneLink
+              surface={`alternatives_${slug}_hero`}
+              className={buttonClass('outlineDark', 'lg')}
+            >
+              Call&nbsp;
+            </TrackedPhoneLink>
+          </>
+        }
+        after={<AuthorByline asOf={COMPETITORS['triple-j-metal'].asOf} />}
+      />
 
       {/* ── TL;DR callout ────────────────────────────────────────────── */}
-      <section className="py-10 md:py-14 bg-(--color-brand-600) text-white">
-        <Container size="narrow">
-          <p className="text-xs font-bold uppercase tracking-[0.18em] text-white/70 mb-3">
-            TL;DR
-          </p>
-          <p className="text-lg leading-relaxed">{content.tldr}</p>
+      <section
+        data-forge=""
+        data-tone="light"
+        className="border-b border-forge-mist bg-forge-fog py-[clamp(40px,4vw,64px)] text-forge-navy"
+      >
+        <div className="mx-auto w-full max-w-[1360px] px-[clamp(20px,3vw,40px)]">
+          <div className="max-w-[760px] border-l-2 border-forge-navy pl-[clamp(18px,2vw,28px)]">
+            <p className="m-0 text-[11px] font-bold uppercase tracking-[.2em] text-forge-slate">
+              TL;DR
+            </p>
+            <p className="mt-3 text-[clamp(17px,.5vw_+_14px,20px)] leading-[1.6] text-forge-navy [text-wrap:pretty]">
+              {content.tldr}
+            </p>
+          </div>
           {/* TODO(hearth): once Hearth is integrated, add an "Affordable
               monthly payments — as low as $X/mo" callout under the TL;DR
               with a link to the financing page. */}
-        </Container>
+        </div>
       </section>
 
       {/* ── Why people compare ───────────────────────────────────────── */}
-      <section className="py-14 md:py-20 bg-white">
-        <Container size="narrow">
-          <h2 className="mb-5">Why people compare these</h2>
-          <p className="text-ink-600 text-base leading-relaxed">{content.whyCompare}</p>
-        </Container>
+      <section data-forge="" data-tone="light" className="bg-white py-[clamp(64px,7vw,104px)] text-forge-navy">
+        <div className="mx-auto w-full max-w-[1360px] px-[clamp(20px,3vw,40px)]">
+          <ForgeReveal className="max-w-[760px]">
+            <SectionHeading line1="Why people compare these" size="compact" />
+            <p className="mt-5 text-[clamp(16px,.3vw_+_14px,18px)] leading-[1.65] text-forge-slate [text-wrap:pretty]">
+              {content.whyCompare}
+            </p>
+          </ForgeReveal>
+        </div>
       </section>
 
       {/* ── Comparison table ─────────────────────────────────────────── */}
@@ -177,65 +190,68 @@ export default async function AlternativesPage(
         eyebrow="Side-by-side"
         heading="Feature-by-feature comparison"
         subheading="What you get with each company on the most-asked questions. Verified from each company's public website."
+        tone="fog"
       />
 
       {/* ── Detailed breakdown sections ──────────────────────────────── */}
-      <section className="py-14 md:py-20 bg-ink-50">
-        <Container size="narrow">
-          <div className="space-y-10">
-            {content.breakdownSections.map((section) => (
-              <article key={section.heading}>
-                <h2 className="mb-4">{section.heading}</h2>
-                <p className="text-ink-700 text-base leading-relaxed">{section.body}</p>
+      <section data-forge="" data-tone="light" className="bg-white py-[clamp(64px,7vw,104px)] text-forge-navy">
+        <div className="mx-auto w-full max-w-[1360px] px-[clamp(20px,3vw,40px)]">
+          <ForgeReveal stagger className="grid grid-cols-[repeat(auto-fit,minmax(min(100%,420px),1fr))] gap-4">
+            {content.breakdownSections.map((section, i) => (
+              <article
+                key={section.heading}
+                className="flex flex-col gap-2.5 rounded-[12px] border border-forge-silver bg-forge-fog px-[clamp(22px,2.4vw,32px)] pt-6 pb-7"
+              >
+                <div className="flex items-center gap-3" aria-hidden="true">
+                  <span className="font-forge-display text-[14px] font-bold text-forge-steel">{numeral(i)}</span>
+                  <span className="h-px flex-1 bg-forge-silver" />
+                </div>
+                <h2 className="mt-1.5 font-forge-display text-[clamp(21px,.6vw_+_16px,25px)] font-bold leading-[1.2] text-forge-navy">
+                  {section.heading}
+                </h2>
+                <p className="m-0 text-[15px] leading-[1.65] text-forge-slate [text-wrap:pretty]">{section.body}</p>
               </article>
             ))}
-          </div>
-        </Container>
+          </ForgeReveal>
+        </div>
       </section>
 
       {/* ── Honest "when competitor wins" + "when Triple J wins" ────── */}
-      <section className="py-14 md:py-20 bg-white">
-        <Container>
-          <div className="grid md:grid-cols-2 gap-8 md:gap-12">
-            <div className="rounded-2xl border border-ink-100 bg-ink-50 p-7">
-              <p className="text-xs font-bold uppercase tracking-[0.18em] text-ink-500 mb-3">
-                When the competitor is the right pick
-              </p>
-              <p className="text-ink-700 leading-relaxed">{content.whenCompetitorWins}</p>
-            </div>
-            <div className="rounded-2xl border-2 border-(--color-brand-400) bg-(--color-brand-50) p-7">
-              <p className="text-xs font-bold uppercase tracking-[0.18em] text-(--color-brand-700) mb-3">
+      <section data-forge="" data-tone="light" className="bg-forge-fog py-[clamp(64px,7vw,104px)] text-forge-navy">
+        <div className="mx-auto grid w-full max-w-[1360px] grid-cols-[repeat(auto-fit,minmax(min(100%,420px),1fr))] items-stretch gap-[clamp(16px,2vw,24px)] px-[clamp(20px,3vw,40px)]">
+          <ForgeReveal className="rounded-[12px] border border-forge-silver bg-white p-[clamp(24px,2.4vw,36px)]">
+            <p className="m-0 text-[11px] font-bold uppercase tracking-[.2em] text-forge-slate">
+              When the competitor is the right pick
+            </p>
+            <p className="mt-4 text-[16px] leading-[1.65] text-forge-slate [text-wrap:pretty]">{content.whenCompetitorWins}</p>
+          </ForgeReveal>
+          <ForgeReveal className="rounded-[12px] border border-forge-navy bg-forge-navy p-[clamp(24px,2.4vw,36px)] text-white">
+            <div data-tone="dark">
+              <p className="m-0 text-[11px] font-bold uppercase tracking-[.2em] text-forge-silver">
                 When Triple J Metal is the better fit
               </p>
-              <ul className="space-y-3">
+              <ul className="mt-5 flex list-none flex-col gap-3 p-0">
                 {content.whenTripleJWins.map((bullet) => (
-                  <li key={bullet} className="flex items-start gap-3 text-sm text-ink-800 leading-relaxed">
-                    <span className="text-(--color-brand-600) font-bold shrink-0 mt-0.5">✓</span>
+                  <li key={bullet} className="flex items-start gap-3 text-[15px] leading-[1.6] text-white/86">
+                    <span aria-hidden="true" className="mt-px shrink-0 font-bold text-forge-steel-light">✓</span>
                     {bullet}
                   </li>
                 ))}
               </ul>
-              <ButtonLink
-                href="#quote"
-                variant="primary"
-                size="md"
-                icon={<ArrowRightIcon className="h-4 w-4" />}
-                iconPosition="right"
-                className="mt-6"
-              >
+              <ForgeButtonLink href="#quote" variant="white" size="md" arrow className="mt-7">
                 Get a Free Quote
-              </ButtonLink>
+              </ForgeButtonLink>
             </div>
-          </div>
-        </Container>
+          </ForgeReveal>
+        </div>
       </section>
 
       {/* ── Related comparisons cluster ──────────────────────────────── */}
       <RelatedComparisons currentSlug={slug as AlternativesSlug} />
 
       {/* ── Quote form ───────────────────────────────────────────────── */}
-      <QuoteForm />
-    </>
+      <QuoteSection />
+    </div>
   )
 }
 

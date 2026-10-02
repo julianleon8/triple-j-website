@@ -49,22 +49,23 @@ export function AuthorByline({ asOf }: Props) {
           __html: JSON.stringify(personLd).replace(/</g, '\\u003c'),
         }}
       />
-      <div className="mt-8 flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-5 text-sm text-white/70">
+      {/* Forge: sits under the hero actions on a navy band. */}
+      <div className="mt-8 flex flex-col gap-3 text-[14px] text-white/70 sm:flex-row sm:items-center sm:gap-5">
         <div className="flex items-center gap-3">
-          <div className="flex h-9 w-9 items-center justify-center rounded-full bg-(--color-brand-600) text-white text-xs font-extrabold shrink-0">
+          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-forge-silver/30 bg-forge-navy-raised font-forge-display text-[12px] font-bold text-forge-silver">
             JL
           </div>
           <div className="leading-tight">
             <div className="font-semibold text-white">
               Reviewed by Juan Luis Leon
             </div>
-            <div className="text-[12px] text-white/55">
+            <div className="mt-0.5 text-[12px] text-forge-steel-light">
               Owner · {SITE.name} · Temple, TX
             </div>
           </div>
         </div>
-        <div className="hidden sm:block h-px w-px bg-white/15" aria-hidden="true" />
-        <div className="text-[12px] text-white/55">
+        <div className="hidden h-6 w-px bg-white/20 sm:block" aria-hidden="true" />
+        <div className="text-[12px] text-forge-steel-light">
           Last verified <time dateTime={asOf}>{formattedDate}</time>
         </div>
       </div>
