@@ -18,6 +18,8 @@ export type BuildItem = {
   alt: string;
   featured: boolean;
   createdAt: string | null;
+  /** Welded | Bolted | Turnkey */
+  tag: string | null;
 };
 
 type PhotoRow = { image_url: string; alt_text: string | null; sort_order: number | null; is_cover: boolean | null };
@@ -30,6 +32,7 @@ type ItemRow = {
   alt_text: string | null;
   is_featured: boolean | null;
   created_at: string | null;
+  tag?: string | null;
   gallery_photos: PhotoRow[] | null;
 };
 
@@ -50,6 +53,7 @@ export function toBuildItem(row: ItemRow): BuildItem | null {
     alt: cover.alt_text || row.alt_text || row.title,
     featured: Boolean(row.is_featured),
     createdAt: row.created_at,
+    tag: row.tag ?? null,
   };
 }
 
@@ -67,7 +71,7 @@ export async function getBuilds({
   try {
     let q = getAdminClient()
       .from("gallery_items")
-      .select("id, title, city, type, alt_text, is_featured, created_at, gallery_photos ( image_url, alt_text, sort_order, is_cover )")
+      .select("id, title, city, type, tag, alt_text, is_featured, created_at, gallery_photos ( image_url, alt_text, sort_order, is_cover )")
       .eq("is_active", true);
     q =
       order === "newest"

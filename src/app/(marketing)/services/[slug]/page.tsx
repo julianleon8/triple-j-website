@@ -1,13 +1,21 @@
-import { RelatedProjects } from "@/components/sections/RelatedProjects"
 import type { Metadata } from 'next'
+import Link from 'next/link'
 import { notFound } from 'next/navigation'
-import { ButtonLink } from '@/components/ui/Button'
-import { Container } from '@/components/ui/Container'
-import { QuoteForm } from '@/components/sections/QuoteForm'
-import { RelatedReading } from '@/components/sections/RelatedReading'
-import { BreadcrumbJsonLd } from '@/components/seo/BreadcrumbJsonLd'
-import { TrackedPhoneLink } from '@/components/site/TrackedPhone'
-import { SERVICES, SERVICE_SLUGS } from '@/lib/services'
+
+import { Breadcrumb } from '@/components/forge/Breadcrumb'
+import { BuildGrid } from '@/components/forge/BuildGrid'
+import { FaqAccordion } from '@/components/forge/FaqAccordion'
+import { FeatureCard, RuleList, SpecSheet } from '@/components/forge/cards'
+import { ForgeButtonLink } from '@/components/forge/ForgeButton'
+import { ForgeReveal } from '@/components/forge/ForgeReveal'
+import { OptionTabs } from '@/components/forge/OptionTabs'
+import { PageHero } from '@/components/forge/PageHero'
+import { QuoteSection } from '@/components/forge/QuoteSection'
+import { SectionHeading } from '@/components/forge/SectionHeading'
+import { buttonClass } from '@/components/forge/styles'
+import { TrackedPhoneLink, TrackedPhoneNumber } from '@/components/site/TrackedPhone'
+import { filterByTypes, getBuilds } from '@/lib/forge-builds'
+import { SERVICE_PHOTOS, SERVICES, SERVICE_SLUGS, type ServiceData } from '@/lib/services'
 import { SITE } from '@/lib/site'
 import { getSiteUrl } from '@/lib/site-url'
 
@@ -34,11 +42,33 @@ export async function generateMetadata(
   }
 }
 
-const GAP_BADGES: Record<number, { label: string; color: string }> = {
-  1: { label: 'Turnkey + Concrete',    color: 'bg-amber-100 text-amber-800' },
-  2: { label: 'Welded Steel Quality',  color: 'bg-blue-100 text-blue-800' },
-  3: { label: 'Same-Week Speed',        color: 'bg-green-100 text-green-800' },
-  4: { label: 'HOA Luxury Builds',     color: 'bg-purple-100 text-purple-800' },
+// Recent builds read live gallery_items; refresh hourly.
+export const revalidate = 3600
+
+/** Existing keyword-gap labels, reused as the eyebrow on pages without Forge copy. */
+const GAP_EYEBROWS: Record<number, string> = {
+  1: 'Turnkey + Concrete',
+  2: 'Welded Steel Quality',
+  3: 'Same-Week Speed',
+  4: 'HOA Luxury Builds',
+}
+
+const menuName = (svc: ServiceData) => svc.forge?.menu ?? svc.shortTitle
+
+/** Order is the design's: two related services, then the fixed links. */
+function relatedLinks(svc: ServiceData): { href: string; label: string }[] {
+  const related = (svc.forge?.related ?? svc.relatedSlugs).slice(0, 2)
+  return [
+    ...related
+      .map((s) => SERVICES[s])
+      .filter((s): s is ServiceData => Boolean(s))
+      .map((s) => ({ href: `/services/${s.slug}`, label: menuName(s) })),
+    { href: '/gallery', label: 'Project gallery' },
+    { href: '/locations/temple', label: 'Temple, TX' },
+    { href: '/locations/belton', label: 'Belton, TX' },
+    { href: '/about', label: 'About our crew' },
+    { href: '/military', label: 'Fort Cavazos military discount' },
+  ]
 }
 
 export default async function ServicePage(
@@ -48,18 +78,15 @@ export default async function ServicePage(
   const svc = SERVICES[slug]
   if (!svc) notFound()
 
-  const gap = svc.keywordGap ? GAP_BADGES[svc.keywordGap] : null
+  const f = svc.forge
+  const menu = menuName(svc)
 
   const baseUrl = getSiteUrl()
   const pageUrl = `${baseUrl}/services/${slug}`
 
   // Per-service @graph: a Service node referencing the canonical
   // LocalBusiness via @id, plus a WebPage node. See docs/SCHEMA-AUDIT.md.
-  //
-  // The FAQPage sibling node was removed 2026-09-06: Google retired the FAQ
-  // rich result on 2026-05-07, so the markup no longer earns anything in
-  // Search. The visible Q&A below stays — it is useful to readers and is read
-  // as ordinary page text by AI Overviews.
+  // No FAQPage node: Google retired the FAQ rich result 2026-05-07 (locked).
   const jsonLd = {
     '@context': 'https://schema.org',
     '@graph': [
@@ -86,202 +113,181 @@ export default async function ServicePage(
     ],
   }
 
-  return (
+  // Recent builds: live items of this service's type, shown only with 3+.
+  const typed = svc.galleryTypes ? filterByTypes(await getBuilds({ order: 'featured' }), svc.galleryTypes) : []
+  const builds = (svc.galleryTag ? typed.filter((b) => b.tag === svc.galleryTag) : typed).slice(0, 8)
+
+  const heroImage = f
+    ? { src: f.img, alt: f.imgAlt, position: f.pos }
+    : SERVICE_PHOTOS[slug]
+      ? { src: SERVICE_PHOTOS[slug], alt: `${svc.title} built by ${SITE.name}`, position: '50% 50%' }
+      : null
+
+  const heroActions = (
     <>
+      <ForgeButtonLink href="#quote" variant="white" size="lg" arrow>
+        Get a Free Quote
+      </ForgeButtonLink>
+      <TrackedPhoneLink
+        surface="services_slug_hero"
+        mode="children-only"
+        className={buttonClass('outlineDark', 'lg')}
+      >
+        Call <TrackedPhoneNumber className="tabular-nums" />
+      </TrackedPhoneLink>
+    </>
+  )
+  const breadcrumb = (
+    <Breadcrumb
+      trail={[{ name: 'Services', href: '/services' }]}
+      current={menu}
+      currentPath={`/services/${slug}`}
+    />
+  )
+  const heroCopy = {
+    breadcrumb,
+    eyebrow: f?.eyebrow ?? (svc.keywordGap ? GAP_EYEBROWS[svc.keywordGap] : undefined),
+    h1a: f?.h1a ?? svc.heroHeadline,
+    h1b: f?.h1b,
+    lede: f?.lede ?? svc.heroCopy,
+    actions: heroActions,
+  }
+
+  return (
+    <div data-forge="">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, '\\u003c') }}
       />
-      <BreadcrumbJsonLd
-        items={[
-          { name: 'Services', path: '/services' },
-          { name: svc.title, path: `/services/${slug}` },
-        ]}
-      />
 
-      {/* ── Hero ── */}
-      <section className="relative bg-[color:var(--color-ink-900)] text-white py-20 md:py-28 overflow-hidden">
-        <div className="hero-glow absolute inset-0 pointer-events-none" aria-hidden="true" />
-        <Container className="relative">
-          <div className="max-w-3xl">
-            {gap && (
-              <span className={`inline-block text-xs font-bold uppercase tracking-widest px-3 py-1 rounded-full mb-4 ${gap.color}`}>
-                {gap.label}
-              </span>
-            )}
-            <h1 className="text-white">{svc.heroHeadline}</h1>
-            <p className="mt-5 text-lg md:text-xl text-white/75 max-w-2xl leading-relaxed">
-              {svc.heroCopy}
-            </p>
-            <div className="mt-8 flex flex-wrap gap-4">
-              <ButtonLink href="#quote" variant="primary" size="lg">
-                Get a Free Quote
-              </ButtonLink>
-              <TrackedPhoneLink
-                surface="services_slug_hero"
-                className="inline-flex items-center gap-2 h-12 px-6 rounded-lg border-2 border-white/30 text-white font-semibold hover:border-white/60 transition-colors text-sm"
-              >
-                Call&nbsp;
-              </TrackedPhoneLink>
-            </div>
-          </div>
-        </Container>
-      </section>
-
-      {/* ── Main benefit callout ── */}
-      <section className="bg-[color:var(--color-brand-600)] text-white py-6">
-        <Container>
-          <p className="text-center font-semibold text-lg">{svc.mainBenefit}</p>
-        </Container>
-      </section>
-
-      <RelatedProjects service={slug} />
-
-      {/* ── Features grid ── */}
-      <section className="py-16 md:py-24 bg-white">
-        <Container>
-          <h2 className="text-center mb-12">{svc.featuresHeading ?? "What’s Included"}</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {svc.features.map((f) => (
-              <div
-                key={f.title}
-                className="rounded-xl border border-[color:var(--color-ink-100)] bg-[color:var(--color-ink-50)] p-6"
-              >
-                <div className="w-8 h-1 bg-[color:var(--color-brand-600)] rounded mb-4" />
-                <h3 className="text-base font-bold text-[color:var(--color-ink-900)] mb-2">
-                  {f.title}
-                </h3>
-                <p className="text-sm text-[color:var(--color-ink-500)] leading-relaxed">
-                  {f.description}
-                </p>
-              </div>
-            ))}
-          </div>
-        </Container>
-      </section>
-
-      {/* ── Technical authority ── */}
-      <section className="py-16 md:py-20 bg-[color:var(--color-ink-50)]">
-        <Container size="narrow">
-          <h2 className="mb-6">Built for Central Texas</h2>
-          <p className="text-[color:var(--color-ink-600)] text-lg leading-relaxed">
-            {svc.technicalAuthority}
-          </p>
-          <div className="mt-8 flex gap-4 flex-wrap">
-            {(svc.trustPoints ?? ['Licensed & Insured', 'Texas-Sourced Red Iron Steel', 'Temple-Based Crew']).map((point) => (
-              <div key={point} className="flex items-center gap-2 text-sm font-semibold text-[color:var(--color-ink-700)]">
-                <span className="text-[color:var(--color-brand-600)]">✓</span> {point}
-              </div>
-            ))}
-          </div>
-        </Container>
-      </section>
-
-      {/* ── Further reading (only when relatedPosts is populated) ── */}
-      {svc.relatedPosts && svc.relatedPosts.length > 0 && (
-        <RelatedReading postSlugs={svc.relatedPosts} />
+      {/* 1 · Hero */}
+      {heroImage ? (
+        <PageHero {...heroCopy} image={heroImage} facts={f?.facts} />
+      ) : (
+        <PageHero {...heroCopy} variant="plain" />
       )}
 
-      {/* ── Competitor comparison ── */}
-      {svc.competitorRows.length > 0 && <section className="py-16 md:py-24 bg-white">
-        <Container size="narrow">
-          <h2 className="mb-2">Why Not the Other Guys?</h2>
-          <p className="text-[color:var(--color-ink-500)] mb-8">
-            Here&rsquo;s what separates Triple J Metal from national dealers and kit sellers.
-          </p>
-          <div className="rounded-xl border border-[color:var(--color-ink-200)] overflow-hidden">
-            <div className="grid grid-cols-2 bg-[color:var(--color-ink-900)] text-white text-sm font-bold uppercase tracking-wide">
-              <div className="px-5 py-3">The Other Guys</div>
-              <div className="px-5 py-3 text-[color:var(--color-brand-400)]">Triple J Metal</div>
-            </div>
-            {svc.competitorRows.map((row, i) => (
-              <div
-                key={i}
-                className={`grid grid-cols-2 text-sm ${i % 2 === 0 ? 'bg-white' : 'bg-[color:var(--color-ink-50)]'}`}
-              >
-                <div className="px-5 py-4 text-[color:var(--color-ink-500)] border-r border-[color:var(--color-ink-100)]">
-                  ✗ {row.them}
-                </div>
-                <div className="px-5 py-4 font-medium text-[color:var(--color-ink-800)]">
-                  <span className="text-[color:var(--color-brand-600)]">✓</span> {row.us}
-                </div>
-              </div>
-            ))}
+      {/* 2 · Options */}
+      {f && f.options.length ? (
+        <section data-forge="" data-tone="light" className="bg-white py-[clamp(64px,7vw,104px)] text-forge-navy">
+          <div className="mx-auto w-full max-w-[1360px] px-[clamp(20px,3vw,40px)]">
+            <OptionTabs
+              heading={
+                <SectionHeading eyebrow={f.optEyebrow} line1={f.optHeading} lede={f.optLede} ledeMax="max-w-[560px]" />
+              }
+              options={f.options.map((o) => ({
+                ...o,
+                imgAlt: o.title,
+                quote: {
+                  service: svc.quoteService,
+                  structure: o.structure,
+                  concrete: o.concrete,
+                },
+              }))}
+            />
           </div>
-        </Container>
-      </section>
-
-      }
-
-      {/* ── Military section (RV covers page only) ── */}
-      {svc.militaryAngle && (
-        <section className="py-16 bg-[color:var(--color-ink-900)] text-white">
-          <Container size="narrow">
-            <div className="flex items-start gap-5">
-              <span className="text-4xl">⭐</span>
-              <div>
-                <h2 className="text-white mb-3">Fort Cavazos Military Discount</h2>
-                <p className="text-white/75 text-lg leading-relaxed mb-4">
-                  PCS&rsquo;ing to Fort Cavazos? We protect your vehicles fast — on-site same week,
-                  often before your household goods even arrive. Active duty, veterans, and first responders
-                  receive a discount on all Triple J Metal installs.
-                </p>
-                <p className="text-white/60 text-sm">
-                  Mention your service when you call, or check the Military / First Responder box
-                  on the quote form below.
-                </p>
-              </div>
-            </div>
-          </Container>
         </section>
-      )}
+      ) : null}
 
-      {/* ── FAQ ── */}
-      {svc.faqs.length > 0 && (
-        <section className="py-16 md:py-24 bg-[color:var(--color-ink-50)]">
-          <Container size="narrow">
-            <h2 className="mb-10">Frequently Asked Questions</h2>
-            <div className="space-y-6">
-              {svc.faqs.map((faq) => (
-                <div
-                  key={faq.q}
-                  className="rounded-xl bg-white border border-[color:var(--color-ink-100)] p-6"
-                >
-                  <h3 className="text-base font-bold text-[color:var(--color-ink-900)] mb-2">
-                    {faq.q}
-                  </h3>
-                  <p className="text-sm text-[color:var(--color-ink-500)] leading-relaxed">{faq.a}</p>
-                </div>
+      {/* 3 · What's included */}
+      {svc.features.length ? (
+        <section data-forge="" data-tone="light" className="bg-forge-fog py-[clamp(64px,7vw,104px)] text-forge-navy">
+          <div className="mx-auto w-full max-w-[1360px] px-[clamp(20px,3vw,40px)]">
+            <ForgeReveal className="max-w-[760px]">
+              <SectionHeading eyebrow="What’s included" line1={svc.featuresHeading ?? 'What’s included'} balance />
+            </ForgeReveal>
+            <ForgeReveal stagger className="mt-11 grid grid-cols-[repeat(auto-fit,minmax(min(100%,300px),1fr))] gap-4">
+              {svc.features.map((feat, i) => (
+                <FeatureCard key={feat.title} index={i} title={feat.title}>
+                  {feat.description}
+                </FeatureCard>
               ))}
-            </div>
-          </Container>
+            </ForgeReveal>
+          </div>
         </section>
-      )}
+      ) : null}
 
-      {/* ── Related services ── */}
-      {svc.relatedSlugs.length > 0 && (
-        <section className="py-12 bg-white border-t border-[color:var(--color-ink-100)]">
-          <Container>
-            <p className="text-sm font-semibold uppercase tracking-widest text-[color:var(--color-ink-400)] mb-6">
-              Related Services
-            </p>
-            <div className="flex flex-wrap gap-3">
-              {svc.relatedSlugs.map((s) => {
-                const rel = SERVICES[s]
-                if (!rel) return null
-                return (
-                  <ButtonLink key={s} href={`/services/${s}`} variant="secondary" size="sm">
-                    {rel.shortTitle}
-                  </ButtonLink>
-                )
-              })}
+      {/* 4 · Recent builds (3+ live matches only) */}
+      {builds.length >= 3 ? (
+        <section data-forge="" data-tone="light" className="bg-white py-[clamp(64px,7vw,104px)] text-forge-navy">
+          <div className="mx-auto w-full max-w-[1360px] px-[clamp(20px,3vw,40px)]">
+            <div className="flex flex-wrap items-end justify-between gap-x-8 gap-y-5">
+              <SectionHeading eyebrow="Recent builds" line1="Real jobs, real addresses." className="max-w-[720px]" />
+              <Link href="/gallery" className="border-b border-forge-silver pb-0.5 text-[15px] font-semibold transition-colors hover:border-forge-navy">
+                See the full gallery →
+              </Link>
             </div>
-          </Container>
+            <BuildGrid items={builds} />
+          </div>
         </section>
-      )}
+      ) : null}
 
-      {/* ── Quote form ── */}
-      <QuoteForm initialService={svc.initialService} />
-    </>
+      {/* 5 · Specs (navy) */}
+      {svc.technicalAuthority ? (
+        <section data-forge="" data-tone="dark" className="bg-forge-navy py-[clamp(64px,7vw,104px)] text-white">
+          <div className="mx-auto grid w-full max-w-[1360px] grid-cols-[repeat(auto-fit,minmax(min(100%,420px),1fr))] items-start gap-[clamp(32px,4vw,72px)] px-[clamp(20px,3vw,40px)]">
+            <ForgeReveal>
+              {f?.techHeading ? (
+                <SectionHeading tone="dark" eyebrow="Built for Central Texas" line1={f.techHeading} balance />
+              ) : (
+                <SectionHeading tone="dark" line1="Built for Central Texas" />
+              )}
+              <p className="mt-[18px] max-w-[600px] text-[clamp(16px,.3vw_+_14px,18px)] leading-[1.6] text-white/80 [text-wrap:pretty]">
+                {svc.technicalAuthority}
+              </p>
+              {svc.trustPoints?.length ? <RuleList className="mt-7" items={svc.trustPoints} /> : null}
+            </ForgeReveal>
+            {f?.specs.length ? (
+              <ForgeReveal>
+                <SpecSheet
+                  title={`Spec sheet · ${menu}`}
+                  rows={f.specs}
+                  footnote="Final gauge, anchoring and engineering are confirmed for your design and site."
+                />
+              </ForgeReveal>
+            ) : null}
+          </div>
+        </section>
+      ) : null}
+
+      {/* 6 · FAQ */}
+      {svc.faqs.length ? (
+        <section data-forge="" data-tone="light" className="bg-white py-[clamp(64px,7vw,104px)] text-forge-navy">
+          <div className="mx-auto grid w-full max-w-[1360px] grid-cols-[repeat(auto-fit,minmax(min(100%,360px),1fr))] items-start gap-[clamp(32px,4vw,72px)] px-[clamp(20px,3vw,40px)]">
+            <ForgeReveal>
+              <SectionHeading eyebrow="Questions" line1="What people" line2="ask us." />
+              <p className="mt-4 max-w-[420px] text-[16px] leading-[1.6] text-forge-slate">
+                Still unsure? Call{' '}
+                <TrackedPhoneLink
+                  surface="services_slug_faq"
+                  className="border-b border-forge-silver font-semibold text-forge-navy tabular-nums transition-colors hover:border-forge-navy"
+                />
+                . A real person from our Temple crew picks up.
+              </p>
+            </ForgeReveal>
+            <ForgeReveal>
+              <FaqAccordion faqs={svc.faqs} />
+            </ForgeReveal>
+          </div>
+        </section>
+      ) : null}
+
+      {/* 7 · Related */}
+      <section data-forge="" data-tone="light" className="border-t border-forge-mist bg-forge-fog py-8 text-forge-navy">
+        <div className="mx-auto flex w-full max-w-[1360px] flex-wrap items-center gap-x-6 gap-y-3.5 px-[clamp(20px,3vw,40px)]">
+          <p className="text-[11px] font-bold uppercase tracking-[.2em] text-forge-slate">Related</p>
+          <div className="flex flex-wrap gap-2.5">
+            {relatedLinks(svc).map((r) => (
+              <ForgeButtonLink key={r.href} href={r.href} variant="linkAccent" size="tap">
+                {r.label} →
+              </ForgeButtonLink>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* 8 · Quote */}
+      <QuoteSection initialService={svc.quoteService} serviceName={svc.quoteService ? menu : undefined} />
+    </div>
   )
 }

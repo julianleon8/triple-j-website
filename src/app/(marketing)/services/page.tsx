@@ -7,7 +7,7 @@ import Link from "next/link";
 import { Container } from "@/components/ui/Container";
 import { Reveal } from "@/components/ui/Reveal";
 import { ArrowRightIcon } from "@/components/ui/icons";
-import { SERVICES, SERVICE_SLUGS } from "@/lib/services";
+import { SERVICE_PHOTOS, SERVICES, SERVICE_SLUGS } from "@/lib/services";
 import { SITE } from "@/lib/site";
 
 export const metadata: Metadata = {
@@ -53,15 +53,6 @@ const FLAGSHIP_SLUG = "carports";
  *   FROM gallery_items gi JOIN gallery_photos gp ON gp.gallery_item_id = gi.id
  *   WHERE gp.is_cover = true AND gi.is_active = true ORDER BY gi.created_at DESC;
  */
-const SERVICE_PHOTOS: Record<string, string> = {
-  carports: "https://idrbgxlvvnqduvbqtaei.supabase.co/storage/v1/object/public/gallery/1777195148318.jpg",
-  "turnkey-carports-with-concrete": "https://idrbgxlvvnqduvbqtaei.supabase.co/storage/v1/object/public/gallery/1777195038839.jpeg",
-  "metal-garages": "/images/metal-garage-green.jpg",
-  barns: "https://idrbgxlvvnqduvbqtaei.supabase.co/storage/v1/object/public/gallery/1777195257805.jpg",
-  "rv-covers": "https://idrbgxlvvnqduvbqtaei.supabase.co/storage/v1/object/public/gallery/1777195863079.jpg",
-  "hoa-compliant-structures": "https://idrbgxlvvnqduvbqtaei.supabase.co/storage/v1/object/public/gallery/1777194918087.jpg",
-  "metal-fencing": "/images/metal-fence-ranch-wire.webp",
-};
 
 export default function ServicesPage() {
   const flagship = SERVICES[FLAGSHIP_SLUG];
