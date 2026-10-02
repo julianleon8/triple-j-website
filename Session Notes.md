@@ -30,6 +30,44 @@ Every item was checked against the 46 live sitemap URLs first; the April plan wa
 - **Found, not fixed:** Killeen copy says "Half the Killeen retirees we work with" take Dell/Apple/Tesla jobs
   and "We've cleared architectural review boards there before" — job-history claims to verify with the owner.
 
+## 2026-10-01 — Visual redesign: hero photo, questions 14–25, reference sites
+
+- Merged `claude/youthful-hypatia-28pf1o` into `claude/focused-gates-iu172r`, keeping both sides of
+  the vault conflicts (permit cleanup on `main`, hero spec on the branch).
+- Read the 13 active gallery items (95 photos) from Supabase and rendered three hero options at
+  1440×900 and 390×844: Mexicano Grille frame, horse stables aisle, Rogers carport. The owner picked the
+  Grille frame, then switched to the **Rogers carport** because the Grille photo is too wide on phones.
+  Found 7 byte-identical duplicate photos in the Mexicano Grille item; reported, not changed.
+- Subhead settled as the mockup's one sentence, reversing the earlier log row. Then questions 14–25:
+  no red; alternating navy bands; lion + Cinzel wordmark; lean header; homepage Hero, Builds, Services,
+  Quote; card prices kept; real customer quotes with their build; inline form kept; scope includes emails,
+  quote PDF and HQ; subtle motion; Vercel preview before `main`. 16 rows in `Decisions.md`.
+- Reference sites: a subagent found 9 (about 139k tokens). Screenshots and notes are in
+  `docs/redesign-2026-10/reference-sites.*`. Waiting on the owner's reactions.
+- Deleted the 7 duplicate Mexicano Grille photo rows (owner's call); their storage files remain. The owner
+  rejected all reference sites. Built a full homepage mockup from the logged decisions, then changed the
+  hero call to action to "Start Your Free Quote" with Carport / Barn / Metal Fencing shortcuts (owner). The
+  owner then withdrew the homepage mockup and kept only the header, hero, ticker and type, published as a
+  reference page for a Figma design system. Found the live Services intro breaking the turnkey lock;
+  flagged, not fixed.
+- No `src/` change.
+
+## 2026-10-01 — Visual redesign: hero specified
+
+- The owner started a full visual redesign of the public site. The hero headline "Your land. Your plans.
+  Our steel." is retired, and the hero now reads "Built right. Built fast. Built by Triple J." The last line
+  is a brushed-steel gradient. The layout is centred, the primary button white and the secondary an outline,
+  and the old proof strip becomes a latest-builds ticker fed from the gallery.
+- "The original typography" turned out to mean the lion logo's lettering. Cinzel Black was chosen after four
+  faces were rendered against it. The brand colour moves from royal blue `#1e6bd6` to the logo's navy
+  `#00182a` and slate `#546678`/`#788a9c`, which reverses the 2026-04-14 lock.
+- Mockups (desktop, phone, font comparison, three strip options) and a CSS reference were saved to
+  `docs/redesign-2026-10/`.
+- Not done: the hero photo. The sandbox's network policy denied the gallery storage host
+  (`idrbgxlvvnqduvbqtaei.supabase.co`) and `triplejmetaltx.com`, so the new uploads could not be viewed.
+  The subhead wording also needs the owner's confirmation; see `Next Session Primer.md`.
+- No `src/` change. All commits are on `claude/youthful-hypatia-28pf1o`.
+
 ## 2026-10-01 — Fencing photo, permit scraper limited to 2026, builder call list
 
 - **Fencing photo.** `public/images/metal-fence-ranch-wire.webp` (owner-supplied) now fills the Metal Fencing

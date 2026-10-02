@@ -9,6 +9,58 @@
 
 ---
 
+# Visual redesign — 2026-10-01 · HERO PUBLISHED FOR FIGMA, NOTHING BUILT
+
+All work is on branch `claude/focused-gates-iu172r` (the previous `claude/youthful-hypatia-28pf1o` is merged
+into it), not `main`. **No `src/` file has changed.** Every answer is in `Locked Decisions.md` (Tagline,
+Marketing headline face, Brand colour, Light/dark, Homepage order, Header, Service-card prices, Trust before
+reviews, Motion, Redesign review) and in the 2026-10-01 rows of `Decisions.md`.
+
+**Settled this session:** the hero photo is the **Rogers 23×35 carport** (the Mexicano Grille frame was
+picked, then dropped as too wide on phones). The subhead is the mockup's one sentence. No red. Bands go Hero
+navy, Builds light, Services navy, Quote light, Footer navy. The logo is the lion + "Triple J Metal" in
+Cinzel. The header is lean: 5 links, phone, quote button; Blog and Partners go to the footer. The homepage is
+**Hero, Builds, Services, Quote** (inline form kept). Card prices stay. Trust comes from real customer
+quotes, collected with permission and shown with their build. Scope: **site + emails + quote PDF + HQ**.
+Motion is subtle. Review happens on a **Vercel preview link** before anything merges to `main`.
+
+**Narrowed to the hero (owner, end of session):** the full homepage mockup was withdrawn and deleted.
+Only the **header, hero, Latest builds ticker and typography** stay: `docs/redesign-2026-10/hero-mockup.html`
+and its renders (`hero-rogers-{desktop,phone}.jpg` are the approved state). They were published as a
+private design canvas, "Triple J Hero" (https://claude.ai/artifact/VsYi1MwUophTohKwBKQcmB: desktop hero,
+phone hero, type-and-colour sheet), for the owner, who will build a design system from it **in Figma** and design the rest of
+the site there, in an interactive session. The homepage-section answers stay logged as preferences; the
+Figma design overrides them.
+
+**Waiting on the owner:**
+1. The Figma design system and the rest-of-site design. Then the whole site plan; no `src/` change before it.
+2. Customer quotes into `testimonials.md` (3–5, with permission, from jobs in the gallery).
+3. **Live copy breaks a lock:** the homepage Services intro says every structure is "delivered turnkey —
+   site prep, concrete pad, and installation all under one contract", a blanket turnkey label above priced
+   cards (2026-09-28 lock). Proposed fix: "Every structure is sold welded, bolted, or turnkey — with turnkey,
+   site prep, concrete and installation sit on one contract. No kits, no subcontractors." Owner approves.
+4. 7 orphaned storage files from the deleted duplicate Grille photos (5.9 MB, listed in `Decisions.md`) can
+   be removed in the Supabase dashboard. `/gallery/[id]` is static and never revalidated, so HQ gallery
+   edits show only after a deploy; a task card was offered for that fix.
+
+**Found while specifying (not built):**
+- **HQ is in scope**, so `brand-*` / `--brand-fg` (44 marketing + 61 HQ files) and `--font-display` (35
+  files) can be rewritten globally. HQ headings use `uppercase` Barlow; with Cinzel, drop `uppercase`.
+- **`#1e6bd6` is hard-coded** in `src/app/layout.tsx` (theme colour), `src/emails/BrandLayout.tsx`,
+  `src/emails/PartnerInquiryConfirmation.tsx`, `src/lib/quote-pdf.tsx` and HQ charts. Emails need a serif
+  fallback (Gmail ignores web fonts). The PDF must register a Cinzel font file. OG cards (`src/lib/og-fonts`)
+  need Cinzel.
+- **Fonts load with `display: "optional"`.** Use `swap` for Cinzel. Write headlines in sentence case.
+- **Quotes tied to builds** need a link from a quote to a `gallery_items` row; `testimonials.md` has no
+  such field yet.
+- **Hero CSS + photo crops** are in `docs/redesign-2026-10/hero-mockup.html` (`?photo=rogers|grille|stables`).
+- **Rendering mockups here:** the sandbox's headless Chromium rejects the proxy's TLS certificate. Route
+  requests through Node with Playwright's `route.fetch()`; never disable TLS checks. Global Playwright
+  is at `/opt/node22/lib/node_modules`.
+- `npm run dev` fails on `main` (Turbopack vs Serwist). Use `next dev --webpack`.
+
+---
+
 # Permit leads — 2026-10-01 · 2026 ONLY, BUILDER LIST SENT
 
 - The scraper reads 2026 reports only (`REPORT_FLOOR`). First run under it: 2026-10-01 14:00 UTC. Expect zero
