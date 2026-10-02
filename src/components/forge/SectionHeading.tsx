@@ -22,6 +22,8 @@ type Props = {
   balance?: boolean;
   className?: string;
   ledeClassName?: string;
+  /** id on the heading element, for aria-labelledby. */
+  headingId?: string;
 };
 
 export function SectionHeading({
@@ -39,6 +41,7 @@ export function SectionHeading({
   balance = false,
   className = "",
   ledeClassName = "",
+  headingId,
 }: Props) {
   const dark = tone === "dark";
   const centered = align === "center";
@@ -50,6 +53,7 @@ export function SectionHeading({
         </Eyebrow>
       ) : null}
       <Tag
+        id={headingId}
         className={`${eyebrow ? "mt-4" : "m-0"} ${size === "compact" ? type.h2Compact : type.h2} ${
           dark ? "text-white" : "text-forge-navy"
         } ${balance ? "[text-wrap:balance]" : ""}`}

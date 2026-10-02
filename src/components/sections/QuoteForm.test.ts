@@ -74,7 +74,8 @@ it('promises the same thing on /quote as the page headline does', () => {
 it('preselects the service chip from ?service=', () => {
   const html = render({ chrome: false, initialService: 'rv_cover' });
   // rv_cover lights the shared "Carport / RV Cover" chip.
-  expect(html).toMatch(/aria-pressed="true"[^>]*>(?:(?!<\/button>).)*Carport \/ RV Cover/s);
+  const pressed = html.split('<button').find((b) => b.includes('aria-pressed="true"')) ?? '';
+  expect(pressed).toContain('Carport / RV Cover');
 });
 
 it('prefills the ZIP from ?city=', () => {

@@ -1,13 +1,13 @@
 import { SITE } from "@/lib/site";
-import Image from "next/image";
 import type { Metadata } from "next";
-import { Gallery } from "@/components/sections/Gallery";
-import { HowItWorks } from "@/components/sections/HowItWorks";
-import { QuoteForm } from "@/components/sections/QuoteForm";
-import { ServiceAreas } from "@/components/sections/ServiceAreas";
-import { Services } from "@/components/sections/Services";
-import { Container } from "@/components/ui/Container";
-import { ButtonLink } from "@/components/ui/Button";
+
+import { ForgeReveal } from "@/components/forge/ForgeReveal";
+import { QuoteSection } from "@/components/forge/QuoteSection";
+import { SectionHeading } from "@/components/forge/SectionHeading";
+import { BuildsStrip } from "@/components/forge/home/BuildsStrip";
+import { HomeHero } from "@/components/forge/home/HomeHero";
+import { ServicesBand } from "@/components/forge/home/ServicesBand";
+import { getBuilds } from "@/lib/forge-builds";
 
 export const metadata: Metadata = {
   title: "Metal Carports, Garages & Barns, Temple TX",
@@ -23,42 +23,38 @@ export const metadata: Metadata = {
   },
 };
 
-export default function HomePage() {
+// The builds strip and ticker read live gallery_items; refresh hourly so a
+// job published in HQ shows up without a deploy.
+export const revalidate = 3600;
+
+/**
+ * Homepage (Forge, 2026-10-02): Hero (navy) → Builds (white) → Services
+ * (navy) → Quote (fog) → Footer (navy).
+ */
+export default async function HomePage() {
+  const builds = await getBuilds({ order: "newest" });
   return (
     <>
-      <section className="relative -mt-20 overflow-hidden bg-ink-900 text-white">
-        <Image
-          src="/images/red-iron-frame-hero.jpg"
-          alt="Red iron framing on a Triple J Metal construction site in Central Texas"
-          fill priority sizes="100vw" className="object-cover object-center"
+      <HomeHero builds={builds.slice(0, 16)} />
+      {builds.length ? (
+        <BuildsStrip
+          items={builds.slice(0, 8)}
+          header={
+            <ForgeReveal className="max-w-[720px]">
+              <SectionHeading
+                eyebrow="Our builds"
+                headingId="builds-heading"
+                line1="Real jobs, real addresses."
+                line2="Built down the road."
+                lede="Every photo is a Triple J crew job in Central Texas, pulled straight from our live gallery with the title and city we filed it under."
+                ledeMax="max-w-[600px]"
+              />
+            </ForgeReveal>
+          }
         />
-        <div aria-hidden="true" className="pointer-events-none absolute inset-0 hero-scrim" />
-        <div aria-hidden="true" className="pointer-events-none absolute inset-0 bg-linear-to-t from-black/60 to-transparent" />
-        <Container size="wide" className="relative pt-36 pb-16 sm:pt-44 sm:pb-24 lg:pt-48 lg:pb-28">
-          <div className="max-w-3xl">
-            <p className="text-sm font-semibold uppercase tracking-[0.18em] text-white/80">Family-owned · Temple, Texas</p>
-            <h1 className="mt-6 font-display text-6xl font-extrabold uppercase leading-[0.95] tracking-tight text-white sm:text-7xl lg:text-[88px]">
-              Your land.<br />Your plans.<br /><span className="text-brand-300">Our steel.</span>
-            </h1>
-            <p className="mt-6 max-w-lg text-lg leading-relaxed text-white/85">
-              Carports, garages, barns, and patios. Welded or bolted,
-              built on your property by our Central Texas crew.
-            </p>
-            <div className="mt-8 flex flex-col gap-3 min-[400px]:flex-row">
-              <ButtonLink href="#gallery" size="lg" variant="secondary">Explore Our Builds</ButtonLink>
-              <ButtonLink href="#quote" size="lg">Get a Free Quote</ButtonLink>
-            </div>
-          </div>
-          <div className="mt-12 flex flex-wrap gap-x-8 gap-y-3 border-t border-white/20 pt-5 text-sm text-white/80">
-            <span>Welded or bolted</span><span>Our own crew</span><span>Same-week scheduling</span>
-          </div>
-        </Container>
-      </section>
-      <Gallery />
-      <Services />
-      <HowItWorks />
-      <ServiceAreas />
-      <QuoteForm />
+      ) : null}
+      <ServicesBand />
+      <QuoteSection />
     </>
   );
 }
