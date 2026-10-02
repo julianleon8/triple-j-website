@@ -49,20 +49,72 @@ export const SITE = {
   },
 } as const;
 
+/**
+ * Header nav (Forge, 2026-10-02). "Services" opens the mega menu built from
+ * MEGA_SERVICES / MEGA_AREAS below; its href is the no-JS fallback.
+ */
 export const NAV_LINKS = [
   { href: "/services", label: "Services" },
-  { href: "/services/metal-fencing", label: "Fencing" },
   { href: "/gallery", label: "Gallery" },
-  { href: "/blog", label: "Blog" },
+  { href: "/about", label: "About" },
   { href: "/partners", label: "Partners" },
+  { href: "/contact", label: "Contact" },
+] as const;
+
+/** Footer "Company" column. Blog lives here, not in the header. */
+export const COMPANY_LINKS = [
+  { href: "/gallery", label: "Gallery" },
   { href: "/about", label: "About" },
   { href: "/contact", label: "Contact" },
+  { href: "/blog", label: "Blog" },
+  { href: "/partners", label: "Partners" },
+  { href: "/military", label: "Fort Cavazos Military" },
+  { href: "/best-metal-carport-builders-temple-tx", label: "Compare Builders" },
+] as const;
+
+/**
+ * The three services the mega menu, mobile menu and location pages feature,
+ * with their thumbnail. Prices are the sales-pack floor
+ * (dev/sales-pack-2026-04-30.md); never improvise one here.
+ */
+export const MEGA_SERVICES = [
+  {
+    slug: "carports",
+    label: "Carports",
+    href: "/services/carports",
+    sub: "Welded or bolted · from $3,000",
+    img: "/images/carport-gable-residential.jpg",
+    pos: "50% 50%",
+  },
+  {
+    slug: "metal-fencing",
+    label: "Metal Fencing",
+    href: "/services/metal-fencing",
+    sub: "Privacy, pipe & ranch, ornamental",
+    img: "/images/metal-fence-ranch-wire.webp",
+    pos: "60% 50%",
+  },
+  {
+    slug: "gates",
+    label: "Gates",
+    href: "/services/gates",
+    sub: "Walk, driveway & ranch entrances",
+    img: "/images/metal-fence-ranch-wire.webp",
+    pos: "15% 50%",
+  },
+] as const;
+
+/** "Where we build" rows in the mega and mobile menus. */
+export const MEGA_AREAS = [
+  { slug: "temple", label: "Temple, TX", href: "/locations/temple", sub: "Home base · 0 mi" },
+  { slug: "belton", label: "Belton, TX", href: "/locations/belton", sub: "10 mi south · 15 min from HQ" },
 ] as const;
 
 /** Footer service links — `href` must match a real route (or `/contact` until a dedicated page exists). */
 export const SERVICES = [
-  { title: "Metal Fencing & Gates", href: "/services/metal-fencing" },
   { title: "Carports", href: "/services/carports" },
+  { title: "Metal Fencing", href: "/services/metal-fencing" },
+  { title: "Gates", href: "/services/gates" },
   { title: "Metal Garages", href: "/services/metal-garages" },
   { title: "Metal Barns", href: "/services/barns" },
   { title: "RV & Boat Covers", href: "/services/rv-covers" },

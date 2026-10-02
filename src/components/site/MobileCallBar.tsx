@@ -1,36 +1,42 @@
-import { PhoneIcon, ArrowRightIcon } from "@/components/ui/icons";
+"use client";
+
+import { usePathname } from "next/navigation";
+
+import { PhoneIcon } from "@/components/ui/icons";
 import { TrackedPhoneLink } from "@/components/site/TrackedPhone";
+import { headerCta, onCtaClick } from "@/components/site/Header";
 
 /**
- * Sticky bottom call-to-action bar — mobile only.
- * Left: tap-to-call phone button.
- * Right: Get Quote anchor to homepage form.
- * Always visible on small screens so the phone is never more than one tap away.
+ * Sticky bottom call bar under 900px: white "Call Now" (with the
+ * English · Español subline) and an outline button that follows the page's
+ * CTA — "Free Quote", "Message" on /contact, "Inquire" on /partners.
  */
 export function MobileCallBar() {
+  const cta = headerCta(usePathname());
   return (
-    <div className="md:hidden fixed bottom-0 inset-x-0 z-40 bg-[color:var(--color-ink-900)]/95 backdrop-blur border-t border-white/10 pb-[env(safe-area-inset-bottom)]">
+    <div
+      data-forge=""
+      data-tone="dark"
+      className="fixed inset-x-0 bottom-0 z-40 border-t border-forge-silver/20 bg-[rgba(0,24,42,.95)] pb-[env(safe-area-inset-bottom)] backdrop-blur-[8px] min-[900px]:hidden"
+    >
       <div className="grid grid-cols-2 gap-2 p-2">
         <TrackedPhoneLink
           surface="mobile_call_bar"
           mode="children-only"
-          className="flex flex-col items-center justify-center h-12 rounded-md bg-[color:var(--color-brand-600)] hover:bg-[color:var(--color-brand-700)] text-white font-bold tracking-tight transition-colors"
+          className="flex h-12 flex-col items-center justify-center rounded-[6px] bg-white font-bold text-forge-navy"
         >
           <span className="flex items-center gap-2 leading-none">
-            <PhoneIcon className="h-5 w-5" />
+            <PhoneIcon width={18} height={18} aria-hidden="true" />
             <span>Call Now</span>
           </span>
-          <span className="text-[10px] font-medium text-white/75 mt-0.5 tracking-wide">
-            English · Español
-          </span>
+          <span className="mt-0.5 text-[10px] font-medium tracking-[.03em] text-forge-slate">English · Español</span>
         </TrackedPhoneLink>
-        {/* eslint-disable-next-line @next/next/no-html-link-for-pages -- deliberate: Android in-app browsers swallow <Link>'s router-driven hash scroll (see ButtonLink in ui/Button.tsx) */}
         <a
-          href="/#quote"
-          className="flex items-center justify-center gap-2 h-12 rounded-md bg-white/10 hover:bg-white/20 text-white font-semibold tracking-tight transition-colors"
+          href={cta.href}
+          onClick={onCtaClick(cta.target)}
+          className="flex h-12 items-center justify-center gap-2 rounded-[6px] border border-white/30 font-semibold text-white"
         >
-          <span>Free Quote</span>
-          <ArrowRightIcon className="h-4 w-4" />
+          {cta.short} <span aria-hidden="true">→</span>
         </a>
       </div>
     </div>

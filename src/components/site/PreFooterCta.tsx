@@ -1,88 +1,54 @@
-import Image from "next/image";
-
-import { ButtonLink } from "@/components/ui/Button";
-import { Container } from "@/components/ui/Container";
-import { ArrowRightIcon, PhoneIcon } from "@/components/ui/icons";
+import { Eyebrow } from "@/components/forge/Eyebrow";
+import { ForgeButtonLink } from "@/components/forge/ForgeButton";
+import { PhoneIcon } from "@/components/ui/icons";
 import { TrackedPhoneLink, TrackedPhoneNumber } from "@/components/site/TrackedPhone";
 
 /**
- * Pre-footer CTA band — full-bleed photo backdrop with dark gradient.
- * Bookends the page: hero opens with this same atmospheric language,
- * the CTA closes with it. Sits between page content and the Footer in
- * the marketing layout, so every public page gets it.
- *
- * To swap the photo, change `src` below — treatment stays.
+ * Closing call-to-action band for routes that have no Forge quote section of
+ * their own (blog, comparison pages, services index, legal pages…). Forge
+ * pages end with <QuoteSection> instead, so this is no longer in the
+ * marketing layout; each route that needs it renders it (2026-10-02, D12).
  */
 export function PreFooterCta() {
   return (
     <section
+      data-forge=""
+      data-tone="dark"
       aria-labelledby="prefooter-cta-heading"
-      className="relative overflow-hidden bg-black text-white"
+      className="border-t border-forge-silver/15 bg-forge-navy py-[clamp(64px,7vw,104px)] text-white"
     >
-      {/* Background photo with heavy dark gradient on top */}
-      <div className="absolute inset-0">
-        <Image
-          src="/images/carport-gable-residential.jpg"
-          alt="Residential gable-roof metal carport installed by Triple J Metal"
-          fill
-          sizes="100vw"
-          className="object-cover opacity-60"
-        />
-      </div>
-      <div
-        aria-hidden="true"
-        className="absolute inset-0 bg-gradient-to-tr from-black/95 via-black/75 to-[color:var(--color-brand-700)]/40"
-      />
-
-      <Container size="wide" className="relative">
-        <div className="py-20 md:py-28 lg:py-32 max-w-3xl">
-          {/* Red eyebrow pill — same as hero/Services/WhyTripleJ */}
-          <span className="inline-flex items-center rounded-full bg-red-600 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.18em] text-white shadow-sm">
-            Built for this
-          </span>
-
-          {/* Barlow huge headline — two-line with brand-blue accent on
-              the punch line, same rhythm as hero. */}
+      <div className="mx-auto w-full max-w-[1360px] px-[clamp(20px,3vw,40px)]">
+        <div className="max-w-[760px]">
+          <Eyebrow tone="dark">Built for this</Eyebrow>
           <h2
             id="prefooter-cta-heading"
-            className="mt-6 font-display font-extrabold uppercase tracking-tight leading-[0.95] text-white text-5xl sm:text-6xl md:text-7xl lg:text-8xl"
+            className="mt-4 font-forge-display text-[clamp(30px,3vw_+_12px,56px)] font-black leading-[1.05] tracking-[.01em] text-white"
           >
             Ready to build?
             <br />
-            <span className="text-[color:var(--color-brand-400)]">
-              We&rsquo;re ready to start.
-            </span>
+            <span className="forge-steel-text">We&rsquo;re ready to start.</span>
           </h2>
-
-          <p className="mt-6 text-lg sm:text-xl leading-relaxed text-white/75 max-w-2xl">
-            Free on-site quote, usually within 24 hours. One call, one crew, one
-            contract — site prep, concrete, and install all under one roof.
+          <p className="mt-4 max-w-[600px] text-[clamp(16px,.3vw_+_14px,18px)] leading-[1.55] text-white/80">
+            Free on-site quote, usually within 24 hours. One call, one crew, one contract — site prep,
+            concrete, and install all under one roof.
           </p>
-
-          <div className="mt-10 flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-6">
-            <ButtonLink
-              href="/#quote"
-              variant="primary"
-              size="lg"
-              icon={<ArrowRightIcon className="h-5 w-5" />}
-              iconPosition="right"
-            >
+          <div className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-4">
+            <ForgeButtonLink href="/quote" variant="white" size="lg" arrow>
               Get a Free Quote
-            </ButtonLink>
+            </ForgeButtonLink>
             <TrackedPhoneLink
               surface="prefooter"
               mode="children-only"
-              className="inline-flex items-center gap-2 text-base font-semibold text-white/85 hover:text-white transition-colors"
+              className="inline-flex items-center gap-2 text-[16px] font-semibold text-white/86 transition-colors hover:text-white"
             >
-              <PhoneIcon className="h-5 w-5" />
+              <PhoneIcon width={18} height={18} aria-hidden="true" />
               <span>
                 Call <TrackedPhoneNumber className="tabular-nums" />
               </span>
-              <span aria-hidden="true">→</span>
             </TrackedPhoneLink>
           </div>
         </div>
-      </Container>
+      </div>
     </section>
   );
 }

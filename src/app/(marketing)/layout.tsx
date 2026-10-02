@@ -3,7 +3,6 @@ import type { ReactNode } from "react";
 import { Footer } from "@/components/site/Footer";
 import { Header } from "@/components/site/Header";
 import { MobileCallBar } from "@/components/site/MobileCallBar";
-import { PreFooterCta } from "@/components/site/PreFooterCta";
 import { GoogleAdsTag } from "@/components/seo/GoogleAdsTag";
 import { OrganizationJsonLd } from "@/components/seo/OrganizationJsonLd";
 import { MarketingAttribution } from "@/components/site/MarketingAttribution";
@@ -20,7 +19,11 @@ import { MarketingAttribution } from "@/components/site/MarketingAttribution";
  *
  * The `marketing` class scopes the Barlow Condensed h1/h2/h3 rule in
  * globals.css to this tree ONLY, so HQ (iPhone PWA) headings inherit
- * the iOS stack instead of the magazine display face.
+ * the iOS stack instead of the magazine display face. Forge surfaces
+ * (data-forge) step out of that rule.
+ *
+ * No PreFooterCta here: Forge pages end with their own quote section, and
+ * the routes without one render PreFooterCta themselves (2026-10-02).
  */
 export default function MarketingLayout({
   children,
@@ -37,7 +40,6 @@ export default function MarketingLayout({
       <GoogleAdsTag />
       <Header />
       <main className="flex-1">{children}</main>
-      <PreFooterCta />
       <Footer />
       <MobileCallBar />
     </div>

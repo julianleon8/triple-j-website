@@ -1,3 +1,4 @@
+import { PreFooterCta } from '@/components/site/PreFooterCta'
 import { BreadcrumbJsonLd } from '@/components/seo/BreadcrumbJsonLd'
 import type { Metadata } from 'next'
 import Link from 'next/link'
@@ -146,6 +147,7 @@ export default function BlogPage() {
           </div>
         </Container>
       </section>
+      <PreFooterCta />
     </>
   )
 }

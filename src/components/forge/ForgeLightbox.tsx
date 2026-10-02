@@ -128,7 +128,7 @@ export function ForgeLightbox({
           src={item.img}
           alt={item.alt}
           onClick={(e) => e.stopPropagation()}
-          className="max-h-[calc(100vh-210px)] min-w-0 max-w-[min(1100px,calc(100%-112px))] rounded-[8px] object-contain shadow-[var(--shadow-lightbox)]"
+          className="max-h-[calc(100vh_-_210px)] min-w-0 max-w-[min(1100px,calc(100%_-_112px))] rounded-[8px] object-contain shadow-[var(--shadow-lightbox)]"
         />
         <button
           type="button"

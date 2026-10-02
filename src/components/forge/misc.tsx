@@ -47,7 +47,7 @@ export function MapBand({
         referrerPolicy="no-referrer-when-downgrade"
         className="absolute inset-0 size-full border-0"
       />
-      <div className="absolute bottom-4 left-4 max-w-[calc(100%-32px)] rounded-[10px] bg-forge-navy px-[18px] py-4 text-white shadow-[var(--shadow-float-dark)]">
+      <div className="absolute bottom-4 left-4 max-w-[calc(100%_-_32px)] rounded-[10px] bg-forge-navy px-[18px] py-4 text-white shadow-[var(--shadow-float-dark)]">
         {callout}
       </div>
     </div>
