@@ -1,5 +1,32 @@
 # Session Notes
 
+## 2026-10-02 — Forge step 13: PBR footer, every remaining route, OG cards, emails, PDF, cleanup
+
+Owner: "do step 13, start with /thank-you and /quote and change the brushed slate to a PBR panel look."
+All on `claude/new-session-471fsd`; `main` untouched.
+
+- **Footer texture:** brushed steel → a drawn **PBR wall panel** (`.forge-pbr`, an SVG tile: 12" pitch,
+  trapezoid rib lit from the left, two stiffeners per pan). The handoff's corrugated PNG was the wrong
+  profile; both texture PNGs (2.3 MB) deleted.
+- **`/quote` and `/thank-you`** in Forge (form first on phones, sticky pitch on desktop, How it works,
+  live recent builds). Their old copy broke locks (concrete on every job, frame-day-one/panels-day-two,
+  "usually within 24 hours" under the guarantee) — rewritten to the locks.
+- **Every other legacy route** in Forge: blog index + posts (`.forge-prose`), privacy/terms (`LegalPage`),
+  404, `/services` + colors/hybrid/PBR-vs-PBU, alternatives, the Temple roundup, `/locations`. Three helper
+  agents did the blog, services and comparison groups in parallel; each reviewed by screenshot.
+- **Real bug found:** compiled JSX dropped the space after `</strong>` (and similar) when the following
+  text run held an HTML entity ("Texasis:"). ~40 spots fixed with `{' '}`; a test guards the post modules.
+- **Lock fixes on the way:** welded-vs-bolted "12 on request" gauge; PBU "$300–$800" (not in the sales
+  pack); RV card "beat every competitor"; Triple J one-liner "turnkey concrete"; 404 "same-day" + `/contact`;
+  customer email preview always said "today".
+- **13b/13c:** OG cards in Cinzel (WOFFs from `@fontsource/cinzel`) with a PBR strip; military card olive/tan;
+  emails navy with a Cinzel→Georgia wordmark; quote PDF registers Cinzel (render test added).
+- **Cleanup:** ten dead section components, legacy `Button`/`Container`/`Reveal`, the `.marketing` heading
+  rules and the legacy hero/texture/reveal/military CSS removed (`globals.css` 836 → 613 lines).
+  `check-vault.mjs` learned a `RETIRED` set for files deleted by a later decision.
+- Gate: typecheck, lint, 555 tests, vault check, `next build` (placeholder Supabase env). **HQ (13d) not
+  touched** — it needs its own design pass.
+
 ## 2026-10-02 — Forge redesign built (handoff PR 00–12) on a preview branch
 
 Owner uploaded the finished "Forge" handoff (`docs/redesign-2026-10/forge-handoff/`). Built PR 00–12 on

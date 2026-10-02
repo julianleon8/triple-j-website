@@ -1,33 +1,41 @@
-# Forge redesign — 2026-10-02 · PR 00–12 BUILT ON A PREVIEW BRANCH, NOT ON MAIN
+# Forge redesign — 2026-10-02 · ALL 14 HANDOFF STEPS BUILT EXCEPT HQ, ON A PREVIEW BRANCH
 
-Branch **`claude/new-session-471fsd`** carries the Forge handoff's PR 00–12 (`docs/redesign-2026-10/forge-handoff/`),
-one commit each; it also merges `claude/focused-gates-iu172r`. Vercel builds a preview for the branch.
-**Nothing is on `main`.** Merging to `main` is the publish step and needs the owner's go.
-Every decision is in the 2026-10-02 rows of `Decisions.md` and the matching `Locked Decisions.md` lines.
+Branch **`claude/new-session-471fsd`** carries the whole Forge handoff (`docs/redesign-2026-10/forge-handoff/`):
+PR 00–12 plus step 13a–13c (every public route, OG cards, customer emails, quote PDF, legacy cleanup) and the
+owner's **PBR-panel footer**. Vercel builds a preview per push. **Nothing is on `main`**; merging is the publish
+step and needs the owner's go. Decisions: the 2026-10-02 rows of `Decisions.md` + matching `Locked Decisions.md`.
 
 **Waiting on the owner:**
-1. Review the preview at phone and desktop width: `/`, `/services/carports`, `/services/metal-fencing`,
-   `/services/gates`, `/locations/temple`, `/locations/belton`, `/gallery`, `/about`, `/contact`, `/partners`,
-   `/military`. Gallery-driven sections were never seen with real photos here — look at them on the preview.
-2. Freddy confirms the heavy-duty upgrade wording ("11-gauge columns, welded to the receivers and purlins").
-3. `/contact` messages fire the Ads lead conversion (parity with before). Narrow to "New build" only?
-4. `/contact` says "We call back same day" (pre-existing). Keep, or bring it to "within 24 hours"?
-5. Claim to verify, kept from live copy: carports "Licensed & insured" (`services.ts` trustPoints). Real
-   customer quotes for `testimonials.md`.
-6. A gates photo: `/services/gates` uses the fence photo for now.
+1. Review the preview page by page at phone and desktop width (gallery-driven sections were never seen with
+   real photos in the sandbox). Then say "merge".
+2. **Blog post copy that breaks locks** (left as written — it's content, not styling):
+   - Bell County permit guide: "a local contractor who pulls permits", "we pull the permit… in our name",
+     "include the permit cost in your quote"; Fort Cavazos post: "we submit it"; HOA post: "pull the city
+     permit… coordinate the engineer". Lock: permits are advisory only.
+   - Blackland Prairie post: "Anything under 3,500 [PSI] … is underspec" — calls our 3,000 standard underspec.
+   - HOA post: standing-seam premium "roughly $1,500–$3,000" (not in the sales pack).
+   - Fort Cavazos + welded-vs-bolted tables: rows labelled "Concrete included" (cells say "Separately priced");
+     welded-vs-bolted "Triple J handles the concrete pour and the steel erection in the same contract".
+   - Fort Cavazos: "we're on-site for one day" on a 20×20; military discount "ask on the quote call" (it's a
+     form checkbox now).
+3. `/services` hero lede "delivered turnkey with site prep, concrete, and install all under one contract" —
+   the turnkey-label fix proposed 2026-10-01 still needs a yes.
+4. Smaller claims to confirm or cut: roundup "We schedule within days of contract signing"; `/locations` "no
+   travel fee for most residential projects"; carports "Licensed & insured".
+5. `src/lib/colors.ts` hot-links swatch images from a panel maker's site (the domain is in page source, and
+   the Dark Gray, Black and Antique Premium swatches 404). Needs our own swatch images.
+6. Still open from before: Freddy on the 11-gauge wording; `/contact` "same day" (keep?); contact messages
+   counting as Ads conversions (narrow to "New build"?); real testimonials; a gates photo.
 
-**Next build step — PR 13** (`prs/PR-13-retire-legacy.md`, targets `main` after the merge):
-- 13a: restyle in Forge, no new design: `/quote`, `/thank-you` (every quote lands here — do it first), blog
-  index and posts, `/locations` and `/services` indexes, colors / hybrid / pbr-vs-pbu, alternatives,
-  best-metal-carport-builders-temple-tx, privacy, terms, not-found. `themeColor` `#1e6bd6` → `#00182a`.
-  Then drop the `.marketing h1/h2/h3` + `p` rules and legacy classes. Unused now (0 importers):
-  `sections/{Services,ServiceAreas,Crew,RelatedProjects,RelatedReading,TrustBar,WhyTripleJ,Testimonials}.tsx`.
-- 13b OG cards in Cinzel · 13c emails + quote PDF · 13d HQ — its own design pass with the owner.
+**Next build step — 13d, HQ.** Its own design pass with the owner: HQ is forced-dark "Shop floor"; do not
+alias `brand-*` onto navy (contrast dies on `#0b0d0f`). Barlow, the `brand-*` tokens and the global
+royal-blue focus ring stay until then because only HQ uses them.
 
-**Working notes:** primitives in `src/components/forge/`; wrap a page in `data-forge`. Prefill the quote form
-with `requestQuote()` (`src/lib/forge-quote.ts`). Gallery data via `getBuilds()` (`src/lib/forge-builds.ts`).
-`next build` needs a Supabase URL for `/gallery/[id]` — pass dead-host placeholders inline, never real keys.
-Dev server: `npx next dev --webpack`. Tailwind math inside `clamp()`/`calc()` needs `_+_` / `_-_`.
+**Working notes:** primitives in `src/components/forge/`; wrap pages in `data-forge`. Blog bodies use
+`.forge-prose`; legal pages use `LegalPage`. **JSX gotcha:** write `</strong>{' '}text`, never `</strong> text`,
+when the text run holds an HTML entity — the space is dropped (`blog/[slug]/posts.test.ts` guards posts).
+`next build` needs a Supabase URL for `/gallery/[id]` — dead-host placeholders inline, never real keys.
+Dev: `npx next dev --webpack`. Tailwind math in `clamp()`/`calc()` needs `_+_` / `_-_`.
 
 ---
 
