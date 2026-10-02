@@ -82,7 +82,7 @@ export default function ServicesPage() {
         eyebrow="What We Build"
         h1a="Six things we build."
         h1b="Built whole, by us."
-        lede="Welded or bolted red-iron steel — delivered turnkey with site prep, concrete, and install all under one contract. Same-week scheduling across Bell, Coryell, and McLennan counties."
+        lede="Every structure is sold welded, bolted, or turnkey — with turnkey, site prep, concrete and installation sit on one contract. No kits, no subcontractors. Same-week scheduling across Bell, Coryell, and McLennan counties."
         ledeMax="max-w-[640px]"
       />
 

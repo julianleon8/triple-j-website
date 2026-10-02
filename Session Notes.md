@@ -1,5 +1,11 @@
 # Session Notes
 
+## 2026-10-02 — `/services` turnkey line
+
+Owner approved the 2026-10-01 proposal: the `/services` hero no longer says every structure is "delivered
+turnkey"; it says each is sold welded, bolted, or turnkey, with turnkey putting site prep, concrete and
+installation on one contract.
+
 ## 2026-10-02 — Blog posts brought to the locks
 
 Owner asked. All five post modules rewritten where they broke a lock: permit-pulling claims (and a

@@ -11,8 +11,8 @@ step and needs the owner's go. Decisions: the 2026-10-02 rows of `Decisions.md` 
 2. **Blog posts were brought to the locks** (2026-10-02, owner asked): permit-pulling claims are now advisory,
    PSI/price/concrete/competitor/timeline lines fixed (row in `Decisions.md`); `check-vault.mjs` now rejects the
    retired permit-pulling and concrete-included wording. Skim the five posts on the preview.
-3. `/services` hero lede "delivered turnkey with site prep, concrete, and install all under one contract" —
-   the turnkey-label fix proposed 2026-10-01 still needs a yes.
+3. **`/services` hero lede fixed** (owner approved): turnkey is named as one of three ways a structure is sold,
+   not a blanket label (row in `Decisions.md`).
 4. Smaller claims to confirm or cut: roundup "We schedule within days of contract signing"; `/locations` "no
    travel fee for most residential projects"; carports "Licensed & insured".
 5. `src/lib/colors.ts` hot-links swatch images from a panel maker's site (the domain is in page source, and
