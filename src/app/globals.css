@@ -477,6 +477,21 @@ p:not(:where([data-forge] *)) { line-height: 1.6; }
 
   .forge-no-scrollbar { scrollbar-width: none; }
   .forge-no-scrollbar::-webkit-scrollbar { display: none; }
+
+  /* PBR panel: one 12" pitch per tile, light from the left — the wide flat
+     pan with two stiffener ribs, then the trapezoid major rib (lit face,
+     crown with a specular edge, shaded face). An SVG tile, so it stays
+     sharp at any density and weighs ~1 KB. Pitch scales with the viewport
+     via --pbr-pitch; the sheen layer keeps it from reading as flat CG. */
+  .forge-pbr {
+    --pbr-pitch: clamp(88px, 6vw + 40px, 132px);
+    background-color: #062035;
+    background-image:
+      linear-gradient(100deg, rgba(201,211,220,.05) 0%, transparent 35%, rgba(201,211,220,.025) 62%, transparent 85%),
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='10' viewBox='0 0 120 10' preserveAspectRatio='none'%3E%3Cdefs%3E%3ClinearGradient id='s'%3E%3Cstop offset='0' stop-color='%2300070e'/%3E%3Cstop offset='1' stop-color='%23062035' stop-opacity='0'/%3E%3C/linearGradient%3E%3ClinearGradient id='l'%3E%3Cstop offset='0' stop-color='%2312385a'/%3E%3Cstop offset='1' stop-color='%231a4466'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='120' height='10' fill='%23062035'/%3E%3Crect width='18' height='10' fill='url(%23s)'/%3E%3Crect x='28' width='1.5' height='10' fill='%2312324c'/%3E%3Crect x='29.5' width='1.5' height='10' fill='%2301101d'/%3E%3Crect x='56' width='1.5' height='10' fill='%2312324c'/%3E%3Crect x='57.5' width='1.5' height='10' fill='%2301101d'/%3E%3Crect x='84' width='1' height='10' fill='%23021426'/%3E%3Crect x='85' width='11' height='10' fill='url(%23l)'/%3E%3Crect x='96' width='1' height='10' fill='%234a6c88'/%3E%3Crect x='97' width='9' height='10' fill='%23133552'/%3E%3Crect x='106' width='1' height='10' fill='%2300060d'/%3E%3Crect x='107' width='13' height='10' fill='%23010c16'/%3E%3C/svg%3E");
+    background-size: 100% 100%, var(--pbr-pitch) 100%;
+    background-repeat: no-repeat, repeat-x;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

@@ -161,15 +161,8 @@ export function Footer() {
       data-tone="dark"
       className="relative z-0 overflow-hidden border-t border-forge-silver/15 bg-forge-navy text-white/80"
     >
-      <Image
-        src="/images/textures/footer-brushed-steel.png"
-        alt=""
-        aria-hidden="true"
-        fill
-        sizes="100vw"
-        className="pointer-events-none object-cover opacity-55"
-        style={{ objectPosition: "50% 100%" }}
-      />
+      {/* PBR wall panel under the scrim (owner, 2026-10-02: replaces brushed steel). */}
+      <div aria-hidden="true" className="forge-pbr pointer-events-none absolute inset-0 opacity-80" />
       <div aria-hidden="true" className="pointer-events-none absolute inset-0" style={{ background: "var(--scrim-footer)" }} />
       <FooterCurtain className="relative">{content}</FooterCurtain>
     </footer>
