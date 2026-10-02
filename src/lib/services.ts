@@ -531,7 +531,7 @@ export const SERVICES: Record<string, ServiceData> = {
     heroHeadline: 'RV & Boat Covers — Same-Week Installs, Texas Hail Won\'t Wait',
     heroCopy:
       "Texas hail season doesn't send a calendar invite. A single storm can total an unprotected RV or boat in minutes. Triple J Metal builds tall-clearance RV and boat covers for Central Texas properties — most jobs are scheduled and on-site within days of your approval. If you just bought an RV, just PCS'd to Fort Cavazos, or just had a close call with hail — call us today.",
-    mainBenefit: 'Same-week installs beat every competitor in Central Texas. Military discount available for Fort Cavazos families.',
+    mainBenefit: 'Same-week scheduling. Military discount available for Fort Cavazos families.',
     features: [
   {
     "title": "Tall Clearance for Class A & Class C RVs",

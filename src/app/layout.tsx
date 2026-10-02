@@ -38,10 +38,9 @@ export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   viewportFit: "cover",
-  themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#1e6bd6" },
-    { media: "(prefers-color-scheme: dark)",  color: "#000000" },
-  ],
+  // Forge navy in both schemes: the header is navy either way. HQ sets its
+  // own (#0b0d0f) in src/app/hq/layout.tsx.
+  themeColor: "#00182a",
 };
 
 export const metadata: Metadata = {
