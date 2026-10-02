@@ -3,9 +3,11 @@ import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import Image from 'next/image'
 import Link from 'next/link'
-import { ButtonLink } from '@/components/ui/Button'
-import { Container } from '@/components/ui/Container'
-import { QuoteForm } from '@/components/sections/QuoteForm'
+import { Breadcrumb } from '@/components/forge/Breadcrumb'
+import { ForgeButtonLink } from '@/components/forge/ForgeButton'
+import { PageHero } from '@/components/forge/PageHero'
+import { QuoteSection } from '@/components/forge/QuoteSection'
+import { buttonClass } from '@/components/forge/styles'
 import { TrackedPhoneLink, TrackedPhoneNumber } from '@/components/site/TrackedPhone'
 import { SITE } from '@/lib/site'
 import { getSiteUrl } from '@/lib/site-url'
@@ -136,7 +138,7 @@ export default async function GalleryDetailPage(
   }
 
   return (
-    <>
+    <div data-forge="">
       <BreadcrumbJsonLd
         items={[
           { name: 'Gallery', path: '/gallery' },
@@ -150,143 +152,128 @@ export default async function GalleryDetailPage(
         }}
       />
 
-      {/* ── Hero ── */}
-      <section className="relative bg-ink-900 text-white py-16 md:py-20 overflow-hidden">
-        <div className="hero-glow absolute inset-0 pointer-events-none" aria-hidden="true" />
-        <Container className="relative">
-          <div className="grid md:grid-cols-[1fr_minmax(auto,460px)] gap-10 md:gap-14 items-center">
-            <div>
-              <span className="text-xs font-semibold uppercase tracking-[0.15em] text-brand-400">
-                Triple J Build · {item.type}
-              </span>
-              <h1 className="mt-3 text-white">{item.title}</h1>
-              <p className="mt-4 text-lg text-white/75">{item.city}</p>
-              <div className="mt-8 flex flex-wrap gap-4">
-                <ButtonLink href="#quote" variant="primary" size="lg">
-                  Build one like this
-                </ButtonLink>
-                <TrackedPhoneLink
-                  surface="gallery_id_hero"
-                  className="inline-flex items-center gap-2 h-12 px-6 rounded-lg border-2 border-white/30 text-white font-semibold hover:border-white/60 transition-colors text-sm"
-                >
-                  Call&nbsp;
-                </TrackedPhoneLink>
-              </div>
-            </div>
-            <a
-              href="#project-photos"
-              className="group relative block aspect-4/3 rounded-2xl overflow-hidden bg-ink-800 shadow-xl"
-              aria-label={`View all ${photos.length} photos of ${item.title}`}
-            >
-              <Image
-                src={cover.image_url}
-                alt={cover.alt_text || item.title}
-                fill
-                sizes="(max-width: 768px) 100vw, 460px"
-                className="object-cover object-center transition-transform duration-500 group-hover:scale-[1.02]"
-                unoptimized={cover.image_url.startsWith('/')}
-                priority
+      {/* ── Hero (navy band) ── */}
+      <PageHero
+        variant="plain"
+        breadcrumb={
+          <Breadcrumb trail={[{ name: 'Gallery', href: '/gallery' }]} current={item.title} jsonLd={false} />
+        }
+        eyebrow={`Triple J build · ${item.type}`}
+        h1a={item.title}
+        lede={item.city}
+        contentMax="max-w-[640px]"
+        actions={
+          <>
+            <ForgeButtonLink href="#quote" variant="white" size="lg" arrow>
+              Build one like this
+            </ForgeButtonLink>
+            <TrackedPhoneLink surface="gallery_id_hero" mode="children-only" className={buttonClass('outlineDark', 'lg')}>
+              Call <TrackedPhoneNumber className="tabular-nums" />
+            </TrackedPhoneLink>
+          </>
+        }
+        aside={
+          <a
+            href="#project-photos"
+            className="relative block aspect-4/3 w-full max-w-[460px] overflow-hidden rounded-[12px] border border-forge-silver/[.22] bg-forge-navy-raised shadow-[var(--shadow-mega)]"
+            aria-label={`View all ${photos.length} photos of ${item.title}`}
+          >
+            <Image
+              src={cover.image_url}
+              alt={cover.alt_text || item.title}
+              fill
+              sizes="(max-width: 768px) 100vw, 460px"
+              className="object-cover object-center"
+              unoptimized={cover.image_url.startsWith('/')}
+              priority
+            />
+            <span aria-hidden="true" className="absolute inset-0" style={{ background: 'var(--scrim-photo-card)' }} />
+            <span className="absolute right-3 bottom-3 rounded-[6px] border border-white/30 bg-[rgba(0,24,42,.6)] px-3 py-1.5 text-[12px] font-semibold uppercase tracking-[.12em] text-white">
+              View all {photos.length} photos →
+            </span>
+          </a>
+        }
+      />
+
+      {/* ── Body: photos + details ── */}
+      <section data-forge="" data-tone="light" className="bg-white py-[clamp(56px,6vw,96px)] text-forge-navy">
+        <div className="mx-auto grid w-full max-w-[1360px] gap-12 px-[clamp(20px,3vw,40px)] md:grid-cols-[1fr_300px]">
+          <div>
+            <h2 id="project-photos" className="mb-6 scroll-mt-24 font-forge-display text-[clamp(26px,2vw_+_12px,40px)] font-black leading-[1.1]">
+              Project photos
+            </h2>
+            {photos.length > 0 ? (
+              <PhotoLightbox
+                photos={photos.map((p) => ({
+                  id: p.id,
+                  src: p.image_url,
+                  alt: p.alt_text || item.title,
+                }))}
               />
-              {/* Click affordance overlay */}
-              <div aria-hidden="true" className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
-              <span className="absolute bottom-3 right-3 inline-flex items-center gap-1.5 rounded-full bg-white/15 backdrop-blur-md text-white text-xs font-bold uppercase tracking-wider px-3 py-1.5 group-hover:bg-white/25 transition-colors">
-                View all {photos.length} photos →
-              </span>
-            </a>
+            ) : (
+              <p className="text-forge-slate">
+                Additional photos coming soon. Call <TrackedPhoneNumber /> to see more
+                examples like this build.
+              </p>
+            )}
           </div>
-        </Container>
-      </section>
 
-      {/* ── Body: photos + sidebar ── */}
-      <section className="py-16 md:py-20 bg-white">
-        <Container size="wide">
-          <div className="grid md:grid-cols-[1fr_300px] gap-12">
-            <div>
-              <h2 id="project-photos" className="mb-6 scroll-mt-24">
-                Project Photos
-              </h2>
-              {photos.length > 0 ? (
-                <PhotoLightbox
-                  photos={photos.map((p) => ({
-                    id: p.id,
-                    src: p.image_url,
-                    alt: p.alt_text || item.title,
-                  }))}
-                />
-              ) : (
-                <p className="text-ink-500">
-                  Additional photos coming soon. Call <TrackedPhoneNumber /> to see more
-                  examples like this build.
-                </p>
-              )}
+          <aside className="flex flex-col items-start gap-4">
+            <div className="w-full rounded-[12px] border border-forge-silver bg-forge-fog p-5">
+              <h2 className="mb-4 text-[11px] font-bold uppercase tracking-[.2em] text-forge-slate">Build details</h2>
+              <dl className="flex flex-col gap-3">
+                <DetailRow label="Project" value={item.title} />
+                <DetailRow label="Location" value={item.city} />
+                <DetailRow label="Type" value={item.type} />
+                <DetailRow label="Construction" value={item.tag} />
+                {colors.panel && (
+                  <DetailRow
+                    label="Panel Color"
+                    value={
+                      <Link href={`/services/colors#${colors.panel.slug}`} className={detailLink}>
+                        {colors.panel.name} ({colors.panel.line})
+                      </Link>
+                    }
+                  />
+                )}
+                {colors.trim && (
+                  <DetailRow
+                    label="Trim Color"
+                    value={
+                      <Link href={`/services/colors#${colors.trim.slug}`} className={detailLink}>
+                        {colors.trim.name} ({colors.trim.line})
+                      </Link>
+                    }
+                  />
+                )}
+                {item.panel_profile && (
+                  <DetailRow
+                    label="Panel Profile"
+                    value={
+                      <Link href="/services/pbr-vs-pbu-panels" className={detailLink}>
+                        {item.panel_profile}
+                      </Link>
+                    }
+                  />
+                )}
+                {item.gauge && (
+                  <DetailRow label="Gauge" value={`${item.gauge} ga`} />
+                )}
+              </dl>
             </div>
-
-            <aside className="space-y-4">
-              <div className="rounded-xl border border-ink-100 bg-ink-50 p-5">
-                <h2 className="text-sm font-bold uppercase tracking-widest text-ink-400 mb-4">
-                  Build Details
-                </h2>
-                <dl className="space-y-3">
-                  <DetailRow label="Project" value={item.title} />
-                  <DetailRow label="Location" value={item.city} />
-                  <DetailRow label="Type" value={item.type} />
-                  <DetailRow label="Construction" value={item.tag} />
-                  {colors.panel && (
-                    <DetailRow
-                      label="Panel Color"
-                      value={
-                        <Link
-                          href={`/services/colors#${colors.panel.slug}`}
-                          className="text-brand-700 hover:underline"
-                        >
-                          {colors.panel.name} ({colors.panel.line})
-                        </Link>
-                      }
-                    />
-                  )}
-                  {colors.trim && (
-                    <DetailRow
-                      label="Trim Color"
-                      value={
-                        <Link
-                          href={`/services/colors#${colors.trim.slug}`}
-                          className="text-brand-700 hover:underline"
-                        >
-                          {colors.trim.name} ({colors.trim.line})
-                        </Link>
-                      }
-                    />
-                  )}
-                  {item.panel_profile && (
-                    <DetailRow
-                      label="Panel Profile"
-                      value={
-                        <Link
-                          href="/services/pbr-vs-pbu-panels"
-                          className="text-brand-700 hover:underline"
-                        >
-                          {item.panel_profile}
-                        </Link>
-                      }
-                    />
-                  )}
-                  {item.gauge && (
-                    <DetailRow label="Gauge" value={`${item.gauge} ga`} />
-                  )}
-                </dl>
-              </div>
-              <ButtonLink href="/gallery" variant="secondary" size="sm">
-                ← All projects
-              </ButtonLink>
-            </aside>
-          </div>
-        </Container>
+            <ForgeButtonLink href="/gallery" variant="outlineLight" size="tap">
+              ← All projects
+            </ForgeButtonLink>
+          </aside>
+        </div>
       </section>
 
-      <QuoteForm key={item.id} projectReference={{ id: item.id, title: item.title, city: item.city || "Central Texas", type: item.type, image: cover.image_url }} />
-    </>
+      <QuoteSection key={item.id} projectReference={{ id: item.id, title: item.title, city: item.city || "Central Texas", type: item.type, image: cover.image_url }} />
+    </div>
   )
 }
+
+const detailLink = 'border-b border-forge-silver text-forge-navy transition-colors hover:border-forge-navy'
 
 function DetailRow({
   label,
@@ -297,10 +284,10 @@ function DetailRow({
 }) {
   return (
     <div className="flex flex-col gap-1">
-      <dt className="text-xs font-semibold uppercase tracking-wide text-ink-400">
+      <dt className="text-[11px] font-semibold uppercase tracking-[.18em] text-forge-steel">
         {label}
       </dt>
-      <dd className="text-sm font-medium text-ink-800">{value}</dd>
+      <dd className="m-0 text-[14px] font-medium text-forge-navy">{value}</dd>
     </div>
   )
 }

@@ -86,7 +86,7 @@ export function PhotoLightbox({ photos }: Props) {
             key={p.id}
             type="button"
             onClick={() => open(i)}
-            className="group relative aspect-4/3 overflow-hidden rounded-xl bg-ink-200 focus:outline-none focus:ring-2 focus:ring-brand-600"
+            className="group relative aspect-4/3 overflow-hidden rounded-[12px] border border-forge-silver bg-forge-slate transition-[border-color,box-shadow] duration-300 hover:border-forge-steel hover:shadow-[var(--shadow-card-hover)]"
             aria-label={`Open photo ${i + 1} of ${photos.length}: ${p.alt}`}
           >
             <Image
@@ -98,7 +98,7 @@ export function PhotoLightbox({ photos }: Props) {
               unoptimized={p.src.startsWith('/')}
             />
             {i === 0 && (
-              <span className="absolute top-2 left-2 bg-brand-600 text-white text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full shadow">
+              <span className="absolute top-2 left-2 rounded-full bg-forge-navy px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-white shadow">
                 Cover
               </span>
             )}
