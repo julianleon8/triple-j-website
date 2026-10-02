@@ -2,7 +2,7 @@
  * Forge class maps — the variant → class tables behind the Forge primitives.
  *
  * Kept apart from the components so they can be unit-tested without
- * rendering, the way src/components/ui/Button.test.ts pins the old buttons.
+ * rendering (see styles.test.ts).
  * Every value is a literal string so Tailwind's scanner sees it.
  * Spec: docs/redesign-2026-10/forge-handoff/forge-design-system/readme.md
  */

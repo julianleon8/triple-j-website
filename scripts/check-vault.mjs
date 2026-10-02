@@ -49,12 +49,21 @@ const rootMd = readdirSync(ROOT).filter((f) => f.endsWith('.md')).sort()
     'dev/feedback_turnkey_vs_steel_install.md',
     'dev/feedback_no_public_pricing_yet.md',
   ])
+  // Deleted by a later decision. Decisions.md rows that cite them are history
+  // and stay as written; Locked Decisions.md and AGENTS.md must not cite them.
+  const RETIRED = new Set([
+    'src/components/ui/Reveal.tsx', // Forge step 13a, 2026-10-02
+    'src/lib/use-reveal.ts', // Forge step 13a, 2026-10-02
+    'src/components/ui/Button.tsx', // Forge step 13a, 2026-10-02
+    'src/components/ui/Button.test.ts', // Forge step 13a, 2026-10-02
+  ])
   for (const f of ['Decisions.md', 'Locked Decisions.md', 'AGENTS.md']) {
     if (!has(f)) continue
     read(f).split('\n').forEach((line, i) => {
       for (const m of line.matchAll(/`((?:dev|docs|seo|src|scripts)\/[A-Za-z0-9._/-]+)`/g)) {
         const p = m[1]
         if (GRANDFATHERED.has(p) || has(p)) continue
+        if (f === 'Decisions.md' && RETIRED.has(p)) continue
         fail(f, i + 1, `cites \`${p}\`, which does not exist`)
       }
     })

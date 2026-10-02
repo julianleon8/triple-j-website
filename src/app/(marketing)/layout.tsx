@@ -32,7 +32,7 @@ export default function MarketingLayout({
 }) {
   return (
     <div
-      className="marketing bg-white text-[color:var(--color-ink-900)] flex-1 flex flex-col"
+      className="marketing flex flex-1 flex-col bg-white text-forge-navy"
       style={{ colorScheme: "light" }}
     >
       <OrganizationJsonLd />
