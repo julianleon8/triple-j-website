@@ -41,6 +41,18 @@ export const FIXES = [
     to: 'same-week turnaround',
     why: 'retired timeline claim',
   },
+  {
+    id: 'gauge-upgrade-title',
+    re: /\b12-Gauge Storm Upgrade\b/g,
+    to: 'Heavy-Duty Upgrade',
+    why: 'the upgrade is 11-gauge columns welded to receivers and purlins, not 12-gauge (2026-10-02)',
+  },
+  {
+    id: 'gauge-upgrade',
+    re: /\b12[-‑ ]gauge storm upgrade\b/gi,
+    to: 'heavy-duty upgrade',
+    why: 'the upgrade is 11-gauge columns welded to receivers and purlins, not 12-gauge (2026-10-02)',
+  },
 ]
 
 // A line that names a retired claim in order to ban it is not a violation, and

@@ -97,6 +97,9 @@ const eslintConfig = defineConfig([
     // whichever build ran last.
     "public/sw.js",
     "public/sw.js.map",
+    // Design references from the 2026-10 Forge handoff: prototype bundles kept
+    // for reading, never imported or shipped.
+    "docs/**",
   ]),
 ]);
 

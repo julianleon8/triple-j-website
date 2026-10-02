@@ -1,0 +1,55 @@
+/* Forge — typography tokens.
+   The design files size type with container-query units (cqw) on a full-width
+   container; in production 1cqw === 1vw, so every clamp() here uses vw. */
+:root {
+  --font-display: "Cinzel", Georgia, serif;          /* headlines, wordmark, card titles, numerals */
+  --font-sans:    "Inter", system-ui, sans-serif;    /* everything else */
+  --font-mono:    ui-monospace, Menlo, monospace;    /* photo placeholders only */
+
+  --weight-black:   900; /* Cinzel: h1, h2, wordmark, big numbers */
+  --weight-display: 700; /* Cinzel: h3, card titles, FAQ questions, tabs, fact values */
+  --weight-bold:    700; /* Inter: form labels, micro-labels */
+  --weight-semi:    600; /* Inter: buttons, links, eyebrows */
+  --weight-medium:  500; /* Inter: nav links, chips */
+  --weight-regular: 400;
+
+  /* Display scale (Cinzel, sentence case — NEVER text-transform: uppercase) */
+  --type-hero-home: clamp(35px, 7.4vw, 104px);          /* homepage hero h1, lh 1.02 */
+  --type-h1:        clamp(34px, 4.4vw + 6px, 76px);     /* inner-page hero h1, lh 1.04 */
+  --type-h2:        clamp(30px, 3vw + 12px, 56px);      /* section h2, lh 1.05 */
+  --type-h2-compact: clamp(26px, 2.2vw + 12px, 44px);   /* secondary split h2, lh 1.1 */
+  --type-h3-panel:  clamp(24px, 1vw + 16px, 32px);      /* callout panel h3, lh 1.15 */
+  --type-h3-form:   clamp(24px, 1vw + 16px, 30px);      /* form success / form title, lh 1.15 */
+  --type-h3-card:   clamp(22px, 0.8vw + 16px, 28px);    /* option-detail card h3, lh 1.2 */
+  --type-quote:     clamp(20px, 1vw + 14px, 26px);      /* testimonial blockquote, Cinzel 700, lh 1.35 */
+  --type-faq-q:     clamp(17px, 0.4vw + 15px, 20px);    /* FAQ question, Cinzel 700, lh 1.3 */
+  --type-title-lg:  24px;  /* photo-card title (Cinzel 900), crew name */
+  --type-title:     19px;  /* feature card / fact value / list h3 (Cinzel 700), lh 1.2–1.25 */
+  --type-title-sm:  17px;  /* build-card title, mega-menu item (Cinzel 700), lh 1.25 */
+  --type-wordmark:  clamp(19px, 1vw + 8px, 22px);       /* header "Triple J Metal" (Cinzel 900) */
+  --type-wordmark-footer: clamp(24px, 1vw + 16px, 30px);
+
+  /* Body scale (Inter) */
+  --type-lede-hero: clamp(16px, 0.4vw + 14px, 18px);    /* lh 1.6 */
+  --type-lede:      clamp(16px, 0.3vw + 14px, 18px);    /* lh 1.55–1.65 */
+  --type-body-lg:   16px;
+  --type-body:      15px;  /* lh 1.6–1.65 */
+  --type-small:     14px;
+  --type-meta:      13px;
+  --type-fine:      12px;  /* eyebrows, helper text */
+  --type-micro:     11px;  /* form + card micro-labels, legal line */
+
+  --leading-hero:    1.02;
+  --leading-h1:      1.04;
+  --leading-h2:      1.05;
+  --leading-title:   1.2;
+  --leading-body:    1.6;
+  --leading-relaxed: 1.65;
+  --leading-page:    1.55; /* root line-height */
+
+  --tracking-display: 0.01em;
+  --tracking-eyebrow: 0.22em;  /* section eyebrow, 12px/600 */
+  --tracking-label:   0.20em;  /* card/fact/footer micro-labels, 11px */
+  --tracking-form:    0.18em;  /* form field labels, step counter */
+  --tracking-role:    0.16em;  /* crew role line */
+}

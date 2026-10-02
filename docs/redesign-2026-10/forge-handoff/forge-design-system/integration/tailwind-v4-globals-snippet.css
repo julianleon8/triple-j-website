@@ -1,0 +1,132 @@
+/* ─────────────────────────────────────────────────────────────────────────────
+   Forge → triple-j-website integration snippet (Tailwind v4, Next.js 16)
+   Paste into src/app/globals.css in PR 1. Additive only: nothing existing is
+   renamed or removed, so HQ, emails and every un-migrated page stay as they are.
+
+   Why a `forge-` prefix on the Tailwind side: Tailwind ships its own `slate-*`
+   scale, and the repo's `brand-*` / `ink-*` tokens still drive HQ. Prefixed
+   utilities (bg-forge-navy, text-forge-slate, font-forge-display …) cannot collide.
+   PR 13 retires Barlow + royal blue and may alias brand-* onto these.
+   ───────────────────────────────────────────────────────────────────────────── */
+
+/* 1 ▸ Raw tokens — add next to the existing :root token block */
+:root {
+  --color-navy: #00182a;
+  --color-navy-raised: #0c2538;
+  --color-slate: #546678;
+  --color-steel: #788a9c;
+  --color-steel-light: #9fb0c0;
+  --color-silver: #c9d3dc;
+  --color-mist: #e3e9ee;
+  --color-fog: #f4f6f8;
+  --color-highlight: #e9eef2;
+  --color-olive: #4b5320;
+  --color-tan: #c5b481;
+  --color-tan-light: #e2d6ae;
+  --color-link-accent: #1e6bd6;        /* pending owner confirmation — README §Deltas */
+  --color-link-accent-hover: #1851b5;
+
+  --gradient-steel: linear-gradient(180deg, #e9eef2 0%, #9fb0c0 45%, #788a9c 55%, #c9d3dc 100%);
+  --scrim-hero-home: radial-gradient(ellipse at center, rgba(0,24,42,.55) 0%, rgba(0,24,42,.82) 60%, rgba(0,24,42,.94) 100%);
+  --scrim-hero-page: linear-gradient(100deg, rgba(0,24,42,.96) 0%, rgba(0,24,42,.84) 42%, rgba(0,24,42,.40) 100%);
+  --scrim-hero-military: linear-gradient(110deg, rgba(0,24,42,.97) 0%, rgba(0,24,42,.86) 45%, rgba(75,83,32,.55) 100%);
+  --scrim-photo-card: linear-gradient(to top, rgba(0,24,42,.94) 0%, rgba(0,24,42,.55) 55%, rgba(0,24,42,.10) 100%);
+  --scrim-footer: linear-gradient(to bottom, #00182a 0%, rgba(0,24,42,.72) 30%, rgba(0,24,42,.42) 70%, rgba(0,24,42,.30) 100%);
+
+  --shadow-lifted: 0 24px 48px -24px rgba(0,24,42,.30);
+  --shadow-card-hover: 0 18px 36px -20px rgba(0,24,42,.40);
+  --shadow-cta: 0 10px 24px -12px rgba(0,24,42,.45);
+  --shadow-mega: 0 30px 60px -20px rgba(0,10,20,.70);
+
+  --forge-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --forge-container: 1360px;
+  --forge-gutter: clamp(20px, 3vw, 40px);
+  --forge-section-y: clamp(64px, 7vw, 104px);
+}
+
+/* 2 ▸ Utilities — add inside the existing `@theme inline { … }` block */
+@theme inline {
+  --color-forge-navy: var(--color-navy);
+  --color-forge-navy-raised: var(--color-navy-raised);
+  --color-forge-slate: var(--color-slate);
+  --color-forge-steel: var(--color-steel);
+  --color-forge-steel-light: var(--color-steel-light);
+  --color-forge-silver: var(--color-silver);
+  --color-forge-mist: var(--color-mist);
+  --color-forge-fog: var(--color-fog);
+  --color-forge-olive: var(--color-olive);
+  --color-forge-tan: var(--color-tan);
+  --color-forge-tan-light: var(--color-tan-light);
+  --color-forge-link: var(--color-link-accent);
+  --color-forge-link-hover: var(--color-link-accent-hover);
+
+  /* next/font in src/app/layout.tsx: Cinzel({ variable: "--font-cinzel", weight: ["700","900"], display: "swap", subsets: ["latin"] }) */
+  --font-forge-display: var(--font-cinzel), Georgia, serif;
+
+  --radius-forge-control: 6px;
+  --radius-forge-icon: 8px;
+  --radius-forge-tile: 10px;
+  --radius-forge-card: 12px;
+
+  --ease-forge: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* 3 ▸ Helpers that Tailwind can't express cleanly — add unlayered or in @layer components */
+.forge-steel-text {             /* 2nd headline line on navy / photo */
+  background: var(--gradient-steel);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.forge-eyebrow {                /* 12px Inter 600, .22em, uppercase, 32×2 rule before */
+  display: inline-flex; align-items: center; gap: 14px;
+  font-size: 12px; font-weight: 600; letter-spacing: .22em; text-transform: uppercase;
+}
+.forge-eyebrow::before {
+  content: ""; width: 32px; height: 2px; flex: none;
+  background: linear-gradient(90deg, transparent, #788a9c);
+}
+.forge-eyebrow--center::after {
+  content: ""; width: 32px; height: 2px; flex: none;
+  background: linear-gradient(90deg, #788a9c, transparent);
+}
+.forge-eyebrow--military::before { background: linear-gradient(90deg, transparent, #c5b481); }
+
+@media (prefers-reduced-motion: reduce) {
+  .forge-motion, .forge-motion * { transition: none !important; animation: none !important; }
+}
+
+/* 4 ▸ Legacy-rule escapes — EDIT these existing rules in globals.css (do not add copies).
+   Hand-written rules in globals.css are UNLAYERED, so they beat every Tailwind
+   utility regardless of specificity. Three of them would silently override Forge:
+
+   a) `.marketing h1, .marketing h2, .marketing h3 { font-family; letter-spacing;
+      line-height; font-weight }` and the three `.marketing hN { font-size }` rules
+      → Barlow 800 + legacy clamp sizes on every Forge heading.
+   b) `p { line-height: 1.6; }` → kills leading-[1.55] / leading-[1.65] on Forge ledes.
+   c) `@media (max-width: 768px) { body:not(:has(.hq-ui)) main { padding-bottom: 4.5rem } }`
+      → Forge's call bar shows below 900px, so 769–899px would be unpadded.
+
+   Every migrated surface carries a `data-forge` attribute on its root (the
+   Header, Footer, MobileCallBar, and each redesigned page wrapper). Rewrite: */
+
+.marketing :is(h1, h2, h3):not(:where([data-forge], [data-forge] *)) {
+  font-family: var(--font-display);
+  letter-spacing: -0.01em;
+  line-height: 1.05;
+  font-weight: 800;
+}
+.marketing h1:not(:where([data-forge], [data-forge] *)) { font-size: clamp(2.25rem, 5vw + 1rem, 4.5rem); }
+.marketing h2:not(:where([data-forge], [data-forge] *)) { font-size: clamp(1.75rem, 2.5vw + 1rem, 2.75rem); }
+.marketing h3:not(:where([data-forge], [data-forge] *)) { font-size: clamp(1.25rem, 1vw + 1rem, 1.75rem); letter-spacing: -0.015em; }
+
+p:not(:where([data-forge] *)) { line-height: 1.6; }
+
+/* (c) is handled in PR 3: widen the call-bar clearance to max-width: 899px for
+   pages whose layout renders the Forge MobileCallBar. */
+
+/* 5 ▸ Forge-scoped focus + selection (the global ones are royal blue) */
+[data-forge] :focus-visible { outline: 2px solid var(--color-navy); outline-offset: 2px; }
+[data-forge] [data-tone="dark"] :focus-visible,
+[data-forge][data-tone="dark"] :focus-visible { outline-color: var(--color-silver); }
+[data-forge] ::selection { background: var(--color-slate); color: #fff; }

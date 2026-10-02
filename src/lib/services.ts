@@ -101,7 +101,7 @@ export const SERVICES: Record<string, ServiceData> = {
     features: [
   {
     "title": "Welded Red Iron — Permanent",
-    "description": "On-site welded red iron with material and connection details confirmed for your project. Standard framing is 14-gauge; a 12-gauge upgrade is available where appropriate."
+    "description": "On-site welded red iron with material and connection details confirmed for your project. Standard framing is 14-gauge; a heavy-duty upgrade with 11-gauge columns is available where appropriate."
   },
   {
     "title": "Bolted Red Iron — Affordable",
@@ -259,9 +259,9 @@ export const SERVICES: Record<string, ServiceData> = {
           'Don\'t want to source your own concrete crew? We pour the pad, install the garage, and hand you the keys — one invoice.',
       },
       {
-        title: '12-Gauge Storm Upgrade',
+        title: 'Heavy-Duty Upgrade',
         description:
-          'Upgrade from 14-gauge to 12-gauge steel for maximum durability in Central Texas hail country. Ideal for insured structures.',
+          'Standard framing is 14-gauge. The heavy-duty upgrade adds 11-gauge columns, welded to the receivers and purlins.',
       },
       {
         title: 'Insulation Ready',
@@ -308,7 +308,7 @@ export const SERVICES: Record<string, ServiceData> = {
       {
         title: 'Welded Red Iron Framing',
         description:
-          '14-gauge or 12-gauge red iron steel, welded on-site. Permanent, storm-proof, and built to last decades without bolt connections loosening.',
+          '14-gauge red iron steel with an optional 11-gauge heavy-duty column upgrade, welded on-site. Permanent, storm-proof, and built to last decades without bolt connections loosening.',
       },
       {
         title: 'Any Configuration',
@@ -447,9 +447,9 @@ export const SERVICES: Record<string, ServiceData> = {
           'The architectural siding standard for luxury residential construction — available in the same color palette as your primary home\'s exterior for seamless matching.',
       },
       {
-        title: '12-Gauge Storm Upgrade',
+        title: 'Heavy-Duty Upgrade',
         description:
-          'Premium structures deserve premium steel. 12-gauge framing provides greater rigidity and meets the structural requirements of HOA engineering reviews.',
+          'For premium structures, the heavy-duty upgrade adds 11-gauge columns, welded to the receivers and purlins. The rest of the frame stays 14-gauge.',
       },
       {
         title: 'Low Disruption — Same-Week Build',

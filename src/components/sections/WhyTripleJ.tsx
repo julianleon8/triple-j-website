@@ -98,8 +98,8 @@ export function WhyTripleJ() {
                   Welded On-Site
                 </span>
                 <p className="mt-3 text-white text-base sm:text-lg leading-relaxed">
-                  Texas-sourced red-iron steel. 14-gauge standard, 12-gauge
-                  storm upgrade. Every weld inspected before concrete cures.
+                  Texas-sourced red-iron steel. 14-gauge standard, with 11-gauge
+                  heavy-duty columns available. Every weld inspected before concrete cures.
                 </p>
               </div>
             </div>

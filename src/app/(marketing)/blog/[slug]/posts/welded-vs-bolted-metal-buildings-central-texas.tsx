@@ -41,9 +41,9 @@ export default function WeldedVsBoltedPost() {
         &#8212; there are no slip-fit connections that can work loose under vibration or thermal cycling.
       </p>
       <p>
-        Triple J Metal uses a <strong>Miller Bobcat</strong> welder and 12-gauge red iron for our primary structural
-        frames. 12-gauge steel has substantially higher tensile strength than the 14-gauge tube used in
-        most bolt-together kits, and our frames are engineered for <strong>140 MPH wind loads</strong> &#8212; the
+        Triple J Metal uses a <strong>Miller Bobcat</strong> welder and red iron for our primary structural
+        frames: 14-gauge standard, with a heavy-duty upgrade that adds 11-gauge columns welded to the
+        receivers and purlins. Our frames are engineered for <strong>140 MPH wind loads</strong> &#8212; the
         standard required by Texas windstorm certification zones near the Gulf.
       </p>
       <p>

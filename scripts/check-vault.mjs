@@ -111,6 +111,7 @@ const rootMd = readdirSync(ROOT).filter((f) => f.endsWith('.md')).sort()
     [/Triple JJJ/i, 'retired brand alias'],
     [/Triple J Metal Buildings LLC/i, 'retired legal alias - the legal name is "Triple J Metal LLC"'],
     [/4,?000 PSI concrete/i, '4,000 PSI is on-request only, never the promised default (reversed 2026-05-01)'],
+    [/\b12[- ]gauge\b/i, '14-gauge is standard; the upgrade is 11-gauge heavy-duty columns welded to receivers and purlins, never 12-gauge (2026-10-02)'],
   ]
   const EXEMPT = new Set(['Decisions.md', 'Session Notes.md', 'Locked Decisions.md'])
 

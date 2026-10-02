@@ -1,0 +1,42 @@
+/* Forge — gradients, scrims, glass, shadows. */
+:root {
+  /* Brushed-steel accent: 2nd headline line on navy/photo (background-clip:text) */
+  --gradient-steel: linear-gradient(180deg, #e9eef2 0%, #9fb0c0 45%, #788a9c 55%, #c9d3dc 100%);
+  /* Eyebrow rule: 32×2px (48px on home hero) before the label; mirrored after when centred */
+  --gradient-eyebrow-rule:     linear-gradient(90deg, transparent, #788a9c);
+  --gradient-eyebrow-rule-end: linear-gradient(90deg, #788a9c, transparent);
+  --gradient-eyebrow-rule-mil: linear-gradient(90deg, transparent, #c5b481);
+
+  /* Photo scrims */
+  --scrim-hero-home: radial-gradient(ellipse at center, rgba(0,24,42,.55) 0%, rgba(0,24,42,.82) 60%, rgba(0,24,42,.94) 100%);
+  --scrim-hero-page: linear-gradient(100deg, rgba(0,24,42,.96) 0%, rgba(0,24,42,.84) 42%, rgba(0,24,42,.40) 100%);
+  --scrim-hero-military: linear-gradient(110deg, rgba(0,24,42,.97) 0%, rgba(0,24,42,.86) 45%, rgba(75,83,32,.55) 100%);
+  --scrim-photo-card: linear-gradient(to top, rgba(0,24,42,.94) 0%, rgba(0,24,42,.55) 55%, rgba(0,24,42,.10) 100%);
+  --scrim-photo-card-strong: linear-gradient(to top, rgba(0,24,42,.96) 0%, rgba(0,24,42,.78) 50%, rgba(0,24,42,.30) 100%);
+  --scrim-mega-military: linear-gradient(to top, rgba(0,24,42,.96) 0%, rgba(0,24,42,.70) 55%, rgba(75,83,32,.35) 100%);
+  --scrim-chip-photo: linear-gradient(to top, rgba(0,24,42,.55), rgba(0,24,42,0) 55%);
+  --scrim-caption: linear-gradient(to top, rgba(0,24,42,.90), rgba(0,24,42,0));
+  --scrim-footer: linear-gradient(to bottom, #00182a 0%, rgba(0,24,42,.72) 30%, rgba(0,24,42,.42) 70%, rgba(0,24,42,.30) 100%);
+  --footer-texture-opacity: 0.55;
+
+  /* Glass (dark sections only — never blur on light surfaces) */
+  --glass-fact-strip: rgba(0,24,42,.78);  /* + backdrop-filter: blur(6px) */
+  --glass-ticker:     rgba(0,24,42,.72);  /* + blur(6px) */
+  --glass-callbar:    rgba(0,24,42,.95);  /* + blur(8px) */
+  --overlay-lightbox: rgba(0,12,22,.94);
+  --blur-glass: 6px;
+  --blur-callbar: 8px;
+
+  /* Placeholder for a missing photo (design files only — ship real photos) */
+  --placeholder-stripes: repeating-linear-gradient(135deg, #e3e9ee 0 14px, #f4f6f8 14px 28px);
+
+  /* Shadows — restrained; cards rest flat with a 1px border */
+  --shadow-lifted:      0 24px 48px -24px rgba(0,24,42,.30); /* quote/message/inquiry form card, option card */
+  --shadow-card-hover:  0 18px 36px -20px rgba(0,24,42,.40); /* build/gallery card hover */
+  --shadow-cta:         0 10px 24px -12px rgba(0,24,42,.45); /* sticky "Continue" button */
+  --shadow-badge:       0 6px 14px rgba(0,24,42,.35);        /* ✓ badge on selected chip */
+  --shadow-mega:        0 30px 60px -20px rgba(0,10,20,.70); /* mega menu panel */
+  --shadow-float-dark:  0 18px 36px -16px rgba(0,10,20,.60); /* map callout */
+  --shadow-curtain:     0 30px 60px -12px rgba(0,10,20,.60); /* main over footer (homepage reveal) */
+  --shadow-lightbox:    0 30px 60px -20px rgba(0,0,0,.60);
+}
