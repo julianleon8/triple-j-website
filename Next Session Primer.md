@@ -1,3 +1,36 @@
+# Forge redesign — 2026-10-02 · PR 00–12 BUILT ON A PREVIEW BRANCH, NOT ON MAIN
+
+Branch **`claude/new-session-471fsd`** carries the Forge handoff's PR 00–12 (`docs/redesign-2026-10/forge-handoff/`),
+one commit each; it also merges `claude/focused-gates-iu172r`. Vercel builds a preview for the branch.
+**Nothing is on `main`.** Merging to `main` is the publish step and needs the owner's go.
+Every decision is in the 2026-10-02 rows of `Decisions.md` and the matching `Locked Decisions.md` lines.
+
+**Waiting on the owner:**
+1. Review the preview at phone and desktop width: `/`, `/services/carports`, `/services/metal-fencing`,
+   `/services/gates`, `/locations/temple`, `/locations/belton`, `/gallery`, `/about`, `/contact`, `/partners`,
+   `/military`. Gallery-driven sections were never seen with real photos here — look at them on the preview.
+2. Freddy confirms the heavy-duty upgrade wording ("11-gauge columns, welded to the receivers and purlins").
+3. `/contact` messages fire the Ads lead conversion (parity with before). Narrow to "New build" only?
+4. `/contact` says "We call back same day" (pre-existing). Keep, or bring it to "within 24 hours"?
+5. Claim to verify, kept from live copy: carports "Licensed & insured" (`services.ts` trustPoints). Real
+   customer quotes for `testimonials.md`.
+6. A gates photo: `/services/gates` uses the fence photo for now.
+
+**Next build step — PR 13** (`prs/PR-13-retire-legacy.md`, targets `main` after the merge):
+- 13a: restyle in Forge, no new design: `/quote`, `/thank-you` (every quote lands here — do it first), blog
+  index and posts, `/locations` and `/services` indexes, colors / hybrid / pbr-vs-pbu, alternatives,
+  best-metal-carport-builders-temple-tx, privacy, terms, not-found. `themeColor` `#1e6bd6` → `#00182a`.
+  Then drop the `.marketing h1/h2/h3` + `p` rules and legacy classes. Unused now (0 importers):
+  `sections/{Services,ServiceAreas,Crew,RelatedProjects,RelatedReading,TrustBar,WhyTripleJ,Testimonials}.tsx`.
+- 13b OG cards in Cinzel · 13c emails + quote PDF · 13d HQ — its own design pass with the owner.
+
+**Working notes:** primitives in `src/components/forge/`; wrap a page in `data-forge`. Prefill the quote form
+with `requestQuote()` (`src/lib/forge-quote.ts`). Gallery data via `getBuilds()` (`src/lib/forge-builds.ts`).
+`next build` needs a Supabase URL for `/gallery/[id]` — pass dead-host placeholders inline, never real keys.
+Dev server: `npx next dev --webpack`. Tailwind math inside `clamp()`/`calc()` needs `_+_` / `_-_`.
+
+---
+
 # SEO action plan — 2026-10-01 · WORKED THROUGH, 3 ITEMS LEFT
 
 `docs/ACTION-PLAN.md` now carries a live status line under every item. Left open:

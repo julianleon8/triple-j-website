@@ -1,5 +1,36 @@
 # Session Notes
 
+## 2026-10-02 — Forge redesign built (handoff PR 00–12) on a preview branch
+
+Owner uploaded the finished "Forge" handoff (`docs/redesign-2026-10/forge-handoff/`). Built PR 00–12 on
+`claude/new-session-471fsd`, one commit each; `main` is untouched. Owner picks: D2 mega header, D4 two hero
+buttons, D17 hero shows everything at load. Every other delta follows the package default (2026-10-02 rows
+in `Decisions.md`).
+
+- **PR 00:** merged `claude/focused-gates-iu172r` (vault + redesign docs). The "12-gauge storm upgrade" was
+  wrong: it is the **heavy-duty upgrade, 11-gauge columns welded to the receivers and purlins**; fixed in
+  copy, `copy-fixes.mjs` rewrites it and `check-vault.mjs` fails on "12-gauge".
+- **PR 01–02:** Cinzel + Inter, Forge tokens and `forge-*` utilities in `globals.css`; pages carry
+  `data-forge` to step out of the unlayered `.marketing` heading/paragraph rules. Primitives in
+  `src/components/forge/` (buttons, headings, hero, cards, tabs, FAQ, form controls, reveal, lightbox, build
+  grid). `src/lib/forge-quote.ts` (`requestQuote` → `forge:quote` event prefills the form and scrolls) and
+  `src/lib/forge-builds.ts` (live gallery items; sections hide when empty).
+- **PR 03:** header with Services mega menu, mobile sheet, brushed-steel footer, homepage footer curtain,
+  mobile call bar. `PreFooterCta` left the marketing layout.
+- **PR 04:** centered `QuoteSection` + restyled 2-step form (D7 timeline/budget, permits question into the
+  notes). Submit pipeline and payload unchanged; payload-contract tests added.
+- **PR 05–12:** homepage, service template (+ new `/services/gates`), location template (Temple, Belton
+  ported), gallery + lightbox, About, Contact (message form), Partners (inquiry form), Fort Cavazos.
+- **Dropped as unverifiable (D18):** "Emergency quotes", "2 in-house welders", "Stacks with…", drive times to
+  the main gate, the Fort Cavazos testimonial. `/military` says "30 min from Killeen" and a 24-hour callback.
+- **Kept from before:** `/contact` messages fire the Google Ads conversion (the old `/contact` quote form did
+  via `/thank-you`). Partner form requires email (API). Belton "include concrete" → "offer concrete".
+- Local gate: typecheck, lint, 559 tests, vault check, `next build` (dead-host placeholder Supabase env).
+  Screens checked at 1440 and 390 in Playwright **without gallery data** (no Supabase env in the sandbox), so
+  the builds strip, ticker, recent-builds rows and gallery grid were seen empty — check them on the preview.
+- **Not built:** PR 13 (legacy routes, OG cards, emails, PDF, HQ). `/quote`, `/thank-you`, blog, indexes,
+  privacy/terms still wear the old style under the new header and footer.
+
 ## 2026-10-01 — SEO action plan (docs/ACTION-PLAN.md) worked through against the live site
 
 Every item was checked against the 46 live sitemap URLs first; the April plan was half stale.
