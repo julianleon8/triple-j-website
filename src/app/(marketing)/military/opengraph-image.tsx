@@ -1,6 +1,13 @@
 import { ImageResponse } from 'next/og'
-import { getOgAssets, Wordmark } from '@/lib/og-card'
-import { SITE } from '@/lib/site'
+import {
+  getOgAssets,
+  OG_NAVY,
+  OG_STEEL_TEXT,
+  OgFooter,
+  OgPill,
+  PbrStrip,
+  Wordmark,
+} from '@/lib/og-card'
 
 /**
  * Per-page Open Graph + Twitter card image for /military.
@@ -8,8 +15,9 @@ import { SITE } from '@/lib/site'
  * Next.js's file-based OG image API: any `opengraph-image.tsx` (or
  * `twitter-image.tsx`) inside a route segment becomes that page's
  * og:image / twitter:image. Generated as a 1200×630 PNG at request time
- * + cached. Fonts and the lion wordmark come from src/lib/og-card.tsx,
- * shared with every other card.
+ * + cached. Fonts, the lion wordmark and the card pieces come from
+ * src/lib/og-card.tsx; this card swaps in the page's olive and tan
+ * (the military hero scrim) and repeats its h1.
  *
  * Falls back to /og-default.jpg sitewide if this route fails to render.
  */
@@ -38,78 +46,50 @@ export default async function MilitaryOpenGraphImage() {
           flexDirection: 'column',
           justifyContent: 'space-between',
           padding: '56px 80px 60px',
-          backgroundImage:
-            'linear-gradient(135deg, #000000 0%, #0f172a 50%, #1e3a8a 100%)',
+          // --scrim-hero-military, without the photo under it.
+          backgroundImage: `linear-gradient(110deg, ${OG_NAVY} 0%, #06213a 45%, #3a4420 100%)`,
           color: 'white',
           fontFamily: 'Inter',
+          position: 'relative',
         }}
       >
+        <PbrStrip width={460} fade="#1e3330" />
+
         {/* Top row: brand + Fort Cavazos pill */}
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <Wordmark logo={logo} size={40} />
-          <div
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: 12,
-              padding: '10px 20px',
-              borderRadius: 999,
-              background: 'rgba(220, 38, 38, 0.25)',
-              border: '2px solid rgba(220, 38, 38, 0.6)',
-              fontSize: 18,
-              fontWeight: 700,
-              letterSpacing: '0.15em',
-              textTransform: 'uppercase',
-              color: '#fca5a5',
-            }}
-          >
+          <Wordmark logo={logo} size={34} />
+          <OgPill color="#e2d6ae" border="rgba(197, 180, 129, 0.6)" background="rgba(75, 83, 32, 0.55)">
             Fort Cavazos
-          </div>
+          </OgPill>
         </div>
 
-        {/* Headline */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
+        {/* Headline — the page's h1 */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
           <div
             style={{
               display: 'flex',
               flexDirection: 'column',
-              fontFamily: 'Barlow Condensed',
-              fontSize: 104,
-              fontWeight: 800,
-              lineHeight: 0.95,
-              letterSpacing: '-0.01em',
-              textTransform: 'uppercase',
-              maxWidth: 1000,
+              fontFamily: 'Cinzel',
+              fontSize: 66,
+              fontWeight: 900,
+              lineHeight: 1.06,
+              letterSpacing: '0.01em',
+              maxWidth: 1040,
             }}
           >
-            <span>Same-Week Carports</span>
-            <span style={{ display: 'flex', gap: 22 }}>
-              <span>for</span>
-              <span style={{ color: '#4d8dff' }}>PCS Families.</span>
+            {/* textWrap set per span: satori does not inherit it. */}
+            <span style={{ textWrap: 'balance' }}>Fort Cavazos carports.</span>
+            <span style={{ textWrap: 'balance', backgroundImage: OG_STEEL_TEXT, backgroundClip: 'text', color: 'transparent' }}>
+              Same-week for PCS families.
             </span>
           </div>
-          <div style={{ fontSize: 26, fontWeight: 500, lineHeight: 1.35, color: 'rgba(255,255,255,0.75)', maxWidth: 950 }}>
+          <div style={{ fontSize: 26, fontWeight: 500, lineHeight: 1.4, color: 'rgba(255,255,255,0.78)', maxWidth: 900 }}>
             Welded or bolted. Concrete available. 7% military discount
             honored. Hablamos español.
           </div>
         </div>
 
-        {/* Footer row */}
-        <div
-          style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            color: 'rgba(255,255,255,0.55)',
-            fontSize: 20,
-            fontWeight: 500,
-            borderTop: '1px solid rgba(255,255,255,0.15)',
-            paddingTop: 20,
-          }}
-        >
-          <div>triplejmetaltx.com / military</div>
-          <div style={{ fontWeight: 700, color: 'white' }}>{SITE.phone}</div>
-        </div>
+        <OgFooter path="/military" />
       </div>
     ),
     { ...size, fonts },

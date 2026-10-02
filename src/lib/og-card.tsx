@@ -18,12 +18,13 @@ import { SITE } from '@/lib/site'
  * Two cards share one set of brand assets:
  *
  * - `renderOgCard` — the typographic card for services, locations, blog posts
- *   and /quote. Visual language is lifted from the hand-built /military card
- *   so the two stay consistent — dark gradient, brand-blue accent on the punch
- *   word, rule above a footer carrying the path and the phone number.
+ *   and /quote, in Forge (2026-10-02): navy ground with a strip of PBR panel,
+ *   Cinzel headline in sentence case with the steel-gradient second line, a
+ *   rule above a footer carrying the path and the phone number. /military
+ *   renders its own card from the same pieces, with olive and tan.
  * - `renderBrandCard` — the homepage card, and `/og-default.jpg`, the fallback
  *   every page without a card of its own inherits. The header's lion lockup
- *   beside the homepage hero photo, so a shared link previews the page it opens.
+ *   on navy beside a jobsite photo.
  *
  * `next/og` bundles only Geist Regular, so until 2026-09-28 every `fontWeight`
  * here silently rendered at 400. The cards now load the site's own faces from
@@ -44,17 +45,65 @@ export const OG_CONTENT_TYPE = 'image/png'
 export const BRAND_CARD_CONTENT_TYPE = 'image/jpeg'
 export const BRAND_CARD_ALT = `${SITE.name} — welded or bolted metal buildings in ${SITE.address.city}, ${SITE.address.state} and Central Texas`
 
-// satori cannot read CSS variables, so the two tokens used are copied here.
-/** --color-brand-400: the "Metal" in the site header's wordmark. */
-const WORDMARK_BLUE = '#5c85f2'
-/** --color-ink-950 */
-const INK = '#050505'
+// satori cannot read CSS variables, so the Forge tokens used are copied here
+// from src/app/globals.css.
+export const OG_NAVY = '#00182a'
+const NAVY_RAISED = '#0c2538'
+export const OG_STEEL_LIGHT = '#9fb0c0'
+export const OG_SILVER = '#c9d3dc'
+/** The steel gradient on every Forge headline's second line (.forge-steel-text). */
+export const OG_STEEL_TEXT =
+  'linear-gradient(180deg, #e9eef2 0%, #9fb0c0 45%, #788a9c 55%, #c9d3dc 100%)'
+
+/** Card ground: navy into navy-raised. */
+export const OG_NAVY_GROUND = `linear-gradient(135deg, ${OG_NAVY} 0%, ${NAVY_RAISED} 60%, #15344e 100%)`
+
+/** `#rrggbb` → `rgba(r,g,b,a)`; satori's colour parser is safer with rgba than 8-digit hex. */
+function rgba(hex: string, alpha: number): string {
+  const n = parseInt(hex.slice(1), 16)
+  return `rgba(${(n >> 16) & 255},${(n >> 8) & 255},${n & 255},${alpha})`
+}
+
+/**
+ * A strip of PBR wall panel (the site footer's texture) down the right of a
+ * card, faded into the ground so text never sits on it. One rib every 120px:
+ * shaded face and cast shadow, two stiffeners in the pan, lit face, crown fold.
+ */
+export function PbrStrip({ width = 560, fade = OG_NAVY }: { width?: number; fade?: string }) {
+  return (
+    <div style={{ position: 'absolute', top: 0, right: 0, width, height: 630, display: 'flex' }}>
+      <div
+        style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          width,
+          height: 630,
+          display: 'flex',
+          backgroundImage:
+            'repeating-linear-gradient(90deg, rgba(0,7,14,.4) 0px, rgba(0,7,14,0) 18px, rgba(0,7,14,0) 28px, rgba(201,211,220,.08) 28px, rgba(0,7,14,.3) 30px, rgba(0,7,14,0) 31px, rgba(0,7,14,0) 56px, rgba(201,211,220,.08) 56px, rgba(0,7,14,.3) 58px, rgba(0,7,14,0) 59px, rgba(0,7,14,0) 84px, rgba(201,211,220,.08) 85px, rgba(201,211,220,.16) 96px, rgba(201,211,220,.34) 96px, rgba(201,211,220,.34) 97px, rgba(201,211,220,.1) 97px, rgba(201,211,220,.1) 106px, rgba(0,6,13,.55) 106px, rgba(0,6,13,.45) 120px)',
+        }}
+      />
+      <div
+        style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          width,
+          height: 630,
+          display: 'flex',
+          backgroundImage: `linear-gradient(90deg, ${rgba(fade, 1)} 0%, ${rgba(fade, 0.82)} 30%, ${rgba(fade, 0.35)} 75%, ${rgba(fade, 0.2)} 100%)`,
+        }}
+      />
+    </div>
+  )
+}
 
 type OgAssets = {
   fonts: {
     name: string
     data: Buffer
-    weight: 500 | 600 | 700 | 800
+    weight: 500 | 600 | 700 | 900
     style: 'normal'
   }[]
   /** The header's lion mark, as a data URI. */
@@ -65,10 +114,10 @@ type OgAssets = {
 // follows them, so the files ship with any card rendered on demand rather
 // than at build — an unknown slug, say.
 async function loadOgAssets(): Promise<OgAssets> {
-  const [barlow700, barlow800, inter500, inter600, inter700, logo] =
+  const [cinzel700, cinzel900, inter500, inter600, inter700, logo] =
     await Promise.all([
-      readFile(join(process.cwd(), 'src/lib/og-fonts/barlow-condensed-latin-700-normal.woff')),
-      readFile(join(process.cwd(), 'src/lib/og-fonts/barlow-condensed-latin-800-normal.woff')),
+      readFile(join(process.cwd(), 'src/lib/og-fonts/cinzel-latin-700-normal.woff')),
+      readFile(join(process.cwd(), 'src/lib/og-fonts/cinzel-latin-900-normal.woff')),
       readFile(join(process.cwd(), 'src/lib/og-fonts/inter-latin-500-normal.woff')),
       readFile(join(process.cwd(), 'src/lib/og-fonts/inter-latin-600-normal.woff')),
       readFile(join(process.cwd(), 'src/lib/og-fonts/inter-latin-700-normal.woff')),
@@ -76,8 +125,8 @@ async function loadOgAssets(): Promise<OgAssets> {
     ])
   return {
     fonts: [
-      { name: 'Barlow Condensed', data: barlow700, weight: 700, style: 'normal' },
-      { name: 'Barlow Condensed', data: barlow800, weight: 800, style: 'normal' },
+      { name: 'Cinzel', data: cinzel700, weight: 700, style: 'normal' },
+      { name: 'Cinzel', data: cinzel900, weight: 900, style: 'normal' },
       { name: 'Inter', data: inter500, weight: 500, style: 'normal' },
       { name: 'Inter', data: inter600, weight: 600, style: 'normal' },
       { name: 'Inter', data: inter700, weight: 700, style: 'normal' },
@@ -98,8 +147,9 @@ export function getOgAssets(): Promise<OgAssets> {
 }
 
 /**
- * The site header's lockup — lion mark, then TRIPLE J METAL with "Metal" in
- * brand blue. `stacked` sets the two words on two lines, as the brand card does.
+ * The site header's lockup — lion mark, then "Triple J Metal" in Cinzel Black,
+ * sentence case, all white. `stacked` sets it on two lines, as the brand card
+ * does.
  */
 export function Wordmark({
   logo,
@@ -111,7 +161,7 @@ export function Wordmark({
   size: number
   stacked?: boolean
 }) {
-  const mark = Math.round(size * (stacked ? 1.5 : 1.3))
+  const mark = Math.round(size * (stacked ? 1.7 : 1.4))
   return (
     <div style={{ display: 'flex', alignItems: 'center' }}>
       {/* eslint-disable-next-line @next/next/no-img-element -- satori renders this, not a browser */}
@@ -120,35 +170,92 @@ export function Wordmark({
         style={{
           display: 'flex',
           flexDirection: stacked ? 'column' : 'row',
-          marginLeft: Math.round(size * 0.3),
-          fontFamily: 'Barlow Condensed',
-          fontWeight: 800,
+          marginLeft: Math.round(size * 0.35),
+          fontFamily: 'Cinzel',
+          fontWeight: 900,
           fontSize: size,
-          lineHeight: stacked ? 0.88 : 1,
-          letterSpacing: '-0.01em',
-          textTransform: 'uppercase',
+          lineHeight: 1,
+          letterSpacing: '0.01em',
         }}
       >
         <span>Triple J</span>
-        <span
-          style={{
-            color: WORDMARK_BLUE,
-            marginLeft: stacked ? 0 : Math.round(size * 0.22),
-          }}
-        >
-          Metal
-        </span>
+        <span style={{ marginLeft: stacked ? 0 : Math.round(size * 0.28) }}>Metal</span>
       </div>
     </div>
   )
 }
 
+/** Uppercase micro-label pill, top right of a card. */
+export function OgPill({
+  children,
+  color = OG_SILVER,
+  border = 'rgba(201, 211, 220, 0.35)',
+  background = 'rgba(255, 255, 255, 0.06)',
+}: {
+  children: string
+  color?: string
+  border?: string
+  background?: string
+}) {
+  return (
+    <div
+      style={{
+        display: 'flex',
+        padding: '10px 20px',
+        borderRadius: 999,
+        background,
+        border: `2px solid ${border}`,
+        fontSize: 17,
+        fontWeight: 700,
+        letterSpacing: '0.18em',
+        textTransform: 'uppercase',
+        color,
+      }}
+    >
+      {children}
+    </div>
+  )
+}
+
+/** Path on the left, phone on the right, over a hairline rule. */
+export function OgFooter({ path }: { path: string }) {
+  return (
+    <div
+      style={{
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        color: OG_STEEL_LIGHT,
+        fontSize: 20,
+        fontWeight: 500,
+        borderTop: '1px solid rgba(201,211,220,0.2)',
+        paddingTop: 20,
+      }}
+    >
+      {/* One interpolated child, not text + expression — satori rejects a
+          div with more than one child unless it declares display. */}
+      <div>{`triplejmetaltx.com${path}`}</div>
+      <div style={{ fontWeight: 700, color: 'white' }}>{SITE.phone}</div>
+    </div>
+  )
+}
+
+/**
+ * Cinzel's capitals set wide and satori does not reflow or auto-shrink text,
+ * so size off the longer line: blog accents ("Temple, Belton & Killeen
+ * Requirements") routinely run longer than the headline they sit under.
+ */
+export function ogHeadlineSize(...lines: (string | undefined)[]): number {
+  const longest = Math.max(...lines.map((l) => l?.length ?? 0))
+  return longest > 34 ? 50 : longest > 26 ? 60 : longest > 18 ? 70 : 82
+}
+
 export type OgCardInput = {
-  /** Small uppercase pill above the headline, e.g. "Metal Garages". */
+  /** Small micro-label pill above the headline, e.g. "Metal Garages". */
   eyebrow: string
-  /** Main line. Rendered at the largest size, uppercase. */
+  /** Main line. Rendered at the largest size, Cinzel, sentence case. */
   headline: string
-  /** Optional second line, rendered in brand blue under the headline. */
+  /** Optional second line, in the steel gradient under the headline. */
   accent?: string
   /** One or two sentences under the headline. */
   subhead?: string
@@ -164,15 +271,7 @@ export async function renderOgCard({
   path,
 }: OgCardInput) {
   const { fonts, logo } = await getOgAssets()
-
-  // Long city/service names would otherwise overflow the fixed 1200px canvas —
-  // satori does not reflow or auto-shrink text the way a browser would. Size
-  // off the longer of the two lines: blog accents ("Temple, Belton & Killeen
-  // Requirements") routinely run longer than the headline they sit under.
-  // Barlow Condensed sets far narrower than the Geist these steps were first
-  // tuned against, so each step sits a notch larger.
-  const longest = Math.max(headline.length, accent?.length ?? 0)
-  const headlineSize = longest > 34 ? 64 : longest > 26 ? 80 : longest > 18 ? 92 : 104
+  const headlineSize = ogHeadlineSize(headline, accent)
 
   return new ImageResponse(
     (
@@ -184,59 +283,48 @@ export async function renderOgCard({
           flexDirection: 'column',
           justifyContent: 'space-between',
           padding: '56px 80px 60px',
-          backgroundImage:
-            'linear-gradient(135deg, #000000 0%, #0f172a 50%, #1e3a8a 100%)',
+          backgroundImage: OG_NAVY_GROUND,
           color: 'white',
           fontFamily: 'Inter',
+          position: 'relative',
         }}
       >
+        <PbrStrip />
+
         {/* Top row: wordmark + section pill */}
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-          }}
-        >
-          <Wordmark logo={logo} size={40} />
-          <div
-            style={{
-              display: 'flex',
-              padding: '10px 20px',
-              borderRadius: 999,
-              background: 'rgba(77, 141, 255, 0.18)',
-              border: '2px solid rgba(77, 141, 255, 0.5)',
-              fontSize: 18,
-              fontWeight: 700,
-              letterSpacing: '0.15em',
-              textTransform: 'uppercase',
-              color: '#9dc2ff',
-            }}
-          >
-            {eyebrow}
-          </div>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <Wordmark logo={logo} size={34} />
+          <OgPill>{eyebrow}</OgPill>
         </div>
 
         {/* Headline block */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
           <div
             style={{
               display: 'flex',
               flexDirection: 'column',
-              fontFamily: 'Barlow Condensed',
+              fontFamily: 'Cinzel',
               fontSize: headlineSize,
-              fontWeight: 800,
-              lineHeight: 0.95,
-              letterSpacing: '-0.01em',
-              textTransform: 'uppercase',
-              maxWidth: 1000,
+              fontWeight: 900,
+              lineHeight: 1.06,
+              letterSpacing: '0.01em',
+              maxWidth: 1040,
             }}
           >
-            {/* Balanced so a wrap never strands one word ("WAIT."). Set on
-                each span: satori does not inherit textWrap from a parent. */}
+            {/* Balanced so a wrap never strands one word. Set on each span:
+                satori does not inherit textWrap from a parent. */}
             <span style={{ textWrap: 'balance' }}>{headline}</span>
             {accent ? (
-              <span style={{ color: '#4d8dff', textWrap: 'balance' }}>{accent}</span>
+              <span
+                style={{
+                  textWrap: 'balance',
+                  backgroundImage: OG_STEEL_TEXT,
+                  backgroundClip: 'text',
+                  color: 'transparent',
+                }}
+              >
+                {accent}
+              </span>
             ) : null}
           </div>
           {subhead ? (
@@ -244,9 +332,9 @@ export async function renderOgCard({
               style={{
                 fontSize: 26,
                 fontWeight: 500,
-                lineHeight: 1.35,
-                color: 'rgba(255,255,255,0.75)',
-                maxWidth: 950,
+                lineHeight: 1.4,
+                color: 'rgba(255,255,255,0.78)',
+                maxWidth: 900,
               }}
             >
               {subhead}
@@ -254,24 +342,7 @@ export async function renderOgCard({
           ) : null}
         </div>
 
-        {/* Footer row */}
-        <div
-          style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            color: 'rgba(255,255,255,0.55)',
-            fontSize: 20,
-            fontWeight: 500,
-            borderTop: '1px solid rgba(255,255,255,0.15)',
-            paddingTop: 20,
-          }}
-        >
-          {/* One interpolated child, not text + expression — satori rejects a
-              div with more than one child unless it declares display. */}
-          <div>{`triplejmetaltx.com${path}`}</div>
-          <div style={{ fontWeight: 700, color: 'white' }}>{SITE.phone}</div>
-        </div>
+        <OgFooter path={path} />
       </div>
     ),
     { ...OG_SIZE, fonts },
@@ -285,7 +356,6 @@ export async function renderOgCard({
 export async function renderBrandCard(): Promise<Response> {
   const [{ fonts, logo }, photo] = await Promise.all([
     getOgAssets(),
-    // The homepage hero, so the preview matches the page the link opens.
     readFile(join(process.cwd(), 'public/images/red-iron-frame-hero.jpg')),
   ])
 
@@ -297,7 +367,7 @@ export async function renderBrandCard(): Promise<Response> {
           height: '100%',
           display: 'flex',
           position: 'relative',
-          background: INK,
+          background: OG_NAVY,
           color: 'white',
           fontFamily: 'Inter',
         }}
@@ -317,7 +387,7 @@ export async function renderBrandCard(): Promise<Response> {
             objectFit: 'cover',
           }}
         />
-        {/* Solid ink under the text, feathering into the photo. */}
+        {/* Solid navy under the text, feathering into the photo. */}
         <div
           style={{
             position: 'absolute',
@@ -326,7 +396,7 @@ export async function renderBrandCard(): Promise<Response> {
             width: 1200,
             height: 630,
             display: 'flex',
-            backgroundImage: `linear-gradient(90deg, ${INK} 0%, ${INK} 50%, rgba(5,5,5,0.6) 58%, rgba(5,5,5,0.15) 66%, rgba(5,5,5,0) 72%)`,
+            backgroundImage: `linear-gradient(90deg, ${OG_NAVY} 0%, ${OG_NAVY} 50%, rgba(0,24,42,0.62) 58%, rgba(0,24,42,0.18) 66%, rgba(0,24,42,0) 72%)`,
           }}
         />
         <div
@@ -342,7 +412,7 @@ export async function renderBrandCard(): Promise<Response> {
             paddingLeft: 64,
           }}
         >
-          <Wordmark logo={logo} size={92} stacked />
+          <Wordmark logo={logo} size={78} stacked />
           <div
             style={{
               display: 'flex',
@@ -362,7 +432,7 @@ export async function renderBrandCard(): Promise<Response> {
               marginTop: 14,
               fontSize: 28,
               fontWeight: 500,
-              color: 'rgba(255,255,255,0.75)',
+              color: OG_STEEL_LIGHT,
             }}
           >
             {`${SITE.address.city}, ${SITE.address.state} · Central Texas`}
@@ -371,11 +441,11 @@ export async function renderBrandCard(): Promise<Response> {
             style={{
               display: 'flex',
               marginTop: 30,
-              fontFamily: 'Barlow Condensed',
-              fontSize: 66,
+              fontFamily: 'Cinzel',
+              fontSize: 52,
               fontWeight: 700,
-              lineHeight: 0.88,
-              letterSpacing: '0.01em',
+              lineHeight: 1,
+              letterSpacing: '0.02em',
             }}
           >
             {SITE.phone}
@@ -386,7 +456,7 @@ export async function renderBrandCard(): Promise<Response> {
     { ...OG_SIZE, fonts },
   ).arrayBuffer()
 
-  // 4:4:4 keeps the blue "Metal" crisp; the default 4:2:0 smears coloured type.
+  // 4:4:4 keeps the fine Cinzel serifs crisp; the default 4:2:0 smears them.
   const jpeg = await sharp(Buffer.from(png))
     .jpeg({ quality: 84, mozjpeg: true, chromaSubsampling: '4:4:4' })
     .toBuffer()

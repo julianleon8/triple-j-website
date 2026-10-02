@@ -46,10 +46,10 @@ export default function PartnerInquiryOwnerAlert(props: PartnerInquiryOwnerAlert
 
   return (
     <BrandLayout preview={`Partner inquiry — ${companyName} (${companyType})`}>
-      <Heading as="h2" style={{ fontSize: 18, fontWeight: 700, margin: '0 0 4px', color: '#111827' }}>
+      <Heading as="h2" style={{ fontSize: 18, fontWeight: 700, margin: '0 0 4px', color: '#00182a' }}>
         🤝 Partner inquiry
       </Heading>
-      <Text style={{ fontSize: 12, color: '#6b7280', margin: '0 0 16px' }}>
+      <Text style={{ fontSize: 12, color: '#546678', margin: '0 0 16px' }}>
         <span style={{
           background: BRAND_COLOR,
           color: '#fff',
@@ -64,20 +64,20 @@ export default function PartnerInquiryOwnerAlert(props: PartnerInquiryOwnerAlert
         {submittedAt}
       </Text>
 
-      <Section style={{ border: '1px solid #e5e7eb', borderRadius: 8, overflow: 'hidden' }}>
+      <Section style={{ border: '1px solid #e3e9ee', borderRadius: 8, overflow: 'hidden' }}>
         {rows.map(([label, value], i) => (
-          <Row key={label} style={{ background: i % 2 === 0 ? '#f9fafb' : '#ffffff' }}>
-            <Column style={{ padding: '10px 14px', fontWeight: 600, fontSize: 13, color: '#374151', width: 150, verticalAlign: 'top' }}>
+          <Row key={label} style={{ background: i % 2 === 0 ? '#f4f6f8' : '#ffffff' }}>
+            <Column style={{ padding: '10px 14px', fontWeight: 600, fontSize: 13, color: '#33475a', width: 150, verticalAlign: 'top' }}>
               {label}
             </Column>
-            <Column style={{ padding: '10px 14px', fontSize: 13, color: '#111827', whiteSpace: 'pre-wrap' }}>
+            <Column style={{ padding: '10px 14px', fontSize: 13, color: '#00182a', whiteSpace: 'pre-wrap' }}>
               {value}
             </Column>
           </Row>
         ))}
       </Section>
 
-      <Text style={{ color: '#9ca3af', fontSize: 11, margin: '20px 0 0' }}>
+      <Text style={{ color: '#788a9c', fontSize: 11, margin: '20px 0 0' }}>
         Inquiry ID: {inquiryId}
       </Text>
     </BrandLayout>

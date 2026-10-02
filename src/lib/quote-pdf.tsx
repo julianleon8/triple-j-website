@@ -9,8 +9,11 @@
  * tree (Document/Page/View/Text) — DOM JSX is not valid here.
  */
 
+import { join } from 'node:path'
+
 import {
   Document,
+  Font,
   Page,
   View,
   Text,
@@ -43,12 +46,27 @@ export type QuotePdfProps = {
   generatedAt: string
 }
 
-// ── Brand constants ────────────────────────────────────────────────────
-const BRAND_BLUE = '#1e6bd6'
-const INK_900 = '#0f172a'
-const INK_700 = '#334155'
-const INK_500 = '#64748b'
-const INK_200 = '#e2e8f0'
+// ── Brand constants (Forge, 2026-10-02) ────────────────────────────────
+const NAVY = '#00182a'
+const INK_900 = NAVY
+const INK_700 = '#33475a'
+const INK_500 = '#546678'
+const INK_200 = '#e3e9ee'
+const STEEL = '#788a9c'
+
+// Cinzel for the wordmark and the grand total — the same WOFF files the Open
+// Graph cards load (fontkit reads WOFF). Literal join(process.cwd(), …) paths
+// so output file tracing ships them with /api/quotes/[id]/pdf. Body stays on
+// the built-in Helvetica.
+Font.register({
+  family: 'Cinzel',
+  fonts: [
+    { src: join(process.cwd(), 'src/lib/og-fonts/cinzel-latin-700-normal.woff'), fontWeight: 700 },
+    { src: join(process.cwd(), 'src/lib/og-fonts/cinzel-latin-900-normal.woff'), fontWeight: 900 },
+  ],
+})
+// Cinzel has no hyphenation dictionary; never split a word across lines.
+Font.registerHyphenationCallback((word) => [word])
 
 // lineHeight gotcha: react-pdf resolves a unitless lineHeight against the
 // font size of the style that DECLARES it, then children inherit the result
@@ -71,19 +89,19 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
     marginBottom: 28,
     paddingBottom: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: INK_200,
+    borderBottomWidth: 1.5,
+    borderBottomColor: STEEL,
     borderBottomStyle: 'solid',
   },
   brandStack: { flexDirection: 'column' },
   brandTitle: {
-    fontSize: 24,
-    lineHeight: 1.15,
-    fontFamily: 'Helvetica-Bold',
-    letterSpacing: -0.5,
-    color: INK_900,
+    fontSize: 22,
+    lineHeight: 1.2,
+    fontFamily: 'Cinzel',
+    fontWeight: 900,
+    letterSpacing: 0.2,
+    color: NAVY,
   },
-  brandAccent: { color: BRAND_BLUE },
   brandSub: { marginTop: 2, fontSize: 9, color: INK_500 },
   quoteMeta: { flexDirection: 'column', alignItems: 'flex-end' },
   quoteLabel: {
@@ -98,7 +116,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     lineHeight: 1.2,
     fontFamily: 'Helvetica-Bold',
-    color: BRAND_BLUE,
+    color: NAVY,
   },
   quoteValidity: { marginTop: 4, fontSize: 9, color: INK_500 },
   customerBlock: { marginBottom: 24 },
@@ -154,7 +172,7 @@ const styles = StyleSheet.create({
     borderTopStyle: 'solid',
   },
   totalsGrandLabel: { fontSize: 12, lineHeight: 1.2, fontFamily: 'Helvetica-Bold', color: INK_900 },
-  totalsGrandValue: { fontSize: 16, lineHeight: 1.2, fontFamily: 'Helvetica-Bold', color: BRAND_BLUE },
+  totalsGrandValue: { fontSize: 16, lineHeight: 1.2, fontFamily: 'Cinzel', fontWeight: 700, color: NAVY },
   notesBlock: {
     marginTop: 28,
     padding: 12,
@@ -228,7 +246,7 @@ export function QuotePdfDocument(props: QuotePdfProps) {
         <View style={styles.header}>
           <View style={styles.brandStack}>
             <Text style={styles.brandTitle}>
-              TRIPLE J <Text style={styles.brandAccent}>METAL</Text>
+              Triple J Metal
             </Text>
             <Text style={styles.brandSub}>{SITE.addressOneLine}</Text>
             <Text style={styles.brandSub}>{SITE.phone} · triplejmetaltx.com</Text>

@@ -47,20 +47,20 @@ export default function QuoteAcceptedOwnerAlert(props: QuoteAcceptedOwnerAlertPr
         </span>
       </Text>
 
-      <Heading as="h2" style={{ fontSize: 22, fontWeight: 700, margin: '6px 0 4px', color: '#111827' }}>
+      <Heading as="h2" style={{ fontSize: 22, fontWeight: 700, margin: '6px 0 4px', color: '#00182a' }}>
         {isAccepted ? `${totalStr} accepted` : `Quote declined`}
       </Heading>
-      <Text style={{ fontSize: 13, color: '#6b7280', margin: '0 0 16px' }}>
+      <Text style={{ fontSize: 13, color: '#546678', margin: '0 0 16px' }}>
         {customerName} · {acceptedAt}
       </Text>
 
-      <Section style={{ border: '1px solid #e5e7eb', borderRadius: 8, overflow: 'hidden' }}>
+      <Section style={{ border: '1px solid #e3e9ee', borderRadius: 8, overflow: 'hidden' }}>
         {rows.map(([label, value], i) => (
-          <Row key={label} style={{ background: i % 2 === 0 ? '#f9fafb' : '#ffffff' }}>
-            <Column style={{ padding: '10px 14px', fontWeight: 600, fontSize: 13, color: '#374151', width: 110, verticalAlign: 'top' }}>
+          <Row key={label} style={{ background: i % 2 === 0 ? '#f4f6f8' : '#ffffff' }}>
+            <Column style={{ padding: '10px 14px', fontWeight: 600, fontSize: 13, color: '#33475a', width: 110, verticalAlign: 'top' }}>
               {label}
             </Column>
-            <Column style={{ padding: '10px 14px', fontSize: 13, color: '#111827' }}>
+            <Column style={{ padding: '10px 14px', fontSize: 13, color: '#00182a' }}>
               {value}
             </Column>
           </Row>
@@ -68,7 +68,7 @@ export default function QuoteAcceptedOwnerAlert(props: QuoteAcceptedOwnerAlertPr
       </Section>
 
       {isAccepted && (
-        <Text style={{ margin: '18px 0 0', fontSize: 13, color: '#374151', lineHeight: 1.6 }}>
+        <Text style={{ margin: '18px 0 0', fontSize: 13, color: '#33475a', lineHeight: 1.6 }}>
           Auto-created a job record. A draft invoice is being pushed to QuickBooks.
           {' '}Call the customer to schedule the build.
         </Text>
