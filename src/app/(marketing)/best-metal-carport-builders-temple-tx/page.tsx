@@ -304,7 +304,7 @@ export default function BestBuildersRoundupPage() {
               </li>
               <li className="flex items-start gap-3">
                 <span aria-hidden="true" className="mt-px shrink-0 font-bold text-forge-steel-light">✓</span>
-                You need it built same-week. We schedule within days of contract signing.
+                You need it built same-week.
               </li>
               <li className="flex items-start gap-3">
                 <span aria-hidden="true" className="mt-px shrink-0 font-bold text-forge-steel-light">✓</span>

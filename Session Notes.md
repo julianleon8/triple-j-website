@@ -1,5 +1,11 @@
 # Session Notes
 
+## 2026-10-02 — Unverified claims cut
+
+Owner: cut the roundup's "within days of contract signing", the `/locations` no-travel-fee line and the
+carports "Licensed & insured" trust point. The RV-covers intro's "on-site within days of your approval"
+became same-week scheduling once the build is approved.
+
 ## 2026-10-02 — `/services` turnkey line
 
 Owner approved the 2026-10-01 proposal: the `/services` hero no longer says every structure is "delivered

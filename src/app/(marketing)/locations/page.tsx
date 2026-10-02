@@ -233,8 +233,7 @@ export default function LocationsPage() {
             <p className="mt-4 text-[clamp(16px,.3vw_+_14px,18px)] leading-[1.65] text-forge-slate [text-wrap:pretty]">
               Not sure if you&rsquo;re in our range? Call{' '}
               <TrackedPhoneNumber className="whitespace-nowrap font-semibold text-forge-navy tabular-nums" />{' '}— we&rsquo;ll tell you
-              immediately. We don&rsquo;t charge a travel fee for most residential projects within the
-              service area.
+              immediately.
             </p>
             <div className="mt-8">
               <TrackedPhoneLink

@@ -13,8 +13,8 @@ step and needs the owner's go. Decisions: the 2026-10-02 rows of `Decisions.md` 
    retired permit-pulling and concrete-included wording. Skim the five posts on the preview.
 3. **`/services` hero lede fixed** (owner approved): turnkey is named as one of three ways a structure is sold,
    not a blanket label (row in `Decisions.md`).
-4. Smaller claims to confirm or cut: roundup "We schedule within days of contract signing"; `/locations` "no
-   travel fee for most residential projects"; carports "Licensed & insured".
+4. **Unverified claims cut** (owner): roundup "within days of contract signing", `/locations` travel-fee line,
+   carports "Licensed & insured"; RV intro "within days of your approval" → same-week after approval.
 5. `src/lib/colors.ts` hot-links swatch images from a panel maker's site (the domain is in page source, and
    the Dark Gray, Black and Antique Premium swatches 404). Needs our own swatch images.
 6. Still open from before: Freddy on the 11-gauge wording; `/contact` "same day" (keep?); contact messages
