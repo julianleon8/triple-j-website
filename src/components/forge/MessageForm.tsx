@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import type HCaptcha from "@hcaptcha/react-hcaptcha";
 
+import { GoogleAdsConversion } from "@/components/seo/GoogleAdsConversion";
 import { captureAttribution } from "@/lib/marketing-attribution";
 
 import { FieldLabel, PillGroup, SuccessPanel, TextArea, TextInput } from "./form";
@@ -95,6 +96,16 @@ export function MessageForm() {
         const body = await res.json().catch(() => ({}));
         throw new Error(typeof body?.error === "string" ? body.error : "Something went wrong. Please call us directly.");
       }
+      // Same enhanced-conversion stash QuoteForm writes before /thank-you;
+      // the <GoogleAdsConversion /> in the success panel reads and clears it.
+      try {
+        sessionStorage.setItem(
+          "tj_ec_user_data",
+          JSON.stringify({ name: m.name.trim(), phone: m.phone.trim(), email: m.email.trim() }),
+        );
+      } catch {
+        // Private mode / quota — the conversion still fires without match data.
+      }
       setStatus("sent");
     } catch (e) {
       setStatus("err");
@@ -114,6 +125,10 @@ export function MessageForm() {
     const at = m.reach === "Email" ? m.email.trim() : m.phone.trim();
     return (
       <div id="message" className={card}>
+        {/* /contact used QuoteForm → /thank-you before the redesign, so every
+            message still counts as the Google Ads lead conversion. Fires once
+            per success-panel mount; no-ops without the Ads env vars. */}
+        <GoogleAdsConversion />
         <SuccessPanel
           title={`Got it, ${first}.`}
           resetLabel="Send another message"
