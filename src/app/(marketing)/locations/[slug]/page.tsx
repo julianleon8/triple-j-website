@@ -3,33 +3,26 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
-import { Container } from "@/components/ui/Container";
-import { Reveal } from "@/components/ui/Reveal";
-import { ArrowRightIcon, PhoneIcon, PinIcon } from "@/components/ui/icons";
-import { ButtonLink } from "@/components/ui/Button";
-import { RelatedReading } from "@/components/sections/RelatedReading";
+import { Breadcrumb } from "@/components/forge/Breadcrumb";
+import { BuildGrid } from "@/components/forge/BuildGrid";
+import { Chip } from "@/components/forge/Chip";
+import { NumberedRow, PhotoCard } from "@/components/forge/cards";
+import { ForgeButtonLink } from "@/components/forge/ForgeButton";
+import type { Fact } from "@/components/forge/FactStrip";
+import { ForgeReveal } from "@/components/forge/ForgeReveal";
+import { PageHero } from "@/components/forge/PageHero";
+import { QuoteRequestButton } from "@/components/forge/QuoteRequestButton";
+import { QuoteSection } from "@/components/forge/QuoteSection";
+import { SectionHeading } from "@/components/forge/SectionHeading";
+import { buttonClass } from "@/components/forge/styles";
+import { PinIcon } from "@/components/ui/icons";
 import { BreadcrumbJsonLd } from "@/components/seo/BreadcrumbJsonLd";
 import { TrackedPhoneLink, TrackedPhoneNumber } from "@/components/site/TrackedPhone";
-import { LOCATIONS, LOCATION_SLUGS } from "@/lib/locations";
+import { filterByCities, getBuilds } from "@/lib/forge-builds";
+import { LOCATIONS, LOCATION_SLUGS, type LocationData } from "@/lib/locations";
 import { SERVICES } from "@/lib/services";
-import { SITE } from "@/lib/site";
+import { MEGA_SERVICES, SITE } from "@/lib/site";
 import { getSiteUrl } from "@/lib/site-url";
-import { getAdminClient } from "@/lib/supabase/admin";
-
-/* ─── Per-service photo map (kept in sync with /services list page) ──────
-   When swapping or adding service photos, update both this file and
-   src/app/(marketing)/services/page.tsx. URLs point to real builds in the
-   /hq/gallery (Supabase Storage); see services/page.tsx for the source map
-   and a query template for finding new candidate covers. */
-const SERVICE_PHOTOS: Record<string, string> = {
-  carports: "https://idrbgxlvvnqduvbqtaei.supabase.co/storage/v1/object/public/gallery/1777195148318.jpg",
-  "turnkey-carports-with-concrete": "https://idrbgxlvvnqduvbqtaei.supabase.co/storage/v1/object/public/gallery/1777195038839.jpeg",
-  "metal-garages": "/images/metal-garage-green.jpg",
-  barns: "https://idrbgxlvvnqduvbqtaei.supabase.co/storage/v1/object/public/gallery/1777195257805.jpg",
-  "rv-covers": "https://idrbgxlvvnqduvbqtaei.supabase.co/storage/v1/object/public/gallery/1777195863079.jpg",
-  "hoa-compliant-structures": "https://idrbgxlvvnqduvbqtaei.supabase.co/storage/v1/object/public/gallery/1777194918087.jpg",
-  "metal-fencing": "/images/metal-fence-ranch-wire.webp",
-};
 
 /* Default hero photo when a city doesn't yet have a landmark photo sourced. */
 const FALLBACK_HERO = "/images/red-iron-frame-hero.jpg";
@@ -69,12 +62,42 @@ export async function generateMetadata(
   };
 }
 
-type GalleryRow = {
-  id: string;
-  title: string;
-  city: string | null;
-  gallery_photos: { image_url: string; alt_text: string | null; is_cover: boolean }[];
-};
+// "Builds near" reads live gallery_items; refresh hourly.
+export const revalidate = 3600;
+
+/** Fact strip from the city's own data when no designed strip exists. */
+function cityFacts(loc: LocationData): Fact[] {
+  if (loc.facts?.length) return loc.facts;
+  return [
+    loc.distanceFromTemple ? { k: "From HQ", v: loc.distanceFromTemple } : null,
+    { k: "County", v: loc.county },
+    loc.habla ? { k: "Language", v: "English & Español", s: "Hablamos español con Juan y Freddy" } : null,
+  ].filter((f): f is Fact => f !== null);
+}
+
+/** Callouts beside the "why" list: the designed one, else the city's
+ *  military section and existing callouts, stacked. */
+function cityCallouts(loc: LocationData) {
+  if (loc.quoteCallout) return [{ ...loc.quoteCallout, href: null as string | null }];
+  return [
+    ...(loc.military
+      ? [{
+          eyebrow: "Military & first responder",
+          headline: loc.military.headline,
+          blurb: loc.military.copy,
+          ctaLabel: "See the military page",
+          href: "/military" as string | null,
+        }]
+      : []),
+    ...(loc.callouts ?? []).map((c) => ({
+      eyebrow: c.eyebrow,
+      headline: c.headline,
+      blurb: c.blurb,
+      ctaLabel: c.ctaLabel,
+      href: c.ctaHref as string | null,
+    })),
+  ];
+}
 
 export default async function LocationPage(
   { params }: PageProps<"/locations/[slug]">,
@@ -82,24 +105,6 @@ export default async function LocationPage(
   const { slug } = await params;
   const loc = LOCATIONS[slug];
   if (!loc) notFound();
-
-  // Only show active projects recorded in this city, including legacy city labels.
-  const { data: galleryRows } = await getAdminClient()
-    .from("gallery_items")
-    .select("id, title, city, gallery_photos ( image_url, alt_text, is_cover )")
-    .eq("is_active", true)
-    .in("city", [loc.name, `${loc.name} Texas`, `${loc.name}, Texas`, `${loc.name} TX`, `${loc.name}, TX`])
-    .order("is_featured", { ascending: false })
-    .order("sort_order", { ascending: true })
-    .limit(6);
-
-  const galleryPhotos = (galleryRows as GalleryRow[] | null ?? [])
-    .map((row) => {
-      const cover = row.gallery_photos.find((p) => p.is_cover) ?? row.gallery_photos[0];
-      if (!cover) return null;
-      return { id: row.id, title: row.title, city: row.city, src: cover.image_url, alt: cover.alt_text };
-    })
-    .filter(Boolean) as { id: string; title: string; city: string | null; src: string; alt: string | null }[];
 
   const baseUrl = getSiteUrl();
   const pageUrl = `${baseUrl}/locations/${slug}`;
@@ -165,24 +170,17 @@ export default async function LocationPage(
     ],
   };
 
-  // Resolve fields with new-field-wins-over-legacy fallbacks
-  const headlineLine1 = loc.customHeadline?.line1 ?? loc.heroHeadline;
-  const headlineLine2 = loc.customHeadline?.line2 ?? null;
-  const subhead = loc.heroSubhead ?? loc.heroCopy;
-  const intro = loc.localIntro ?? loc.areaContext;
-  const heroImg = loc.heroImage ?? FALLBACK_HERO;
+  // Only active projects recorded in the city (or its designed neighbours).
+  const builds = filterByCities(await getBuilds({ order: "featured" }), loc.galleryCities ?? [loc.name]).slice(0, 8);
 
-  // Pick top services for the mini-grid (top 3 if topServices is set,
-  // else fall back to first 3 from the SERVICES catalog).
-  const topServiceSlugs = loc.topServices ?? ["carports", "metal-garages", "rv-covers"];
-  const topServices = topServiceSlugs
-    .map((s) => SERVICES[s])
-    .filter(Boolean)
-    .slice(0, 3);
+  const callouts = cityCallouts(loc);
+  const intro = loc.localIntro ?? loc.areaContext;
+  const whyRows = loc.why?.length
+    ? loc.why.map((w) => ({ t: w.t, b: w.b }))
+    : (loc.whyLocalBullets ?? []).map((b) => ({ t: undefined, b }));
 
   return (
-    <>
-      {/* JSON-LD */}
+    <div data-forge="">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
@@ -196,456 +194,195 @@ export default async function LocationPage(
         ]}
       />
 
-      {/* ─── Hero — city landmark photo + dark gradient ───────────────── */}
-      <section className="relative overflow-hidden bg-black text-white">
-        <div className="absolute inset-0">
-          <Image
-            src={heroImg}
-            alt={loc.heroImageAlt ?? ""}
-            fill
-            priority
-            sizes="100vw"
-            className="object-cover opacity-55"
-          />
-        </div>
-        <div
-          aria-hidden="true"
-          className="absolute inset-0 bg-gradient-to-tr from-black/95 via-black/80 to-[color:var(--color-brand-700)]/40"
-        />
+      {/* 1 · Hero */}
+      <PageHero
+        breadcrumb={
+          <Breadcrumb trail={[{ name: "Service areas", href: "/locations" }]} current={`${loc.name}, TX`} jsonLd={false} />
+        }
+        image={{
+          src: loc.heroImage ?? FALLBACK_HERO,
+          alt: loc.heroImageAlt ?? `${loc.name}, Texas`,
+          position: loc.heroPosition,
+        }}
+        eyebrow={loc.heroEyebrow ?? `Service area · ${loc.county}`}
+        h1a={loc.customHeadline?.line1 ?? loc.heroHeadline}
+        h1b={loc.customHeadline?.line2}
+        lede={loc.heroSubhead ?? loc.heroCopy}
+        facts={cityFacts(loc)}
+        actions={
+          <>
+            <ForgeButtonLink href="#quote" variant="white" size="lg" arrow>
+              Get a {loc.name} Quote
+            </ForgeButtonLink>
+            <TrackedPhoneLink surface="location_hero" mode="children-only" className={buttonClass("outlineDark", "lg")}>
+              Call <TrackedPhoneNumber className="tabular-nums" />
+            </TrackedPhoneLink>
+          </>
+        }
+      />
 
-        <Container size="wide" className="relative">
-          <div className="py-24 sm:py-32 lg:py-40 max-w-3xl">
-            {/* Eyebrow row: red county pill + optional Spanish chip */}
-            <div className="flex flex-wrap items-center gap-2">
-              <span className="inline-flex items-center rounded-full bg-red-600 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.18em] text-white shadow-sm">
-                {loc.county}
-              </span>
-              {loc.habla ? (
-                <span className="inline-flex items-center rounded-full bg-[color:var(--color-brand-600)]/25 border border-[color:var(--color-brand-400)]/40 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.18em] text-[color:var(--color-brand-300)]">
-                  Hablamos Español
-                </span>
-              ) : null}
-            </div>
-
-            {/* Headline (custom two-line if available, else legacy single-line) */}
-            <h1 className="mt-6 font-display font-extrabold uppercase tracking-tight leading-[0.95] text-white text-5xl sm:text-6xl md:text-7xl">
-              {headlineLine1}
-              {headlineLine2 ? (
-                <>
-                  <br />
-                  <span className="text-[color:var(--color-brand-400)]">
-                    {headlineLine2}
-                  </span>
-                </>
-              ) : null}
-            </h1>
-
-            {/* Distance stat */}
-            {loc.distanceFromTemple ? (
-              <div className="mt-5 inline-flex items-center gap-2 text-sm text-white/65">
-                <PinIcon className="h-4 w-4 text-[color:var(--color-brand-400)]" />
-                <span className="font-semibold uppercase tracking-wider text-[11px]">
-                  {loc.distanceFromTemple}
-                </span>
-              </div>
-            ) : null}
-
-            <p className="mt-6 text-lg sm:text-xl leading-relaxed text-white/75 max-w-2xl">
-              {subhead}
-            </p>
-
-            <div className="mt-9 flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-6">
-              <ButtonLink
-                href={`/quote?city=${slug}`}
-                variant="primary"
-                size="lg"
-                icon={<ArrowRightIcon className="h-5 w-5" />}
-                iconPosition="right"
-              >
-                Get a Free Quote
-              </ButtonLink>
-              <TrackedPhoneLink
-                surface="locations_slug_hero"
-                mode="children-only"
-                className="inline-flex items-center gap-2 text-base font-semibold text-white/85 hover:text-white transition-colors"
-              >
-                <PhoneIcon className="h-5 w-5" />
-                <span>Call <TrackedPhoneNumber className="tabular-nums" /></span>
-                <span aria-hidden="true">→</span>
-              </TrackedPhoneLink>
-            </div>
-          </div>
-        </Container>
-      </section>
-
-      {/* ─── Local intro + landmarks ──────────────────────────────────── */}
-      <section
-        aria-labelledby="local-heading"
-        className="relative py-20 md:py-24 bg-gradient-to-b from-white to-[color:var(--color-ink-50)] overflow-hidden"
-      >
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute inset-0 opacity-[0.04] bg-grid-decoration"
-        />
-        <Container size="wide" className="relative">
-          <Reveal className="max-w-3xl">
-            <span className="inline-flex items-center rounded-full bg-red-600 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.18em] text-white shadow-sm">
-              {loc.name}, TX
-            </span>
-            <h2
-              id="local-heading"
-              className="mt-5 font-display font-extrabold uppercase tracking-tight leading-[0.95] text-[color:var(--color-ink-900)] text-4xl sm:text-5xl md:text-6xl"
-            >
-              Built local.
-              <br />
-              <span className="text-[color:var(--color-brand-600)]">
-                Built whole, by us.
-              </span>
-            </h2>
-            <p className="mt-6 text-lg leading-relaxed text-[color:var(--color-ink-600)] max-w-2xl">
+      {/* 2 · Coverage */}
+      <section data-forge="" data-tone="light" className="bg-white py-[clamp(64px,7vw,104px)] text-forge-navy">
+        <div className="mx-auto grid w-full max-w-[1360px] grid-cols-[repeat(auto-fit,minmax(min(100%,420px),1fr))] items-start gap-[clamp(32px,4vw,72px)] px-[clamp(20px,3vw,40px)]">
+          <ForgeReveal>
+            {loc.introHeading ? (
+              <SectionHeading eyebrow={loc.introEyebrow ?? "Where we build"} line1={loc.introHeading} balance />
+            ) : (
+              <SectionHeading eyebrow={loc.introEyebrow ?? "Where we build"} line1="Built local." line2="Built whole, by us." />
+            )}
+            <p className="mt-[18px] max-w-[600px] text-[clamp(16px,.3vw_+_14px,18px)] leading-[1.65] text-forge-slate [text-wrap:pretty]">
               {intro}
             </p>
-          </Reveal>
-
-          {/* Landmark grid (only when populated) */}
-          {loc.landmarks && loc.landmarks.length > 0 ? (
+            {loc.localSource ? (
+              <p className="mt-4 text-[14px] text-forge-slate">
+                Source:{" "}
+                <a href={loc.localSource.url} className="border-b border-forge-silver text-forge-navy hover:border-forge-navy">
+                  {loc.localSource.label}
+                </a>
+              </p>
+            ) : null}
+          </ForgeReveal>
+          <ForgeReveal className="rounded-[12px] border border-forge-silver bg-forge-fog p-[clamp(20px,2vw,32px)]">
+            {loc.neighborhoods?.length ? (
+              <>
+                <p className="text-[11px] font-bold uppercase tracking-[.2em] text-forge-slate">Neighborhoods we cover</p>
+                <div className="mt-4 flex flex-wrap gap-2">
+                  {loc.neighborhoods.map((n) => (
+                    <Chip key={n}>{n}</Chip>
+                  ))}
+                </div>
+              </>
+            ) : null}
+            {loc.areaNote ? (
+              <p className="mt-[18px] text-[14px] leading-[1.6] text-forge-slate [text-wrap:pretty]">{loc.areaNote}</p>
+            ) : null}
             <div
-              className={`mt-12 grid grid-cols-1 sm:grid-cols-2 gap-5 ${
-                loc.landmarks.length >= 3 ? "lg:grid-cols-3" : "lg:grid-cols-2"
+              className={`flex items-start gap-2.5 text-[14px] text-forge-navy ${
+                loc.neighborhoods?.length || loc.areaNote ? "mt-5 border-t border-forge-silver pt-[18px]" : ""
               }`}
             >
-              {loc.landmarks.map((landmark, i) => (
-                <Reveal key={landmark.name} delay={i * 80}>
-                  <article className="group relative flex flex-col h-full overflow-hidden rounded-2xl border border-[color:var(--color-ink-100)] bg-white shadow-sm hover:shadow-xl transition-shadow">
-                    {landmark.imageSrc ? (
-                      <div className="relative aspect-[4/3] overflow-hidden bg-[color:var(--color-ink-100)]">
-                        <Image
-                          src={landmark.imageSrc}
-                          alt={landmark.imageAlt ?? landmark.name}
-                          fill
-                          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                          className="object-cover transition-transform duration-500 group-hover:scale-105"
-                        />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
-                      </div>
-                    ) : (
-                      // Typography-only card when no photo is sourced yet.
-                      // Reads as intentional magazine card via a brand-blue
-                      // numbered accent + dot-grid texture.
-                      <div className="relative aspect-[4/3] overflow-hidden bg-[color:var(--color-ink-900)] text-white p-6 flex items-end">
-                        <div
-                          aria-hidden="true"
-                          className="pointer-events-none absolute inset-0 opacity-[0.08] bg-dot-grid"
-                        />
-                        <div className="relative">
-                          <div className="text-7xl font-display font-extrabold leading-none text-[color:var(--color-brand-400)]/60 tabular-nums">
-                            {String(i + 1).padStart(2, "0")}
-                          </div>
-                          <div className="mt-3 text-xs font-bold uppercase tracking-[0.18em] text-white/55">
-                            Landmark
-                          </div>
-                        </div>
-                      </div>
-                    )}
-                    <div className="flex-1 p-6">
-                      <h3 className="font-display font-extrabold uppercase tracking-tight text-2xl text-[color:var(--color-ink-900)] leading-none">
-                        {landmark.name}
-                      </h3>
-                      <p className="mt-3 text-[15px] leading-relaxed text-[color:var(--color-ink-600)]">
-                        {landmark.blurb}
-                      </p>
+              <PinIcon width={16} height={16} aria-hidden="true" className="mt-[3px] flex-none text-forge-slate" />
+              <span>
+                Shop: {SITE.addressOneLine}
+                {loc.distanceFromTemple ? (
+                  <>
+                    {" "}· <b className="font-semibold">{loc.distanceFromTemple}</b>
+                  </>
+                ) : null}
+              </span>
+            </div>
+          </ForgeReveal>
+        </div>
+      </section>
+
+      {/* 3 · Know the ground */}
+      {loc.landmarks?.length ? (
+        <section data-forge="" data-tone="light" className="bg-forge-fog py-[clamp(64px,7vw,104px)] text-forge-navy">
+          <div className="mx-auto w-full max-w-[1360px] px-[clamp(20px,3vw,40px)]">
+            <ForgeReveal className="max-w-[760px]">
+              <SectionHeading eyebrow="Know the ground" line1={loc.landHeading ?? `${loc.name}, the way we know it.`} />
+            </ForgeReveal>
+            <ForgeReveal stagger className="mt-11 grid grid-cols-[repeat(auto-fit,minmax(min(100%,300px),1fr))] gap-5">
+              {loc.landmarks.map((m) => (
+                <div key={m.name} className="flex flex-col overflow-hidden rounded-[12px] border border-forge-silver bg-white">
+                  {m.imageSrc ? (
+                    <div className="relative aspect-[16/10] overflow-hidden bg-forge-slate">
+                      <Image src={m.imageSrc} alt={m.imageAlt ?? m.name} fill sizes="(min-width: 1200px) 440px, 100vw" className="object-cover" />
                     </div>
-                  </article>
-                </Reveal>
+                  ) : null}
+                  <div className="px-[22px] pt-5 pb-6">
+                    <h3 className="font-forge-display text-[20px] font-bold leading-[1.2] text-forge-navy">{m.name}</h3>
+                    <p className="mt-2.5 text-[15px] leading-[1.6] text-forge-slate [text-wrap:pretty]">{m.blurb}</p>
+                  </div>
+                </div>
+              ))}
+            </ForgeReveal>
+          </div>
+        </section>
+      ) : null}
+
+      {/* 4 · Why a local crew (navy) */}
+      <section data-forge="" data-tone="dark" className="bg-forge-navy py-[clamp(64px,7vw,104px)] text-white">
+        <div className="mx-auto grid w-full max-w-[1360px] grid-cols-[repeat(auto-fit,minmax(min(100%,420px),1fr))] items-start gap-[clamp(32px,4vw,72px)] px-[clamp(20px,3vw,40px)]">
+          <ForgeReveal>
+            {loc.whyHeading ? (
+              <SectionHeading tone="dark" eyebrow="Why a local crew" line1={loc.whyHeading} balance />
+            ) : (
+              <SectionHeading tone="dark" eyebrow="Why a local crew" line1="Local crew." line2={`${loc.name} timelines.`} />
+            )}
+            {whyRows.length ? (
+              <div className="mt-8 flex flex-col border-t border-forge-silver/[.18]">
+                {whyRows.map((w, i) => (
+                  <NumberedRow key={w.b} index={i} title={w.t} pad="sm">
+                    {w.b}
+                  </NumberedRow>
+                ))}
+              </div>
+            ) : (
+              <p className="mt-6 max-w-[600px] text-[17px] leading-[1.65] text-white/80">{loc.whyLocal}</p>
+            )}
+          </ForgeReveal>
+          {callouts.length ? (
+            <div className="flex flex-col gap-4">
+              {callouts.map((callout) => (
+                <ForgeReveal
+                  key={callout.headline}
+                  className="rounded-[12px] border border-forge-silver/30 bg-forge-navy-raised p-[clamp(24px,2.4vw,40px)]"
+                >
+                  <p className="text-[11px] font-bold uppercase tracking-[.2em] text-forge-silver">{callout.eyebrow}</p>
+                  <h3 className="mt-2.5 font-forge-display text-[clamp(24px,1vw_+_16px,32px)] font-black leading-[1.15] text-white">
+                    {callout.headline}
+                  </h3>
+                  <p className="mt-3.5 text-[15px] leading-[1.65] text-white/80 [text-wrap:pretty]">{callout.blurb}</p>
+                  <div className="mt-6">
+                    {callout.href ? (
+                      <ForgeButtonLink href={callout.href} variant="white" size="md" arrow>
+                        {callout.ctaLabel}
+                      </ForgeButtonLink>
+                    ) : (
+                      <QuoteRequestButton request={{}} variant="white" size="md" arrow>
+                        {callout.ctaLabel}
+                      </QuoteRequestButton>
+                    )}
+                  </div>
+                </ForgeReveal>
               ))}
             </div>
           ) : null}
-        </Container>
+        </div>
       </section>
 
-      {loc.localSource && <Container size="wide" className="pb-8"><a href={loc.localSource.url} className="text-sm underline text-brand-700">{loc.localSource.label}</a></Container>}
-
-      {/* ─── Where We Build (neighborhoods chips) ─────────────────────── */}
-      {loc.neighborhoods && loc.neighborhoods.length > 0 ? (
-        <section
-          aria-labelledby="neighborhoods-heading"
-          className="relative py-16 md:py-20 bg-white border-t border-[color:var(--color-ink-100)]"
-        >
-          <Container size="wide">
-            <Reveal className="max-w-3xl">
-              <span className="text-xs font-bold uppercase tracking-[0.18em] text-[color:var(--color-brand-700)]">
-                Where We Build
-              </span>
-              <h2
-                id="neighborhoods-heading"
-                className="mt-3 font-display font-extrabold uppercase tracking-tight leading-none text-[color:var(--color-ink-900)] text-3xl sm:text-4xl"
-              >
-                {loc.name} neighborhoods we serve
-              </h2>
-            </Reveal>
-            <div className="mt-8 flex flex-wrap gap-2.5">
-              {loc.neighborhoods.map((n, i) => (
-                <Reveal key={n} delay={i * 40}>
-                  <span className="inline-flex items-center rounded-lg border border-[color:var(--color-ink-100)] bg-[color:var(--color-ink-50)] px-3.5 py-2 text-sm font-semibold text-[color:var(--color-ink-700)]">
-                    {n}
-                  </span>
-                </Reveal>
-              ))}
-            </div>
-          </Container>
-        </section>
-      ) : null}
-
-      {/* ─── Services (3-up photo cards for top services) ─────────────── */}
-      <section
-        aria-labelledby="services-heading"
-        className="relative py-20 md:py-24 bg-[color:var(--color-ink-50)]"
-      >
-        <Container size="wide">
-          <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4 max-w-5xl">
-            <Reveal>
-              <span className="text-xs font-bold uppercase tracking-[0.18em] text-[color:var(--color-brand-700)]">
-                What We Build in {loc.name}
-              </span>
-              <h2
-                id="services-heading"
-                className="mt-3 font-display font-extrabold uppercase tracking-tight leading-none text-[color:var(--color-ink-900)] text-3xl sm:text-4xl md:text-5xl"
-              >
-                Explore options for your property.
-              </h2>
-            </Reveal>
-            <Link
-              href="/services"
-              className="inline-flex items-center gap-2 text-sm font-bold uppercase tracking-wider text-[color:var(--color-brand-700)] hover:text-[color:var(--color-brand-800)] transition-colors"
-            >
-              See all services
-              <ArrowRightIcon className="h-4 w-4" />
-            </Link>
-          </div>
-
-          <div className="mt-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-            {topServices.map((svc, i) => (
-              <Reveal key={svc.slug} delay={i * 80}>
-                <Link
-                  href={`/services/${svc.slug}`}
-                  className="group relative flex flex-col h-full overflow-hidden rounded-2xl bg-[color:var(--color-ink-900)] shadow-md hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 ease-out"
-                >
-                  <div className="relative aspect-[4/3] overflow-hidden">
-                    <Image
-                      src={SERVICE_PHOTOS[svc.slug] ?? FALLBACK_HERO}
-                      alt={svc.title}
-                      fill
-                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                      className="object-cover transition-transform duration-700 ease-out group-hover:scale-110"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/40 to-black/20" />
-                    <div className="absolute inset-x-0 bottom-0 p-5">
-                      <h3 className="font-display font-extrabold uppercase tracking-tight leading-none text-white text-2xl md:text-3xl">
-                        {svc.shortTitle}
-                      </h3>
-                    </div>
-                  </div>
-                  <div className="flex flex-col gap-3 p-5 bg-white flex-1">
-                    <p className="text-[15px] leading-relaxed text-[color:var(--color-ink-600)]">
-                      {svc.mainBenefit}
-                    </p>
-                    <span className="mt-auto inline-flex items-center gap-1.5 text-sm font-bold text-[color:var(--color-brand-600)] group-hover:gap-2.5 transition-all">
-                      See details
-                      <ArrowRightIcon className="h-4 w-4" />
-                    </span>
-                  </div>
-                </Link>
-              </Reveal>
+      {/* 5 · What we build in {name} */}
+      <section data-forge="" data-tone="light" className="bg-white py-[clamp(64px,7vw,104px)] text-forge-navy">
+        <div className="mx-auto w-full max-w-[1360px] px-[clamp(20px,3vw,40px)]">
+          <ForgeReveal className="max-w-[720px]">
+            <SectionHeading eyebrow={`What we build in ${loc.name}`} line1="Same crew." line2="Every build." inline />
+          </ForgeReveal>
+          <ForgeReveal stagger className="mt-9 grid grid-cols-[repeat(auto-fit,minmax(min(100%,280px),1fr))] gap-4">
+            {MEGA_SERVICES.map((s) => (
+              <PhotoCard key={s.href} href={s.href} img={s.img} imgPosition={s.pos} title={s.label} sub={s.sub} cta={`Explore ${s.label}`} />
             ))}
-          </div>
-        </Container>
+          </ForgeReveal>
+        </div>
       </section>
 
-      {/* ─── Further reading (only when relatedPosts is populated) ──── */}
-      {loc.relatedPosts && loc.relatedPosts.length > 0 ? (
-        <RelatedReading postSlugs={loc.relatedPosts} />
-      ) : null}
-
-      {/* ─── Per-city callout sections (stacked, in array order) ─────── */}
-      {loc.callouts && loc.callouts.length > 0 ? (
-        <section
-          aria-label={`${loc.name} secondary markets`}
-          className="relative py-16 md:py-20 bg-white"
-        >
-          <Container size="wide">
-            <div className="space-y-5">
-              {loc.callouts.map((callout, idx) => (
-                <Reveal key={callout.eyebrow} delay={idx * 100}>
-                  <Link
-                    href={callout.ctaHref}
-                    className="group block relative overflow-hidden rounded-2xl border border-[color:var(--color-brand-400)]/30 bg-gradient-to-br from-[color:var(--color-brand-600)]/8 via-white to-white shadow-lg hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 ease-out"
-                  >
-                    {/* Soft brand-blue radial wash in the upper-right */}
-                    <div
-                      aria-hidden="true"
-                      className="pointer-events-none absolute -top-20 -right-20 h-64 w-64 rounded-full bg-[color:var(--color-brand-400)]/15 blur-3xl"
-                    />
-                    <div className="relative grid grid-cols-1 md:grid-cols-5 gap-6 md:gap-10 p-8 md:p-10 lg:p-12 items-center">
-                      <div className="md:col-span-3">
-                        <span className="inline-flex items-center rounded-full bg-[color:var(--color-brand-600)] px-3 py-1 text-[11px] font-bold uppercase tracking-[0.18em] text-white shadow-sm">
-                          {callout.eyebrow}
-                        </span>
-                        <h2 className="mt-5 font-display font-extrabold uppercase tracking-tight leading-[0.95] text-[color:var(--color-ink-900)] text-3xl sm:text-4xl md:text-5xl">
-                          {callout.headline}
-                        </h2>
-                        <p className="mt-5 text-base sm:text-lg leading-relaxed text-[color:var(--color-ink-600)]">
-                          {callout.blurb}
-                        </p>
-                      </div>
-                      <div className="md:col-span-2 flex md:justify-end">
-                        <span className="inline-flex items-center gap-2 text-sm font-bold uppercase tracking-wider text-[color:var(--color-brand-700)] group-hover:gap-3 transition-all">
-                          {callout.ctaLabel}
-                          <ArrowRightIcon className="h-4 w-4" />
-                        </span>
-                      </div>
-                    </div>
-                  </Link>
-                </Reveal>
-              ))}
-            </div>
-          </Container>
-        </section>
-      ) : null}
-
-      {/* ─── Why Triple J in {city} (dark editorial spread) ───────────── */}
-      <section
-        aria-labelledby="why-local-heading"
-        className="relative py-20 md:py-24 bg-[color:var(--color-ink-900)] text-white overflow-hidden"
-      >
-        <div aria-hidden="true" className="absolute inset-0 quote-glow pointer-events-none" />
-        <Container size="wide" className="relative">
-          <Reveal className="max-w-3xl">
-            <span className="inline-flex items-center rounded-full bg-red-600 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.18em] text-white shadow-sm">
-              Why Triple J
-            </span>
-            <h2
-              id="why-local-heading"
-              className="mt-6 font-display font-extrabold uppercase tracking-tight leading-[0.95] text-white text-4xl sm:text-5xl md:text-6xl"
-            >
-              Local crew.
-              <br />
-              <span className="text-[color:var(--color-brand-400)]">
-                {loc.name} timelines.
-              </span>
-            </h2>
-          </Reveal>
-
-          {loc.whyLocalBullets && loc.whyLocalBullets.length > 0 ? (
-            <ul className="mt-10 grid grid-cols-1 md:grid-cols-2 gap-5 max-w-4xl">
-              {loc.whyLocalBullets.map((bullet, i) => (
-                <Reveal key={i} delay={i * 80}>
-                  <li className="flex items-start gap-4 rounded-xl border border-white/10 bg-white/[0.03] p-5">
-                    <span
-                      aria-hidden="true"
-                      className="shrink-0 inline-flex items-center justify-center h-8 w-8 rounded-full bg-[color:var(--color-brand-600)]/25 text-[color:var(--color-brand-300)] text-sm font-bold"
-                    >
-                      ✓
-                    </span>
-                    <span className="text-base leading-relaxed text-white/85">
-                      {bullet}
-                    </span>
-                  </li>
-                </Reveal>
-              ))}
-            </ul>
-          ) : (
-            <Reveal className="mt-10 max-w-3xl">
-              <p className="text-lg leading-relaxed text-white/80">
-                {loc.whyLocal}
-              </p>
-            </Reveal>
-          )}
-        </Container>
-      </section>
-
-      {/* ─── Verified city project matches ─────────── */}
-      {galleryPhotos.length > 0 ? (
-        <section
-          aria-labelledby="gallery-heading"
-          className="relative py-16 md:py-20 bg-white"
-        >
-          <Container size="wide">
-            <Reveal className="flex flex-col md:flex-row md:items-end md:justify-between gap-4 max-w-5xl">
-              <div>
-                <span className="text-xs font-bold uppercase tracking-[0.18em] text-[color:var(--color-brand-700)]">
-                  Recent Builds
-                </span>
-                <h2
-                  id="gallery-heading"
-                  className="mt-3 font-display font-extrabold uppercase tracking-tight leading-none text-[color:var(--color-ink-900)] text-3xl sm:text-4xl"
-                >
-                  Projects in {loc.name}.
-                </h2>
-              </div>
-              <Link
-                href="/gallery"
-                className="inline-flex items-center gap-2 text-sm font-bold uppercase tracking-wider text-[color:var(--color-brand-700)] hover:text-[color:var(--color-brand-800)] transition-colors"
-              >
-                See full portfolio
-                <ArrowRightIcon className="h-4 w-4" />
+      {/* 6 · Builds near {name} (3+ only) */}
+      {builds.length >= 3 ? (
+        <section data-forge="" data-tone="light" className="bg-forge-fog py-[clamp(64px,7vw,104px)] text-forge-navy">
+          <div className="mx-auto w-full max-w-[1360px] px-[clamp(20px,3vw,40px)]">
+            <div className="flex flex-wrap items-end justify-between gap-x-8 gap-y-5">
+              <SectionHeading eyebrow={`Builds near ${loc.name}`} line1="Built down the road." className="max-w-[720px]" />
+              <Link href="/gallery" className="border-b border-forge-silver pb-0.5 text-[15px] font-semibold transition-colors hover:border-forge-navy">
+                See the full gallery →
               </Link>
-            </Reveal>
-
-            <div className="mt-8 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
-              {galleryPhotos.map((p, i) => (
-                <Reveal key={p.id} delay={i * 60}>
-                  <Link
-                    href={`/gallery/${p.id}`}
-                    className="group relative aspect-square overflow-hidden rounded-xl bg-[color:var(--color-ink-200)] block"
-                  >
-                    <Image
-                      src={p.src}
-                      alt={p.alt ?? p.title}
-                      fill
-                      sizes="(max-width: 768px) 50vw, 16vw"
-                      className="object-cover transition-transform duration-500 group-hover:scale-105"
-                      unoptimized={p.src.startsWith("/")}
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-70 group-hover:opacity-100 transition-opacity" />
-                    <div className="absolute bottom-2 left-2 right-2 text-white">
-                      <div className="text-[10px] uppercase tracking-wider text-white/70 font-semibold truncate">
-                        {p.city}
-                      </div>
-                    </div>
-                  </Link>
-                </Reveal>
-              ))}
             </div>
-          </Container>
+            <BuildGrid items={builds} />
+          </div>
         </section>
       ) : null}
 
-      {/* ─── Military section (Killeen + Harker Heights only) ─────────── */}
-      {loc.military ? (
-        <section
-          aria-labelledby="military-heading"
-          className="relative py-20 md:py-24 bg-[color:var(--color-ink-950)] text-white overflow-hidden"
-        >
-          <div aria-hidden="true" className="absolute inset-0 quote-glow pointer-events-none" />
-          <Container size="wide" className="relative">
-            <Reveal className="max-w-3xl">
-              <span className="inline-flex items-center rounded-full bg-red-600 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.18em] text-white shadow-sm">
-                <span aria-hidden="true" className="mr-1.5">★</span>
-                Military &amp; First Responder
-              </span>
-              <h2
-                id="military-heading"
-                className="mt-6 font-display font-extrabold uppercase tracking-tight leading-[0.95] text-white text-4xl sm:text-5xl md:text-6xl"
-              >
-                {loc.military.headline}
-              </h2>
-              <p className="mt-6 text-lg leading-relaxed text-white/80 max-w-2xl">
-                {loc.military.copy}
-              </p>
-            </Reveal>
-          </Container>
-        </section>
-      ) : null}
-    </>
+      {/* 7 · Quote, with this city's ZIP filled in */}
+      <QuoteSection initialZip={loc.zip} city={loc.name} />
+    </div>
   );
 }

@@ -92,9 +92,10 @@ export function filterByTypes(items: BuildItem[], types: readonly string[]): Bui
   return items.filter((b) => want.has(b.type.toLowerCase()));
 }
 
-/** Builds whose city matches one of `cities` (case-insensitive, ignores ", TX"). */
+/** Builds whose city matches one of `cities` (case-insensitive; "Temple, TX",
+ *  "Temple Texas" and "Temple" are the same city). */
 export function filterByCities(items: BuildItem[], cities: readonly string[]): BuildItem[] {
-  const norm = (c: string) => c.toLowerCase().replace(/,\s*tx$/, "").trim();
+  const norm = (c: string) => c.toLowerCase().replace(/,?\s*(tx|texas)$/, "").trim();
   const want = new Set(cities.map(norm));
   return items.filter((b) => want.has(norm(b.city)));
 }

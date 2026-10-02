@@ -49,7 +49,8 @@ export function NumberedRow({
   pad = "md",
 }: {
   index: number;
-  title: ReactNode;
+  /** Omit for a body-only row. */
+  title?: ReactNode;
   children: ReactNode;
   tone?: "dark" | "light";
   /** `md` 22px rows (About), `sm` 20px rows (locations). */
@@ -64,8 +65,10 @@ export function NumberedRow({
     >
       <span className="pt-0.5 font-forge-display text-[15px] font-bold text-forge-steel">{numeral(index)}</span>
       <div>
-        <h3 className={`m-0 font-forge-display text-[19px] font-bold ${dark ? "text-white" : "text-forge-navy"}`}>{title}</h3>
-        <p className={`mt-1.5 text-[15px] leading-[1.6] [text-wrap:pretty] ${dark ? "text-white/75" : "text-forge-slate"}`}>
+        {title ? (
+          <h3 className={`m-0 font-forge-display text-[19px] font-bold ${dark ? "text-white" : "text-forge-navy"}`}>{title}</h3>
+        ) : null}
+        <p className={`${title ? "mt-1.5" : "m-0"} text-[15px] leading-[1.6] [text-wrap:pretty] ${dark ? "text-white/75" : "text-forge-slate"}`}>
           {children}
         </p>
       </div>
