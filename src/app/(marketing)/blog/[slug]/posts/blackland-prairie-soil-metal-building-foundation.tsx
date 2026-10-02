@@ -5,7 +5,7 @@ export default function BlacklandPrairiePost() {
     <>
       <p>
         Central Texas sits on one of the most problematic soil types in North America for construction
-        foundations. <strong>Blackland Prairie clay</strong> &#8212; the dark, expansive soil that runs through Bell County,
+        foundations. <strong>Blackland Prairie clay</strong>{' '}&#8212; the dark, expansive soil that runs through Bell County,
         Temple, Killeen, and Belton &#8212; swells dramatically when wet and shrinks and cracks when dry. The
         same soil that makes this region excellent farmland will heave, tilt, and crack a concrete slab
         that wasn&#8217;t designed for it.
@@ -18,7 +18,7 @@ export default function BlacklandPrairiePost() {
 
       <h2>What Makes Blackland Prairie Clay Different</h2>
       <p>
-        The key property of Bell County&#8217;s expansive clay is its <strong>Plasticity Index (PI)</strong> &#8212; a measure
+        The key property of Bell County&#8217;s expansive clay is its <strong>Plasticity Index (PI)</strong>{' '}&#8212; a measure
         of how much water the soil absorbs before it becomes plastic (pliable). Bell County soils
         commonly have PI values above 40, sometimes above 60. For context, non-expansive soils have
         a PI under 15.
@@ -36,10 +36,10 @@ export default function BlacklandPrairiePost() {
       <h2>How Soil Type Affects Concrete Specification</h2>
       <p>
         Standard concrete mix for a residential slab is 3,000 PSI, and that is what{' '}
-        <strong>Triple J pours as standard</strong> for carport and garage slabs. What matters more
+        <strong>Triple J pours as standard</strong>{' '}for carport and garage slabs. What matters more
         than the number on the mix ticket is what sits under and around it: correct thickness,
         reinforcement, a perimeter beam, and anchor depth set for the soil actually on your lot. For
-        the most reactive clay sites we can pour a <strong>4,000 PSI mix on request</strong> &#8212;
+        the most reactive clay sites we can pour a <strong>4,000 PSI mix on request</strong>{' '}&#8212;
         the higher strength rating makes the slab more resistant to cracking under differential
         movement, the scenario where one edge of your slab moves up while the other stays flat.
       </p>

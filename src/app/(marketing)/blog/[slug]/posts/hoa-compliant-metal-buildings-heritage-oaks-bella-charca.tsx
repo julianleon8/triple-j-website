@@ -21,10 +21,10 @@ export default function HoaCompliantPost() {
         Most HOA architectural guidelines in luxury Central Texas subdivisions prohibit:
       </p>
       <ul>
-        <li><strong>Utility-grade appearance:</strong> Exposed fastener heads on the visible roof and wall surfaces</li>
-        <li><strong>Industrial color palettes:</strong> Unpainted Galvalume or bright colors that don&#8217;t coordinate with the home exterior</li>
-        <li><strong>Visible hardware:</strong> Bolted connections and exposed rafter tails on the structure perimeter</li>
-        <li><strong>Non-compliant setbacks:</strong> Structures that don&#8217;t maintain minimum distances from property lines, the main dwelling, and drainage easements</li>
+        <li><strong>Utility-grade appearance:</strong>{' '}Exposed fastener heads on the visible roof and wall surfaces</li>
+        <li><strong>Industrial color palettes:</strong>{' '}Unpainted Galvalume or bright colors that don&#8217;t coordinate with the home exterior</li>
+        <li><strong>Visible hardware:</strong>{' '}Bolted connections and exposed rafter tails on the structure perimeter</li>
+        <li><strong>Non-compliant setbacks:</strong>{' '}Structures that don&#8217;t maintain minimum distances from property lines, the main dwelling, and drainage easements</li>
       </ul>
       <p>
         A standard PBR panel with exposed screws &#8212; which is the correct choice for an agricultural barn
@@ -92,11 +92,11 @@ export default function HoaCompliantPost() {
         Most HOA architectural review committees require a written application that includes:
       </p>
       <ol>
-        <li><strong>Plot plan or site plan</strong> showing the proposed structure location relative to property lines, the main dwelling, and easements</li>
-        <li><strong>Structure dimensions</strong> (length, width, height at eave and ridge)</li>
-        <li><strong>Exterior materials specification</strong> (panel type, manufacturer, product name, color)</li>
-        <li><strong>Color samples</strong> or manufacturer color card</li>
-        <li><strong>Photos or renderings</strong> of similar completed structures (optional but recommended)</li>
+        <li><strong>Plot plan or site plan</strong>{' '}showing the proposed structure location relative to property lines, the main dwelling, and easements</li>
+        <li><strong>Structure dimensions</strong>{' '}(length, width, height at eave and ridge)</li>
+        <li><strong>Exterior materials specification</strong>{' '}(panel type, manufacturer, product name, color)</li>
+        <li><strong>Color samples</strong>{' '}or manufacturer color card</li>
+        <li><strong>Photos or renderings</strong>{' '}of similar completed structures (optional but recommended)</li>
       </ol>
       <p>
         We can provide all of these materials as part of the quoting process. Many HOA ARC committees

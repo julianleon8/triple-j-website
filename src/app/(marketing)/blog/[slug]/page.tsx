@@ -1,9 +1,11 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
+import Image from 'next/image'
 import Link from 'next/link'
-import { Container } from '@/components/ui/Container'
-import { ButtonLink } from '@/components/ui/Button'
-import { QuoteForm } from '@/components/sections/QuoteForm'
+import { Eyebrow } from '@/components/forge/Eyebrow'
+import { ForgeButtonLink } from '@/components/forge/ForgeButton'
+import { ForgeReveal } from '@/components/forge/ForgeReveal'
+import { QuoteSection } from '@/components/forge/QuoteSection'
 import { BreadcrumbJsonLd } from '@/components/seo/BreadcrumbJsonLd'
 import { BLOG_POSTS } from '@/lib/blog'
 import { SITE } from '@/lib/site'
@@ -40,6 +42,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     },
   }
 }
+
+/** The ~760px reading column, centred, with the Forge gutter. */
+const readingClass = 'mx-auto w-full max-w-[840px] px-[clamp(20px,3vw,40px)]'
 
 function formatDate(iso: string) {
   return new Date(iso).toLocaleDateString('en-US', {
@@ -89,7 +94,7 @@ export default async function BlogPostPage({ params }: Props) {
   const relatedPosts = BLOG_POSTS.filter((p) => p.slug !== post.slug).slice(0, 3)
 
   return (
-    <>
+    <div data-forge="">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, '\\u003c') }}
@@ -102,103 +107,133 @@ export default async function BlogPostPage({ params }: Props) {
       />
 
       {/* ── Hero ── */}
-      <section className="relative bg-ink-900 text-white py-16 md:py-24 overflow-hidden">
-        <div className="hero-glow absolute inset-0 pointer-events-none" aria-hidden="true" />
-        <Container size="narrow" className="relative">
+      <section
+        data-forge=""
+        data-tone="dark"
+        className="bg-forge-navy pt-[clamp(24px,3vw,40px)] pb-[clamp(48px,5vw,72px)] text-white"
+      >
+        <div className={readingClass}>
           <Link
             href="/blog"
-            className="inline-flex items-center gap-1.5 text-xs font-semibold text-brand-400 hover:text-brand-300 mb-6 transition-colors"
+            className="inline-flex items-center gap-1.5 text-[13px] font-semibold text-forge-silver transition-colors hover:text-white"
           >
             ← All Articles
           </Link>
-          <div className="flex items-center gap-3 mb-4">
-            <span className="text-xs font-semibold text-brand-400 uppercase tracking-widest">
+          <div className="mt-[clamp(32px,4vw,56px)] flex flex-wrap items-center gap-x-3 gap-y-2">
+            <Eyebrow as="span" tone={post.category === 'Military' ? 'militaryDark' : 'dark'}>
               {post.category}
-            </span>
-            <span className="text-white/40 text-xs">·</span>
-            <span className="text-xs text-white/50">{post.readTime}</span>
+            </Eyebrow>
+            <span aria-hidden="true" className="text-[13px] text-forge-steel">·</span>
+            <span className="text-[13px] text-forge-steel-light">{post.readTime}</span>
           </div>
-          <h1 className="text-white leading-tight">{post.title}</h1>
+          <h1 className="mt-[18px] font-forge-display text-[clamp(30px,2.2vw_+_16px,48px)] font-black leading-[1.1] tracking-[.01em] text-white [text-wrap:balance]">
+            {post.title}
+          </h1>
           {/* Credits the crew, matching BlogPosting.author (the organization) —
               no post records an individual author or reviewer. */}
-          <p className="mt-4 text-sm text-white/60">
+          <p className="mt-5 text-[14px] text-forge-silver">
             By the {SITE.name} crew · Temple, TX · Published{' '}
             <time dateTime={post.date}>{formatDate(post.date)}</time>
           </p>
-          <p className="mt-5 text-lg text-white/70 leading-relaxed">{post.excerpt}</p>
+          <p className="mt-5 text-[clamp(16px,.4vw_+_14px,18px)] leading-[1.6] text-white/86 [text-wrap:pretty]">
+            {post.excerpt}
+          </p>
           <div className="mt-6 flex flex-wrap gap-2">
             {post.tags.map((tag) => (
               <span
                 key={tag}
-                className="text-[10px] font-semibold uppercase tracking-wider bg-white/10 text-white/60 px-2 py-0.5 rounded-full"
+                className="inline-flex h-7 items-center rounded-full border border-white/20 px-3 text-[12px] font-semibold text-forge-silver"
               >
                 {tag}
               </span>
             ))}
           </div>
-        </Container>
+        </div>
       </section>
 
       {/* ── Article body ── */}
-      <article className="py-14 md:py-20 bg-white">
-        <Container size="narrow">
-          <div className="prose prose-lg max-w-none prose-headings:font-extrabold prose-headings:text-ink-900 prose-p:text-ink-600 prose-p:leading-relaxed prose-a:text-brand-700 prose-strong:text-ink-900 prose-li:text-ink-600">
+      <article
+        data-forge=""
+        data-tone="light"
+        className="bg-white py-[clamp(56px,6vw,96px)] text-forge-navy"
+      >
+        <div className={readingClass}>
+          <div className="forge-prose">
             <PostContent />
           </div>
-        </Container>
+        </div>
       </article>
 
       {/* ── Author strip ── */}
-      <section className="py-10 bg-ink-50 border-t border-ink-100">
-        <Container size="narrow">
+      <section
+        data-forge=""
+        data-tone="light"
+        className="border-t border-forge-mist bg-forge-fog py-10 text-forge-navy"
+      >
+        <div className={readingClass}>
           <div className="flex items-start gap-4">
-            <div className="w-12 h-12 rounded-full bg-brand-600 flex items-center justify-center shrink-0">
-              <span className="text-white font-extrabold text-sm">JJJ</span>
-            </div>
+            <Image
+              src="/images/logo-lion.png"
+              alt=""
+              aria-hidden="true"
+              width={48}
+              height={48}
+              className="size-12 shrink-0 object-contain"
+            />
             <div>
-              <p className="font-bold text-ink-900 text-sm">Triple J Metal — Temple, TX</p>
-              <p className="text-xs text-ink-500 mt-0.5 leading-relaxed">
+              <p className="text-[15px] font-semibold text-forge-navy">Triple J Metal — Temple, TX</p>
+              <p className="mt-1 text-[14px] leading-[1.6] text-forge-slate">
                 Local metal building contractor serving Central Texas since {SITE.established}. Welded or bolted red iron,
                 concrete available, same-week scheduling. This guide was written by our crew from first-hand experience
                 in Bell County.
               </p>
             </div>
           </div>
-        </Container>
+        </div>
       </section>
 
       {/* ── Related posts ── */}
       {relatedPosts.length > 0 && (
-        <section className="py-14 bg-white border-t border-ink-100">
-          <Container size="narrow">
-            <h2 className="text-lg font-extrabold text-ink-900 mb-6">More Articles</h2>
-            <div className="space-y-4">
+        <section
+          data-forge=""
+          data-tone="light"
+          aria-labelledby="related-heading"
+          className="bg-white py-[clamp(56px,6vw,88px)] text-forge-navy"
+        >
+          <ForgeReveal className={readingClass}>
+            <h2
+              id="related-heading"
+              className="font-forge-display text-[clamp(24px,1vw_+_16px,30px)] font-bold leading-[1.2] text-forge-navy"
+            >
+              More Articles
+            </h2>
+            <div className="mt-6 space-y-3">
               {relatedPosts.map((related) => (
                 <Link
                   key={related.slug}
                   href={`/blog/${related.slug}`}
-                  className="group block rounded-xl border border-ink-100 bg-ink-50 p-5 hover:shadow-sm hover:-translate-y-0.5 transition-all"
+                  className="group block rounded-[12px] border border-forge-silver bg-forge-fog p-5 transition-colors duration-200 hover:border-forge-navy"
                 >
-                  <p className="text-[10px] font-bold uppercase tracking-wider text-ink-400 mb-1">
+                  <p className="mb-1.5 text-[11px] font-bold uppercase tracking-[.16em] text-forge-slate">
                     {related.category} · {related.readTime}
                   </p>
-                  <p className="text-sm font-bold text-ink-900 group-hover:text-brand-700 transition-colors leading-snug">
+                  <p className="text-[16px] font-semibold leading-[1.4] text-forge-navy">
                     {related.title}
                   </p>
                 </Link>
               ))}
             </div>
             <div className="mt-6">
-              <ButtonLink href="/blog" variant="secondary" size="sm">
+              <ForgeButtonLink href="/blog" variant="outlineLight" size="sm">
                 ← Back to all articles
-              </ButtonLink>
+              </ForgeButtonLink>
             </div>
-          </Container>
+          </ForgeReveal>
         </section>
       )}
 
       {/* ── Quote form ── */}
-      <QuoteForm />
-    </>
+      <QuoteSection />
+    </div>
   )
 }

@@ -478,6 +478,57 @@ p:not(:where([data-forge] *)) { line-height: 1.6; }
   .forge-no-scrollbar { scrollbar-width: none; }
   .forge-no-scrollbar::-webkit-scrollbar { display: none; }
 
+  /* Long-form body copy (blog posts): plain p / h2 / h3 / ul / ol / strong / a
+     from the post modules, set in Forge. Replaces the legacy unlayered
+     .marketing heading and paragraph rules those posts used to lean on. */
+  .forge-prose {
+    color: var(--color-slate);
+    font-size: clamp(16px, .3vw + 15px, 18px);
+    line-height: 1.7;
+    text-wrap: pretty;
+  }
+  .forge-prose > * + * { margin-top: 1.15em; }
+  .forge-prose :is(h2, h3) {
+    font-family: var(--font-forge-display);
+    color: var(--color-navy);
+    text-wrap: balance;
+  }
+  .forge-prose h2 {
+    margin-top: 2.1em;
+    font-weight: 900;
+    font-size: clamp(24px, 1vw + 17px, 32px);
+    line-height: 1.15;
+    letter-spacing: .01em;
+  }
+  .forge-prose h3 {
+    margin-top: 1.8em;
+    font-weight: 700;
+    font-size: clamp(19px, .5vw + 15px, 22px);
+    line-height: 1.25;
+  }
+  .forge-prose :is(h2, h3) + * { margin-top: .7em; }
+  .forge-prose > :first-child { margin-top: 0; }
+  .forge-prose strong { color: var(--color-navy); font-weight: 600; }
+  .forge-prose a {
+    color: var(--color-navy);
+    font-weight: 600;
+    text-decoration: underline;
+    text-decoration-color: var(--color-silver);
+    text-underline-offset: 3px;
+    transition: text-decoration-color .2s;
+  }
+  .forge-prose a:hover { text-decoration-color: var(--color-navy); }
+  .forge-prose :is(ul, ol) { padding-left: 1.3em; }
+  .forge-prose ul { list-style: disc; }
+  .forge-prose ol { list-style: decimal; }
+  .forge-prose li + li { margin-top: .45em; }
+  .forge-prose li::marker { color: var(--color-steel); }
+  .forge-prose blockquote {
+    border-left: 2px solid var(--color-steel);
+    padding-left: 1.1em;
+    color: var(--color-navy);
+  }
+
   /* PBR panel: one 12" pitch per tile, light from the left — the wide flat
      pan with two stiffener ribs, then the trapezoid major rib (lit face,
      crown with a specular edge, shaded face). An SVG tile, so it stays

@@ -41,9 +41,9 @@ export default function WeldedVsBoltedPost() {
         &#8212; there are no slip-fit connections that can work loose under vibration or thermal cycling.
       </p>
       <p>
-        Triple J Metal uses a <strong>Miller Bobcat</strong> welder and red iron for our primary structural
+        Triple J Metal uses a <strong>Miller Bobcat</strong>{' '}welder and red iron for our primary structural
         frames: 14-gauge standard, with a heavy-duty upgrade that adds 11-gauge columns welded to the
-        receivers and purlins. Our frames are engineered for <strong>140 MPH wind loads</strong> &#8212; the
+        receivers and purlins. Our frames are engineered for <strong>140 MPH wind loads</strong>{' '}&#8212; the
         standard required by Texas windstorm certification zones near the Gulf.
       </p>
       <p>
@@ -60,7 +60,7 @@ export default function WeldedVsBoltedPost() {
         highlightCol={1}
         rows={[
           ['Wind rating',        'Design-specific', 'Design-specific', 'Design-specific'],
-          ['Frame gauge',        '14-gauge standard; 12 on request',  '14-gauge typical',   'N/A'],
+          ['Frame gauge',        '14-gauge standard; 11-gauge heavy-duty columns available',  '14-gauge typical',   'N/A'],
           ['Joints',             'Continuous welds',   'Bolt + slip-fit',    'Nailed/screwed'],
           ['Custom dimensions',  'Any size',           'Confirm options',    'Any size'],
           ['Permits',            'Advisory help; confirm filing',       'Customer handles',   'Contractor varies'],
@@ -82,16 +82,16 @@ export default function WeldedVsBoltedPost() {
       </p>
       <ul>
         <li>
-          <strong>Dirt or gravel sites:</strong> require 30-inch mobile home-style earth anchors, driven
+          <strong>Dirt or gravel sites:</strong>{' '}require 30-inch mobile home-style earth anchors, driven
           at the correct angle. Standard 3-foot rebar in the ground does not meet wind warranty requirements
           on most manufacturer specs.
         </li>
         <li>
-          <strong>Asphalt sites:</strong> require 30-inch asphalt anchors specifically designed for
+          <strong>Asphalt sites:</strong>{' '}require 30-inch asphalt anchors specifically designed for
           the substrate.
         </li>
         <li>
-          <strong>Concrete pads:</strong> require 6-inch concrete sleeve anchors, properly torqued.
+          <strong>Concrete pads:</strong>{' '}require 6-inch concrete sleeve anchors, properly torqued.
           A concrete pad that wasn&#8217;t designed with anchor bolt locations leaves you drilling post-pour,
           which is weaker.
         </li>

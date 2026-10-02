@@ -5,7 +5,7 @@ export default function BellCountyPermitPost() {
     <>
       <p>
         One of the first questions we get on every quote call is: &#8220;Do I need a permit for this?&#8221;
-        The honest answer in <strong>Bell County, Texas</strong> is: it depends on size, jurisdiction, and what
+        The honest answer in <strong>Bell County, Texas</strong>{' '}is: it depends on size, jurisdiction, and what
         your property is zoned. The rules in Temple, Killeen, Belton, and unincorporated Bell County
         are different from each other &#8212; and the consequences of building without the right permit
         can follow your property deed for decades.
@@ -45,7 +45,7 @@ export default function BellCountyPermitPost() {
       />
 
       <p>
-        <strong>Important:</strong> These thresholds apply to detached accessory structures on residential lots.
+        <strong>Important:</strong>{' '}These thresholds apply to detached accessory structures on residential lots.
         Commercial properties, properties in floodplains, and properties with HOA covenants may have
         additional or different requirements. Always verify with the applicable building department
         before breaking ground.
@@ -57,9 +57,9 @@ export default function BellCountyPermitPost() {
         permit fees for a metal carport or garage in this range:
       </p>
       <ul>
-        <li><strong>Small structures (under 300 sq ft):</strong> $50–$150 permit fee</li>
-        <li><strong>Mid-size (300–800 sq ft):</strong> $150–$350</li>
-        <li><strong>Larger structures (800+ sq ft):</strong> $350–$800+, may require stamped engineering</li>
+        <li><strong>Small structures (under 300 sq ft):</strong>{' '}$50–$150 permit fee</li>
+        <li><strong>Mid-size (300–800 sq ft):</strong>{' '}$150–$350</li>
+        <li><strong>Larger structures (800+ sq ft):</strong>{' '}$350–$800+, may require stamped engineering</li>
       </ul>
       <p>
         These are the permit fees only &#8212; not the cost of stamped engineering drawings, which can add
@@ -86,7 +86,7 @@ export default function BellCountyPermitPost() {
 
       <h2>Who Should Pull the Permit &#8212; You or the Contractor?</h2>
       <p>
-        When you hire Triple J Metal, <strong>we pull the permit.</strong> We are a licensed contractor in
+        When you hire Triple J Metal, <strong>we pull the permit.</strong>{' '}We are a licensed contractor in
         Texas, which means we can pull permits for projects we&#8217;re contracted to build. The permit is
         in our name, we&#8217;re responsible for the inspection, and the liability for code compliance sits
         with us &#8212; not you.
@@ -109,10 +109,10 @@ export default function BellCountyPermitPost() {
         residential setbacks for accessory structures are:
       </p>
       <ul>
-        <li><strong>Rear yard:</strong> 5–10 feet from property line (varies by city)</li>
-        <li><strong>Side yard:</strong> 3–5 feet minimum</li>
-        <li><strong>Front yard:</strong> Behind the front face of the main dwelling, typically no accessory structures allowed in front setback</li>
-        <li><strong>Drainage easements:</strong> No permanent structures allowed within the easement footprint (check your plat)</li>
+        <li><strong>Rear yard:</strong>{' '}5–10 feet from property line (varies by city)</li>
+        <li><strong>Side yard:</strong>{' '}3–5 feet minimum</li>
+        <li><strong>Front yard:</strong>{' '}Behind the front face of the main dwelling, typically no accessory structures allowed in front setback</li>
+        <li><strong>Drainage easements:</strong>{' '}No permanent structures allowed within the easement footprint (check your plat)</li>
       </ul>
       <p>
         Before we quote your project, we&#8217;ll ask for your property address and confirm the applicable

@@ -9,14 +9,14 @@ export default function FortCavazosPost() {
         trailer are covered before the first Central Texas hail storm hits.
       </p>
       <p>
-        Triple J Metal is located in <strong>Temple, TX &#8212; 10 minutes from Fort Cavazos.</strong> We&#8217;ve built
+        Triple J Metal is located in <strong>Temple, TX &#8212; 10 minutes from Fort Cavazos.</strong>{' '}We&#8217;ve built
         carports and covered structures for military families throughout the Killeen-Harker Heights
         corridor. This is what we&#8217;ve learned about how to make the process work around a PCS timeline.
       </p>
 
       <h2>Why PCS Season Creates an Urgent Carport Window</h2>
       <p>
-        The peak PCS wave runs from <strong>late April through early August</strong> &#8212; the same period that Central
+        The peak PCS wave runs from <strong>late April through early August</strong>{' '}&#8212; the same period that Central
         Texas enters its severe weather season. Families arriving in this window often have vehicles
         sitting in unshaded driveways or gravel lots while they settle in. Texas UV degrades vehicle
         paint and interiors faster than most military families expect coming from bases in the Pacific
@@ -34,21 +34,21 @@ export default function FortCavazosPost() {
       <h2>Triple J&#8217;s Typical Timeline From First Call to Keys</h2>
       <ol>
         <li>
-          <strong>Day 1:</strong> Quote call or form submission. We confirm property address, size, and any permit
+          <strong>Day 1:</strong>{' '}Quote call or form submission. We confirm property address, size, and any permit
           requirements for your jurisdiction (city of Killeen, Harker Heights, or unincorporated Bell County
           depending on your address).
         </li>
         <li>
-          <strong>Day 2–3:</strong> Quote delivered. If you&#8217;re in a non-HOA area and the structure doesn&#8217;t require
+          <strong>Day 2–3:</strong>{' '}Quote delivered. If you&#8217;re in a non-HOA area and the structure doesn&#8217;t require
           a permit, we can schedule site prep immediately after contract signing. If a permit is required,
           we submit it during this window.
         </li>
         <li>
-          <strong>Day 3–5 (no permit) / Day 10–14 (with permit):</strong> Concrete pour, if applicable. Our
+          <strong>Day 3–5 (no permit) / Day 10–14 (with permit):</strong>{' '}Concrete pour, if applicable. Our
           crew pours the slab, places anchor bolts, and cures.
         </li>
         <li>
-          <strong>Same week or next week (no permit) / Week 2–3 (with permit):</strong> Steel erection. On a
+          <strong>Same week or next week (no permit) / Week 2–3 (with permit):</strong>{' '}Steel erection. On a
           standard 20&#215;20 carport, we&#8217;re on-site for one day. Larger structures take 2&#8211;3 days.
         </li>
       </ol>
@@ -98,7 +98,7 @@ export default function FortCavazosPost() {
         No DD-214 required on the call; we ask for verification at contract signing.
       </p>
       <p>
-        If you&#8217;re inbound PCSing to Fort Cavazos, <strong>call us from your current station.</strong> We can have
+        If you&#8217;re inbound PCSing to Fort Cavazos, <strong>call us from your current station.</strong>{' '}We can have
         the quote ready before you arrive so you can sign and schedule the same week you move in.
       </p>
     </>

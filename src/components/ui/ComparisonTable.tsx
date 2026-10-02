@@ -1,11 +1,17 @@
 type ComparisonTableProps = {
   headers: [string, ...string[]]
   rows: string[][]
-  /** Zero-indexed column to highlight in brand color (default: 1) */
+  /** Zero-indexed column to highlight (white header, navy 600 cells; default: 1) */
   highlightCol?: number
   caption?: string
 }
 
+/**
+ * Forge comparison table for blog post bodies: navy header row, white/fog
+ * zebra rows inside a silver 12px frame. The frame scrolls sideways on
+ * phones instead of pushing the page wider. `not-prose` is kept for any
+ * future typography plugin; `.forge-prose` styles none of these elements.
+ */
 export function ComparisonTable({
   headers,
   rows,
@@ -15,23 +21,26 @@ export function ComparisonTable({
   const colCount = headers.length
 
   return (
-    <div className="rounded-xl border border-ink-200 overflow-hidden not-prose my-8">
-      <table className="w-full text-sm">
+    // Focusable so keyboard users can scroll it when it overflows; the frame
+    // is the scroller, so its focus ring is not clipped.
+    <div
+      role="region"
+      aria-label={caption ?? 'Comparison table'}
+      tabIndex={0}
+      className="not-prose my-8 overflow-x-auto overscroll-x-contain rounded-[12px] border border-forge-silver bg-white"
+    >
+      <table className="w-full min-w-[560px] border-collapse text-left text-[14px] leading-[1.5]">
         {caption && (
           <caption className="sr-only">{caption}</caption>
         )}
         <thead>
-          <tr className="bg-ink-900 text-xs font-bold uppercase tracking-wide">
+          <tr className="bg-forge-navy">
             {headers.map((h, i) => (
               <th
                 key={i}
                 scope="col"
-                className={`px-4 py-3 text-left ${
-                  i === 0
-                    ? 'text-ink-400'
-                    : i === highlightCol
-                    ? 'text-brand-400'
-                    : 'text-white/70'
+                className={`px-4 py-3.5 align-bottom text-[11px] font-bold uppercase leading-[1.4] tracking-[.14em] ${
+                  i === highlightCol ? 'text-white' : 'text-forge-silver'
                 }`}
               >
                 {h}
@@ -41,14 +50,17 @@ export function ComparisonTable({
         </thead>
         <tbody>
           {rows.map((row, ri) => (
-            <tr key={ri} className={ri % 2 === 0 ? 'bg-white' : 'bg-ink-50'}>
+            <tr
+              key={ri}
+              className={`border-t border-forge-mist ${ri % 2 === 0 ? 'bg-white' : 'bg-forge-fog'}`}
+            >
               {row.slice(0, colCount).map((cell, ci) => {
                 if (ci === 0) {
                   return (
                     <th
                       key={ci}
                       scope="row"
-                      className="px-4 py-4 font-semibold text-ink-700 border-r border-ink-100 text-left"
+                      className="border-r border-forge-mist px-4 py-4 align-top font-semibold text-forge-navy"
                     >
                       {cell}
                     </th>
@@ -57,9 +69,9 @@ export function ComparisonTable({
                 return (
                   <td
                     key={ci}
-                    className={`px-4 py-4 text-ink-600 ${
-                      ci < colCount - 1 ? 'border-r border-ink-100' : ''
-                    } ${ci === highlightCol ? 'font-semibold text-ink-800' : ''}`}
+                    className={`px-4 py-4 align-top ${
+                      ci < colCount - 1 ? 'border-r border-forge-mist' : ''
+                    } ${ci === highlightCol ? 'font-semibold text-forge-navy' : 'text-forge-slate'}`}
                   >
                     {cell}
                   </td>
