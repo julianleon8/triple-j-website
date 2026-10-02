@@ -5,12 +5,13 @@ import { fencingNotes } from "@/lib/fencing-inquiry";
 import Image from "next/image";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import type HCaptcha from "@hcaptcha/react-hcaptcha";
 
-import { Button } from "@/components/ui/Button";
-import { Container } from "@/components/ui/Container";
-import { ArrowRightIcon } from "@/components/ui/icons";
+import { Eyebrow } from "@/components/forge/Eyebrow";
+import { CheckboxRow, FieldHelper, FieldLabel, PillGroup, StepProgress, TextArea, TextInput } from "@/components/forge/form";
+import { QUOTE_EVENT, scrollToId, type QuoteRequest } from "@/lib/forge-quote";
+import { cityFromZip } from "@/lib/locations";
 import { projectService, type ProjectReference } from "@/lib/project-reference";
 import { summarizeBuild } from "@/lib/quote-summary";
 import { captureAttribution } from "@/lib/marketing-attribution";
@@ -32,25 +33,30 @@ const HCaptchaWidget = dynamic(
 const HCAPTCHA_SITE_KEY = process.env.NEXT_PUBLIC_HCAPTCHA_SITE_KEY;
 
 /* ─── Types ─────────────────────────────────────────────────────────────────
-   FormState shape matches the /api/leads payload exactly. The 3-step lock
-   from 2026-04-15 was revised in 2026-04-23 to a 2-step structure that
-   opens with a visual service-chip selector — see Decisions.md. */
+   FormState shape matches the /api/leads payload exactly. Two steps, opening
+   with a visual service-chip selector (Decisions 2026-04-23). The Forge
+   restyle (2026-10-02) changed the presentation, three option lists and
+   added the permits question; the submit pipeline is unchanged. */
 
 type ServiceType = "fencing" | "carport" | "garage" | "barn" | "rv_cover" | "lean_to" | "other";
 type StructureType = "welded" | "bolted" | "unsure";
 type NeedsConcrete = "yes" | "already_have" | "unsure";
 type Surface = "dirt" | "gravel" | "asphalt" | "concrete";
-type Timeline = "asap" | "this_week" | "this_month" | "planning";
-type BudgetBand = "under_5k" | "5_10k" | "10_20k" | "20_40k" | "over_40k";
+// `this_week` stays a valid API value but is no longer offered (D7).
+type Timeline = "asap" | "this_month" | "planning";
+type BudgetBand = "under_5k" | "5_10k" | "10_20k" | "over_20k" | "not_sure";
 type BestTime = "morning" | "afternoon" | "evening";
+type Permits = "yes" | "no" | "not_sure";
 
-const BUDGET_BANDS: Array<{ v: BudgetBand; label: string; min: number; max: number | null }> = [
-  { v: "under_5k", label: "Under $5K",   min: 0,     max: 5000 },
-  { v: "5_10k",    label: "$5K – $10K",  min: 5000,  max: 10000 },
-  { v: "10_20k",   label: "$10K – $20K", min: 10000, max: 20000 },
-  { v: "20_40k",   label: "$20K – $40K", min: 20000, max: 40000 },
-  { v: "over_40k", label: "$40K+",       min: 40000, max: null },
+export const BUDGET_BANDS: Array<{ v: BudgetBand; label: string; min?: number; max?: number | null }> = [
+  { v: "under_5k", label: "Under $5k", min: 0, max: 5000 },
+  { v: "5_10k", label: "$5k–$10k", min: 5000, max: 10000 },
+  { v: "10_20k", label: "$10k–$20k", min: 10000, max: 20000 },
+  { v: "over_20k", label: "$20k+", min: 20000, max: null },
+  { v: "not_sure", label: "Not sure yet" },
 ];
+
+const PERMIT_LABELS: Record<Permits, string> = { yes: "Yes", no: "No", not_sure: "Not sure" };
 
 type FormState = {
   // Step 1 — project
@@ -71,6 +77,7 @@ type FormState = {
   email: string;
   needs_concrete: NeedsConcrete | "";
   current_surface: Surface | "";
+  permits: Permits | "";
   timeline: Timeline | "";
   best_time_to_call: BestTime | "";
   budget: BudgetBand | "";
@@ -82,241 +89,188 @@ const INITIAL: FormState = {
   service_type: "", structure_type: "unsure",
   width: "", length: "", height: "", zip: "",
   name: "", phone: "", email: "",
-  needs_concrete: "", current_surface: "", timeline: "",
+  needs_concrete: "", current_surface: "", permits: "", timeline: "",
   best_time_to_call: "",
   budget: "",
   fence_style: "Not sure yet", fence_length: "", fence_height: "", fence_gates: "", fence_removal: "Not sure",
   is_military: false, message: "",
 };
 
-/* ─── Magazine label primitive ──────────────────────────────────────────────
-   Small Barlow uppercase label with bullets bracketing the text. Used for
-   every field group on the form. */
+/* ─── Service chips (step 1 opener) ─────────────────────────────────────── */
 
-function FieldLabel({ children, optional }: { children: React.ReactNode; optional?: boolean }) {
-  return (
-    <p className="font-display font-extrabold uppercase tracking-[0.18em] text-[11px] text-white/60 mb-2.5">
-      <span aria-hidden="true" className="text-[color:var(--color-brand-400)]">·&nbsp;</span>
-      {children}
-      {optional ? <span className="ml-1.5 text-white/35 font-medium">(optional)</span> : null}
-      <span aria-hidden="true" className="text-[color:var(--color-brand-400)]">&nbsp;·</span>
-    </p>
-  );
-}
+type ServiceChip = { value: ServiceType; label: string; sublabel: string; image: string; also?: ServiceType[] };
 
-/* ─── Shared input + button styles ──────────────────────────────────────────
-   Outlined-dark inputs: subtle white/10 border on white/5 fill, white text
-   inside, brand-blue ring on focus. Matches the glass card. */
-
-const inputCls =
-  "w-full rounded-lg border border-white/15 " +
-  "bg-white/5 px-4 h-12 text-[15px] text-white " +
-  "placeholder:text-white/35 " +
-  "focus:outline-none focus:ring-2 focus:ring-[color:var(--color-brand-400)] " +
-  "focus:border-transparent transition-colors";
-
-/* ─── Service chip (step 1 opener) ──────────────────────────────────────────
-   Visual chip with photo thumbnail, used for service-type selection. */
-
-type ServiceChip = { value: ServiceType; label: string; sublabel: string; image?: string };
-
+// One "Carport / RV Cover" chip: an `rv_cover` prefill (?service=rv) still
+// lights it and still submits as rv_cover.
 const SERVICE_CHIPS: readonly ServiceChip[] = [
-  { value: "fencing", label: "Metal Fencing", sublabel: "Privacy, ranch, ornamental & gates", image: "/images/metal-fence-ranch-wire.webp" },
+  { value: "carport", label: "Carport / RV Cover", sublabel: "Welded or bolted", image: "/images/carport-gable-residential.jpg", also: ["rv_cover"] },
+  { value: "fencing", label: "Fencing & Gates", sublabel: "Privacy, ranch, ornamental", image: "/images/metal-fence-ranch-wire.webp" },
+  { value: "garage", label: "Metal Garage", sublabel: "Fully enclosed", image: "/images/metal-garage-green.jpg" },
+  { value: "barn", label: "Metal Barn", sublabel: "Ranch & ag", image: "/images/carport-concrete-rural.jpg" },
   { value: "lean_to", label: "Lean-To / Patio", sublabel: "Attached or freestanding", image: "/images/porch-cover-lean-to.jpg" },
   { value: "other", label: "Other / Custom", sublabel: "Tell us what you need", image: "/images/red-iron-frame-hero.jpg" },
-  { value: "carport",  label: "Carport",     sublabel: "Welded or bolted",  image: "/images/carport-gable-residential.jpg" },
-  { value: "garage",   label: "Metal Garage", sublabel: "Fully enclosed",   image: "/images/metal-garage-green.jpg" },
-  // Real Triple J ranch build (Temple) and RV cover (Copperas Cove) from /hq/gallery —
-  // matches the Services grid swap so the lead-form chip imagery is consistent.
-  { value: "barn",     label: "Metal Barn",  sublabel: "Ranch & ag",        image: "https://idrbgxlvvnqduvbqtaei.supabase.co/storage/v1/object/public/gallery/items/e83d6a82-6138-40e1-a60b-c4fe4b7d8a30/1777195267509.jpg" },
-  { value: "rv_cover", label: "RV / Boat",   sublabel: "Tall clearance",    image: "https://idrbgxlvvnqduvbqtaei.supabase.co/storage/v1/object/public/gallery/1777251893180.jpg" },
 ];
 
-function ServiceChipCard({
-  chip, selected, onClick,
-}: {
-  chip: ServiceChip;
-  selected: boolean;
-  onClick: () => void;
-}) {
+const KNOWN_SERVICES: readonly string[] = ["fencing", "carport", "garage", "barn", "rv_cover", "lean_to", "other"];
+
+function chipSelected(chip: ServiceChip, value: string): boolean {
+  return chip.value === value || Boolean(chip.also?.includes(value as ServiceType));
+}
+
+function ServiceChipCard({ chip, selected, onClick }: { chip: ServiceChip; selected: boolean; onClick: () => void }) {
   return (
     <button
       type="button"
       onClick={onClick}
       aria-pressed={selected}
-      className={`group relative flex flex-col overflow-hidden rounded-xl border-2 transition-all cursor-pointer ${
-        selected
-          ? "border-[color:var(--color-brand-400)] bg-[color:var(--color-brand-600)]/15 shadow-lg"
-          : "border-white/15 bg-white/5 hover:border-white/30"
+      className={`relative flex cursor-pointer flex-col overflow-hidden rounded-[10px] border-2 p-0 text-left text-forge-navy transition-colors duration-200 ${
+        selected ? "border-forge-navy bg-forge-fog" : "border-forge-silver bg-white hover:border-forge-steel"
       }`}
     >
-      <div className="relative aspect-[5/4] overflow-hidden">
-        {chip.image ? <Image
-          src={chip.image}
-          // Decorative: the label + sublabel below already name the button.
-          alt=""
-          fill
-          sizes="(max-width: 640px) 50vw, 25vw"
-          className={`object-cover transition-all duration-500 ${
-            selected ? "scale-105" : "group-hover:scale-105"
-          }`}
-        />
-        : <div aria-hidden="true" className="absolute inset-0 bg-brand-900 bg-[repeating-linear-gradient(90deg,transparent_0px,transparent_25px,#64748b_25px,#64748b_31px)]" />}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/40 to-black/10" />
-        {selected && (
+      <span className="relative block aspect-[5/4] w-full overflow-hidden bg-forge-slate">
+        {/* Decorative: the label + sublabel below already name the button. */}
+        <Image src={chip.image} alt="" fill sizes="(max-width: 640px) 45vw, 360px" className="object-cover" />
+        <span aria-hidden="true" className="absolute inset-0" style={{ background: "var(--scrim-chip-photo)" }} />
+        {selected ? (
           <span
             aria-hidden="true"
-            className="absolute top-2 right-2 inline-flex items-center justify-center h-7 w-7 rounded-full bg-[color:var(--color-brand-600)] text-white text-sm font-bold shadow-lg"
+            className="absolute top-2 right-2 inline-flex size-7 items-center justify-center rounded-full bg-forge-navy text-[14px] font-bold text-white shadow-[0_6px_14px_rgba(0,24,42,.35)]"
           >
             ✓
           </span>
-        )}
-      </div>
-      <div className="p-3">
-        <div className={`font-display font-extrabold uppercase tracking-tight text-base leading-none ${
-          selected ? "text-white" : "text-white/90"
-        }`}>
-          {chip.label}
-        </div>
-        <div className="mt-1 text-[11px] uppercase tracking-wider text-white/45 leading-tight">
-          {chip.sublabel}
-        </div>
-      </div>
+        ) : null}
+      </span>
+      <span className="block px-3 pt-2.5 pb-3">
+        <span className="block font-forge-display text-[15px] font-bold leading-[1.15] tracking-[.01em]">{chip.label}</span>
+        <span className="mt-[3px] block text-[11px] uppercase leading-[1.25] tracking-[.04em] text-forge-steel">{chip.sublabel}</span>
+      </span>
     </button>
   );
 }
 
-/* ─── Outlined-dark pill (option chip) ──────────────────────────────────── */
-
-function OptionPill({
-  selected, onClick, children,
-}: {
-  selected: boolean;
-  onClick: () => void;
-  children: React.ReactNode;
-}) {
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      aria-pressed={selected}
-      className={`h-11 px-4 rounded-lg border text-sm font-semibold transition-all cursor-pointer ${
-        selected
-          ? "border-[color:var(--color-brand-400)] bg-[color:var(--color-brand-600)]/20 text-white"
-          : "border-white/15 bg-white/5 text-white/75 hover:border-white/30 hover:text-white"
-      }`}
-    >
-      {children}
-    </button>
-  );
-}
+type Update = <K extends keyof FormState>(k: K, v: FormState[K]) => void;
 
 /* ─── Step 1 — Project ─────────────────────────────────────────────────── */
 
-function FenceFields({ form, update }: { form: FormState; update: <K extends keyof FormState>(k: K, v: FormState[K]) => void }) {
-  return <div className="space-y-7">
-    <div><FieldLabel>Fence Style</FieldLabel><div className="flex flex-wrap gap-2">
-      {["Metal privacy", "Pipe / ranch", "Ornamental metal", "Gates only", "Not sure yet"].map((style) => <OptionPill key={style} selected={form.fence_style === style} onClick={() => update("fence_style", style)}>{style}</OptionPill>)}
-    </div></div>
-    <div><FieldLabel optional>Approximate Fence Size</FieldLabel><div className="grid grid-cols-2 gap-3">
-      <input type="number" min={0} step="any" className={inputCls} aria-label="Total fence length in linear feet" placeholder="Length (linear ft)" value={form.fence_length} onChange={(e) => update("fence_length", e.target.value)} />
-      <input type="number" min={0} step="any" className={inputCls} aria-label="Fence height in feet" placeholder="Height (ft)" value={form.fence_height} onChange={(e) => update("fence_height", e.target.value)} />
-    </div><p className="mt-2 text-xs text-white/60">Rough measurements are fine. Leave blank if you’re not sure.</p></div>
-    <div><label htmlFor="fence-gates" className="block text-sm text-white/70 mb-2">Gates (optional)</label><input id="fence-gates" className={inputCls} maxLength={300} placeholder="e.g. 1 walk gate + 12 ft driveway gate" value={form.fence_gates} onChange={(e) => update("fence_gates", e.target.value)} /></div>
-    <div><FieldLabel>Old Fence Removal Needed?</FieldLabel><div className="flex flex-wrap gap-2">
-      {["Yes", "No", "Not sure"].map((value) => <OptionPill key={value} selected={form.fence_removal === value} onClick={() => update("fence_removal", value)}>{value}</OptionPill>)}
-    </div></div>
-  </div>;
+function FenceFields({ form, update }: { form: FormState; update: Update }) {
+  return (
+    <>
+      <PillGroup
+        label="Fence Style"
+        options={["Metal privacy", "Pipe / ranch", "Ornamental metal", "Gates only", "Not sure yet"].map((v) => ({ v, label: v }))}
+        value={form.fence_style}
+        onChange={(v) => update("fence_style", v || "Not sure yet")}
+      />
+      <div>
+        <FieldLabel as="p" optional>
+          Approximate Fence Size
+        </FieldLabel>
+        <div className="grid grid-cols-2 gap-2.5">
+          <TextInput type="number" min={0} step="any" aria-label="Total fence length in linear feet" placeholder="Length (linear ft)" value={form.fence_length} onChange={(e) => update("fence_length", e.target.value)} />
+          <TextInput type="number" min={0} step="any" aria-label="Fence height in feet" placeholder="Height (ft)" value={form.fence_height} onChange={(e) => update("fence_height", e.target.value)} />
+        </div>
+        <FieldHelper>Rough measurements are fine. Leave blank if you’re not sure.</FieldHelper>
+      </div>
+      <div>
+        <FieldLabel htmlFor="fence-gates" optional>
+          Gates
+        </FieldLabel>
+        <TextInput id="fence-gates" maxLength={300} placeholder="e.g. 1 walk gate + 12 ft driveway gate" value={form.fence_gates} onChange={(e) => update("fence_gates", e.target.value)} />
+      </div>
+      <PillGroup
+        label="Old Fence Removal Needed?"
+        options={["Yes", "No", "Not sure"].map((v) => ({ v, label: v }))}
+        value={form.fence_removal}
+        onChange={(v) => update("fence_removal", v || "Not sure")}
+      />
+    </>
+  );
 }
 
-function StepProject({
-  form, update,
-}: {
-  form: FormState;
-  update: <K extends keyof FormState>(k: K, v: FormState[K]) => void;
-}) {
+function StepProject({ form, update }: { form: FormState; update: Update }) {
+  const zipCity = form.zip.trim().length >= 5 ? cityFromZip(form.zip) : null;
   return (
-    <div className="space-y-7">
-      {/* Service type — visual chips, opens the form */}
+    <div className="flex flex-col gap-6">
       <div>
-        <FieldLabel>The Build</FieldLabel>
+        <FieldLabel as="p">The build</FieldLabel>
         <div className="grid grid-cols-2 gap-3">
           {SERVICE_CHIPS.map((c) => (
             <ServiceChipCard
               key={c.value}
               chip={c}
-              selected={form.service_type === c.value}
+              selected={chipSelected(c, form.service_type)}
               onClick={() => update("service_type", c.value)}
             />
           ))}
         </div>
       </div>
 
-      {form.service_type === "fencing" ? <FenceFields form={form} update={update} /> : <>
-      {/* Construction preference */}
-      <div>
-        <FieldLabel>Construction</FieldLabel>
-        <div className="flex flex-wrap gap-2">
-          {([
-            { v: "welded" as StructureType, label: "Welded — permanent" },
-            { v: "bolted" as StructureType, label: "Bolted" },
-            { v: "unsure" as StructureType, label: "Not sure yet" },
-          ]).map((opt) => (
-            <OptionPill
-              key={opt.v}
-              selected={form.structure_type === opt.v}
-              onClick={() => update("structure_type", opt.v)}
-            >
-              {opt.label}
-            </OptionPill>
-          ))}
-        </div>
-      </div>
-
-      {/* Dimensions */}
-      <div>
-        <FieldLabel optional>Approximate Size</FieldLabel>
-        <div className="grid grid-cols-3 gap-3">
-          {[
-            { key: "width" as const,  placeholder: "Width" },
-            { key: "length" as const, placeholder: "Length" },
-            { key: "height" as const, placeholder: "Height" },
-          ].map(({ key, placeholder }) => (
-            <input
-              key={key}
-              type="number"
-              inputMode="numeric"
-              min={0}
-              step={1}
-              value={form[key]}
-              onChange={(e) => update(key, e.target.value)}
-              className={inputCls}
-              placeholder={placeholder}
-              aria-label={`${placeholder} in feet`}
+      {form.service_type === "fencing" ? (
+        <FenceFields form={form} update={update} />
+      ) : (
+        <>
+          <div>
+            <PillGroup
+              label="Construction"
+              options={[
+                { v: "welded" as StructureType, label: "Welded" },
+                { v: "bolted" as StructureType, label: "Bolted" },
+                { v: "unsure" as StructureType, label: "Not sure" },
+              ]}
+              value={form.structure_type}
+              onChange={(v) => update("structure_type", v || "unsure")}
             />
-          ))}
-        </div>
-        <p className="mt-2 text-[11px] text-white/40 uppercase tracking-wider">
-          W × L × H in feet — rough is fine
-        </p>
-      </div>
+            <FieldHelper>Welded is permanent; bolted can be moved later.</FieldHelper>
+          </div>
+          <div>
+            <FieldLabel as="p" optional>
+              Approximate size
+            </FieldLabel>
+            <div className="grid grid-cols-3 gap-2.5">
+              {[
+                { key: "width" as const, placeholder: "Width" },
+                { key: "length" as const, placeholder: "Length" },
+                { key: "height" as const, placeholder: "Height" },
+              ].map(({ key, placeholder }) => (
+                <TextInput
+                  key={key}
+                  type="number"
+                  inputMode="numeric"
+                  min={0}
+                  step={1}
+                  value={form[key]}
+                  onChange={(e) => update(key, e.target.value)}
+                  placeholder={placeholder}
+                  aria-label={`${placeholder} in feet`}
+                />
+              ))}
+            </div>
+            <FieldHelper>W × L × H in feet. Rough is fine — we measure on-site.</FieldHelper>
+          </div>
+        </>
+      )}
 
-      </>}
-
-      {/* Location */}
       <div>
-        <FieldLabel>Location</FieldLabel>
-        <input
-          id="zip"
-          type="text"
-          inputMode="numeric"
-          maxLength={10}
-          required
-          value={form.zip}
-          onChange={(e) => update("zip", e.target.value)}
-          className={inputCls}
-          placeholder="ZIP code (we'll match the city)"
-        />
+        <FieldLabel htmlFor="zip">ZIP code</FieldLabel>
+        <div className="relative">
+          <TextInput
+            id="zip"
+            type="text"
+            inputMode="numeric"
+            autoComplete="postal-code"
+            maxLength={10}
+            required
+            value={form.zip}
+            onChange={(e) => update("zip", e.target.value)}
+            placeholder="ZIP code"
+            className="pr-[130px]"
+          />
+          {zipCity ? (
+            <span className="pointer-events-none absolute top-1/2 right-3.5 -translate-y-1/2 whitespace-nowrap text-[13px] font-semibold text-forge-navy">
+              {zipCity} ✓
+            </span>
+          ) : null}
+        </div>
       </div>
     </div>
   );
@@ -324,190 +278,152 @@ function StepProject({
 
 /* ─── Step 2 — Contact + Details ───────────────────────────────────────── */
 
-function StepContact({
-  form, update,
-}: {
-  form: FormState;
-  update: <K extends keyof FormState>(k: K, v: FormState[K]) => void;
-}) {
+function StepContact({ form, update, militarySub }: { form: FormState; update: Update; militarySub: string }) {
+  const fencing = form.service_type === "fencing";
   return (
-    <div className="space-y-7">
-      {/* Contact */}
+    <div className="flex flex-col gap-6">
       <div>
-        <FieldLabel>Who To Call Back</FieldLabel>
-        <div className="space-y-3">
-          <input
-            id="name"
-            type="text"
-            required
-            autoComplete="name"
-            value={form.name}
-            onChange={(e) => update("name", e.target.value)}
-            className={inputCls}
-            placeholder="Full name"
-            aria-label="Your name"
-          />
-          <input
-            id="phone"
-            type="tel"
-            required
-            autoComplete="tel"
-            value={form.phone}
-            onChange={(e) => update("phone", e.target.value)}
-            className={inputCls}
-            placeholder="Phone (we'll text first)"
-            aria-label="Your phone number"
-          />
-          <input
-            id="email"
-            type="email"
-            autoComplete="email"
-            value={form.email}
-            onChange={(e) => update("email", e.target.value)}
-            className={inputCls}
-            placeholder="Email (optional)"
-            aria-label="Your email"
-          />
+        <FieldLabel as="p">Who to call back</FieldLabel>
+        <div className="flex flex-col gap-2.5">
+          <TextInput id="name" type="text" required autoComplete="name" value={form.name} onChange={(e) => update("name", e.target.value)} placeholder="Full name" aria-label="Your name" />
+          <TextInput id="phone" type="tel" required autoComplete="tel" value={form.phone} onChange={(e) => update("phone", e.target.value)} placeholder="Phone — we text first" aria-label="Your phone number" />
+          <TextInput id="email" type="email" autoComplete="email" value={form.email} onChange={(e) => update("email", e.target.value)} placeholder="Email (optional)" aria-label="Your email" />
         </div>
       </div>
 
-      {/* Concrete */}
-      {form.service_type !== "fencing" && <div>
-        <FieldLabel>Concrete Pad</FieldLabel>
-        <div className="flex flex-wrap gap-2">
-          {([
-            { v: "yes" as NeedsConcrete, label: "Yes — include in quote" },
+      {!fencing ? (
+        <PillGroup
+          label="Concrete pad"
+          options={[
+            { v: "yes" as NeedsConcrete, label: "Include it" },
             { v: "already_have" as NeedsConcrete, label: "Have a slab" },
             { v: "unsure" as NeedsConcrete, label: "Not sure" },
-          ]).map((opt) => (
-            <OptionPill
-              key={opt.v}
-              selected={form.needs_concrete === opt.v}
-              onClick={() => update("needs_concrete", opt.v)}
-            >
-              {opt.label}
-            </OptionPill>
-          ))}
-        </div>
-      </div>
+          ]}
+          value={form.needs_concrete}
+          onChange={(v) => update("needs_concrete", v)}
+        />
+      ) : null}
 
-      }
+      {!fencing && form.needs_concrete === "already_have" ? (
+        <PillGroup
+          label="Current surface"
+          options={[
+            { v: "dirt" as Surface, label: "Dirt / bare ground" },
+            { v: "gravel" as Surface, label: "Gravel" },
+            { v: "asphalt" as Surface, label: "Asphalt" },
+            { v: "concrete" as Surface, label: "Existing concrete" },
+          ]}
+          value={form.current_surface}
+          onChange={(v) => update("current_surface", v)}
+        />
+      ) : null}
 
-      {/* Surface — only when "already_have" */}
-      {form.service_type !== "fencing" && form.needs_concrete === "already_have" && (
-        <div>
-          <FieldLabel>Current Surface</FieldLabel>
-          <div className="flex flex-wrap gap-2">
-            {([
-              { v: "dirt" as Surface, label: "Dirt / bare ground" },
-              { v: "gravel" as Surface, label: "Gravel" },
-              { v: "asphalt" as Surface, label: "Asphalt" },
-              { v: "concrete" as Surface, label: "Existing concrete" },
-            ]).map((opt) => (
-              <OptionPill
-                key={opt.v}
-                selected={form.current_surface === opt.v}
-                onClick={() => update("current_surface", opt.v)}
-              >
-                {opt.label}
-              </OptionPill>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {/* Timeline */}
       <div>
-        <FieldLabel>Timeline</FieldLabel>
-        <div className="flex flex-wrap gap-2">
-          {([
-            { v: "asap" as Timeline, label: "ASAP — this week if possible" },
-            { v: "this_week" as Timeline, label: "This week" },
-            { v: "this_month" as Timeline, label: "This month" },
-            { v: "planning" as Timeline, label: "Just planning" },
-          ]).map((opt) => (
-            <OptionPill
-              key={opt.v}
-              selected={form.timeline === opt.v}
-              onClick={() => update("timeline", opt.v)}
-            >
-              {opt.label}
-            </OptionPill>
-          ))}
-        </div>
+        <PillGroup
+          label="Do you need permits?"
+          options={(Object.keys(PERMIT_LABELS) as Permits[]).map((v) => ({ v, label: PERMIT_LABELS[v] }))}
+          value={form.permits}
+          onChange={(v) => update("permits", v)}
+        />
+        <FieldHelper>We talk through city, county and HOA requirements before anything gets scheduled.</FieldHelper>
       </div>
 
-      {/* Best time to call — pairs with Timeline but answers a different
+      <PillGroup
+        label="Timeline"
+        options={[
+          { v: "asap" as Timeline, label: "ASAP" },
+          { v: "this_month" as Timeline, label: "This month" },
+          { v: "planning" as Timeline, label: "Just planning" },
+        ]}
+        value={form.timeline}
+        onChange={(v) => update("timeline", v)}
+      />
+
+      {/* Best time to call pairs with Timeline but answers a different
           question: when the job needs doing vs. when they can pick up. */}
+      <PillGroup
+        label="Best time to call"
+        optional
+        allowDeselect
+        options={[
+          { v: "morning" as BestTime, label: "Morning (before noon)" },
+          { v: "afternoon" as BestTime, label: "Afternoon (12–5)" },
+          { v: "evening" as BestTime, label: "Evening (after 5)" },
+        ]}
+        value={form.best_time_to_call}
+        onChange={(v) => update("best_time_to_call", v)}
+      />
+
       <div>
-        <FieldLabel optional>Best Time To Call</FieldLabel>
-        <div className="flex flex-wrap gap-2">
-          {([
-            { v: "morning" as BestTime, label: "Morning (before noon)" },
-            { v: "afternoon" as BestTime, label: "Afternoon (12–5)" },
-            { v: "evening" as BestTime, label: "Evening (after 5)" },
-          ]).map((opt) => (
-            <OptionPill
-              key={opt.v}
-              selected={form.best_time_to_call === opt.v}
-              onClick={() => update("best_time_to_call", opt.v)}
-            >
-              {opt.label}
-            </OptionPill>
-          ))}
-        </div>
+        <PillGroup
+          label="Budget range"
+          optional
+          allowDeselect
+          tabular
+          options={BUDGET_BANDS.map((b) => ({ v: b.v, label: b.label }))}
+          value={form.budget}
+          onChange={(v) => update("budget", v)}
+        />
+        <FieldHelper>Honest pricing, no surprises. We scope the build to what you want to spend — not the other way around.</FieldHelper>
       </div>
 
-      {/* Budget */}
+      {/* Military / first responder discount. /military, the service pages and
+          the PCS copy all tell visitors to check this box. */}
       <div>
-        <FieldLabel optional>Budget Range</FieldLabel>
-        <div className="flex flex-wrap gap-2">
-          {BUDGET_BANDS.map((opt) => (
-            <OptionPill
-              key={opt.v}
-              selected={form.budget === opt.v}
-              onClick={() => update("budget", opt.v)}
-            >
-              {opt.label}
-            </OptionPill>
-          ))}
-        </div>
+        <FieldLabel as="p" optional>
+          Discount
+        </FieldLabel>
+        <CheckboxRow
+          checked={form.is_military}
+          onChange={(c) => update("is_military", c)}
+          label="Military, veteran or first responder"
+          sub={militarySub}
+        />
       </div>
 
-      {/* Military / first responder discount.
-          /military, /services/[slug] and the PCS copy all tell visitors to
-          "check the box on the quote form" — until now there was no box, and
-          is_military could only ever be set by the initialMilitary prop. */}
       <div>
-        <FieldLabel optional>Discount</FieldLabel>
-        <label className="flex cursor-pointer items-start gap-3 rounded-xl border border-white/15 bg-white/5 px-4 py-3 transition hover:border-white/30">
-          <input
-            type="checkbox"
-            checked={form.is_military}
-            onChange={(e) => update("is_military", e.target.checked)}
-            className="mt-0.5 h-4 w-4 shrink-0 accent-[color:var(--color-brand-600)]"
-          />
-          <span className="text-sm text-white/80">
-            Active military, veteran, or first responder
-            <span className="block text-xs text-white/50">
-              We&apos;ll apply the discount to your quote. ID checked at the estimate.
-            </span>
-          </span>
-        </label>
-      </div>
-
-      {/* Notes */}
-      <div>
-        <FieldLabel optional>Anything Else</FieldLabel>
-        <textarea
+        <FieldLabel htmlFor="message" optional>
+          Anything else
+        </FieldLabel>
+        <TextArea
           id="message"
           rows={3}
           value={form.message}
           onChange={(e) => update("message", e.target.value)}
-          className={`${inputCls} h-auto py-3 resize-y min-h-20`}
-          placeholder="HOA requirements, site access, existing anchors, budget range…"
+          placeholder="HOA requirements, site access, existing anchors…"
         />
       </div>
+    </div>
+  );
+}
+
+/* ─── Section chrome ───────────────────────────────────────────────────── */
+
+export const QUOTE_LEDE_DEFAULT = "Two quick steps. A real Texas crew on the other end — not a form into a black hole.";
+
+function QuoteIntro({ lede }: { lede: string }) {
+  return (
+    <div className="flex max-w-[720px] flex-col items-center text-center">
+      <Eyebrow align="center">Get a quote</Eyebrow>
+      <h2
+        id="quote-heading"
+        className="mt-4 font-forge-display text-[clamp(30px,3vw_+_12px,56px)] font-black leading-[1.05] tracking-[.01em] text-forge-navy"
+      >
+        Tell us about
+        <br />
+        <span className="text-forge-slate">your build.</span>
+      </h2>
+      <p className="mt-4 max-w-[520px] text-[clamp(16px,.3vw_+_14px,18px)] leading-[1.55] text-forge-slate [text-wrap:pretty]">
+        {lede}
+      </p>
+      <ul className="m-0 mt-6 flex list-none flex-wrap justify-center gap-x-6 gap-y-2.5 p-0 text-[15px] text-forge-navy">
+        {["Free quote, no obligation", "Reply within 24 hours", "Military, first-responder & trade discounts honored"].map((t) => (
+          <li key={t} className="flex items-center gap-3">
+            <span aria-hidden="true" className="h-[2px] w-7 flex-none bg-forge-steel" />
+            {t}
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }
@@ -515,26 +431,25 @@ function StepContact({
 /* ─── Main form ────────────────────────────────────────────────────────── */
 
 export type QuoteFormProps = {
-  /** Pre-check the "Active military or first responder" box on step 2.
+  /** Pre-check the military / first-responder box on step 2.
    *  Used by /military so PCS visitors don't have to remember the discount toggle. */
   initialMilitary?: boolean;
   projectReference?: ProjectReference;
   /**
-   * Render the surrounding section — dark photo backdrop, Container, eyebrow
-   * trio, discount line and heading — or just the form card on its own.
+   * Render the surrounding Forge quote section (fog band, centred intro,
+   * assurances) around the card, or just the card on its own.
    *
-   * Defaults to `true`, and must stay that way: fourteen marketing pages render
-   * this as a page-closing section and four of them pass no props at all.
-   *
-   * `false` is for /quote, which supplies its own headline. The card is styled
-   * for a dark ground unconditionally (white text on white/5 fill), so a host
-   * page passing `chrome={false}` MUST provide that ground itself or the form
-   * renders white-on-white.
+   * Defaults to `true`, and must stay that way: the marketing pages render
+   * this as a page-closing section and several pass no props at all.
+   * `false` is for /quote, which supplies its own headline. The card is a
+   * self-contained white surface, so it reads on any ground.
    */
   chrome?: boolean;
-  /** Preselected service chip, from ?service= on /quote. */
+  /** Intro lede in chrome mode; QuoteSection picks it per page type. */
+  lede?: string;
+  /** Preselected service chip, from ?service= on /quote or the service page. */
   initialService?: ServiceType;
-  /** Prefilled ZIP, from ?city= or ?zip= on /quote. */
+  /** Prefilled ZIP, from ?city= or ?zip= on /quote, or the location page. */
   initialZip?: string;
   /**
    * Which funnel this submission belongs to. Constrained to the two values the
@@ -548,6 +463,7 @@ export function QuoteForm({
   initialMilitary = false,
   projectReference,
   chrome = true,
+  lede = QUOTE_LEDE_DEFAULT,
   initialService,
   initialZip,
   source = "website_form",
@@ -576,14 +492,31 @@ export function QuoteForm({
   // on pages without a form, such as the blog and partner page.
   useEffect(() => {
     captureAttribution();
+    // Legacy shortcut buttons (QuoteShortcut) send just a service.
     function selectService(event: Event) {
       const service = (event as CustomEvent).detail;
-      if (!SERVICE_CHIPS.some((chip) => chip.value === service)) return;
-      setForm((current) => ({ ...current, service_type: service }));
+      if (typeof service !== "string" || !KNOWN_SERVICES.includes(service)) return;
+      setForm((current) => ({ ...current, service_type: service as ServiceType }));
       setStep(1);
     }
-    window.addEventListener('triplej:quote-service', selectService);
-    return () => window.removeEventListener('triplej:quote-service', selectService);
+    // Forge cards (option card, lightbox, military calculator) send a request.
+    function applyRequest(event: Event) {
+      const req = (event as CustomEvent<QuoteRequest>).detail ?? {};
+      setForm((current) => ({
+        ...current,
+        ...(req.service && KNOWN_SERVICES.includes(req.service) ? { service_type: req.service } : {}),
+        ...(req.structure ? { structure_type: req.structure } : {}),
+        ...(req.concrete ? { needs_concrete: req.concrete } : {}),
+        ...(req.military ? { is_military: true } : {}),
+      }));
+      setStep(1);
+    }
+    window.addEventListener("triplej:quote-service", selectService);
+    window.addEventListener(QUOTE_EVENT, applyRequest);
+    return () => {
+      window.removeEventListener("triplej:quote-service", selectService);
+      window.removeEventListener(QUOTE_EVENT, applyRequest);
+    };
   }, []);
 
   function update<K extends keyof FormState>(key: K, value: FormState[K]) {
@@ -601,7 +534,10 @@ export function QuoteForm({
   }
 
   function next() {
-    if (step < 2 && canAdvance()) setStep(2);
+    if (step < 2 && canAdvance()) {
+      setStep(2);
+      requestAnimationFrame(() => scrollToId("quote-card"));
+    }
   }
   function back() {
     if (step > 1) setStep(1);
@@ -617,36 +553,13 @@ export function QuoteForm({
     setStatus("submitting");
     setErrMsg("");
 
-    const budgetBand = BUDGET_BANDS.find((b) => b.v === form.budget);
-    const payload = {
-      name:            form.name.trim(),
-      phone:           form.phone.trim(),
-      email:           form.email.trim() || undefined,
-      zip:             form.zip.trim() || undefined,
-      service_type:    ["lean_to", "fencing"].includes(form.service_type) ? "other" : form.service_type || undefined,
-      structure_type:  form.service_type === "fencing" ? undefined : form.structure_type,
-      width:           form.service_type === "fencing" ? undefined : form.width || undefined,
-      length:          form.service_type === "fencing" ? undefined : form.length || undefined,
-      height:          form.service_type === "fencing" ? undefined : form.height || undefined,
-      needs_concrete:  form.service_type === "fencing" ? undefined : form.needs_concrete || undefined,
-      current_surface: form.service_type === "fencing" ? undefined : form.current_surface || undefined,
-      timeline:        form.timeline || undefined,
-      best_time_to_call: form.best_time_to_call || undefined,
-      source,
-      estimated_budget_min: budgetBand?.min,
-      estimated_budget_max: budgetBand?.max ?? undefined,
-      is_military:     form.is_military,
-      message:         [form.service_type === "lean_to" ? "Requested build: Lean-To / Patio" : "", form.service_type === "fencing" ? fencingNotes(form) : "", form.message.trim()].filter(Boolean).join("\n\n") || undefined,
-      captcha_token:   captchaToken ?? undefined,
-      reference_project_id: reference?.id,
-      ...captureAttribution(),
-    };
+    const payload = buildLeadPayload(form, { source, captchaToken, referenceId: reference?.id });
 
     try {
       const res = await fetch("/api/leads", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
+        body: JSON.stringify({ ...payload, ...captureAttribution() }),
       });
       if (!res.ok) {
         const body = await res.json().catch(() => ({}));
@@ -693,236 +606,184 @@ export function QuoteForm({
     }
   }
 
-  const progressPct = step === 1 ? 50 : 100;
+  const buildSummary =
+    step === 2 ? (form.service_type === "fencing" ? fencingNotes(form).replaceAll("\n", " · ") : summarizeBuild(form)) : null;
 
-  const buildSummary = step === 2 ? (form.service_type === "fencing" ? fencingNotes(form).replaceAll("\n", " · ") : summarizeBuild(form)) : null;
-
-  // The reference card and the form card render in both modes; everything
-  // between them is chrome. Kept as one expression so bare mode is provably
-  // the same markup minus the wrapper, rather than a second copy of it.
-  const body = (
-    <div className="mx-auto max-w-xl">
-      {reference && (
-        <div className="mb-7 flex items-start gap-4 rounded-lg border border-white/20 bg-black/50 p-4">
-          <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-md">
+  const card: ReactNode = (
+    <div
+      id="quote-card"
+      className="w-full max-w-[760px] scroll-mt-4 rounded-[12px] border border-forge-silver bg-white p-[clamp(20px,2vw,32px)] text-forge-navy shadow-[var(--shadow-lifted)]"
+    >
+      {reference ? (
+        <div className="mb-6 flex items-start gap-4 rounded-[10px] border border-forge-silver bg-forge-fog p-4">
+          <div className="relative size-20 shrink-0 overflow-hidden rounded-[6px]">
             <Image src={reference.image} alt="" fill sizes="80px" className="object-cover" />
           </div>
           <div className="min-w-0 flex-1">
-            <p className="text-xs uppercase tracking-wider text-brand-300">Inspired by this project</p>
-            <p className="mt-1 text-base font-semibold">{reference.title}</p>
-            <p className="text-sm text-white/70">{reference.city}</p>
-            <button type="button" onClick={() => setReference(undefined)} className="mt-1 min-h-11 text-sm text-white/80 underline underline-offset-4">Remove reference</button>
+            <p className="text-[11px] font-bold uppercase tracking-[.18em] text-forge-slate">Inspired by this project</p>
+            <p className="mt-1 font-forge-display text-[17px] font-bold">{reference.title}</p>
+            <p className="text-[14px] text-forge-slate">{reference.city}</p>
+            <button type="button" onClick={() => setReference(undefined)} className="mt-1 min-h-11 cursor-pointer text-[14px] font-semibold text-forge-navy underline underline-offset-4">
+              Remove reference
+            </button>
           </div>
         </div>
-      )}
-      {chrome ? (
-        <>
-          {/* Discount + trust eyebrow trio above the form */}
-          <div className="mb-6 flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-[11px] font-bold uppercase tracking-[0.15em] text-white/65">
-            <span className="inline-flex items-center gap-1.5">
-              <span aria-hidden="true" className="text-[color:var(--color-brand-400)]">·</span>
-              Free Quote
-            </span>
-            <span className="inline-flex items-center gap-1.5">
-              <span aria-hidden="true" className="text-[color:var(--color-brand-400)]">·</span>
-              Reply within 24h
-            </span>
-            <span className="inline-flex items-center gap-1.5">
-              <span aria-hidden="true" className="text-[color:var(--color-brand-400)]">·</span>
-              150+ Central Texas Builds
-            </span>
-          </div>
-
-          {/* Discount eyebrow line */}
-          <p className="mb-8 text-center text-[11px] font-semibold uppercase tracking-[0.18em] text-[color:var(--color-brand-300)]">
-            Military, first-responder &amp; trade discounts honored
-          </p>
-
-          {/* Quieter section header — small eyebrow + smaller headline */}
-          <div className="mb-8 text-center">
-            <span className="inline-flex items-center rounded-full bg-red-600 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.18em] text-white shadow-sm">
-              Get A Quote
-            </span>
-            <h2
-              id="quote-heading"
-              className="mt-5 font-display font-extrabold uppercase tracking-tight leading-[0.95] text-white text-3xl sm:text-4xl"
-            >
-              Tell us about
-              <br />
-              <span className="text-[color:var(--color-brand-400)]">your build.</span>
-            </h2>
-            <p className="mt-4 text-sm sm:text-base text-white/65 max-w-md mx-auto leading-relaxed">
-              Two quick steps. A real Texas crew on the other end —
-              not a form into a black hole.
-            </p>
-          </div>
-        </>
       ) : null}
 
-      {/* Glass form card */}
-      <div className="rounded-2xl border border-white/10 bg-white/[0.04] backdrop-blur-md shadow-2xl p-6 sm:p-8">
-        {/* Slim progress bar */}
-        <div className="mb-7">
-          <div className="flex items-center justify-between text-[11px] font-bold uppercase tracking-[0.18em] text-white/55 mb-2">
-            <span>
-              <span className="text-[color:var(--color-brand-400)]">Step {step}</span> of 2
-            </span>
-            <span>{step === 1 ? "Project" : "Contact + Details"}</span>
-          </div>
-          <div
-            className="relative h-1 rounded-full bg-white/8 overflow-hidden"
-            role="progressbar"
-            aria-label="Quote form progress"
-            aria-valuenow={progressPct as number}
-            aria-valuemin={0 as number}
-            aria-valuemax={100 as number}
-          >
-            <div
-              className="absolute inset-y-0 left-0 bg-[color:var(--color-brand-400)] transition-[width] duration-500 ease-out"
-              style={{ width: `${progressPct}%` }}
+      <StepProgress step={step} label={step === 1 ? "Your build" : "Who to call back"} />
+
+      {/* Not a <form>: Enter advances step 1 (locked anti-implicit-submit pattern). */}
+      <div
+        onKeyDown={(e) => {
+          if (e.key === "Enter" && step < 2 && (e.target as HTMLElement).tagName !== "TEXTAREA") {
+            e.preventDefault();
+            if (canAdvance()) next();
+          }
+        }}
+      >
+        {/* Re-key the wrapper so React re-mounts → animation re-fires */}
+        <div key={step} className="step-slide-in">
+          {step === 1 ? (
+            <StepProject form={form} update={update} />
+          ) : (
+            <StepContact
+              form={form}
+              update={update}
+              militarySub="7% off your install. ID checked at the estimate."
             />
-          </div>
+          )}
         </div>
 
-        {/* Step content with onKeyDown=Enter advances (per locked
-            anti-implicit-submit pattern: NOT a <form> element). */}
-        <div
-          onKeyDown={(e) => {
-            if (
-              e.key === "Enter" &&
-              step < 2 &&
-              (e.target as HTMLElement).tagName !== "TEXTAREA"
-            ) {
-              e.preventDefault();
-              if (canAdvance()) next();
-            }
-          }}
-        >
-          {/* Re-key the wrapper so React re-mounts → animation re-fires */}
-          <div key={step} className="step-slide-in">
-            {step === 1 ? (
-              <StepProject form={form} update={update} />
-            ) : (
-              <StepContact form={form} update={update} />
-            )}
+        {step === 1 ? (
+          <div className="sticky bottom-[72px] z-[2] -mx-[clamp(20px,2vw,32px)] mt-6 -mb-[clamp(20px,2vw,32px)] rounded-b-[12px] bg-[linear-gradient(to_bottom,rgba(255,255,255,0),#fff_16px)] px-[clamp(20px,2vw,32px)] pt-3.5 pb-[clamp(20px,2vw,32px)] min-[900px]:bottom-0">
+            <button
+              type="button"
+              onClick={next}
+              disabled={!canAdvance()}
+              className="inline-flex w-full cursor-pointer items-center justify-center gap-2 rounded-[6px] bg-forge-navy px-[26px] py-[15px] text-[16px] font-semibold text-white shadow-[var(--shadow-cta)] transition-colors duration-200 hover:bg-forge-navy-raised disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              Continue <span aria-hidden="true">→</span>
+            </button>
           </div>
+        ) : (
+          <>
+            {/* Build echo — a confirmation, never an estimate. */}
+            {buildSummary ? (
+              <div className="mt-6 rounded-[10px] border border-forge-silver bg-forge-fog px-4 py-3">
+                <p className="text-[11px] font-bold uppercase tracking-[.18em] text-forge-slate">Your build</p>
+                <p className="mt-1 text-[14px] text-forge-navy">{buildSummary}</p>
+              </div>
+            ) : null}
 
-          {/* Build echo — a confirmation, never an estimate. summarizeBuild
-              returns null until there is something worth repeating back. */}
-          {buildSummary ? (
-            <div className="mt-6 rounded-lg border border-white/20 bg-black/40 px-4 py-3">
-              <p className="text-[11px] font-bold uppercase tracking-wider text-[color:var(--color-brand-300)]">
-                Your build
-              </p>
-              <p className="mt-1 text-sm text-white/85">{buildSummary}</p>
-            </div>
-          ) : null}
+            {HCAPTCHA_SITE_KEY ? (
+              <div className="mt-6 flex justify-center">
+                <HCaptchaWidget
+                  ref={captchaRef}
+                  sitekey={HCAPTCHA_SITE_KEY}
+                  theme="light"
+                  onVerify={(token) => setCaptchaToken(token)}
+                  onExpire={() => setCaptchaToken(null)}
+                  onError={() => setCaptchaToken(null)}
+                />
+              </div>
+            ) : null}
 
-          {/* Captcha — lazy-loaded on step 2 first render */}
-          {step === 2 && HCAPTCHA_SITE_KEY ? (
-            <div className="mt-6 flex justify-center">
-              <HCaptchaWidget
-                ref={captchaRef}
-                sitekey={HCAPTCHA_SITE_KEY}
-                theme="dark"
-                onVerify={(token) => setCaptchaToken(token)}
-                onExpire={() => setCaptchaToken(null)}
-                onError={() => setCaptchaToken(null)}
-              />
-            </div>
-          ) : null}
+            {status === "err" ? (
+              <div role="alert" className="mt-5 rounded-[8px] border border-forge-navy bg-forge-fog px-4 py-3 text-[14px] font-semibold text-forge-navy">
+                {errMsg}
+              </div>
+            ) : null}
 
-          {/* Error */}
-          {status === "err" ? (
-            <div className="mt-5 rounded-lg border border-red-400/40 bg-red-500/10 text-red-100 px-4 py-3 text-sm">
-              {errMsg}
-            </div>
-          ) : null}
-
-          {/* Navigation */}
-          <div className={`mt-7 flex gap-3 ${step > 1 ? "justify-between" : "justify-end"}`}>
-            {step > 1 ? (
+            <div className="mt-6 flex justify-between gap-3">
               <button
                 type="button"
                 onClick={back}
-                className="h-12 px-5 rounded-lg border border-white/15 bg-white/5 text-sm font-semibold text-white/75 hover:border-white/30 hover:text-white transition-colors"
+                className="h-[50px] cursor-pointer rounded-[6px] border border-forge-silver bg-white px-[18px] text-[14px] font-semibold text-forge-slate transition-colors hover:border-forge-navy"
               >
                 ← Back
               </button>
-            ) : null}
-
-            {step < 2 ? (
-              <Button
+              <button
                 type="button"
-                variant="primary"
-                size="lg"
-                disabled={!canAdvance()}
-                icon={<ArrowRightIcon className="h-5 w-5" />}
-                iconPosition="right"
-                onClick={next}
-                className="flex-1"
-              >
-                Continue
-              </Button>
-            ) : (
-              <Button
-                type="button"
-                variant="primary"
-                size="lg"
-                disabled={status === "submitting" || !canAdvance()}
-                icon={<ArrowRightIcon className="h-5 w-5" />}
-                iconPosition="right"
                 onClick={handleSubmit}
-                className="flex-1"
+                disabled={status === "submitting" || !canAdvance()}
+                className="inline-flex flex-1 cursor-pointer items-center justify-center gap-2 rounded-[6px] bg-forge-navy px-[26px] py-[15px] text-[16px] font-semibold text-white transition-colors duration-200 hover:bg-forge-navy-raised disabled:cursor-not-allowed disabled:opacity-50"
               >
-                {status === "submitting" ? "Sending…" : "Send to Triple J"}
-              </Button>
-            )}
-          </div>
+                {status === "submitting" ? "Sending…" : "Send to Triple J"} <span aria-hidden="true">→</span>
+              </button>
+            </div>
 
-          {/* Below-submit reassurance line */}
-          <p className="mt-5 text-center text-[12px] text-white/55 leading-relaxed">
-            Free quote — no spam, no obligation.{" "}
-            {isQuotePage ? "Same day, guaranteed within 24 hours." : "Most replies within 24 hours."}
-          </p>
-
-          {/* Consent micro-text */}
-          <p className="mt-2 text-center text-[11px] text-white/35">
-            By submitting you consent to be contacted by phone, text, or email.
-          </p>
-        </div>
+            <p className="mt-[18px] text-center text-[12px] leading-[1.5] text-forge-slate">
+              Free · no obligation · {isQuotePage ? "same day, guaranteed within 24 hours." : "reply within 24 hours."}
+            </p>
+            <p className="mt-1.5 text-center text-[11px] text-forge-steel">
+              By submitting you consent to be contacted by phone, text, or email.
+            </p>
+          </>
+        )}
       </div>
     </div>
   );
 
-  // Bare mode: the host page owns the heading and, critically, the dark ground
-  // the card is styled against. `id="quote"` lives on the wrapper there.
-  if (!chrome) return body;
+  // Bare mode: the host page owns the heading. `id="quote"` lives there.
+  if (!chrome) return card;
 
   return (
     <section
       id="quote"
-      // Pairs with the <h2 id="quote-heading"> above, which is chrome-only —
-      // the two must stay in the same branch or this points at nothing.
+      // Pairs with the <h2 id="quote-heading"> in QuoteIntro; both are chrome-only.
       aria-labelledby="quote-heading"
-      className="scroll-mt-24 relative overflow-hidden bg-black text-white py-20 md:py-28"
+      data-forge=""
+      data-tone="light"
+      className="scroll-mt-24 border-t border-forge-mist bg-forge-fog py-[clamp(64px,7vw,104px)] text-forge-navy"
     >
-      {/* Full-bleed photo backdrop with heavy dark gradient */}
-      <div className="absolute inset-0">
-        <Image
-          src="/images/red-iron-frame-hero.jpg"
-          alt=""
-          fill
-          sizes="100vw"
-          className="object-cover opacity-50"
-        />
+      <div className="mx-auto flex w-full max-w-[1360px] flex-col items-center gap-[clamp(32px,3vw,48px)] px-[clamp(20px,3vw,40px)]">
+        <QuoteIntro lede={lede} />
+        {card}
       </div>
-      <div
-        aria-hidden="true"
-        className="absolute inset-0 bg-gradient-to-tr from-black/95 via-black/80 to-[color:var(--color-brand-700)]/40"
-      />
-
-      <Container size="wide" className="relative">{body}</Container>
     </section>
   );
 }
+
+/**
+ * The /api/leads body for a filled form, without attribution (added at send
+ * time). Pure, so the payload contract is testable: the Forge restyle may not
+ * change any key or value except adding the permits line to the notes.
+ */
+export function buildLeadPayload(
+  form: FormState,
+  { source, captchaToken, referenceId }: { source: "website_form" | "quote_page"; captchaToken: string | null; referenceId?: string },
+) {
+  const budgetBand = BUDGET_BANDS.find((b) => b.v === form.budget);
+  const fencing = form.service_type === "fencing";
+  return {
+    name:            form.name.trim(),
+    phone:           form.phone.trim(),
+    email:           form.email.trim() || undefined,
+    zip:             form.zip.trim() || undefined,
+    service_type:    ["lean_to", "fencing"].includes(form.service_type) ? "other" : form.service_type || undefined,
+    structure_type:  fencing ? undefined : form.structure_type,
+    width:           fencing ? undefined : form.width || undefined,
+    length:          fencing ? undefined : form.length || undefined,
+    height:          fencing ? undefined : form.height || undefined,
+    needs_concrete:  fencing ? undefined : form.needs_concrete || undefined,
+    current_surface: fencing ? undefined : form.current_surface || undefined,
+    timeline:        form.timeline || undefined,
+    best_time_to_call: form.best_time_to_call || undefined,
+    source,
+    estimated_budget_min: budgetBand?.min,
+    estimated_budget_max: budgetBand?.max ?? undefined,
+    is_military:     form.is_military,
+    message:         [
+      form.service_type === "lean_to" ? "Requested build: Lean-To / Patio" : "",
+      fencing ? fencingNotes(form) : "",
+      form.message.trim(),
+      // Permits have no column; they ride in the notes (D7, no migration).
+      form.permits ? `Permits: ${PERMIT_LABELS[form.permits]}` : "",
+    ].filter(Boolean).join("\n\n") || undefined,
+    captcha_token:   captchaToken ?? undefined,
+    reference_project_id: referenceId,
+  };
+}
+
+export type { FormState as QuoteFormState };
+export { INITIAL as QUOTE_FORM_INITIAL };
