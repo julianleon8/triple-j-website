@@ -115,7 +115,7 @@ export default function BlacklandPrairiePost() {
         If you&#8217;re getting quotes from multiple contractors in Central Texas, ask each one:
       </p>
       <ul>
-        <li>What PSI concrete do you use? (Anything under 3,500 on Blackland Prairie is underspec.)</li>
+        <li>What PSI concrete do you use? (3,000 PSI is the residential standard &#8212; ask what thickness, reinforcement and perimeter beam come with it.)</li>
         <li>What rebar spacing do you use?</li>
         <li>How do you handle anchor placement &#8212; wet-set or post-pour?</li>
         <li>Do you grade the site for drainage?</li>

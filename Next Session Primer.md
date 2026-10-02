@@ -8,16 +8,9 @@ step and needs the owner's go. Decisions: the 2026-10-02 rows of `Decisions.md` 
 **Waiting on the owner:**
 1. Review the preview page by page at phone and desktop width (gallery-driven sections were never seen with
    real photos in the sandbox). Then say "merge".
-2. **Blog post copy that breaks locks** (left as written — it's content, not styling):
-   - Bell County permit guide: "a local contractor who pulls permits", "we pull the permit… in our name",
-     "include the permit cost in your quote"; Fort Cavazos post: "we submit it"; HOA post: "pull the city
-     permit… coordinate the engineer". Lock: permits are advisory only.
-   - Blackland Prairie post: "Anything under 3,500 [PSI] … is underspec" — calls our 3,000 standard underspec.
-   - HOA post: standing-seam premium "roughly $1,500–$3,000" (not in the sales pack).
-   - Fort Cavazos + welded-vs-bolted tables: rows labelled "Concrete included" (cells say "Separately priced");
-     welded-vs-bolted "Triple J handles the concrete pour and the steel erection in the same contract".
-   - Fort Cavazos: "we're on-site for one day" on a 20×20; military discount "ask on the quote call" (it's a
-     form checkbox now).
+2. **Blog posts were brought to the locks** (2026-10-02, owner asked): permit-pulling claims are now advisory,
+   PSI/price/concrete/competitor/timeline lines fixed (row in `Decisions.md`); `check-vault.mjs` now rejects the
+   retired permit-pulling and concrete-included wording. Skim the five posts on the preview.
 3. `/services` hero lede "delivered turnkey with site prep, concrete, and install all under one contract" —
    the turnkey-label fix proposed 2026-10-01 still needs a yes.
 4. Smaller claims to confirm or cut: roundup "We schedule within days of contract signing"; `/locations` "no

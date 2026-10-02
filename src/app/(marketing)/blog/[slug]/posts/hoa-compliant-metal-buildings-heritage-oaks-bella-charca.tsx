@@ -12,8 +12,8 @@ export default function HoaCompliantPost() {
       </p>
       <p>
         This isn&#8217;t an obstacle if you know what panel types, finishes, and structural approaches
-        actually pass HOA review. Here&#8217;s what we&#8217;ve learned building in these communities from the
-        Triple J Metal crew in Temple, TX.
+        actually pass HOA review. Here&#8217;s what the Triple J Metal crew in Temple, TX looks at when we
+        plan a build for these communities.
       </p>
 
       <h2>Why Standard Metal Buildings Fail HOA Review</h2>
@@ -63,17 +63,17 @@ export default function HoaCompliantPost() {
       </p>
       <p>
         Standing seam panels cost more per square foot than PBR, and installation is slower because
-        the seaming process requires a specialized tool to form the seam correctly in the field. For
-        a typical 20&#215;24 carport in Heritage Oaks, the premium over standard PBR construction is
-        roughly $1,500&#8211;$3,000 depending on pitch and panel width.
+        the seaming process requires a specialized tool to form the seam correctly in the field. We
+        quote standing seam next to the PBR and PBU options, so you see the difference on your build
+        before you choose.
       </p>
 
       <h2>Color Selection for HOA Review</h2>
       <p>
         Most HOA communities require that accessory structure colors coordinate with the main dwelling
         exterior. Heritage Oaks and Bella Charca homes are built primarily in neutral palettes &#8212;
-        warm whites, tans, greiges, and gray-browns. The Premium-line concealed-fastener colors that consistently
-        pass HOA review in these communities:
+        warm whites, tans, greiges, and gray-browns. Premium-line concealed-fastener colors that suit
+        those palettes (your ARC still has the final say):
       </p>
       <ul>
         <li>Regal White and Dove Gray &#8212; for homes with white or light gray siding</li>
@@ -99,7 +99,8 @@ export default function HoaCompliantPost() {
         <li><strong>Photos or renderings</strong>{' '}of similar completed structures (optional but recommended)</li>
       </ol>
       <p>
-        We can provide all of these materials as part of the quoting process. Many HOA ARC committees
+        We provide the structure, materials and color details for your application with the quote; the
+        plot plan usually comes from your property survey. Many HOA ARC committees
         meet monthly &#8212; factor this into your timeline. If you&#8217;re targeting a specific build date, work
         backward from the next ARC meeting date and allow 2&#8211;4 weeks for the approval process.
       </p>
@@ -112,10 +113,12 @@ export default function HoaCompliantPost() {
         single point of accountability if the ARC requires revisions.
       </p>
       <p>
-        When Triple J builds in Heritage Oaks or Bella Charca, we handle the ARC submission materials,
-        pull the city permit, pour the slab with anchor bolts, and erect the standing seam structure &#8212;
-        all under one contract. If the ARC requests a change, we revise the submission. If the permit
-        requires a stamped drawing, we coordinate the engineer. One phone call, one contract, one crew.
+        On a turnkey build in Heritage Oaks or Bella Charca, site prep, the slab with anchor bolts and
+        the standing seam structure sit on one contract. We prepare the structure and materials details
+        for your ARC submission and revise them if the committee asks for a change. On the city permit
+        we&#8217;re advisory: we talk you through what the city requires &#8212; including whether it wants
+        stamped drawings &#8212; and who files is confirmed in your written scope. One phone call, one
+        contract, one crew.
       </p>
       <p>
         Fill out the quote form below or call our Temple, TX office. Mention your HOA community and

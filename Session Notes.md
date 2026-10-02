@@ -1,5 +1,14 @@
 # Session Notes
 
+## 2026-10-02 — Blog posts brought to the locks
+
+Owner asked. All five post modules rewritten where they broke a lock: permit-pulling claims (and a
+"licensed contractor" line) now advisory, 3,500-PSI "underspec" line, two unsourced prices, "Concrete
+included" rows, day-count build timeline, a wrong "10 minutes from Fort Cavazos", the military discount
+terms, and blanket competitor claims (named brands, warranty-voiding, "None noted"). Unbacked "140 MPH" →
+design-specific. `check-vault.mjs` now fails on permit-pulling and "concrete included" wording (tests
+exempt). Gate: typecheck, lint, tests, vault check.
+
 ## 2026-10-02 — Forge step 13: PBR footer, every remaining route, OG cards, emails, PDF, cleanup
 
 Owner: "do step 13, start with /thank-you and /quote and change the brushed slate to a PBR panel look."

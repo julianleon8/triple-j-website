@@ -121,6 +121,8 @@ const rootMd = readdirSync(ROOT).filter((f) => f.endsWith('.md')).sort()
     [/Triple J Metal Buildings LLC/i, 'retired legal alias - the legal name is "Triple J Metal LLC"'],
     [/4,?000 PSI concrete/i, '4,000 PSI is on-request only, never the promised default (reversed 2026-05-01)'],
     [/\b12[- ]gauge\b/i, '14-gauge is standard; the upgrade is 11-gauge heavy-duty columns welded to receivers and purlins, never 12-gauge (2026-10-02)'],
+    [/\bwe (?:pull|file|submit) (?:the |your |all )?(?:city )?permits?\b|\bpulls permits\b/i, 'permits are advisory only: never say we pull, file or submit the permit (2026-09-07)'],
+    [/\bconcrete included\b/i, 'say "concrete available" (priced separately), never "concrete included" (2026-09-28)'],
   ]
   const EXEMPT = new Set(['Decisions.md', 'Session Notes.md', 'Locked Decisions.md'])
 
@@ -149,6 +151,8 @@ const rootMd = readdirSync(ROOT).filter((f) => f.endsWith('.md')).sort()
   const srcFiles = execFileSync('git', ['ls-files', 'src'], { encoding: 'utf8' })
     .split('\n')
     .filter((f) => /\.(ts|tsx)$/.test(f))
+    // Tests never ship, and some spell out banned phrases to assert they're gone.
+    .filter((f) => !/\.test\.tsx?$/.test(f))
   // The 4,000 PSI drift found on 2026-09-06 was carried here as a non-failing
   // warning while the copy decision was outstanding. It was resolved the same
   // day -- all 22 occurrences rewritten to "3,000 PSI standard, 4,000 on

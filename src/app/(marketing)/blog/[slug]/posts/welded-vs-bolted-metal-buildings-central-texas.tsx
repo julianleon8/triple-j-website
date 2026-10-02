@@ -19,8 +19,7 @@ export default function WeldedVsBoltedPost() {
       <p>
         A bolted structure &#8212; sometimes called a &#8220;bolt-together&#8221; kit &#8212; is manufactured off-site,
         shipped to your address, and assembled on your property. The main structural members are
-        connected with bolts and slip-fit collars. National brands like Alan&#8217;s Factory Outlet and
-        East Texas Carports operate this model almost exclusively.
+        connected with bolts and slip-fit collars. Many national kit dealers sell this model.
       </p>
       <p>
         Bolted kits are cheaper to produce because the manufacturing is standardized. The components
@@ -30,8 +29,14 @@ export default function WeldedVsBoltedPost() {
         in the field.
       </p>
       <p>
-        The critical detail: <strong>most bolted kit warranties are voided by wind events above 90&#8211;110 MPH.</strong>{' '}
-        Central Texas regularly sees gusts exceeding those thresholds during severe thunderstorm seasons.
+        Bolted doesn&#8217;t have to mean a kit. Triple J builds bolted too &#8212; red iron bolted together on
+        your site by our own crew &#8212; for customers who want a lower price or a structure they can move
+        later. The comparisons below are about shipped kits.
+      </p>
+      <p>
+        The critical detail: <strong>read the wind clause in any kit warranty.</strong>{' '}Coverage is often
+        tied to a rated wind speed and to anchoring to the manufacturer&#8217;s spec &#8212; and Central Texas
+        severe-storm season brings strong gusts.
       </p>
 
       <h2>What Is a Welded Metal Building?</h2>
@@ -43,12 +48,12 @@ export default function WeldedVsBoltedPost() {
       <p>
         Triple J Metal uses a <strong>Miller Bobcat</strong>{' '}welder and red iron for our primary structural
         frames: 14-gauge standard, with a heavy-duty upgrade that adds 11-gauge columns welded to the
-        receivers and purlins. Our frames are engineered for <strong>140 MPH wind loads</strong>{' '}&#8212; the
-        standard required by Texas windstorm certification zones near the Gulf.
+        receivers and purlins. Wind rating is design-specific: framing, anchoring and any engineering
+        requirements are confirmed for your design and site.
       </p>
       <p>
         Custom dimensions are another practical benefit. We cut steel to your exact site dimensions.
-        A bolted kit comes in fixed sizes &#8212; 12&#215;20, 18&#215;21, 20&#215;20 &#8212; and you adjust your property plans
+        Many kits come in catalog sizes &#8212; 12&#215;20, 18&#215;21, 20&#215;20 &#8212; and you adjust your property plans
         to fit the kit. With welded construction, the structure is designed around your site.
       </p>
 
@@ -63,19 +68,19 @@ export default function WeldedVsBoltedPost() {
           ['Frame gauge',        '14-gauge standard; 11-gauge heavy-duty columns available',  '14-gauge typical',   'N/A'],
           ['Joints',             'Continuous welds',   'Bolt + slip-fit',    'Nailed/screwed'],
           ['Custom dimensions',  'Any size',           'Confirm options',    'Any size'],
-          ['Permits',            'Advisory help; confirm filing',       'Customer handles',   'Contractor varies'],
-          ['Concrete included',  'Separately priced; same contract available','Confirm scope','Confirm scope'],
+          ['Permits',            'Advisory help; filing confirmed in scope', 'Confirm with provider', 'Contractor varies'],
+          ['Concrete',           'Available; priced separately, same contract', 'Confirm scope', 'Confirm scope'],
           ['Warranty',           'Confirm written terms', 'Confirm written terms', 'Confirm written terms'],
           ['Real estate value',  'Permanent improvement', 'Project-specific', 'Permanent improvement'],
-          ['Lead time',          'Same week (typical)','Confirm current schedule',         'Confirm current schedule'],
+          ['Lead time',          'Same-week scheduling', 'Confirm current schedule', 'Confirm current schedule'],
         ]}
       />
 
       <h2>The Anchor System: Where Warranties Actually Get Voided</h2>
       <p>
-        Most bolted kit warranties have a buried clause about anchoring. If your structure isn&#8217;t
-        anchored to the correct spec for your substrate, the wind warranty is void &#8212; even if you
-        paid for the upgrade frame.
+        Kit warranties often carry a clause about anchoring. If your structure isn&#8217;t anchored to the
+        manufacturer&#8217;s spec for your substrate, the wind coverage can be void &#8212; even if you paid
+        for the upgrade frame. Read it before you buy.
       </p>
       <p>
         Here&#8217;s what the anchor requirements actually look like in Central Texas:
@@ -97,8 +102,8 @@ export default function WeldedVsBoltedPost() {
         </li>
       </ul>
       <p>
-        Because Triple J handles the concrete pour and the steel erection in the same contract, we
-        place anchor bolts in the wet slab at the correct spec before it cures. The result is a structurally
+        When Triple J pours your slab and erects the steel on the same contract, we set the anchor
+        bolts in the wet concrete at the correct spec before it cures. The result is a structurally
         correct anchor system &#8212; not a retrofit.
       </p>
 
@@ -111,7 +116,7 @@ export default function WeldedVsBoltedPost() {
         Triple J sources panels from <strong>leading regional Texas suppliers</strong>. The panels we install use
         Galvalume® substrate &#8212; a zinc-aluminum alloy that resists rust at cut edges &#8212; with painted
         finishes backed by a 40-year warranty engineered for high-UV climates. 26-gauge panels provide
-        meaningful hail resistance compared to the 29-gauge panels used in many lower-cost kits.
+        meaningful hail resistance compared to 29-gauge panels.
       </p>
       <p>
         Optional Drip Stop anti-condensation felt on the panel underside is worth considering for enclosed
@@ -121,9 +126,9 @@ export default function WeldedVsBoltedPost() {
 
       <h2>Which Is Right for Your Property?</h2>
       <p>
-        If your primary concern is minimizing upfront cost and you&#8217;re comfortable managing site prep,
-        permits, and concrete coordination separately, a bolted kit from a national dealer may work.
-        Understand what you&#8217;re accepting on wind warranty.
+        If your primary concern is minimizing upfront cost, a bolted structure can be the right call
+        &#8212; built by our crew, or a kit from a national dealer. With a kit, confirm who handles site
+        prep, permits and concrete, and understand what you&#8217;re accepting on wind warranty.
       </p>
       <p>
         If you want a structure that is permanent &#8212; that adds appraised real estate value, handles

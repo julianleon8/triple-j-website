@@ -9,8 +9,8 @@ export default function FortCavazosPost() {
         trailer are covered before the first Central Texas hail storm hits.
       </p>
       <p>
-        Triple J Metal is located in <strong>Temple, TX &#8212; 10 minutes from Fort Cavazos.</strong>{' '}We&#8217;ve built
-        carports and covered structures for military families throughout the Killeen-Harker Heights
+        Triple J Metal is located in <strong>Temple, TX &#8212; about 30 minutes from Killeen.</strong>{' '}We build
+        carports and covered structures for military families across the Killeen&#8211;Harker Heights
         corridor. This is what we&#8217;ve learned about how to make the process work around a PCS timeline.
       </p>
 
@@ -34,22 +34,24 @@ export default function FortCavazosPost() {
       <h2>Triple J&#8217;s Typical Timeline From First Call to Keys</h2>
       <ol>
         <li>
-          <strong>Day 1:</strong>{' '}Quote call or form submission. We confirm property address, size, and any permit
-          requirements for your jurisdiction (city of Killeen, Harker Heights, or unincorporated Bell County
-          depending on your address).
+          <strong>First call or form:</strong>{' '}We confirm your property address, size, and use, and talk
+          through what your jurisdiction usually requires for permits (City of Killeen, Harker Heights, or
+          unincorporated Bell County, depending on your address).
         </li>
         <li>
-          <strong>Day 2–3:</strong>{' '}Quote delivered. If you&#8217;re in a non-HOA area and the structure doesn&#8217;t require
-          a permit, we can schedule site prep immediately after contract signing. If a permit is required,
-          we submit it during this window.
+          <strong>Written quote:</strong>{' '}For your actual dimensions and scope. In a non-HOA area where the
+          structure doesn&#8217;t need a permit, site prep can be scheduled right after you sign. Where a permit
+          is required, who files it is set in your written scope, and the build is scheduled once it&#8217;s
+          approved.
         </li>
         <li>
-          <strong>Day 3–5 (no permit) / Day 10–14 (with permit):</strong>{' '}Concrete pour, if applicable. Our
-          crew pours the slab, places anchor bolts, and cures.
+          <strong>Concrete, if you want it:</strong>{' '}Our crew pours the slab, sets the anchor bolts in the
+          wet concrete, and lets it cure. Concrete is available on any build and priced separately.
         </li>
         <li>
-          <strong>Same week or next week (no permit) / Week 2–3 (with permit):</strong>{' '}Steel erection. On a
-          standard 20&#215;20 carport, we&#8217;re on-site for one day. Larger structures take 2&#8211;3 days.
+          <strong>Steel erection:</strong>{' '}Same-week scheduling once scope, materials, site readiness and
+          any required approvals are confirmed. Larger structures take longer on site than a standard
+          20&#215;20 carport.
         </li>
       </ol>
       <p>
@@ -65,11 +67,11 @@ export default function FortCavazosPost() {
         headers={['', 'Triple J Metal (Temple TX)', 'National Kit Dealers', 'Regional Bolted Dealers']}
         highlightCol={1}
         rows={[
-          ['Typical lead time',    '1–3 weeks (permit dependent)', 'Confirm current schedule',     'Confirm current schedule'],
-          ['Concrete included',    'Separately priced; same contract available', 'Confirm scope', 'Confirm scope'],
-          ['Permit handled by',    'Confirm filing responsibility', 'Confirm with provider', 'Confirm with provider'],
+          ['Typical lead time',    'Same-week scheduling after approval', 'Confirm current schedule', 'Confirm current schedule'],
+          ['Concrete',             'Available; priced separately, same contract', 'Confirm scope', 'Confirm scope'],
+          ['Permits',              'Advisory help; filing confirmed in scope', 'Confirm with provider', 'Confirm with provider'],
           ['Site prep',            'Our skid steer crew',          'Confirm scope', 'Confirm scope'],
-          ['Military discount',    'Yes — ask on quote call',      'None noted',     'Varies'],
+          ['Military discount',    '7% — check the box on the quote form', 'Confirm with provider', 'Confirm with provider'],
           ['Local crew',           'Temple-based crew', 'National brand', 'Troy / Waco TX'],
         ]}
       />
@@ -93,9 +95,10 @@ export default function FortCavazosPost() {
 
       <h2>Military Discount and How to Claim It</h2>
       <p>
-        Triple J offers a discount to active duty military members, veterans, and first responders.
-        Just mention your service on the quote call or form &#8212; we&#8217;ll apply it to the final quote.
-        No DD-214 required on the call; we ask for verification at contract signing.
+        Triple J takes 7% off every install for active-duty, retired, Reserve/Guard and first responders.
+        Check the military box on the quote form (or mention your service on the call) and we&#8217;ll apply
+        it to your quote. Nothing to prove on the call &#8212; we verify by service ID, military email or
+        DD-214 at the estimate.
       </p>
       <p>
         If you&#8217;re inbound PCSing to Fort Cavazos, <strong>call us from your current station.</strong>{' '}We can have
