@@ -1,3 +1,21 @@
+# Internal links — 2026-10-03 · AUDITED, HOMEPAGE LINK DONE, REST AWAITS THE OWNER'S PICK
+
+Done on `claude/youthful-cerf-2m3dfh` (not on `main` yet): hero "Welded or bolted" → the welded-vs-bolted post.
+Proposed, biggest first. The post bodies are copy, so they need the owner's nod; the rest is structure:
+1. **Blog posts → money pages.** All 5 have zero body links. `seo/SITE-STRUCTURE.md` already says each post
+   links 1 service + 1 city + the quote; the PCS post should also link `/military`.
+2. **"More Articles"** (`blog/[slug]/page.tsx`) takes the first 3 others by array order. Pick by category/tags.
+3. **Thin city pages:** Holland, Salado, Taylor, Troy have 1 inbound link (the index); Lampasas and Nolanville 2.
+   9 of 14 city pages link no neighbouring city; 8 of 14 are in the footer. Add neighbour `callouts`.
+4. **Service pages link no city.** Add "where we build" links to the 3 nearest cities. Fencing and RV covers
+   link to no blog post.
+5. **`/about`, `/partners`** have no body link in; `/about` and `/contact` link nowhere out. Hero "Our own crew"
+   → `/about`; the homepage body has no link to `/blog`.
+6. `/services/hybrid-projects` and `/services/colors` are reached only from `/services`. Footer "Lean-To Patios"
+   and "House Additions" go to `/contact`, not `/quote`.
+
+---
+
 # PostHog — 2026-10-03 · LIVE; ALERT PUSH VERIFIED, MONDAY PUSH UNTESTED
 
 Funnel tracking is live on `main`; dashboard "Ad funnel":

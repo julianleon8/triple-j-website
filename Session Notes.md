@@ -1,5 +1,22 @@
 # Session Notes
 
+## 2026-10-03 — Homepage "Welded or bolted" link + internal-link audit
+
+- **Why:** a Liberty Hill visitor spent 26 min on the site (Mac, then iPhone 19 s later). PostHog showed two
+  dead taps on the hero's "Welded or bolted" on the phone, after which they found the welded-vs-bolted post
+  through `/blog`. It is the most-read post and nothing on the homepage pointed to it.
+- **Shipped on `claude/youthful-cerf-2m3dfh`, not `main`:** the first item in the hero strip
+  (`src/app/(marketing)/page.tsx`) is now a `<Link>` to `/blog/welded-vs-bolted-metal-buildings-central-texas`,
+  underlined, 44 px tall to tap. Typecheck, lint, 557 tests, vault check, `next build`, and a headless click on a
+  390 px viewport all pass.
+- **Audit method:** `next build` with placeholder env, then a crawl of the prerendered HTML plus the five dynamic
+  pages from `next start`; links inside `<main>` counted apart from header/footer. 54 pages, **zero broken
+  internal links**. `/gallery/[id]` project pages are not in it (they read Supabase).
+- **Found:** no blog post has a link in its body; the "More Articles" block is the first three others in array
+  order, so the HOA post is never shown by another post; no service page links to any city page; 4 city pages
+  (Holland, Salado, Taylor, Troy) have one inbound link, the `/locations` index; `/about` and `/partners` have none
+  in body, and `/about` and `/contact` link nowhere out. Fix list: `Next Session Primer.md` → Internal links.
+
 ## 2026-10-03 — PostHog wired into the public site (funnel, drop-off, replay)
 
 - **Why:** the owner wants to see where ad visitors drop off. Nothing was being recorded: Vercel Web Analytics

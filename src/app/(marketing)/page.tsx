@@ -1,5 +1,6 @@
 import { SITE } from "@/lib/site";
 import Image from "next/image";
+import Link from "next/link";
 import type { Metadata } from "next";
 import { Gallery } from "@/components/sections/Gallery";
 import { HowItWorks } from "@/components/sections/HowItWorks";
@@ -50,7 +51,13 @@ export default function HomePage() {
             </div>
           </div>
           <div className="mt-12 flex flex-wrap gap-x-8 gap-y-3 border-t border-white/20 pt-5 text-sm text-white/80">
-            <span>Welded or bolted</span><span>Our own crew</span><span>Same-week scheduling</span>
+            <Link
+              href="/blog/welded-vs-bolted-metal-buildings-central-texas"
+              className="-my-3 py-3 underline decoration-white/40 underline-offset-4 transition-colors hover:text-white hover:decoration-white focus-visible:text-white focus-visible:decoration-white"
+            >
+              Welded or bolted
+            </Link>
+            <span>Our own crew</span><span>Same-week scheduling</span>
           </div>
         </Container>
       </section>
