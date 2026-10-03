@@ -67,6 +67,8 @@ Filled in as the pages are built; each row is a judgment call, not a known error
 | `src/lib/services.es.ts` | "Dutch doors" | "puertas Dutch (de dos hojas)" | Natural? |
 | `src/i18n/pages/hybrid-projects.ts` | "body shop", "loft", "tack rooms", "run-in shelters" | "taller de hojalatería y pintura", "tapanco", "cuarto para monturas", "refugios abiertos" | Natural for ranch customers here? |
 | `src/i18n/pages/colors.ts` | "Best Value" | "Mejor precio" | OK? |
+| Blog posts (`posts/es/`) | "sleeve anchors", "helical piers", "core drill", "setbacks", "permit expediter" | "anclas de manguito", "pilotes helicoidales", "taladro de núcleo", "retiros (setbacks)", "gestor de permisos" | Trade terms: what would a Texas crew say? |
+| `src/i18n/pages/blog.ts` | "not an AI content farm" | "no por una granja de contenido de IA" | A literal calque. Natural? |
 
 ## English found while translating (owner, not the reviewer)
 
@@ -77,3 +79,4 @@ surface them again. The Spanish versions follow the locks.
 - `belton.callouts[0]`: "Bell County permits handled. Included in your contract … we file the paperwork." — permits are advisory only (2026-09-07).
 - `belton.heroCopy`, `belton.whyLocal`, `waco.whyLocal`: name national competitors as having "no local crew", "we know everyone in the permit office", "include concrete" — competitor claims were removed 2026-09-26; concrete is "available".
 - `src/lib/services.ts:346` (turnkey FAQ): "can help coordinate permit pulls where required." — borderline on the advisory-only permit lock (2026-09-07); "pulls" implies we pull them. The Spanish says "podemos ayudar a coordinar los permisos". Suggest "can walk you through the permit steps" in both.
+- Blog comparison tables (welded vs bolted, Fort Cavazos): "Advisory help; filing confirmed in scope" — reads as though we might file the permit. Spanish: "Te orientamos; el trámite se confirma en el alcance". Consider "Advisory help with the permit" in both.
