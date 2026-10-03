@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getOwner, requireOwner } from '@/lib/auth'
 import { getAdminClient } from '@/lib/supabase/admin'
+import { revalidateGallery } from '@/lib/gallery-revalidate'
 
 export const dynamic = 'force-dynamic'
 
@@ -115,5 +116,6 @@ export async function POST(
     return NextResponse.json({ error: `Photo record insert failed: ${error?.message ?? 'unknown'}` }, { status: 500 })
   }
 
+  revalidateGallery(id)
   return NextResponse.json({ photo }, { status: 201 })
 }

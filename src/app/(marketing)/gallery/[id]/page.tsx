@@ -23,6 +23,11 @@ type GalleryPhoto = {
   is_cover: boolean
 }
 
+// HQ edits revalidate this page on demand (src/lib/gallery-revalidate.ts). The
+// hourly refresh is the backstop for edits made straight in Supabase, which
+// no API route sees — the 2026-10-01 stale-photos incident was one of those.
+export const revalidate = 3600
+
 export async function generateStaticParams() {
   const { data } = await getAdminClient()
     .from('gallery_items')

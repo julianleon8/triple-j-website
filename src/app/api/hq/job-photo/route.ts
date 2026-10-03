@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod'
 import { requireOwner } from '@/lib/auth'
 import { getAdminClient } from '@/lib/supabase/admin'
+import { revalidateGallery } from '@/lib/gallery-revalidate'
 
 export const dynamic = 'force-dynamic'
 // Image uploads can hit 10-15s on LTE with a 2MB blob. 30s gives headroom
@@ -117,7 +118,7 @@ export async function POST(request: NextRequest) {
   // ── Find or create the gallery_item that bundles this job's photos ────
   const { data: existingItem } = await db
     .from('gallery_items')
-    .select('id, title')
+    .select('id, title, is_active')
     .eq('job_id', job.id)
     .limit(1)
     .maybeSingle()
@@ -208,6 +209,10 @@ export async function POST(request: NextRequest) {
     await db.storage.from('gallery').remove([upload.path])
     return NextResponse.json({ error: 'Photo record insert failed' }, { status: 500 })
   }
+
+  // A fresh item is private, but a job already published from HQ shows this
+  // photo on /gallery/[id] straight away.
+  if (existingItem?.is_active) revalidateGallery(galleryItemId)
 
   return NextResponse.json({
     gallery_item_id: galleryItemId,
