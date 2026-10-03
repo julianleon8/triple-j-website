@@ -1,6 +1,8 @@
 'use client'
 
 import { useState } from 'react'
+import type { Locale } from '@/i18n/config'
+import { QUOTES, quoteDate } from '@/i18n/copy/quotes'
 import { SITE } from '@/lib/site'
 
 type LineItem = {
@@ -25,9 +27,13 @@ type Quote = {
 interface Props {
   quote: Quote
   token: string
+  /** The customer's preferred_language (migration 034). */
+  locale?: Locale
 }
 
-export default function QuoteAcceptView({ quote, token }: Props) {
+export default function QuoteAcceptView({ quote, token, locale = 'en' }: Props) {
+  const q = QUOTES[locale]
+  const t = q.accept
   const [status, setStatus] = useState(quote.status)
   const [loading, setLoading] = useState<'accept' | 'decline' | null>(null)
   const [error, setError] = useState('')
@@ -46,7 +52,7 @@ export default function QuoteAcceptView({ quote, token }: Props) {
     setLoading(null)
 
     if (!res.ok) {
-      setError(data.error ?? 'Something went wrong. Please try again.')
+      setError(locale === 'en' && data.error ? data.error : t.error)
       return
     }
 
@@ -67,11 +73,11 @@ export default function QuoteAcceptView({ quote, token }: Props) {
 
           {/* Quote header */}
           <div className="mb-6">
-            <h2 className="text-lg font-bold text-gray-900">Quote {quote.quote_number}</h2>
-            <p className="text-gray-500 text-sm">Prepared for {quote.customers?.name ?? 'you'}</p>
+            <h2 className="text-lg font-bold text-gray-900">{t.heading(quote.quote_number)}</h2>
+            <p className="text-gray-500 text-sm">{t.preparedFor(quote.customers?.name ?? t.you)}</p>
             {quote.valid_until && (
               <p className="text-gray-400 text-xs mt-1">
-                Valid until {new Date(quote.valid_until).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
+                {t.validUntil} {quoteDate(quote.valid_until, locale)}
               </p>
             )}
           </div>
@@ -79,14 +85,14 @@ export default function QuoteAcceptView({ quote, token }: Props) {
           {/* Status banner */}
           {status === 'accepted' && (
             <div className="mb-6 bg-green-50 border border-green-200 rounded-xl px-6 py-4">
-              <p className="text-green-800 font-semibold">You have accepted this quote.</p>
-              <p className="text-green-700 text-sm mt-1">We&apos;ll be in touch soon to schedule your installation. Call us anytime at {SITE.phone}.</p>
+              <p className="text-green-800 font-semibold">{t.acceptedTitle}</p>
+              <p className="text-green-700 text-sm mt-1">{t.acceptedBody(SITE.phone)}</p>
             </div>
           )}
           {status === 'declined' && (
             <div className="mb-6 bg-red-50 border border-red-200 rounded-xl px-6 py-4">
-              <p className="text-red-800 font-semibold">You have declined this quote.</p>
-              <p className="text-red-700 text-sm mt-1">If you change your mind or have questions, call us at {SITE.phone}.</p>
+              <p className="text-red-800 font-semibold">{t.declinedTitle}</p>
+              <p className="text-red-700 text-sm mt-1">{t.declinedBody(SITE.phone)}</p>
             </div>
           )}
 
@@ -94,10 +100,10 @@ export default function QuoteAcceptView({ quote, token }: Props) {
           <table className="w-full text-sm mb-6">
             <thead>
               <tr className="border-b border-gray-100">
-                <th className="text-left text-xs font-medium text-gray-500 uppercase pb-2">Description</th>
-                <th className="text-center text-xs font-medium text-gray-500 uppercase pb-2 w-16">Qty</th>
-                <th className="text-right text-xs font-medium text-gray-500 uppercase pb-2 w-24">Unit</th>
-                <th className="text-right text-xs font-medium text-gray-500 uppercase pb-2 w-24">Total</th>
+                <th className="text-left text-xs font-medium text-gray-500 uppercase pb-2">{q.table.description}</th>
+                <th className="text-center text-xs font-medium text-gray-500 uppercase pb-2 w-16">{q.table.qty}</th>
+                <th className="text-right text-xs font-medium text-gray-500 uppercase pb-2 w-24">{q.table.unit}</th>
+                <th className="text-right text-xs font-medium text-gray-500 uppercase pb-2 w-24">{q.table.total}</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-50">
@@ -114,7 +120,7 @@ export default function QuoteAcceptView({ quote, token }: Props) {
             </tbody>
             <tfoot>
               <tr className="border-t border-gray-200">
-                <td colSpan={3} className="pt-4 text-right font-bold text-gray-900">Total</td>
+                <td colSpan={3} className="pt-4 text-right font-bold text-gray-900">{q.table.total}</td>
                 <td className="pt-4 text-right font-bold text-gray-900 text-lg">${quote.total.toFixed(2)}</td>
               </tr>
             </tfoot>
@@ -135,14 +141,14 @@ export default function QuoteAcceptView({ quote, token }: Props) {
                 disabled={loading !== null}
                 className="flex-1 bg-green-600 hover:bg-green-500 disabled:bg-green-300 text-white font-bold py-3 rounded-xl transition text-base"
               >
-                {loading === 'accept' ? 'Processing…' : 'Accept Quote'}
+                {loading === 'accept' ? t.processing : t.accept}
               </button>
               <button
                 onClick={() => handleAction('decline')}
                 disabled={loading !== null}
                 className="flex-1 bg-gray-100 hover:bg-gray-200 disabled:opacity-50 text-gray-700 font-bold py-3 rounded-xl transition text-base"
               >
-                {loading === 'decline' ? 'Processing…' : 'Decline'}
+                {loading === 'decline' ? t.processing : t.decline}
               </button>
             </div>
           )}
@@ -150,7 +156,7 @@ export default function QuoteAcceptView({ quote, token }: Props) {
           {error && <p className="text-red-500 text-sm mt-3">{error}</p>}
 
           <p className="text-center text-xs text-gray-400 mt-8">
-            Questions? Call or text <a href={SITE.phoneHref} className="underline">{SITE.phone}</a>
+            {t.questions} <a href={SITE.phoneHref} className="underline">{SITE.phone}</a>
           </p>
         </div>
       </div>

@@ -8,6 +8,9 @@ import {
 } from '@react-email/components'
 import BrandLayout, { BRAND_COLOR } from './BrandLayout'
 import { napSignature } from './nap'
+import type { Locale } from '@/i18n/config'
+import { QUOTES, quoteDate } from '@/i18n/copy/quotes'
+import { SITE } from '@/lib/site'
 
 interface LineItem {
   description: string
@@ -26,6 +29,12 @@ interface QuoteEmailProps {
   validUntil: string
   notes?: string
   acceptUrl: string
+  /** The customer's preferred_language (migration 034). */
+  locale?: Locale
+}
+
+export function quoteEmailSubject(quoteNumber: string, locale: Locale = 'en'): string {
+  return QUOTES[locale].email.subject(quoteNumber)
 }
 
 export default function QuoteEmail({
@@ -38,23 +47,24 @@ export default function QuoteEmail({
   validUntil,
   notes,
   acceptUrl,
+  locale = 'en',
 }: QuoteEmailProps) {
+  const t = QUOTES[locale]
   return (
-    <BrandLayout preview={`Your quote ${quoteNumber} from Triple J Metal — ${customerName}`}>
+    <BrandLayout locale={locale} preview={t.email.preview(quoteNumber, customerName)}>
       <Heading as="h2" style={{ fontSize: 20, fontWeight: 700, margin: '0 0 8px', color: '#00182a' }}>
-        Quote {quoteNumber}
+        {t.email.heading(quoteNumber)}
       </Heading>
       <Text style={{ color: '#33475a', margin: '0 0 20px' }}>
-        Hi {customerName}, here is your quote from Triple J Metal LLC. Review the details below and
-        click the button to accept or decline.
+        {t.email.intro(customerName, SITE.legalName)}
       </Text>
 
       <Section style={{ border: '1px solid #e3e9ee', borderRadius: 6, overflow: 'hidden', marginBottom: 16 }}>
         <Row style={{ backgroundColor: '#f4f6f8', borderBottom: '1px solid #e3e9ee' }}>
-          <Column style={{ padding: '10px 16px', fontSize: 11, fontWeight: 700, color: '#546678', textTransform: 'uppercase', width: '55%' }}>Description</Column>
-          <Column style={{ padding: '10px 8px', fontSize: 11, fontWeight: 700, color: '#546678', textTransform: 'uppercase', textAlign: 'center', width: '15%' }}>Qty</Column>
-          <Column style={{ padding: '10px 8px', fontSize: 11, fontWeight: 700, color: '#546678', textTransform: 'uppercase', textAlign: 'right', width: '15%' }}>Unit</Column>
-          <Column style={{ padding: '10px 16px', fontSize: 11, fontWeight: 700, color: '#546678', textTransform: 'uppercase', textAlign: 'right', width: '15%' }}>Total</Column>
+          <Column style={{ padding: '10px 16px', fontSize: 11, fontWeight: 700, color: '#546678', textTransform: 'uppercase', width: '55%' }}>{t.table.description}</Column>
+          <Column style={{ padding: '10px 8px', fontSize: 11, fontWeight: 700, color: '#546678', textTransform: 'uppercase', textAlign: 'center', width: '15%' }}>{t.table.qty}</Column>
+          <Column style={{ padding: '10px 8px', fontSize: 11, fontWeight: 700, color: '#546678', textTransform: 'uppercase', textAlign: 'right', width: '15%' }}>{t.table.unit}</Column>
+          <Column style={{ padding: '10px 16px', fontSize: 11, fontWeight: 700, color: '#546678', textTransform: 'uppercase', textAlign: 'right', width: '15%' }}>{t.table.total}</Column>
         </Row>
         {lineItems.map((item, i) => (
           <Row key={i} style={{ borderBottom: '1px solid #eef2f5' }}>
@@ -68,30 +78,24 @@ export default function QuoteEmail({
 
       <Section style={{ marginBottom: 24 }}>
         <Row>
-          <Column style={{ textAlign: 'right', paddingRight: 16, fontSize: 13, color: '#546678' }}>Subtotal</Column>
+          <Column style={{ textAlign: 'right', paddingRight: 16, fontSize: 13, color: '#546678' }}>{t.table.subtotal}</Column>
           <Column style={{ width: 120, textAlign: 'right', fontSize: 13, color: '#33475a' }}>${subtotal.toFixed(2)}</Column>
         </Row>
         {taxAmount > 0 && (
           <Row>
-            <Column style={{ textAlign: 'right', paddingRight: 16, fontSize: 13, color: '#546678' }}>Tax (8.25%)</Column>
+            <Column style={{ textAlign: 'right', paddingRight: 16, fontSize: 13, color: '#546678' }}>{t.table.taxRate}</Column>
             <Column style={{ width: 120, textAlign: 'right', fontSize: 13, color: '#33475a' }}>${taxAmount.toFixed(2)}</Column>
           </Row>
         )}
         <Row>
-          <Column style={{ textAlign: 'right', paddingRight: 16, fontSize: 16, fontWeight: 700, color: '#00182a', paddingTop: 8 }}>Total</Column>
+          <Column style={{ textAlign: 'right', paddingRight: 16, fontSize: 16, fontWeight: 700, color: '#00182a', paddingTop: 8 }}>{t.table.total}</Column>
           <Column style={{ width: 120, textAlign: 'right', fontSize: 16, fontWeight: 700, color: '#00182a', paddingTop: 8 }}>${total.toFixed(2)}</Column>
         </Row>
       </Section>
 
       <Text style={{ color: '#546678', fontSize: 13, margin: '0 0 20px' }}>
-        This quote is valid until{' '}
-        <strong>
-          {new Date(validUntil).toLocaleDateString('en-US', {
-            month: 'long',
-            day: 'numeric',
-            year: 'numeric',
-          })}
-        </strong>
+        {t.email.validUntil}{' '}
+        <strong>{quoteDate(validUntil, locale)}</strong>
         .
       </Text>
 
@@ -114,22 +118,24 @@ export default function QuoteEmail({
           textDecoration: 'none',
         }}
       >
-        Review &amp; Accept Quote
+        {t.email.button}
       </Button>
     </BrandLayout>
   )
 }
 
 export function quoteEmailText(props: QuoteEmailProps): string {
+  const locale = props.locale ?? 'en'
+  const t = QUOTES[locale]
   const lines = [
-    `Quote ${props.quoteNumber} — Triple J Metal LLC`,
+    t.email.textTitle(props.quoteNumber, SITE.legalName),
     ``,
-    `Hi ${props.customerName},`,
+    t.email.textHi(props.customerName),
     ``,
-    `Here is your quote from Triple J Metal LLC. Review and accept online:`,
+    t.email.textIntro(SITE.legalName),
     props.acceptUrl,
     ``,
-    `LINE ITEMS`,
+    t.email.textItems,
   ]
   for (const item of props.lineItems) {
     lines.push(
@@ -137,18 +143,14 @@ export function quoteEmailText(props: QuoteEmailProps): string {
     )
   }
   lines.push(``)
-  lines.push(`Subtotal: $${props.subtotal.toFixed(2)}`)
-  if (props.taxAmount > 0) lines.push(`Tax: $${props.taxAmount.toFixed(2)}`)
-  lines.push(`Total: $${props.total.toFixed(2)}`)
+  lines.push(`${t.table.subtotal}: $${props.subtotal.toFixed(2)}`)
+  if (props.taxAmount > 0) lines.push(`${t.table.tax}: $${props.taxAmount.toFixed(2)}`)
+  lines.push(`${t.table.total}: $${props.total.toFixed(2)}`)
   lines.push(``)
-  lines.push(
-    `Valid until: ${new Date(props.validUntil).toLocaleDateString('en-US', {
-      month: 'long', day: 'numeric', year: 'numeric',
-    })}`
-  )
+  lines.push(`${t.email.textValid} ${quoteDate(props.validUntil, locale)}`)
   if (props.notes) {
     lines.push(``)
-    lines.push(`Notes:`)
+    lines.push(t.email.textNotes)
     lines.push(props.notes)
   }
   lines.push(``)

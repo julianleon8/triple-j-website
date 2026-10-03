@@ -2,7 +2,8 @@ import { NextRequest, NextResponse } from 'next/server'
 import { requireOwner } from '@/lib/auth'
 import { getAdminClient } from '@/lib/supabase/admin'
 import { getResend } from '@/lib/resend'
-import QuoteEmail, { quoteEmailText } from '@/emails/QuoteEmail'
+import QuoteEmail, { quoteEmailSubject, quoteEmailText } from '@/emails/QuoteEmail'
+import { asPreferredLanguage } from '@/lib/preferred-language'
 
 export const dynamic = 'force-dynamic'
 export const maxDuration = 30
@@ -23,7 +24,9 @@ export async function POST(
 
   const { data: quote, error } = await db
     .from('quotes')
-    .select('*, customers(name, email), quote_line_items(*)')
+    // customers(*): preferred_language (migration 034) rides along when the
+    // column exists; naming it would fail the read before the migration.
+    .select('*, customers(*), quote_line_items(*)')
     .eq('id', id)
     .single()
 
@@ -50,6 +53,7 @@ export async function POST(
     validUntil: quote.valid_until,
     notes: quote.notes ?? undefined,
     acceptUrl,
+    locale: asPreferredLanguage(quote.customers.preferred_language),
   }
 
   try {
@@ -57,7 +61,7 @@ export async function POST(
       from: 'Triple J Metal <quotes@triplejmetaltx.com>',
       replyTo: 'julianleon@triplejmetaltx.com',
       to: quote.customers.email,
-      subject: `Your Quote ${quote.quote_number} from Triple J Metal`,
+      subject: quoteEmailSubject(quote.quote_number, emailProps.locale),
       react: QuoteEmail(emailProps),
       text: quoteEmailText(emailProps),
       tags: [

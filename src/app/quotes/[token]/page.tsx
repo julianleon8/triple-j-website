@@ -1,5 +1,7 @@
 import { getAdminClient } from '@/lib/supabase/admin'
 import QuoteAcceptView from './components/QuoteAcceptView'
+import { QUOTES } from '@/i18n/copy/quotes'
+import { quoteLanguage } from '@/lib/quote-language'
 import { SITE } from '@/lib/site'
 
 export default async function QuotePublicPage({
@@ -8,6 +10,8 @@ export default async function QuotePublicPage({
   params: Promise<{ token: string }>
 }) {
   const { token } = await params
+  const locale = await quoteLanguage(token)
+  const t = QUOTES[locale].accept
 
   // Column-scoped on purpose. `select('*')` would ship every quote column into
   // the RSC payload the customer's browser receives — including `internal_notes`,
@@ -26,10 +30,10 @@ export default async function QuotePublicPage({
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
         <div className="text-center max-w-sm">
-          <h1 className="text-2xl font-bold text-gray-900 mb-2">Quote Not Found</h1>
-          <p className="text-gray-500 text-sm">This quote link is invalid or has expired.</p>
+          <h1 className="text-2xl font-bold text-gray-900 mb-2">{t.notFoundTitle}</h1>
+          <p className="text-gray-500 text-sm">{t.notFoundBody}</p>
           <p className="text-gray-400 text-xs mt-4">
-            Need help? Call <a href={SITE.phoneHref} className="underline">{SITE.phone}</a>
+            {t.notFoundHelp} <a href={SITE.phoneHref} className="underline">{SITE.phone}</a>
           </p>
         </div>
       </div>
@@ -43,5 +47,5 @@ export default async function QuotePublicPage({
     ? quote.customers[0] ?? null
     : quote.customers
 
-  return <QuoteAcceptView quote={{ ...quote, customers }} token={token} />
+  return <QuoteAcceptView quote={{ ...quote, customers }} token={token} locale={locale} />
 }

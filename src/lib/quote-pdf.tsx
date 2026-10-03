@@ -20,8 +20,10 @@ import {
   StyleSheet,
 } from '@react-pdf/renderer'
 
+import { INTL_LOCALE, type Locale } from '@/i18n/config'
+import { QUOTES } from '@/i18n/copy/quotes'
 import { formatUsPhone } from '@/lib/pipeline'
-import { SITE } from '@/lib/site'
+import { SITE, SITE_ES } from '@/lib/site'
 
 export type QuoteLineItem = {
   description: string
@@ -44,6 +46,8 @@ export type QuotePdfProps = {
   notes?: string | null
   /** ISO timestamp the PDF was generated (used for the print line). */
   generatedAt: string
+  /** The customer's preferred_language (migration 034). Line items print as typed. */
+  locale?: Locale
 }
 
 // ── Brand constants (Forge, 2026-10-02) ────────────────────────────────
@@ -212,11 +216,11 @@ function fmtUSD(n: number): string {
 // midnight. Formatting it in UTC keeps it from printing as the day before
 // on any machine west of Greenwich. generatedAt is a real instant, so it is
 // shown in Central time — the shop's clock, whatever the server's is.
-function fmtDate(iso: string): string {
+function fmtDate(iso: string, locale: Locale = 'en'): string {
   const d = new Date(iso)
   if (Number.isNaN(d.getTime())) return iso
   const timeZone = /^\d{4}-\d{2}-\d{2}$/.test(iso) ? 'UTC' : 'America/Chicago'
-  return d.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric', timeZone })
+  return d.toLocaleDateString(INTL_LOCALE[locale], { month: 'long', day: 'numeric', year: 'numeric', timeZone })
 }
 
 export function QuotePdfDocument(props: QuotePdfProps) {
@@ -233,13 +237,16 @@ export function QuotePdfDocument(props: QuotePdfProps) {
     validUntil,
     notes,
     generatedAt,
+    locale = 'en',
   } = props
+  const t = QUOTES[locale]
 
   return (
     <Document
-      title={`Triple J Metal — Quote ${quoteNumber}`}
+      title={`Triple J Metal — ${t.pdf.quote} ${quoteNumber}`}
       author="Triple J Metal"
-      subject={`Quote ${quoteNumber} for ${customerName}`}
+      subject={t.pdf.subject(quoteNumber, customerName)}
+      language={locale}
     >
       <Page size="LETTER" style={styles.page}>
         {/* Header */}
@@ -252,15 +259,15 @@ export function QuotePdfDocument(props: QuotePdfProps) {
             <Text style={styles.brandSub}>{SITE.phone} · triplejmetaltx.com</Text>
           </View>
           <View style={styles.quoteMeta}>
-            <Text style={styles.quoteLabel}>Quote</Text>
+            <Text style={styles.quoteLabel}>{t.pdf.quote}</Text>
             <Text style={styles.quoteNumber}>{quoteNumber}</Text>
-            <Text style={styles.quoteValidity}>Valid until {fmtDate(validUntil)}</Text>
+            <Text style={styles.quoteValidity}>{t.pdf.validUntil} {fmtDate(validUntil, locale)}</Text>
           </View>
         </View>
 
         {/* Customer */}
         <View style={styles.customerBlock}>
-          <Text style={styles.customerLabel}>Quote for</Text>
+          <Text style={styles.customerLabel}>{t.pdf.quoteFor}</Text>
           <Text style={styles.customerName}>{customerName}</Text>
           {customerAddress ? <Text style={styles.customerLine}>{customerAddress}</Text> : null}
           {customerEmail ? <Text style={styles.customerLine}>{customerEmail}</Text> : null}
@@ -270,10 +277,10 @@ export function QuotePdfDocument(props: QuotePdfProps) {
         {/* Line items */}
         <View style={styles.table}>
           <View style={styles.tableHeader}>
-            <Text style={styles.cellDesc}>Description</Text>
-            <Text style={styles.cellQty}>Qty</Text>
-            <Text style={styles.cellUnit}>Unit</Text>
-            <Text style={styles.cellTotal}>Total</Text>
+            <Text style={styles.cellDesc}>{t.table.description}</Text>
+            <Text style={styles.cellQty}>{t.table.qty}</Text>
+            <Text style={styles.cellUnit}>{t.table.unit}</Text>
+            <Text style={styles.cellTotal}>{t.table.total}</Text>
           </View>
           {lineItems.map((li, i) => (
             <View key={i} style={styles.tableRow} wrap={false}>
@@ -288,17 +295,17 @@ export function QuotePdfDocument(props: QuotePdfProps) {
         {/* Totals */}
         <View style={styles.totalsBlock}>
           <View style={styles.totalsRow}>
-            <Text style={styles.totalsLabel}>Subtotal</Text>
+            <Text style={styles.totalsLabel}>{t.table.subtotal}</Text>
             <Text style={styles.totalsValue}>{fmtUSD(subtotal)}</Text>
           </View>
           {taxAmount > 0 ? (
             <View style={styles.totalsRow}>
-              <Text style={styles.totalsLabel}>Tax</Text>
+              <Text style={styles.totalsLabel}>{t.table.tax}</Text>
               <Text style={styles.totalsValue}>{fmtUSD(taxAmount)}</Text>
             </View>
           ) : null}
           <View style={styles.totalsGrandRow}>
-            <Text style={styles.totalsGrandLabel}>Total</Text>
+            <Text style={styles.totalsGrandLabel}>{t.table.total}</Text>
             <Text style={styles.totalsGrandValue}>{fmtUSD(total)}</Text>
           </View>
         </View>
@@ -306,15 +313,15 @@ export function QuotePdfDocument(props: QuotePdfProps) {
         {/* Notes */}
         {notes ? (
           <View style={styles.notesBlock}>
-            <Text style={styles.notesLabel}>Notes</Text>
+            <Text style={styles.notesLabel}>{t.pdf.notes}</Text>
             <Text style={styles.notesText}>{notes}</Text>
           </View>
         ) : null}
 
         {/* Footer */}
         <View style={styles.footer} fixed>
-          <Text>{SITE.legalName} · {SITE.tagline}</Text>
-          <Text>Generated {fmtDate(generatedAt)}</Text>
+          <Text>{SITE.legalName} · {locale === 'es' ? SITE_ES.tagline : SITE.tagline}</Text>
+          <Text>{t.pdf.generated} {fmtDate(generatedAt, locale)}</Text>
         </View>
       </Page>
     </Document>

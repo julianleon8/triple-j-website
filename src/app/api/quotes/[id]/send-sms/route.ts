@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server'
 import { requireOwner } from '@/lib/auth'
 import { getAdminClient } from '@/lib/supabase/admin'
 import { sendSms, isTwilioConfigured, toE164 } from '@/lib/twilio'
+import { QUOTES } from '@/i18n/copy/quotes'
+import { asPreferredLanguage } from '@/lib/preferred-language'
 
 export const dynamic = 'force-dynamic'
 export const maxDuration = 30
@@ -41,7 +43,9 @@ export async function POST(
 
   const { data: quote, error } = await db
     .from('quotes')
-    .select('id, quote_number, accept_token, total, status, customers(name, phone)')
+    // customers(*): preferred_language (migration 034) rides along when the
+    // column exists; naming it would fail the read before the migration.
+    .select('id, quote_number, accept_token, total, status, customers(*)')
     .eq('id', id)
     .single<{
       id: string
@@ -49,7 +53,7 @@ export async function POST(
       accept_token: string
       total: number | string
       status: string
-      customers: { name: string; phone: string | null } | null
+      customers: { name: string; phone: string | null; preferred_language?: string | null } | null
     }>()
 
   if (error || !quote) return NextResponse.json({ error: 'Quote not found' }, { status: 404 })
@@ -74,9 +78,10 @@ export async function POST(
     maximumFractionDigits: 0,
   })
 
-  const body =
-    `Triple J Metal — Quote ${quote.quote_number} for ${quote.customers.name}: ${totalStr}. ` +
-    `Review + accept: ${acceptUrl}. Reply STOP to opt out.`
+  // The customer's language (migration 034). "STOP" stays English in both:
+  // it is the carrier's opt-out keyword.
+  const locale = asPreferredLanguage(quote.customers.preferred_language)
+  const body = QUOTES[locale].sms(quote.quote_number, quote.customers.name, totalStr, acceptUrl)
 
   const result = await sendSms({ to: e164, body })
 

@@ -3,6 +3,7 @@ import { renderToBuffer } from '@react-pdf/renderer'
 import { requireOwner } from '@/lib/auth'
 import { getAdminClient } from '@/lib/supabase/admin'
 import { QuotePdfDocument } from '@/lib/quote-pdf'
+import { asPreferredLanguage } from '@/lib/preferred-language'
 
 export const dynamic = 'force-dynamic'
 // PDF render is fast for typical quotes (< 1s), generous buffer just in case.
@@ -46,6 +47,8 @@ export async function GET(
       city: string | null
       state: string | null
       zip: string | null
+      /** Migration 034; absent until it is applied. */
+      preferred_language?: string | null
     } | null
     quote_line_items: Array<{
       description: string
@@ -60,7 +63,9 @@ export async function GET(
     .from('quotes')
     .select(
       'id, quote_number, valid_until, subtotal, tax_amount, total, notes, ' +
-        'customers(name, email, phone, address, city, state, zip), ' +
+        // customers(*): preferred_language (034) rides along when it exists;
+        // naming it would fail the read before the migration.
+        'customers(*), ' +
         'quote_line_items(description, quantity, unit_price, total_price, sort_order)',
     )
     .eq('id', id)
@@ -101,6 +106,7 @@ export async function GET(
       validUntil: quote.valid_until,
       notes: quote.notes,
       generatedAt: new Date().toISOString(),
+      locale: asPreferredLanguage(quote.customers.preferred_language),
     }),
   )
 
