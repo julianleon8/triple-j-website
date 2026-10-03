@@ -31,6 +31,10 @@
     {
       "path": "/api/cron/morning-brief",
       "schedule": "0 12 * * 1-5"
+    },
+    {
+      "path": "/api/cron/weekly-ads",
+      "schedule": "0 12 * * 1"
     }
   ]
 }

@@ -49,3 +49,53 @@ export function trackLeadCreated({ leadId, distinctId, sessionId, properties }: 
     }
   })
 }
+
+/* ─── PostHog API (read-only, server) ────────────────────────────────────── */
+
+/** The Triple J org's "Website" project. Not a secret: it is in every app URL. */
+export const POSTHOG_PROJECT_ID = 643189
+export const POSTHOG_APP_HOST = 'https://us.posthog.com'
+export const POSTHOG_DASHBOARD_URL = `${POSTHOG_APP_HOST}/project/${POSTHOG_PROJECT_ID}/dashboard/2165121`
+
+/**
+ * GET/POST against the PostHog API with the personal API key. Returns null
+ * when POSTHOG_PERSONAL_API_KEY is unset, so callers can report "not
+ * configured" instead of failing. The key needs only `alert:read` and
+ * `query:read`, scoped to this one project.
+ */
+async function posthogApi<T>(path: string, init?: { method: 'POST'; body: unknown }): Promise<T | null> {
+  const key = process.env.POSTHOG_PERSONAL_API_KEY
+  if (!key) return null
+  const res = await fetch(`${POSTHOG_APP_HOST}/api/projects/${POSTHOG_PROJECT_ID}${path}`, {
+    method: init?.method ?? 'GET',
+    headers: { Authorization: `Bearer ${key}`, 'Content-Type': 'application/json' },
+    body: init ? JSON.stringify(init.body) : undefined,
+    signal: AbortSignal.timeout(20_000),
+    cache: 'no-store',
+  })
+  if (!res.ok) throw new Error(`PostHog API ${path} answered ${res.status}`)
+  return (await res.json()) as T
+}
+
+export type PostHogAlert = {
+  id: string
+  name: string
+  state: string
+  last_value: number | null
+  last_notified_at: string | null
+  last_checked_at: string | null
+  insight: { short_id: string; name: string | null } | null
+}
+
+/** The alert as PostHog has it now. Null when the API key is not configured. */
+export function getAlert(alertId: string): Promise<PostHogAlert | null> {
+  return posthogApi<PostHogAlert>(`/alerts/${encodeURIComponent(alertId)}/`)
+}
+
+/** Run one HogQL query; rows come back as arrays in `columns` order. */
+export async function runHogQL(query: string): Promise<{ columns: string[]; results: unknown[][] } | null> {
+  return posthogApi<{ columns: string[]; results: unknown[][] }>('/query/', {
+    method: 'POST',
+    body: { query: { kind: 'HogQLQuery', query }, name: 'triple-j-app' },
+  })
+}
