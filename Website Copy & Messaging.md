@@ -24,7 +24,7 @@ _Last updated: 2026-04-15_
 
 - **Response promise on `/quote` and `/thank-you?from=quote`:** "Same day, guaranteed within 24 hours." Both figures in one line, deliberately — the confirmation email arrives minutes later, and a bare "same day" would read as a downgrade against it. Every other surface keeps "within 24 hours". Nothing may say "most replies".
 - **Permits:** advisory only — "Building permits? We'll talk you through it." Never "we handle permits", "we pull permits", or any guarantee. Permit handling is an opportunity in `Operational Notes.md`, not a shipped service.
-- **Spanish:** "Se habla español — pregunta por Juan o Freddy." Name those two; Julian is English-only.
+- **Spanish:** "Se habla español." on English pages; no names (2026-10-03 — reverses "pregunta por Juan o Freddy"). The Spanish site says "Hablamos español".
 - **No prices, no deposit or payment terms, no stars or review counts** on `/quote`.
 
 ## Things to REMOVE / Avoid
@@ -75,3 +75,39 @@ Positioning: “Metal fencing and gates built around your property by a Temple-b
 ## Claims and local pages — 2026-09-26
 
 Current published comparisons avoid blanket claims about competitor lead times, installation exclusions, Spanish availability, and concrete exclusivity. Describe Triple J capabilities and ask customers to compare current written scopes. Historical copy above is superseded where inconsistent. Local pages use sourced municipal context, do not invent local job history, and show projects only when the gallery city matches.
+
+## Spanish site (2026-10-03)
+
+The `/es` mirror. Copy lives beside the English it translates (`src/i18n/`, `*.es.ts`); change both in the same edit.
+
+- **Voice: tú.** Warm, direct, the voice of the Spanish ads in `dev/sales-pack-2026-04-30.md` ("tú eliges", "mándanos tus medidas"). Never usted.
+- **No names.** "Nuestro equipo", "los dueños", "nuestro capataz" — never Juan, Freddy or Julian.
+- **Same numbers.** Prices, sizes, PSI, gauges, miles and percentages are copied, never retyped or rounded; a test compares them. Prices use `$3,000` (US format), not `$3.000`.
+- **Same locks.** Every English claim rule applies in Spanish: same-week (never "48 horas" for a build); concrete "disponible", never "incluido"; 3,000 PSI standard, 4,000 PSI on request; 14-gauge standard, 11-gauge heavy-duty columns (never calibre 12); permits advisory ("te orientamos con el permiso"), never "tramitamos el permiso".
+- **Glossary** (keep consistent site-wide):
+
+| English | Spanish |
+|---|---|
+| carport | cochera (cochera metálica) |
+| garage | garaje (garaje metálico) |
+| barn | granero (granero metálico) |
+| RV / boat cover | cubierta para RV / lancha |
+| lean-to patio | techo de lean-to / patio techado |
+| metal fencing / fence | cercas metálicas / cerca |
+| gate | portón |
+| welded / bolted | soldado / atornillado |
+| red iron | viga roja / acero de viga roja |
+| 14-gauge | calibre 14 |
+| concrete pad / slab | losa de concreto |
+| turnkey | llave en mano |
+| quote / free quote | cotización / cotización gratis |
+| same-week install | instalación en la misma semana |
+| crew | equipo / cuadrilla |
+| HOA | HOA (asociación de propietarios) |
+| permit | permiso de construcción |
+| military discount | descuento militar |
+| PBR / PBU panels | paneles PBR / PBU |
+| trim | molduras |
+| purlin / receiver | correa (purlin) / receptor |
+
+Brand names, city names, Fort Cavazos, PCS, BAH and HOA stay as they are.

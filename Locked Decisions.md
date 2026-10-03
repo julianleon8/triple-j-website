@@ -10,6 +10,10 @@ Do not copy anything from this file into `AGENTS.md`. That duplication is what p
 
 ## Product
 
+- **Spanish site:** full mirror of the public site at `/es`, Spanish words in its URLs (`/es/servicios/cocheras`), **tú** voice, English URLs unchanged. Blog translated; legal pages English-only (Spanish footer links to them, "en inglés"). Same phone number. Lead language is stored (`preferred_language`) and drives the customer email, SMS and quote PDF; HQ shows it, HQ itself stays English. Spanish copy sits beside the English it mirrors and must carry the same numbers. Ships via a Vercel preview read by a native speaker before `main`. (2026-10-03)
+
+- **No names on the site:** Juan, Freddy, Julian and Jose Alfredo appear nowhere customer-visible — copy, forms, bylines, schema, `llms.txt`, customer emails. Say "we", "our crew", "the owners" or a role. The public email address `julianleon@…` is the one open exception, pending a new mailbox. (2026-10-03)
+
 - **Website claims and city-page cleanup:** Removed unsupported competitor installation/lead-time/exclusivity claims and the unverifiable Temple Steel Buildings listing. Concrete is separately priced; service pricing uses the approved steel-and-install basis. Salado, Lampasas, Holland, Taylor, Troy, Nolanville, Harker Heights and Copperas Cove now have researched local context, planning guidance, service links and a cited local source. City galleries show only active projects with matching city labels. (2026-09-26; Harker Heights and Copperas Cove 2026-10-01)
 
 - **Steel:** 14-gauge framing is standard. The **heavy-duty upgrade** is 11-gauge columns, welded to the receivers and purlins; the rest of the frame stays 14-gauge. Never "12-gauge", never a full 11-gauge frame. (2026-10-02)
@@ -212,7 +216,7 @@ Do not copy anything from this file into `AGENTS.md`. That duplication is what p
 
 - **Supplier-agnostic.** Never name a specific steel supplier in the vault, in customer copy, or in AI-facing files. Multi-source by design; purchase orders and invoices are the system of record. (2026-04-23)
 - **Zero subcontractors** — owner-operated welders only.
-- **Bilingual team** — Juan and Freddy in Spanish, Julian in English. Spanish-language listing variants are live in the sales pack. **Not an uncontested differentiator:** Polo's Carports (Waco) runs a full English/Español site and serves Temple, Belton, and Killeen. State it as a Triple J strength, never as something competitors lack. (2026-09-06)
+- **Bilingual team** — the crew works in Spanish and English; say "Hablamos español", never who speaks it (no names on the site, 2026-10-03). Spanish-language listing variants are live in the sales pack. **Not an uncontested differentiator:** Polo's Carports (Waco) runs a full English/Español site and serves Temple, Belton, and Killeen. State it as a Triple J strength, never as something competitors lack. (2026-09-06; names 2026-10-03)
 - **Welded or bolted** is a differentiator **against national kit dealers only.** At least four local operators weld — Central Texas Metal Buildings, Polo's, Laneways, and Hill Country Mobile Welding (which covers Georgetown and Round Rock). Do not claim local competitors cannot weld. (2026-09-06)
 - **Competitor lead times are 2–8 weeks**, not "4–16". Verified Sept 2026: Get Carports 4–8, Dayton 4–8, Mayberry 4–6, Cardinal 2–4. Same-week still wins; use the defensible number. (2026-09-06)
 - **Canonical competitor roster:** `research/competitors/roster-2026-09.md`. `src/lib/competitors.ts` is the publishable subset, not a second source of truth. (2026-09-06)
