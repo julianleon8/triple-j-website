@@ -1,3 +1,6 @@
+import type { Locale } from '@/i18n/config'
+import { SHARED } from '@/i18n/copy/shared'
+import { localizeHref } from '@/i18n/routes'
 import { getSiteUrl } from '@/lib/site-url'
 
 /**
@@ -10,15 +13,23 @@ import { getSiteUrl } from '@/lib/site-url'
  *     { name: 'Services', path: '/services' },
  *     { name: 'Carports',  path: '/services/carports' },
  *   ]} />
+ *
+ * Paths are English; a Spanish page passes `locale="es"` and they map to the
+ * Spanish URLs (src/i18n/routes.ts).
  */
 export function BreadcrumbJsonLd({
   items,
+  locale = 'en',
 }: {
   items: { name: string; path: string }[]
+  locale?: Locale
 }) {
   const url = getSiteUrl()
 
-  const trail = [{ name: 'Home', path: '/' }, ...items]
+  const trail = [{ name: SHARED[locale].home, path: '/' }, ...items].map((item) => ({
+    ...item,
+    path: localizeHref(item.path, locale),
+  }))
 
   const jsonLd = {
     '@context': 'https://schema.org',

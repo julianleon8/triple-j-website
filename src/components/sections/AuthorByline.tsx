@@ -1,8 +1,12 @@
+import type { Locale } from '@/i18n/config'
+import { formatLongDate } from '@/i18n/config'
+import { SHARED } from '@/i18n/copy/shared'
 import { SITE } from '@/lib/site'
 
 type Props = {
   /** ISO date when this page was last verified for accuracy. */
   asOf: string
+  locale?: Locale
 }
 
 /**
@@ -17,12 +21,9 @@ type Props = {
  * site, 2026-10-03), so there is no Person schema: the reviewer is the
  * Organization the layout already describes.
  */
-export function AuthorByline({ asOf }: Props) {
-  const formattedDate = new Date(asOf).toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-  })
+export function AuthorByline({ asOf, locale = 'en' }: Props) {
+  const t = SHARED[locale].byline
+  const formattedDate = formatLongDate(asOf, locale)
 
   return (
     <>
@@ -34,16 +35,16 @@ export function AuthorByline({ asOf }: Props) {
           </div>
           <div className="leading-tight">
             <div className="font-semibold text-white">
-              Reviewed by the {SITE.name} team
+              {t.reviewed(SITE.name)}
             </div>
             <div className="mt-0.5 text-[12px] text-forge-steel-light">
-              Owners &amp; crew · Temple, TX
+              {t.role}
             </div>
           </div>
         </div>
         <div className="hidden h-6 w-px bg-white/20 sm:block" aria-hidden="true" />
         <div className="text-[12px] text-forge-steel-light">
-          Last verified <time dateTime={asOf}>{formattedDate}</time>
+          {t.verified} <time dateTime={asOf}>{formattedDate}</time>
         </div>
       </div>
     </>

@@ -2,6 +2,9 @@ import { Eyebrow } from "@/components/forge/Eyebrow";
 import { ForgeButtonLink } from "@/components/forge/ForgeButton";
 import { PhoneIcon } from "@/components/ui/icons";
 import { TrackedPhoneLink, TrackedPhoneNumber } from "@/components/site/TrackedPhone";
+import type { Locale } from "@/i18n/config";
+import { SHARED } from "@/i18n/copy/shared";
+import { localizeHref } from "@/i18n/routes";
 
 /**
  * Closing call-to-action band for routes that have no Forge quote section of
@@ -9,7 +12,8 @@ import { TrackedPhoneLink, TrackedPhoneNumber } from "@/components/site/TrackedP
  * pages end with <QuoteSection> instead, so this is no longer in the
  * marketing layout; each route that needs it renders it (2026-10-02, D12).
  */
-export function PreFooterCta() {
+export function PreFooterCta({ locale = "en" }: { locale?: Locale }) {
+  const t = SHARED[locale].preFooter;
   return (
     <section
       data-forge=""
@@ -19,22 +23,21 @@ export function PreFooterCta() {
     >
       <div className="mx-auto w-full max-w-[1360px] px-[clamp(20px,3vw,40px)]">
         <div className="max-w-[760px]">
-          <Eyebrow tone="dark">Built for this</Eyebrow>
+          <Eyebrow tone="dark">{t.eyebrow}</Eyebrow>
           <h2
             id="prefooter-cta-heading"
             className="mt-4 font-forge-display text-[clamp(30px,3vw_+_12px,56px)] font-black leading-[1.05] tracking-[.01em] text-white"
           >
-            Ready to build?
+            {t.line1}
             <br />
-            <span className="forge-steel-text">We&rsquo;re ready to start.</span>
+            <span className="forge-steel-text">{t.line2}</span>
           </h2>
           <p className="mt-4 max-w-[600px] text-[clamp(16px,.3vw_+_14px,18px)] leading-[1.55] text-white/80">
-            Free on-site quote, usually within 24 hours. One call, one crew, one contract — site prep,
-            concrete, and install all under one roof.
+            {t.body}
           </p>
           <div className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-4">
-            <ForgeButtonLink href="/quote" variant="white" size="lg" arrow>
-              Get a Free Quote
+            <ForgeButtonLink href={localizeHref("/quote", locale)} variant="white" size="lg" arrow>
+              {t.quote}
             </ForgeButtonLink>
             <TrackedPhoneLink
               surface="prefooter"
@@ -43,7 +46,7 @@ export function PreFooterCta() {
             >
               <PhoneIcon width={18} height={18} aria-hidden="true" />
               <span>
-                Call <TrackedPhoneNumber className="tabular-nums" />
+                {t.call} <TrackedPhoneNumber className="tabular-nums" />
               </span>
             </TrackedPhoneLink>
           </div>

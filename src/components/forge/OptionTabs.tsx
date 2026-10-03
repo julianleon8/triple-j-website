@@ -3,6 +3,8 @@
 import Image from "next/image";
 import { useId, useRef, useState, type KeyboardEvent, type ReactNode } from "react";
 
+import { SHARED } from "@/i18n/copy/shared";
+import { useLocale } from "@/i18n/use-locale";
 import { requestQuote, type QuoteRequest } from "@/lib/forge-quote";
 
 export type ForgeOption = {
@@ -99,6 +101,7 @@ export function OptionCard({
   id?: string;
   labelledBy?: string;
 }) {
+  const quoteThis = SHARED[useLocale()].quoteThis;
   return (
     <div
       id={id}
@@ -138,7 +141,7 @@ export function OptionCard({
             }}
             className="inline-flex items-center gap-2 rounded-[6px] bg-forge-navy px-5 py-[13px] text-[15px] font-semibold text-white transition-colors duration-200 hover:bg-forge-navy-raised"
           >
-            Quote this <span aria-hidden="true">→</span>
+            {quoteThis} <span aria-hidden="true">→</span>
           </a>
         </div>
       </div>
