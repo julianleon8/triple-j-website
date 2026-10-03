@@ -129,13 +129,13 @@ export default async function QuotePage({ searchParams }: PageProps<'/quote'>) {
     ? [
         'Metal privacy, pipe/ranch, ornamental fencing and gates.',
         'Share your layout and any city or HOA requirements.',
-        'Se habla español — pregunta por Juan o Freddy.',
+        'Se habla español.',
         'Military, first-responder & trade discounts honored.',
       ]
     : [
         'Welded or bolted — your call, quoted both ways.',
         'Building permits? We’ll talk you through it.',
-        'Se habla español — pregunta por Juan o Freddy.',
+        'Se habla español.',
         'Military, first-responder & trade discounts honored.',
       ]
 
@@ -189,7 +189,7 @@ export default async function QuotePage({ searchParams }: PageProps<'/quote'>) {
                 Same day, guaranteed within 24 hours.
               </p>
               <p className={`mt-2 max-w-[480px] ${type.heroLede} text-white/78`}>
-                Two quick steps, then a real Texas crew calls you back — Julian or Juan, not an offshore call center.
+                Two quick steps, then a real Texas crew calls you back — not an offshore call center.
               </p>
 
               {/* Cold traffic off a Marketplace ad often just wants to call.

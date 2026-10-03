@@ -127,7 +127,7 @@ export function MessageForm() {
 
   if (status === "sent") {
     const first = m.name.trim().split(/\s+/)[0] || "neighbor";
-    const who = m.lang === "Español" ? "Juan or Freddy will reach you in Spanish" : "Julian or Juan will reach you";
+    const who = m.lang === "Español" ? "We’ll reach you in Spanish" : "We’ll reach you";
     const via = m.reach === "Call" ? "by phone" : m.reach === "Text" ? "by text" : "by email";
     const at = m.reach === "Email" ? m.email.trim() : m.phone.trim();
     return (
@@ -154,7 +154,7 @@ export function MessageForm() {
   return (
     <div id="message" className={card}>
       <h2 className="font-forge-display text-[clamp(24px,1vw_+_16px,30px)] font-black leading-[1.15]">Send a message</h2>
-      <p className="mt-2 text-[14px] text-forge-slate">Goes straight to Julian’s phone. No black hole.</p>
+      <p className="mt-2 text-[14px] text-forge-slate">Goes straight to the owners’ phones. No black hole.</p>
       <div className="mt-6 flex flex-col gap-[22px]">
         <PillGroup
           label="What’s this about?"

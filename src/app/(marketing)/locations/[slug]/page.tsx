@@ -73,7 +73,7 @@ function cityFacts(loc: LocationData): Fact[] {
   return [
     loc.distanceFromTemple ? { k: "From HQ", v: loc.distanceFromTemple } : null,
     { k: "County", v: loc.county },
-    loc.habla ? { k: "Language", v: "English & Español", s: "Hablamos español con Juan y Freddy" } : null,
+    loc.habla ? { k: "Language", v: "English & Español", s: "Hablamos español — quotes, site visits and the build" } : null,
   ].filter((f): f is Fact => f !== null);
 }
 

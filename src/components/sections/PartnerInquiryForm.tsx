@@ -136,7 +136,7 @@ export function PartnerInquiryForm() {
     return (
       <div className={card}>
         <SuccessPanel title="Inquiry received." resetLabel="Edit inquiry" onReset={() => setStatus('idle')}>
-          Thanks, {first}. Julian will reach back within one business day about installs in {countyLine(p.counties)}.
+          Thanks, {first}. We’ll reach back within one business day about installs in {countyLine(p.counties)}.
         </SuccessPanel>
       </div>
     )

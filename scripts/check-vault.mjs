@@ -123,6 +123,12 @@ const rootMd = readdirSync(ROOT).filter((f) => f.endsWith('.md')).sort()
     [/\b12[- ]gauge\b/i, '14-gauge is standard; the upgrade is 11-gauge heavy-duty columns welded to receivers and purlins, never 12-gauge (2026-10-02)'],
     [/\bwe (?:pull|file|submit) (?:the |your |all )?(?:city )?permits?\b|\bpulls permits\b/i, 'permits are advisory only: never say we pull, file or submit the permit (2026-09-07)'],
     [/\bconcrete included\b/i, 'say "concrete available" (priced separately), never "concrete included" (2026-09-28)'],
+    // The same locks in Spanish (the /es mirror, 2026-10-03).
+    [/\b(?:construid|instalad|terminad)[oa]s? en 48 horas\b|\b48 horas de construcci[oó]n\b/i, 'Spanish "48-hour build" - 48 hrs is materials arrival; say "en la misma semana"'],
+    [/\bconcreto incluido\b|\bincluye (?:la )?losa\b/i, 'say "concreto disponible" (priced separately), never "concreto incluido" (2026-09-28)'],
+    [/4,?000 PSI (?:est[aá]ndar|de concreto)\b/i, '4,000 PSI is on request only; 3,000 PSI is standard (reversed 2026-05-01)'],
+    [/\bcalibre 12\b/i, '14-gauge is standard; the upgrade is 11-gauge heavy-duty columns, never 12-gauge (2026-10-02)'],
+    [/\b(?:tramitamos|sacamos|presentamos) (?:el |los |tu |tus )?permisos?\b/i, 'permits are advisory only: never say we pull, file or submit the permit (2026-09-07)'],
   ]
   const EXEMPT = new Set(['Decisions.md', 'Session Notes.md', 'Locked Decisions.md'])
 
@@ -162,6 +168,37 @@ const rootMd = readdirSync(ROOT).filter((f) => f.endsWith('.md')).sort()
     if (!has(rel)) continue
     if (FIX) autofix(rel)
     scanText(rel, read(rel), fail)
+  }
+}
+
+// ---------------------------------------------------------------- rule 5b
+// No owner or crew names on the site (Locked Decisions → No names on the site,
+// 2026-10-03). Scans customer-facing source only: HQ, API routes, owner emails
+// and code comments keep the names, so comment lines are skipped. Report-only:
+// the replacement ("we", "our crew", a role) needs judgement.
+{
+  const NAMES = /\b(?:Juan|Freddy|Julian|Jose Alfredo|Jos[eé] Alfredo)\b/
+  const CUSTOMER_FACING = [
+    /^src\/app\/\(marketing\)\//,
+    /^src\/app\/es\//,
+    /^src\/app\/quotes\//,
+    /^src\/app\/(?:global-)?not-found\.tsx$/,
+    /^src\/components\/(?:site|forge|sections|seo|pages)\//,
+    /^src\/i18n\//,
+    /^src\/emails\/(?:LeadCustomerConfirmation|PartnerInquiryConfirmation|QuoteEmail|BrandLayout|nap)\.tsx?$/,
+    /^src\/lib\/(?:services|locations|competitors|blog|site|llms|quote-pdf|og-card)(?:\.es)?\.tsx?$/,
+  ]
+  const COMMENT = /^\s*(?:\/\/|\/\*|\*|\{\/\*)/
+  const files = execFileSync('git', ['ls-files', '--cached', '--others', '--exclude-standard', 'src'], { encoding: 'utf8' })
+    .split('\n')
+    .filter((f) => /\.(ts|tsx)$/.test(f) && !/\.test\.tsx?$/.test(f))
+    .filter((f) => CUSTOMER_FACING.some((re) => re.test(f)))
+  for (const rel of files) {
+    if (!has(rel)) continue
+    read(rel).split('\n').forEach((line, i) => {
+      if (COMMENT.test(line)) return
+      if (NAMES.test(line)) fail(rel, i + 1, 'no owner or crew names on the site - say "we", "our crew" or a role (2026-10-03)')
+    })
   }
 }
 

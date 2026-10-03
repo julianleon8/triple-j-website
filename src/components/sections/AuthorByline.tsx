@@ -1,5 +1,4 @@
 import { SITE } from '@/lib/site'
-import { getSiteUrl } from '@/lib/site-url'
 
 type Props = {
   /** ISO date when this page was last verified for accuracy. */
@@ -10,57 +9,35 @@ type Props = {
  * E-E-A-T byline for comparison + alternatives pages.
  *
  * Surfaces:
- *   - Reviewer name + role + city (Experience signal)
+ *   - Who reviewed the page (the company, by role and city)
  *   - Last updated date (Trustworthiness — shows you maintain the page)
- *   - JSON-LD Person schema (machine-readable authorship)
  *
  * Renders inline in the page hero section, below the H1+subhead.
- * Per Decisions.md / locked answers — Juan Luis Leon fronts the brand
- * for SEO authorship purposes; he's the LLC's registered owner. Freddy is
- * the foreman (AGENTS.md), so Juan's title is Owner, never Foreman.
+ * No person is named on the site (Locked Decisions → No names on the
+ * site, 2026-10-03), so there is no Person schema: the reviewer is the
+ * Organization the layout already describes.
  */
 export function AuthorByline({ asOf }: Props) {
-  const baseUrl = getSiteUrl()
   const formattedDate = new Date(asOf).toLocaleDateString('en-US', {
     year: 'numeric',
     month: 'long',
     day: 'numeric',
   })
 
-  const personLd = {
-    '@context': 'https://schema.org',
-    '@type': 'Person',
-    name: 'Juan Luis Leon',
-    jobTitle: 'Owner',
-    worksFor: { '@id': `${baseUrl}/#organization`, name: SITE.name },
-    address: {
-      '@type': 'PostalAddress',
-      addressLocality: 'Temple',
-      addressRegion: 'TX',
-      addressCountry: 'US',
-    },
-  }
-
   return (
     <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify(personLd).replace(/</g, '\\u003c'),
-        }}
-      />
       {/* Forge: sits under the hero actions on a navy band. */}
       <div className="mt-8 flex flex-col gap-3 text-[14px] text-white/70 sm:flex-row sm:items-center sm:gap-5">
         <div className="flex items-center gap-3">
           <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-forge-silver/30 bg-forge-navy-raised font-forge-display text-[12px] font-bold text-forge-silver">
-            JL
+            TJ
           </div>
           <div className="leading-tight">
             <div className="font-semibold text-white">
-              Reviewed by Juan Luis Leon
+              Reviewed by the {SITE.name} team
             </div>
             <div className="mt-0.5 text-[12px] text-forge-steel-light">
-              Owner · {SITE.name} · Temple, TX
+              Owners &amp; crew · Temple, TX
             </div>
           </div>
         </div>

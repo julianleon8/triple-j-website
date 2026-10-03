@@ -46,19 +46,19 @@ function jsonLd(baseUrl: string) {
 
 const CREW = [
   {
-    name: 'Juan',
-    role: 'Co-owner · Relationships',
-    body: 'The family connection behind Triple J. Juan builds relationships with customers across Central Texas.',
+    title: 'The owners',
+    role: 'Family · Relationships',
+    body: 'The Temple family behind Triple J. They answer the phone, meet you on site and stand behind every build.',
   },
   {
-    name: 'Julian',
+    title: 'Your point of contact',
     role: 'Sales · Operations',
-    body: 'Your point of contact for planning the build, talking through options and keeping the details moving.',
+    body: 'Plans the build with you, talks through the options and keeps the details moving from quote to install.',
   },
   {
-    name: 'Freddy',
+    title: 'The foreman',
     role: 'Foreman · Fabrication',
-    body: 'Jose Alfredo “Freddy” leads the crew — the measurements, cuts and welds that bring your plans to life.',
+    body: 'Leads the crew — the measurements, cuts and welds that bring your plans to life.',
   },
 ]
 
@@ -173,16 +173,16 @@ export default function AboutPage() {
           <ForgeReveal>
             <SectionHeading
               eyebrow="Meet Triple J"
-              line1="Three names."
-              line2="One family business."
-              lede="Juan, Julian and Jose Alfredo. The people behind the name, based right here in Temple."
+              line1="One family."
+              line2="One crew, start to finish."
+              lede="The family behind the name and the crew that builds every job, based right here in Temple."
               ledeMax="max-w-[540px]"
             />
             <div className="mt-7 border-t border-forge-mist">
               {CREW.map((c) => (
-                <div key={c.name} className="border-b border-forge-mist py-5">
+                <div key={c.title} className="border-b border-forge-mist py-5">
                   <div className="flex flex-wrap items-baseline gap-x-4 gap-y-1">
-                    <h3 className="m-0 font-forge-display text-[24px] font-bold text-forge-navy">{c.name}</h3>
+                    <h3 className="m-0 font-forge-display text-[24px] font-bold text-forge-navy">{c.title}</h3>
                     <span className="text-[12px] font-semibold uppercase tracking-[.16em] text-forge-slate">{c.role}</span>
                   </div>
                   <p className="mt-2 text-[15px] leading-[1.6] text-forge-slate">{c.body}</p>

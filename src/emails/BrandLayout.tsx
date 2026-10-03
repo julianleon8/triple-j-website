@@ -81,7 +81,7 @@ export default function BrandLayout({ preview, children }: BrandLayoutProps) {
           {/* ── Footer — family signature + NAP + tagline ─────────────── */}
           <Section style={footer}>
             <Text style={footerSignature}>
-              Juan, Julian &amp; Freddy
+              The Triple J Metal crew
             </Text>
             <Text style={footerFamily}>
               Family-owned · Founded 2025 · 150+ Central Texas builds
@@ -109,7 +109,7 @@ export default function BrandLayout({ preview, children }: BrandLayoutProps) {
 
 export const TEXT_FOOTER = `
 —
-Triple J Metal — Juan, Julian & Freddy
+Triple J Metal — family-owned, Temple, TX
 ${SITE.addressOneLine}
 ${SITE.phone} · triplejmetaltx.com
 Built right, built fast, built by Triple J.

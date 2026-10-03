@@ -33,7 +33,7 @@ const KEY_FACTS = [
   'Concrete: available on the same contract and priced separately. 3,000 PSI is standard; 4,000 PSI on request.',
   'Turnkey: site prep, concrete and installation on one contract.',
   'Fort Cavazos: 7% military and first-responder discount on every install.',
-  'Spanish: Juan and Freddy speak Spanish; Julian speaks English.',
+  'Spanish: the crew works in English and Spanish (hablamos español).',
   'Permits: we talk customers through permit requirements.',
   'Quotes: free, with a reply within 24 hours.',
 ]

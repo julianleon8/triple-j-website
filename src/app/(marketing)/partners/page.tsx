@@ -41,11 +41,11 @@ const OFFER = [
   },
   {
     title: 'No subcontractors',
-    body: 'Every weld, bolt and panel goes up under one of three named owners — Juan, Julian or Freddy. When something needs answering on-site, the person who can answer is on-site.',
+    body: 'Every weld, bolt and panel goes up under the owners themselves, never a hired-out crew. When something needs answering on-site, the person who can answer is on-site.',
   },
   {
     title: 'Bilingual on every job',
-    body: 'English and Spanish on every site — Julian on the English side, Juan and Freddy on Spanish. Critical when your customers include Hispanic landowners, ranchers or commercial buyers.',
+    body: 'English and Spanish on every site, from the quote to the final weld. Critical when your customers include Hispanic landowners, ranchers or commercial buyers.',
   },
 ]
 
@@ -134,16 +134,16 @@ export default async function PartnersPage() {
               eyebrow="Inquire"
               line1="Tell us about"
               line2="your business."
-              lede="A few quick fields. Julian reads every one personally and reaches back within one business day."
+              lede="A few quick fields. An owner reads every one personally and reaches back within one business day."
               ledeMax="max-w-[520px]"
             />
             <div data-tone="dark" className="mt-7 rounded-[12px] bg-forge-navy px-6 py-[22px] text-white">
               <p className="font-forge-display text-[19px] font-bold">Rather skip the form?</p>
-              <p className="mt-1.5 text-[14px] text-white/75">Call or email Julian directly — the same person who reads the responses.</p>
+              <p className="mt-1.5 text-[14px] text-white/75">Call or email us directly — the same person who reads the responses.</p>
               <div className="mt-4 flex flex-wrap gap-2.5">
                 <TrackedPhoneLink surface="partners_inquiry" className={buttonClass('white', 'tap', false, 'tabular-nums')} />
                 <a href={SITE.emailHref} className={buttonClass('outlineDark', 'tap')}>
-                  Email Julian
+                  Email us
                 </a>
               </div>
             </div>

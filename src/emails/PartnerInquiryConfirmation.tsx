@@ -22,20 +22,20 @@ export default function PartnerInquiryConfirmation(props: PartnerInquiryConfirma
       </Text>
 
       <Text style={{ margin: '0 0 12px' }}>
-        Julian will reach out personally within one business day to talk through how a partnership
+        One of the owners will reach out personally within one business day to talk through how a partnership
         could work — what kind of jobs you typically refer, where in Central Texas they tend to
         land, and what your customers care about most. No sales script.
       </Text>
 
       <Text style={{ margin: '0 0 20px' }}>
-        If you want to skip the wait, you can reach Julian directly at{' '}
+        If you want to skip the wait, you can reach us directly at{' '}
         <a href={SITE.phoneHref} style={{ color: '#00182a', fontWeight: 700 }}>{SITE.phone}</a>{' '}
         or{' '}
-        <a href="mailto:julianleon@triplejmetaltx.com" style={{ color: '#00182a', fontWeight: 700 }}>julianleon@triplejmetaltx.com</a>.
+        <a href={SITE.emailHref} style={{ color: '#00182a', fontWeight: 700 }}>{SITE.email}</a>.
       </Text>
 
       <Text style={{ margin: '20px 0 0', color: '#33475a' }}>
-        — Julian, Triple J Metal
+        — The Triple J Metal crew
       </Text>
     </BrandLayout>
   )
@@ -47,11 +47,11 @@ export function partnerInquiryConfirmationText(props: PartnerInquiryConfirmation
     ``,
     `We received your partner inquiry from ${props.companyName}.`,
     ``,
-    `Julian will reach out personally within one business day to talk through how a partnership could work — what kind of jobs you typically refer, where in Central Texas they tend to land, and what your customers care about most. No sales script.`,
+    `One of the owners will reach out personally within one business day to talk through how a partnership could work — what kind of jobs you typically refer, where in Central Texas they tend to land, and what your customers care about most. No sales script.`,
     ``,
-    `If you want to skip the wait, you can reach Julian directly at ${SITE.phone} or ${SITE.email}.`,
+    `If you want to skip the wait, you can reach us directly at ${SITE.phone} or ${SITE.email}.`,
     ``,
-    `— Julian, Triple J Metal`,
+    `— The Triple J Metal crew`,
     ``,
     `—`,
     napSignature(),

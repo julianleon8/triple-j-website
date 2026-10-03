@@ -215,8 +215,8 @@ export default async function HybridProjectsPage() {
             </p>
             <p className={`mt-3 text-forge-slate ${type.lede}`}>
               We don&apos;t subcontract these. The same welder-owners who build the standard projects
-              are the ones engineering and erecting the hybrids — Freddy on the iron, Julian as the
-              second welder, Juan on the supply chain.
+              are the ones engineering and erecting the hybrids — the foreman on the iron, a second
+              welder beside him, and the supply chain run by the family.
             </p>
           </ForgeReveal>
 
