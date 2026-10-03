@@ -1,5 +1,15 @@
 # Session Notes
 
+## 2026-10-03 — Permit guide drops "2025"; gallery sitemap dated by newest photo
+
+- **Permit guide** moved to `/blog/bell-county-metal-building-permit-guide`: H1, share title and URL drop
+  "2025" (the search title already had); 301 from the old URL in `next.config.ts`; the four city pages and
+  `/military` link to the new one. The fee figures inside stay dated "As of 2025".
+- **Sitemap:** a gallery project's lastmod is now its newest photo, not its creation date; photos are
+  usually added later. `src/app/sitemap.test.ts` gained the case.
+- From the 2026-10-01 SEO check, whose other fixes (gallery sitemap, snippet lengths, `/locations`
+  counties) another session had already shipped on `main`; this session's duplicate commit was dropped.
+
 ## 2026-10-03 — HQ gallery edits reach the public pages without a deploy
 
 **In plain terms.** Changing the gallery in HQ updated the database but not the site. The project

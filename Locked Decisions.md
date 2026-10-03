@@ -78,7 +78,7 @@ Do not copy anything from this file into `AGENTS.md`. That duplication is what p
   one does not. Card text is the page's own H1 and description, never new claims; gallery project pages share
   their own cover photo. (2026-09-28)
 - **`/llms.txt` and `/llms-full.txt` are generated** by `src/lib/llms.ts` from `SITE`, `SERVICES`, `LOCATIONS` and `BLOG_POSTS` — never a hand-kept file in `public/`, which the vault checker cannot see. Its Key facts list may only restate lines from this file. (2026-10-01)
-- **Search snippets:** titles ≤60 characters including the ` | Triple J Metal` suffix the template adds; descriptions ≤155. `src/lib/meta-lengths.test.ts` enforces it for data-driven pages. (2026-10-01)
+- **Search snippets:** titles ≤60 characters including the ` | Triple J Metal` suffix the template adds; descriptions ≤155. `src/lib/meta-lengths.test.ts` enforces it for data-driven pages. (2026-10-01) A guide carries no year in its title or URL; dated figures inside keep their date. The permit guide is `/blog/bell-county-metal-building-permit-guide`, 301 from the `-2025` URL. (2026-10-03)
 - **Bylines:** comparison and alternatives pages say "Reviewed by Juan Luis Leon" with the title **Owner** — Freddy is the foreman. Blog posts credit "the Triple J Metal crew"; name a person only once the owner says who writes or reviews them. (2026-10-01)
 - **CSP stays Report-Only** until about a week of `[csp]` lines from `/api/csp-report` (Vercel runtime logs) has been reviewed. (2026-10-01)
 - **No `AggregateRating` or `Review` JSON-LD anywhere** — and none may be added while the GBP is unverified.

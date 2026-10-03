@@ -186,7 +186,7 @@ export const LOCATIONS: Record<string, LocationData> = {
     ],
     relatedPosts: [
       'fort-cavazos-pcs-metal-carport',
-      'bell-county-metal-building-permit-guide-2025',
+      'bell-county-metal-building-permit-guide',
       'hoa-compliant-metal-buildings-heritage-oaks-bella-charca',
     ],
     localSource: {
@@ -291,7 +291,7 @@ export const LOCATIONS: Record<string, LocationData> = {
     ],
     relatedPosts: [
       'fort-cavazos-pcs-metal-carport',
-      'bell-county-metal-building-permit-guide-2025',
+      'bell-county-metal-building-permit-guide',
     ],
   },
 
@@ -461,7 +461,7 @@ export const LOCATIONS: Record<string, LocationData> = {
       },
     ],
     relatedPosts: [
-      'bell-county-metal-building-permit-guide-2025',
+      'bell-county-metal-building-permit-guide',
       'blackland-prairie-soil-metal-building-foundation',
     ],
     // ── Forge design (2026-10-02), ported verbatim from the handoff ──
@@ -582,7 +582,7 @@ export const LOCATIONS: Record<string, LocationData> = {
       },
     ],
     relatedPosts: [
-      'bell-county-metal-building-permit-guide-2025',
+      'bell-county-metal-building-permit-guide',
       'hoa-compliant-metal-buildings-heritage-oaks-bella-charca',
     ],
     // ── Forge design (2026-10-02), ported verbatim from the handoff ──
