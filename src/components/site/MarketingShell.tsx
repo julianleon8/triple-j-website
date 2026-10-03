@@ -31,7 +31,7 @@ export function MarketingShell({ locale, children }: { locale: Locale; children:
       className="marketing flex flex-1 flex-col bg-white text-forge-navy"
       style={{ colorScheme: "light" }}
     >
-      <OrganizationJsonLd />
+      <OrganizationJsonLd locale={locale} />
       <MarketingAttribution />
       <GoogleAdsTag />
       <LanguageSuggest />

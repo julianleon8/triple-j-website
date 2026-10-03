@@ -1,6 +1,35 @@
 import { SITE } from '@/lib/site'
 import { getSiteUrl } from '@/lib/site-url'
 import { LOCATIONS, LOCATION_SLUGS } from '@/lib/locations'
+import { LANG_TAG, type Locale } from '@/i18n/config'
+import { localizeHref } from '@/i18n/routes'
+
+/** The words in the graph, per page language. The business and its @ids are one in both. */
+const WORDS = {
+  en: {
+    business:
+      'Welded or bolted metal carports, garages, barns, and RV covers with turnkey concrete — built by our Temple, TX crew across Central Texas.',
+    website: 'Welded or bolted metal carports, garages, barns, and RV covers across Central Texas.',
+    catalog: 'Triple J Metal services',
+    services: ['Carports', 'Metal garages', 'Metal barns', 'RV and boat covers', 'Turnkey carports with concrete', 'HOA-compliant structures'],
+  },
+  es: {
+    business:
+      'Cocheras, garajes, graneros y cubiertas para RV metálicos, soldados o atornillados, con concreto llave en mano — construidos por nuestro equipo de Temple, TX en todo el centro de Texas.',
+    website: 'Cocheras, garajes, graneros y cubiertas para RV metálicos, soldados o atornillados, en el centro de Texas.',
+    catalog: 'Servicios de Triple J Metal',
+    services: ['Cocheras', 'Garajes metálicos', 'Graneros metálicos', 'Cubiertas para RV y lanchas', 'Cocheras llave en mano con concreto', 'Estructuras para HOA'],
+  },
+} as const satisfies Record<Locale, unknown>
+
+const SERVICE_PATHS = [
+  '/services/carports',
+  '/services/metal-garages',
+  '/services/barns',
+  '/services/rv-covers',
+  '/services/turnkey-carports-with-concrete',
+  '/services/hoa-compliant-structures',
+]
 
 /**
  * Site-wide schema.org @graph.
@@ -22,8 +51,9 @@ import { LOCATIONS, LOCATION_SLUGS } from '@/lib/locations'
  * NOTE: any field added here must also be reflected in the audit report
  * in docs/SCHEMA-AUDIT.md.
  */
-export function OrganizationJsonLd() {
+export function OrganizationJsonLd({ locale = 'en' }: { locale?: Locale }) {
   const url = getSiteUrl()
+  const w = WORDS[locale]
 
   const cityAreaServed = LOCATION_SLUGS.map((slug) => ({
     '@type': 'City',
@@ -84,8 +114,7 @@ export function OrganizationJsonLd() {
         '@type': ['LocalBusiness', 'HomeAndConstructionBusiness'],
         '@id': `${url}/#localbusiness`,
         name: SITE.name,
-        description:
-          'Welded or bolted metal carports, garages, barns, and RV covers with turnkey concrete — built by our Temple, TX crew across Central Texas.',
+        description: w.business,
         url,
         logo: `${url}/images/logo-lion.png`,
         image: `${url}/og-default.jpg`,
@@ -134,15 +163,11 @@ export function OrganizationJsonLd() {
         ],
         hasOfferCatalog: {
           '@type': 'OfferCatalog',
-          name: 'Triple J Metal services',
-          itemListElement: [
-            { name: 'Carports', url: `${url}/services/carports` },
-            { name: 'Metal garages', url: `${url}/services/metal-garages` },
-            { name: 'Metal barns', url: `${url}/services/barns` },
-            { name: 'RV and boat covers', url: `${url}/services/rv-covers` },
-            { name: 'Turnkey carports with concrete', url: `${url}/services/turnkey-carports-with-concrete` },
-            { name: 'HOA-compliant structures', url: `${url}/services/hoa-compliant-structures` },
-          ].map((svc, i) => ({
+          name: w.catalog,
+          itemListElement: SERVICE_PATHS.map((path, i) => ({
+            name: w.services[i],
+            url: `${url}${localizeHref(path, locale)}`,
+          })).map((svc, i) => ({
             '@type': 'Offer',
             position: i + 1,
             itemOffered: {
@@ -159,10 +184,9 @@ export function OrganizationJsonLd() {
         '@id': `${url}/#website`,
         url,
         name: SITE.name,
-        description:
-          'Welded or bolted metal carports, garages, barns, and RV covers across Central Texas.',
+        description: w.website,
         publisher: { '@id': `${url}/#organization` },
-        inLanguage: 'en-US',
+        inLanguage: LANG_TAG[locale],
       },
     ],
   }
