@@ -53,3 +53,18 @@ Filled in as the pages are built; each row is a judgment call, not a known error
 | `src/lib/gallery-filters.ts` | "Patios & porches", "Custom builds" | "Patios y porches", "Obras a la medida" | Natural? |
 | `src/i18n/pages/photo-lightbox.ts` | "Cover" (cover-photo badge) | "Portada" | Right word? |
 | Gallery project pages | Panel and trim color names ("Charcoal Gray") | left in English | They are the manufacturer's catalog names customers order by. Keep English? |
+| `src/lib/locations.es.ts` (Temple) | "Temple's a railroad town — we weld like one" | "Temple es un pueblo de ferrocarril, y nosotros soldamos como tal" | A pun. Keep, or say it plainly? |
+| `src/lib/locations.es.ts` (Killeen) | "We speak the language: BAH, VA loans…" | "Conocemos el vocabulario: BAH, préstamos VA…" | Natural? |
+| `src/lib/locations.es.ts` (Waco, Georgetown) | "run-in sheds" | "cobertizos de refugio para animales" | What do ranchers here call these? |
+| `src/lib/locations.es.ts` (Nolanville) | "property survey" | "plano de la propiedad (survey)" | Natural? |
+| `src/lib/locations.es.ts` (Lampasas) | "spring-fed pool" | "alberca alimentada por un manantial" | Natural? |
+| `src/lib/locations.es.ts` (9 small towns) | — | One shared Spanish template | The nine smaller towns' intros read alike in Spanish. Fine, or vary them? |
+
+## English found while translating (owner, not the reviewer)
+
+Unrendered legacy fields in `src/lib/locations.ts` still break locks in English. Nothing on the live
+site shows them today (newer fields take precedence), but they should be cleaned so nothing can
+surface them again. The Spanish versions follow the locks.
+
+- `belton.callouts[0]`: "Bell County permits handled. Included in your contract … we file the paperwork." — permits are advisory only (2026-09-07).
+- `belton.heroCopy`, `belton.whyLocal`, `waco.whyLocal`: name national competitors as having "no local crew", "we know everyone in the permit office", "include concrete" — competitor claims were removed 2026-09-26; concrete is "available".
