@@ -1,3 +1,18 @@
+# /login freeze — 2026-10-03 · ON BRANCH `claude/fervent-bohr-uwjpb3`, NOT ON `main`
+
+The sign-in button no longer freezes on "Signing in…" when the proxy bounces a signed-in account
+(Session Notes, same date). **Not live until merged to `main`.**
+1. **Owner, in Vercel:** Settings → Environment Variables → `OWNER_EMAIL` must list every HQ login,
+   comma-separated (today: `juanleon1905@gmail.com`, `julianleon0724@yahoo.com`). The 18:53 UTC bounce says
+   `juanleon1905@gmail.com` is missing. Redeploy after changing it.
+2. **To check, not confirmed:** Supabase auth logs show `referer: http://localhost:3000` on every request,
+   including server-side ones. That is GoTrue falling back to the **Site URL**, so Auth → URL Configuration
+   probably still has the localhost Site URL and no production redirect URL. Invite and password-reset emails
+   would then link to localhost. Use **Add user → Create new user** (no email link) until it is fixed.
+3. After the merge, on the iPhone: sign in with a wrong password, then the right one; it should open HQ.
+
+---
+
 # Internal links — 2026-10-03 · LIVE ON `main` (2433134), CHECKED ON PRODUCTION
 
 Merged to `main` at the owner's request and serving on triplejmetaltx.com about a minute after the push

@@ -98,6 +98,15 @@ An account missing from `OWNER_EMAIL` signs in fine and then gets 403 everywhere
 
 Accounts as of 2026-09-07: `juanleon1905@gmail.com`, `julianleon0724@yahoo.com`.
 
+**Adding an HQ login.** There is no sign-up in the app, and `/setup` only works while zero users exist.
+1. Supabase Dashboard → **Authentication → Users → Add user → Create new user**: email, password,
+   **Auto Confirm User** on. ("Send invitation" emails a link built from the Auth Site URL.)
+2. Append the email to **`OWNER_EMAIL`** in Vercel and **redeploy**. Skipping this is the common failure:
+   the password works, then `/login` shows "Signed in, but that account isn't authorized for HQ."
+3. Insert the email into **`public.app_owners`**, so RLS (`is_owner()`) agrees with `OWNER_EMAIL`. Most HQ
+   reads use the admin client and skip RLS, so a missing row shows up only where the user's own session queries.
+4. They sign in at `/login` (or the installed app) and can add a passkey under HQ → Settings.
+
 ### Passkeys (WebAuthn)
 
 Sign-in with Face ID / Touch ID / a security key. Code is shipped; the **project config is a

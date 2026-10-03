@@ -1,5 +1,25 @@
 # Session Notes
 
+## 2026-10-03 — /login stuck on "Signing in…" after a bounce
+
+- **Report (owner):** in the installed app, a sign-in that didn't work the first time left the button on
+  "Signing in…" for good.
+- **Cause, from the logs:** at 18:53:32 UTC Supabase accepted `juanleon1905@gmail.com`'s password (200), the
+  proxy looked the user up (`/user` 200) and still answered `/hq` with a 307 to `/login`. With a user present,
+  that redirect only happens when the email is not in `OWNER_EMAIL`. The form set `loading` before
+  `router.push('/hq')` and only cleared it on an auth error, so a bounce back to `/login` (same component, still
+  mounted) froze the button. Wrong passwords were never the problem: they reset fine, with and without the SW.
+- **Fix (`src/app/(auth)/login/LoginForm.tsx`):** the push to `/hq` runs in `useTransition`, so the pending
+  state ends wherever the navigation lands; try/finally on both sign-in paths; both buttons disabled while
+  either is busy. Not-authorized banner now reads "Signed in, but that account isn't authorized for HQ."
+  A bounce without that flag shows "Signed in, but HQ didn't open. Close the app and open it again."
+  It says reopen, not retry: Next keeps the `/hq` → `/login` redirect in its client route cache for about five
+  minutes, so a second push replays it without asking the server.
+- **Checks:** typecheck, lint, 610 tests; production build with the service worker against a stand-in Supabase,
+  driven in Chromium: wrong → right, wrong → wrong → right, right first time, not on `OWNER_EMAIL`, server-side
+  bounce, bounce → reopen → right. All reset or land on `/hq`. Not run on an iPhone.
+- **Not fixed here:** `OWNER_EMAIL` itself (Vercel env; the agent token gets 403 on env vars).
+
 ## 2026-10-03 — Internal links, ported onto the Forge redesign
 
 - **Why:** a Liberty Hill visitor spent 26 min on the site (Mac, then iPhone 19 s later), tapping the old hero's
