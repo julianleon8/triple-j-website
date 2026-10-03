@@ -14,6 +14,8 @@ import { BLOG_POSTS } from '@/lib/blog'
 import { LOCATIONS } from '@/lib/locations'
 import { SERVICES } from '@/lib/services'
 import { SITE } from '@/lib/site'
+import { localizeHref } from '@/i18n/routes'
+import { localizedPost } from './blog.es'
 
 const SUMMARY =
   `Family-owned metal building contractor in ${SITE.address.city}, Texas (legal name ${SITE.legalName}, ` +
@@ -85,6 +87,15 @@ function index(base: string, fullLink: boolean): string[] {
     '## Company',
     '',
     ...COMPANY_PAGES.map((p) => link(base, p.path, p.title, p.note)),
+    '',
+    // The /es mirror (2026-10-03): every page above except the legal pages.
+    '## En español',
+    '',
+    link(base, '/es', 'Triple J Metal en español', 'the whole site in Spanish; each page mirrors its English one'),
+    link(base, localizeHref('/services', 'es'), 'Servicios'),
+    link(base, localizeHref('/locations', 'es'), 'Ciudades'),
+    link(base, localizeHref('/quote', 'es'), 'Cotización gratis'),
+    ...BLOG_POSTS.map((p) => link(base, localizeHref(`/blog/${p.slug}`, 'es'), localizedPost(p, 'es').title)),
     ...(fullLink
       ? ['', '## Optional', '', link(base, '/llms-full.txt', 'Full text', 'every service and service-area page in one file')]
       : []),

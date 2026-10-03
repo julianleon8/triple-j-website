@@ -4,6 +4,7 @@ import { BLOG_POSTS } from "@/lib/blog";
 import { ALTERNATIVES_SLUGS } from "@/lib/competitors";
 import { LOCATIONS } from "@/lib/locations";
 import { SERVICE_SLUGS } from "@/lib/services";
+import { spanishPath } from "@/i18n/routes";
 import { getSiteUrl } from "@/lib/site-url";
 import { getAdminClient } from "@/lib/supabase/admin";
 
@@ -161,5 +162,23 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     console.warn("[sitemap] gallery fetch failed, skipping image entries:", err);
   }
 
-  return entries;
+  return withSpanish(entries, base);
+}
+
+/**
+ * Every page with a Spanish twin (src/i18n/routes.ts) is listed in both
+ * languages, each entry naming the pair and x-default (English) — Google's
+ * sitemap form of hreflang. English-only pages (legal) stay single.
+ */
+export function withSpanish(entries: MetadataRoute.Sitemap, base: string): MetadataRoute.Sitemap {
+  return entries.flatMap((entry) => {
+    const path = entry.url.slice(base.length) || "/";
+    const es = spanishPath(path);
+    if (es === null) return [entry];
+    const alternates = { languages: { en: entry.url, es: `${base}${es}`, "x-default": entry.url } };
+    return [
+      { ...entry, alternates },
+      { ...entry, url: `${base}${es}`, alternates },
+    ];
+  });
 }

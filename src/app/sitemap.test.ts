@@ -55,3 +55,17 @@ it('still ships the static sitemap when the gallery query errors', async () => {
   expect(entries.some((e) => e.url.includes('/gallery/'))).toBe(false);
   expect(console.warn).toHaveBeenCalled();
 });
+
+it('lists every page with a Spanish twin in both languages, paired', async () => {
+  const entries = await sitemap();
+  const about = entries.find((e) => e.url === 'https://www.example.com/about');
+  const nosotros = entries.find((e) => e.url === 'https://www.example.com/es/nosotros');
+  expect(nosotros).toBeDefined();
+  const pair = { en: 'https://www.example.com/about', es: 'https://www.example.com/es/nosotros', 'x-default': 'https://www.example.com/about' };
+  expect(about?.alternates?.languages).toEqual(pair);
+  expect(nosotros?.alternates?.languages).toEqual(pair);
+  expect(entries.some((e) => e.url === 'https://www.example.com/es/servicios/cocheras')).toBe(true);
+  // Legal pages are English-only.
+  expect(entries.find((e) => e.url === 'https://www.example.com/privacy')?.alternates).toBeUndefined();
+  expect(entries.some((e) => e.url.includes('/es/privacy'))).toBe(false);
+});

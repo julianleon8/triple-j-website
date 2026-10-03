@@ -44,6 +44,13 @@ export const OG_CONTENT_TYPE = 'image/png'
  */
 export const BRAND_CARD_CONTENT_TYPE = 'image/jpeg'
 export const BRAND_CARD_ALT = `${SITE.name} — welded or bolted metal buildings in ${SITE.address.city}, ${SITE.address.state} and Central Texas`
+/** The /es homepage card (2026-10-03). */
+export const BRAND_CARD_ALT_ES = `${SITE.name} — edificios metálicos soldados o atornillados en ${SITE.address.city}, ${SITE.address.state} y el centro de Texas`
+
+const BRAND_CARD_WORDS = {
+  en: { lines: ['Welded or bolted', 'metal buildings'], region: 'Central Texas' },
+  es: { lines: ['Edificios metálicos', 'soldados o atornillados'], region: 'Centro de Texas' },
+} as const
 
 // satori cannot read CSS variables, so the Forge tokens used are copied here
 // from src/app/globals.css.
@@ -353,7 +360,8 @@ export async function renderOgCard({
  * The homepage card, and the body of `/og-default.jpg`. Returns a JPEG — see
  * BRAND_CARD_CONTENT_TYPE — so it is a plain Response, not an ImageResponse.
  */
-export async function renderBrandCard(): Promise<Response> {
+export async function renderBrandCard(locale: 'en' | 'es' = 'en'): Promise<Response> {
+  const words = BRAND_CARD_WORDS[locale]
   const [{ fonts, logo }, photo] = await Promise.all([
     getOgAssets(),
     readFile(join(process.cwd(), 'public/images/red-iron-frame-hero.jpg')),
@@ -423,8 +431,8 @@ export async function renderBrandCard(): Promise<Response> {
               lineHeight: 1.15,
             }}
           >
-            <span>Welded or bolted</span>
-            <span>metal buildings</span>
+            <span>{words.lines[0]}</span>
+            <span>{words.lines[1]}</span>
           </div>
           <div
             style={{
@@ -435,7 +443,7 @@ export async function renderBrandCard(): Promise<Response> {
               color: OG_STEEL_LIGHT,
             }}
           >
-            {`${SITE.address.city}, ${SITE.address.state} · Central Texas`}
+            {`${SITE.address.city}, ${SITE.address.state} · ${words.region}`}
           </div>
           <div
             style={{

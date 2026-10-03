@@ -6,6 +6,7 @@ import { MobileCallBar } from "@/components/site/MobileCallBar";
 import { GoogleAdsTag } from "@/components/seo/GoogleAdsTag";
 import { OrganizationJsonLd } from "@/components/seo/OrganizationJsonLd";
 import { MarketingAttribution } from "@/components/site/MarketingAttribution";
+import { LanguageSuggest } from "@/components/site/LanguageSuggest";
 import type { Locale } from "@/i18n/config";
 
 /**
@@ -33,6 +34,7 @@ export function MarketingShell({ locale, children }: { locale: Locale; children:
       <OrganizationJsonLd />
       <MarketingAttribution />
       <GoogleAdsTag />
+      <LanguageSuggest />
       <Header />
       <main className="flex-1">{children}</main>
       <Footer locale={locale} />

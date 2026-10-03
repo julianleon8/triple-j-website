@@ -82,8 +82,8 @@ export const PARTNER_FORM = bilingual(
     send: "Send Partner Inquiry",
     received: "Inquiry received.",
     edit: "Edit inquiry",
-    there: "there",
-    thanks: (first: string, area: string) => `Thanks, ${first}. We’ll reach back within one business day about installs in ${area}.`,
+    thanks: (first: string, area: string) =>
+      `Thanks, ${first || "there"}. We’ll reach back within one business day about installs in ${area}.`,
     centralTexas: "Central Texas",
     county: (names: string, many: boolean) => `${names} ${many ? "counties" : "County"}`,
   },
@@ -107,7 +107,6 @@ export const PARTNER_FORM = bilingual(
     send: "Enviar solicitud de alianza",
     received: "Solicitud recibida.",
     edit: "Editar solicitud",
-    there: "",
     thanks: (first: string, area: string) =>
       `Gracias${first ? `, ${first}` : ""}. Te respondemos en un día hábil sobre instalaciones en ${area}.`,
     centralTexas: "el centro de Texas",

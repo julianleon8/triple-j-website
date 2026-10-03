@@ -134,7 +134,7 @@ export function PartnerInquiryForm() {
     'rounded-[12px] border border-forge-silver bg-white p-[clamp(20px,2vw,32px)] text-forge-navy shadow-[var(--shadow-lifted)]'
 
   if (status === 'ok') {
-    const first = p.contact_name.trim().split(/\s+/)[0] || t.there
+    const first = p.contact_name.trim().split(/\s+/)[0] ?? ''
     return (
       <div className={card}>
         <SuccessPanel title={t.received} resetLabel={t.edit} onReset={() => setStatus('idle')}>

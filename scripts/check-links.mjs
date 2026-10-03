@@ -10,6 +10,9 @@
 //   * blog posts      with no link to a service, a city, or the quote page
 //                     (seo/SITE-STRUCTURE.md: each post links 1 service + 1 city + the quote)
 //   * broken links    an internal link whose target is not a page
+//   * language        a Spanish page body linking an English page, or the
+//                     reverse (the /es mirror, 2026-10-03); the language switch
+//                     and the English-only legal links live in the chrome
 //
 // It reads Next's prerendered HTML, so build first. Pages rendered on demand
 // (gallery, partners, quote, hybrid-projects) are not in that output; start the
@@ -47,13 +50,20 @@ const opt = (name, fallback) => {
 const DIR = opt('--dir', '.next/server/app')
 const BASE = opt('--base', null)
 const MIN_IN = Number(opt('--min-in', '2'))
-const IGNORE = new Set(opt('--ignore', '/privacy,/terms,/gallery').split(','))
+const IGNORE = new Set(opt('--ignore', '/privacy,/terms,/gallery,/es/galeria').split(','))
 const STRICT = args.includes('--strict')
 
 // Not part of the public site, or not a page a visitor reads.
-const SKIP = /^\/(hq|login|setup|_|api|offline|quotes|sw|thank-you)/
-// Pages rendered on demand, so absent from the prerendered output.
-const ON_DEMAND = ['/gallery', '/partners', '/quote', '/services/hybrid-projects']
+const SKIP = /^\/(hq|login|setup|_|api|offline|quotes|sw|thank-you|es\/gracias)/
+// Pages rendered on demand, so absent from the prerendered output. The Spanish
+// twins (2026-10-03) render the same way as their English pages.
+const ON_DEMAND = [
+  '/gallery', '/partners', '/quote', '/services/hybrid-projects',
+  '/es/galeria', '/es/socios', '/es/cotizacion', '/es/servicios/proyectos-hibridos',
+]
+// English-only pages a Spanish page may link to (owner, 2026-10-03).
+const ENGLISH_ONLY = new Set(['/privacy', '/terms'])
+const isSpanish = (route) => route === '/es' || route.startsWith('/es/')
 const ORIGIN = 'https://www.triplejmetaltx.com'
 
 function walk(dir) {
@@ -142,12 +152,26 @@ for (const r of routes.filter((p) => p.startsWith('/blog/'))) {
   if (!to.some((t) => t.startsWith('/locations/') || t === '/military')) flags.push(`blog      ${r} -- no city link`)
   if (!to.includes('/quote')) flags.push(`blog      ${r} -- no link to /quote`)
 }
+for (const r of routes.filter((p) => p.startsWith('/es/blog/'))) {
+  const to = [...outbound(r)]
+  if (!to.some((t) => t.startsWith('/es/servicios/'))) flags.push(`blog      ${r} -- no service link`)
+  if (!to.some((t) => t.startsWith('/es/ciudades/') || t === '/es/militares')) flags.push(`blog      ${r} -- no city link`)
+  if (!to.includes('/es/cotizacion')) flags.push(`blog      ${r} -- no link to /es/cotizacion`)
+}
+// A page's body stays in its own language: the header/footer switch and the
+// English-only legal pages are the only crossings, and both live in the chrome.
+for (const r of routes) {
+  for (const to of new Set(pages[r].body)) {
+    if (isSpanish(r) && !isSpanish(to) && !ENGLISH_ONLY.has(to)) flags.push(`language  ${r} -> ${to} (English page in a Spanish body)`)
+    if (!isSpanish(r) && isSpanish(to)) flags.push(`language  ${r} -> ${to} (Spanish page in an English body)`)
+  }
+}
 // On-demand pages are real routes even when this run did not fetch them.
 const known = new Set([...routes, ...ON_DEMAND])
 for (const r of routes) {
   for (const to of new Set([...pages[r].body, ...pages[r].chrome])) {
     // /gallery/<id> pages come from the database and are not crawled.
-    if (!known.has(to) && !to.startsWith('/gallery/')) flags.push(`broken    ${r} -> ${to}`)
+    if (!known.has(to) && !to.startsWith('/gallery/') && !to.startsWith('/es/galeria/')) flags.push(`broken    ${r} -> ${to}`)
   }
 }
 

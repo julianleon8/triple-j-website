@@ -13,6 +13,8 @@ import { describe, expect, it } from 'vitest'
  */
 
 const MARKETING = join(process.cwd(), 'src/app/(marketing)')
+// The Spanish mirror (2026-10-03) is held to the same rule.
+const SPANISH = join(process.cwd(), 'src/app/es')
 const IMAGE_FILES = ['opengraph-image.tsx', 'opengraph-image.jpg', 'opengraph-image.png']
 
 function pages(dir: string): string[] {
@@ -24,7 +26,7 @@ function pages(dir: string): string[] {
 }
 
 describe('share images', () => {
-  const overriding = pages(MARKETING).filter((page) =>
+  const overriding = [...pages(MARKETING), ...pages(SPANISH)].filter((page) =>
     /\bopenGraph\s*:/.test(readFileSync(page, 'utf8')),
   )
 
@@ -33,7 +35,7 @@ describe('share images', () => {
     expect(overriding.length).toBeGreaterThan(12)
   })
 
-  it.each(overriding.map((page) => [relative(MARKETING, page), page]))(
+  it.each(overriding.map((page) => [relative(join(process.cwd(), 'src/app'), page), page]))(
     '%s names openGraph images or has an opengraph-image beside it',
     (_name, page) => {
       const namesImages = /\bimages\s*:/.test(readFileSync(page, 'utf8'))
