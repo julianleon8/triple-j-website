@@ -1,5 +1,50 @@
 # Session Notes
 
+## 2026-10-03 — Forge redesign merged to `main`
+
+Owner: "merge it to main." `main` had the PostHog funnel work; merged it into the Forge branch, kept the Forge
+markup and re-applied every PostHog hook (quote-form funnel events, partner event, CTA location tags, privacy
+paragraph). The new `/contact` message form now links its lead to the PostHog visit and fires
+`contact_message_submitted`. Gate on the merged tree: typecheck, lint, 579 tests, vault check, `next build`.
+
+## 2026-10-03 — PostHog wired into the public site (funnel, drop-off, replay)
+
+- **Why:** the owner wants to see where ad visitors drop off. Nothing was being recorded: Vercel Web Analytics
+  was never enabled (found 2026-09-29).
+- **Shipped on `claude/eloquent-hawking-vnaddd`, not `main`:** `src/lib/analytics.ts` (event names, lazy
+  init, `capture()`), `src/instrumentation-client.ts` (loads PostHog after `load`; one click listener names
+  quote/phone/text/email/directions taps with `cta_location`), quote-form funnel events in `QuoteForm.tsx`,
+  `partner_inquiry_submitted`, and a server-side `lead_created` from `/api/leads` (`src/lib/posthog-server.ts`,
+  sent in `after()`, joined to the browser's person and session). `/ingest` reverse proxy with the
+  trailing-slash redirect re-created for every other path; service worker never caches `/ingest`.
+- **Privacy:** no name/phone/email/message as properties (`route.test.ts` asserts it), replay masks inputs
+  and records no bodies, owner and customer-quote routes never tracked. Privacy policy paragraph rewritten,
+  including the Google Ads enhanced-conversion disclosure it lacked.
+- **Verified:** typecheck, lint, 545 tests, vault check, `next build` (placeholder env), and a headless
+  Chromium run against `next start` that walked the funnel and decoded every PostHog batch: events arrive in
+  order with UTMs; posthog-js is one lazy 99 KB chunk; `/about/` still 308s. Not yet seen in real PostHog —
+  there is no Triple J project or key yet.
+- **Found:** the only PostHog project (org "MESA") is El Mexicano Grille's app. Triple J needs its own.
+- **Same session, PostHog side:** MESA's free plan refused a second project, so the owner made org "Triple J
+  Metal" and put its key in Vercel. Project 643189 configured (Central time, replay only on the live domain,
+  internal filter on by default, error tracking on) and the 15-tile "Ad funnel" dashboard built; every tile
+  ran without errors (empty: no events yet). Owner test leads now also carry `internal_traffic`.
+- **Live:** owner approved; `main` fast-forwarded to 6970c79 and deployed in ~80s. Checked on production: the
+  bundle's key is project 643189's, `/about/` still 308s, a headless visit with `?tj_internal=1` sent
+  `$pageview`, `quote_form_viewed` and replay snapshots (all 200), and both test visits are excluded by the
+  internal filter (2 visitors with it off, 0 with it on). On a phone the quote card is 1,485 px tall, which
+  is why `quote_form_viewed` fires on any visible part rather than a 40% threshold.
+- **Alert:** "Quote submission failed", hourly, on "Failed quote submissions per hour" (captcha reminder
+  excluded), emails the owner.
+- **Push instead of email (owner request):** `/api/webhooks/posthog` (re-reads the alert from PostHog before
+  pushing; no shared secret) and cron `weekly-ads` (Monday push of last week's numbers). PostHog destination
+  created, test-delivered to production (reached the route, got the expected 503 "key not set"), enabled.
+  Both wait on `POSTHOG_PERSONAL_API_KEY`: the agent's Vercel access is 403 on env vars. 3 HQ push devices
+  registered. 557 tests, build clean. Owner then added the key and redeployed: webhook verified (202 "not
+  firing" for the real alert, i.e. the alert read works). Monday push not yet exercised.
+- **Monday email:** subscription 159678 sends the dashboard (10 charts + AI summary) every Monday 12:00 UTC to
+  the owner, the Triple J inbox and Julian's Yahoo; first delivery 2026-10-05. Test send requested on create.
+
 ## 2026-10-02 — Unverified claims cut
 
 Owner: cut the roundup's "within days of contract signing", the `/locations` no-travel-fee line and the

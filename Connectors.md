@@ -21,6 +21,7 @@ Env var values live in `.env` (gitignored) and in Vercel's project settings. `.e
 | **Web Push (VAPID)** | `NEXT_PUBLIC_VAPID_PUBLIC_KEY`, `VAPID_PRIVATE_KEY`, `VAPID_SUBJECT` | `src/lib/push.ts` | HQ push notifications on new leads / hot permits |
 | **Google Maps Static** | `GOOGLE_MAPS_STATIC_KEY` | `src/app/hq/jobs/[id]/components/JobMapHero.tsx` | Job map hero image |
 | **Google Ads** (+ a read-only Google Ads Script, `marketing/google-ads-daily-report.js`, pasted into the account by the owner; it emails a daily spend/leads report and needs no key here) | `NEXT_PUBLIC_GOOGLE_ADS_ID`, `NEXT_PUBLIC_GOOGLE_ADS_CONVERSION_LABEL`, `NEXT_PUBLIC_GOOGLE_ADS_CALL_CONVERSION_LABEL` | `src/components/seo/` (form conversion on `/thank-you`), `src/components/site/TrackedPhone.tsx` + `src/lib/call-conversion.ts` (phone-tap conversion) | Conversion tracking only — no user-facing impact. Account `AW-18112939313`; the form label is live (verified in the production bundle 2026-09-29). The call label is live too (2026-10-01): action "Click to call" (Phone call lead, Primary, "Calls from website visits — clicks on a number"), label set in Vercel Production by the owner and verified in the production bundle. Google's snippet and `onclick` instructions do not apply; `TrackedPhone` fires it. The agent's Vercel token cannot list or create production env vars (403), so env changes are an owner dashboard step |
+| **PostHog** (US Cloud) | `NEXT_PUBLIC_POSTHOG_KEY`, `POSTHOG_PERSONAL_API_KEY` (server, secret) | `src/lib/analytics.ts` (event names, init, `capture()`), `src/instrumentation-client.ts` (loader + site-wide link clicks), `src/components/sections/QuoteForm.tsx` (form funnel), `src/lib/posthog-server.ts` (`lead_created` from `/api/leads`, plus the read API), `src/app/api/webhooks/posthog/route.ts`, cron `weekly-ads`; `/ingest` proxy in `next.config.ts` | Analytics only — no user impact. Blank public key = nothing loads; blank personal key = alerts and the Monday report reach email only. See "PostHog" below |
 | **Vercel cron** | `CRON_SECRET` | `src/lib/cron.ts` (auth + run recording), every route under `src/app/api/cron/` | The crons in `vercel.json` stop firing. See "Scheduled jobs" below |
 | **Vercel build** | `VERCEL_GIT_COMMIT_SHA`, `VERCEL_DEPLOYMENT_CREATED_AT` | `src/app/hq/settings/page.tsx` | Build stamp display only |
 | **Setup route** | `SETUP_KEY` | `src/app/api/setup/route.ts` | One-time bootstrap gate |
@@ -44,6 +45,7 @@ Schedules live in `vercel.json`; times are **UTC** (Central is UTC−5/−6). Ve
 | `morning-brief` | `0 12 * * 1-5` | Weekday 7 AM CDT / 6 AM CST. One email: leads new since the last successful brief, and every non-draft lead still `new`, oldest first, plus the draft count. Email only, to `morningBriefRecipients()` (`MORNING_BRIEF_TO`, else the Triple J inbox + Julian's), **not** `OWNER_EMAIL`. Sent even when empty |
 | `receipt-push` | `0 2 * * *` | Pending `job_receipts` → QuickBooks Purchases, max 25/run. Notifies only on failure |
 | `qbo-keepalive` | `0 16 * * 0` | Exercises the QBO refresh token; warns under 14 days left |
+| `weekly-ads` | `0 12 * * 1` | Monday 7 AM CDT / 6 AM CST. Push only: last 7 days from PostHog (leads and how many from Google Ads, call taps, visitors, failed quote sends) against the 7 before; opens the Ad funnel dashboard. Needs `POSTHOG_PERSONAL_API_KEY`, else records `ok: false` |
 
 Routes live at `src/app/api/cron/<slug>/route.ts`. Each job's pure decision logic sits in
 `src/lib/jobs/<slug>.ts` — **not** in the route: Next 16 rejects any export from a `route.ts`
@@ -180,6 +182,55 @@ Notebook `f4aaf762-3ede-45b9-a1ad-b9d8a6319207`. `~/.claude/skills/` does not ex
 
 ### Vercel Web Analytics is not enabled (found 2026-09-29)
 `src/app/layout.tsx` mounts `<Analytics />`, and `TrackedPhone` sends `phone_displayed` / `phone_clicked`, but the Vercel API answers **"Web Analytics not found"** for `triple-j-website`: it was never turned on, so none of it is recorded. Owner fix: Vercel → project → Analytics → Enable. It cannot be switched on through the Vercel MCP (`update_project` has no such field).
+
+### PostHog — product analytics (added 2026-10-03)
+Funnels, drop-off, heatmaps and session replay for the public site, for the ad budget. **Event names are
+owned by `AnalyticsEvent` in `src/lib/analytics.ts`**; the dashboards are built on them, so add, never rename.
+The ad funnel is `$pageview` → `quote_form_viewed` → `quote_form_started` → `quote_step_completed` →
+`quote_form_submitted` → `lead_created` (server-side, one per saved lead). Phone, text, email, directions and
+quote-link taps are captured site-wide by one click listener, with `cta_location` saying where on the page.
+
+- **Not tracked:** `/hq`, `/login`, `/setup`, `/quotes/[token]`, `/offline`. Never sent as properties: name,
+  phone, email, message. Replay masks every input and records no network bodies.
+- **Lead ↔ person.** A submitted lead calls `identify(<lead UUID>)`, so PostHog → Persons → search the lead ID
+  shows that visitor's pages and recordings.
+- **Internal traffic** carries `internal_traffic = true`: any browser that has opened `/hq` or `/login`, any
+  host other than `triplejmetaltx.com` (previews, localhost), or any page opened with `?tj_internal=1`
+  (`?tj_internal=0` clears it). The project's internal/test filter excludes it. The installed HQ app keeps
+  separate storage on iPhone, so the owner's Safari needs `?tj_internal=1` once.
+- **Load cost.** posthog-js (~100 KB gzipped) is a lazy chunk fetched after the page's `load` event, never in
+  first-load JS. Headless browsers (`navigator.webdriver`) are dropped as bots by the SDK itself.
+- **Proxy.** Browser traffic goes to `/ingest/*` on our own domain, rewritten to `us.i.posthog.com`. PostHog's
+  paths end in `/`, so `skipTrailingSlashRedirect` is on and Next's `/:path+/ → /:path+` redirect is
+  re-created in `redirects()` for everything except `/ingest/`. Verified 2026-10-03: `/about/` still 308s.
+- **Account.** The only existing PostHog project (`Default project`, id 423436, org "MESA") holds El Mexicano
+  Grille's app data. Triple J must not share it: web analytics, replays and person counts would mix. MESA is
+  on the free plan, which allows one project per organization, so creating "Triple J Metal" there failed
+  (403, 2026-10-03). Organizations are unlimited and each has its own free allowance (1M events, 5K
+  recordings a month), so Triple J has its own: **org "Triple J Metal", project "Website" (id 643189)**, created
+  2026-10-03. Its key is in Vercel as `NEXT_PUBLIC_POSTHOG_KEY`. Project settings: timezone America/Chicago;
+  replay and heatmaps only on `triplejmetaltx.com` (`recording_domains`); internal/test filter
+  `internal_traffic` is not `true`, checked by default. The PostHog MCP reaches it after
+  `switch-organization` + `switch-project 643189`; it starts on MESA's project.
+- **Dashboard:** "Ad funnel" (pinned), https://us.posthog.com/project/643189/dashboard/2165121 — headline
+  leads / phone taps / visitors / visit-to-lead rate, the six-step drop-off funnel, failures by reason, the
+  funnel by channel, lead rate by landing page, weekly leads and calls by channel, a utm source × campaign
+  table, taps by button position, homepage form vs `/quote`, and leads by building type and by city.
+- **Monday email:** PostHog subscription 159678, "Ad funnel — Monday report", weekly on Monday at 12:00 UTC
+  (7 AM CDT / 6 AM CST) to `juanleon1905@gmail.com`, `julianleon@triplejmetaltx.com`, `julianleon0724@yahoo.com`:
+  10 of the dashboard's charts plus an AI-written summary steered to leads, calls, source and the biggest
+  funnel drop. Change recipients in PostHog → the dashboard → Subscriptions.
+- **To HQ as push, not email:** alert firings go to PostHog destination "HQ push: Quote submission failed"
+  (function `01a10003-0dbe-0000-d529-39e0579baa25`, enabled, filtered to that alert's id) → `POST /api/webhooks/posthog`
+  with `{ alert_id }`. The route trusts nothing in the request: it re-reads the alert with
+  `POSTHOG_PERSONAL_API_KEY` and pushes only if PostHog says it is firing and notified in the last 15 minutes
+  (`src/lib/jobs/posthog-alert.ts`), so there is no shared secret to keep in sync. Pushes linking to
+  posthog.com open in the browser, not inside the installed app (`src/app/sw.ts`). PostHog still emails each
+  alert's subscriber — it requires at least one — so that email is a backstop, not removable.
+- **Alert "Quote submission failed":** hourly, on insight "Failed quote submissions per hour" (`Twwvx6O1`),
+  fires when the last full hour had any failed send other than the captcha reminder.
+- **Owner test leads** carry `internal_traffic` on `lead_created` too: the form sends the browser's flag as
+  `posthog_internal`, so they fall under the same filter.
 
 ### Stripe does not exist
 Listed in project docs since 2026-04-13 as "phase 4", but there is no dependency, no env var, and no code. The only matches in `src/` are an `accentStripe` CSS variable in `src/emails/BrandLayout.tsx`. **QuickBooks is the money rail.** Descoped 2026-09-06 — see `Locked Decisions.md`.

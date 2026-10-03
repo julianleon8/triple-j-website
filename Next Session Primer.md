@@ -1,13 +1,13 @@
-# Forge redesign — 2026-10-02 · ALL 14 HANDOFF STEPS BUILT EXCEPT HQ, ON A PREVIEW BRANCH
+# Forge redesign — 2026-10-03 · MERGED TO `main` (LIVE); HQ STILL TO DO
 
-Branch **`claude/new-session-471fsd`** carries the whole Forge handoff (`docs/redesign-2026-10/forge-handoff/`):
-PR 00–12 plus step 13a–13c (every public route, OG cards, customer emails, quote PDF, legacy cleanup) and the
-owner's **PBR-panel footer**. Vercel builds a preview per push. **Nothing is on `main`**; merging is the publish
-step and needs the owner's go. Decisions: the 2026-10-02 rows of `Decisions.md` + matching `Locked Decisions.md`.
+The whole Forge handoff (`docs/redesign-2026-10/forge-handoff/`) is **on `main` and live** since 2026-10-03:
+PR 00–12, step 13a–13c (every public route, OG cards, customer emails, quote PDF, legacy cleanup) and the
+owner's **PBR-panel footer**, merged from `claude/new-session-471fsd` together with main's PostHog work.
+Decisions: the 2026-10-02 rows of `Decisions.md` + matching `Locked Decisions.md`.
 
 **Waiting on the owner:**
-1. Review the preview page by page at phone and desktop width (gallery-driven sections were never seen with
-   real photos in the sandbox). Then say "merge".
+1. Check the live site page by page at phone and desktop width — the gallery-driven sections (builds strip,
+   ticker, recent builds, gallery grid) were never seen with real photos in the sandbox.
 2. **Blog posts were brought to the locks** (2026-10-02, owner asked): permit-pulling claims are now advisory,
    PSI/price/concrete/competitor/timeline lines fixed (row in `Decisions.md`); `check-vault.mjs` now rejects the
    retired permit-pulling and concrete-included wording. Skim the five posts on the preview.
@@ -29,6 +29,22 @@ royal-blue focus ring stay until then because only HQ uses them.
 when the text run holds an HTML entity — the space is dropped (`blog/[slug]/posts.test.ts` guards posts).
 `next build` needs a Supabase URL for `/gallery/[id]` — dead-host placeholders inline, never real keys.
 Dev: `npx next dev --webpack`. Tailwind math in `clamp()`/`calc()` needs `_+_` / `_-_`.
+
+---
+
+# PostHog — 2026-10-03 · LIVE; ALERT PUSH VERIFIED, MONDAY PUSH UNTESTED
+
+Funnel tracking is live on `main`; dashboard "Ad funnel":
+https://us.posthog.com/project/643189/dashboard/2165121 (`Connectors.md` → PostHog). Notifications go to HQ push
+(owner, 2026-10-03). `POSTHOG_PERSONAL_API_KEY` is in Vercel and live: the webhook now answers 202 "alert not
+firing" for the real alert id (it read the alert from PostHog), so `alert:read` works. Still to do:
+1. Prove `query:read` and the Monday push: owner opens `/api/cron/weekly-ads` in a browser signed in to HQ (or a
+   cron call with `CRON_SECRET`); expect `ok: true` and a "📈 Website last week" push. If it says 403, the key
+   lacks `query:read`. Otherwise the first run is Mon 2026-10-05 12:00 UTC; check `cron_runs` for `weekly-ads`.
+2. Once a Monday push has arrived, turn off PostHog subscription 159678 (the dashboard email) if the owner
+   still wants email gone. The alert's own email cannot be removed (PostHog needs one subscriber).
+3. Owner's Safari: open the site once with `?tj_internal=1`. One real test lead from a phone.
+4. A17 CSP review: watch for `[csp]` lines naming `/ingest` or `blob:` now that replay is live.
 
 ---
 

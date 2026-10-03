@@ -17,6 +17,7 @@ export function MobileCallBar() {
     <div
       data-forge=""
       data-tone="dark"
+      data-cta-location="mobile_call_bar"
       className="fixed inset-x-0 bottom-0 z-40 border-t border-forge-silver/20 bg-[rgba(0,24,42,.95)] pb-[env(safe-area-inset-bottom)] backdrop-blur-[8px] min-[900px]:hidden"
     >
       <div className="grid grid-cols-2 gap-2 p-2">

@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { NextRequest } from 'next/server';
 
-const mock = vi.hoisted(() => ({ lookup: vi.fn(), insert: vi.fn(), notify: vi.fn(), eq: vi.fn(), captcha: vi.fn(), rate: vi.fn() }));
+const mock = vi.hoisted(() => ({ lookup: vi.fn(), insert: vi.fn(), notify: vi.fn(), eq: vi.fn(), captcha: vi.fn(), rate: vi.fn(), track: vi.fn() }));
 vi.mock('@/lib/supabase/server', () => ({ createClient: vi.fn() }));
 vi.mock('@/lib/supabase/admin', () => ({ getAdminClient: () => ({ from: (table: string) => {
   if (table === 'gallery_items') {
@@ -13,6 +13,7 @@ vi.mock('@/lib/supabase/admin', () => ({ getAdminClient: () => ({ from: (table: 
 vi.mock('@/lib/lead-notifications', () => ({ notifyNewLead: mock.notify }));
 vi.mock('@/lib/captcha', () => ({ verifyHCaptchaToken: mock.captcha }));
 vi.mock('@/lib/rate-limit', () => ({ checkRateLimit: mock.rate, getClientIp: () => 'test' }));
+vi.mock('@/lib/posthog-server', () => ({ trackLeadCreated: mock.track }));
 import { POST } from './route';
 
 const id = '162e4b86-b8d7-4bbb-b828-bc23f90d256d';
@@ -101,5 +102,37 @@ describe('best time to call', () => {
   it('rejects a window outside the three the column allows', async () => {
     expect((await POST(request({ best_time_to_call: 'midnight' }))).status).toBe(400);
     expect(mock.insert).not.toHaveBeenCalled();
+  });
+});
+
+describe('lead_created analytics event', () => {
+  it('joins the browser session and carries no identifying fields', async () => {
+    const response = await POST(request({
+      email: 'test@example.com',
+      utm_source: 'google',
+      gclid: 'abc',
+      posthog_distinct_id: 'anon-123',
+      posthog_session_id: 'session-456',
+    }));
+    expect(response.status).toBe(200);
+    expect(mock.track).toHaveBeenCalledTimes(1);
+    const sent = mock.track.mock.calls[0][0];
+    expect(sent).toMatchObject({ leadId: 'new-lead', distinctId: 'anon-123', sessionId: 'session-456' });
+    expect(sent.properties).toMatchObject({ service_type: 'garage', utm_source: 'google', has_gclid: true, has_email: true });
+    const serialized = JSON.stringify(sent);
+    for (const pii of ['Test Person', '2545550100', 'test@example.com', 'Please make it taller.']) {
+      expect(serialized).not.toContain(pii);
+    }
+    expect(mock.insert.mock.calls[0][0]).not.toHaveProperty('posthog_distinct_id');
+    expect(sent.properties.internal_traffic).toBeUndefined();
+  });
+  it('marks a lead sent from the owner\'s browser as internal traffic', async () => {
+    expect((await POST(request({ posthog_internal: true }))).status).toBe(200);
+    expect(mock.track.mock.calls[0][0].properties.internal_traffic).toBe(true);
+  });
+  it('is not sent when the lead is rejected', async () => {
+    mock.captcha.mockResolvedValue({ success: false });
+    expect((await POST(request())).status).toBe(400);
+    expect(mock.track).not.toHaveBeenCalled();
   });
 });

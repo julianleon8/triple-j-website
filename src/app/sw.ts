@@ -85,6 +85,13 @@ const serwist = new Serwist({
       }),
     },
 
+    // ── PostHog (proxied at /ingest). Never cached: a stale remote config or
+    // recorder script would be served from cache long after PostHog moved on.
+    {
+      matcher: ({ url, sameOrigin }) => sameOrigin && url.pathname.startsWith('/ingest/'),
+      handler: new NetworkOnly(),
+    },
+
     // ── All mutations (POST/PATCH/DELETE) are NetworkOnly.
     // If offline, they fail fast — the client surfaces "you're offline" toast.
     {
@@ -149,6 +156,13 @@ self.addEventListener('notificationclick', (event: NotificationEvent) => {
 
   event.waitUntil(
     (async () => {
+      // PostHog alerts and the Monday report link to us.posthog.com. Navigating
+      // the installed app there would strand it outside its own scope, so an
+      // external link opens in the browser instead.
+      if (new URL(targetUrl, self.location.origin).origin !== self.location.origin) {
+        await self.clients.openWindow(targetUrl)
+        return
+      }
       const all = await self.clients.matchAll({ type: 'window', includeUncontrolled: true })
       // If an HQ tab is already open, focus it and navigate.
       for (const client of all) {

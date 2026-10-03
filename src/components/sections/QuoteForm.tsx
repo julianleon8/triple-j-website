@@ -15,6 +15,7 @@ import { cityFromZip } from "@/lib/locations";
 import { projectService, type ProjectReference } from "@/lib/project-reference";
 import { summarizeBuild } from "@/lib/quote-summary";
 import { captureAttribution } from "@/lib/marketing-attribution";
+import { capture, identifyLead, posthogIds, type AnalyticsEvent } from "@/lib/analytics";
 
 // Lazy-load hCaptcha — its 20 KB chunk only fetches when step 2 first
 // renders. Most homepage visitors never advance past step 1, so this
@@ -488,6 +489,43 @@ export function QuoteForm({
   const captchaRef = useRef<HCaptcha | null>(null);
   const [errMsg, setErrMsg] = useState("");
 
+  // Funnel analytics. Every event carries which form this is, so the homepage
+  // section and the /quote ad landing page can be compared side by side.
+  const cardRef = useRef<HTMLDivElement | null>(null);
+  const startedRef = useRef(false);
+  function track(event: AnalyticsEvent, props: Record<string, string | number | boolean | null | undefined> = {}) {
+    capture(event, { form_source: source, ...props });
+  }
+  function markStarted(field: string) {
+    if (startedRef.current) return;
+    startedRef.current = true;
+    track("quote_form_started", { first_field: field });
+  }
+
+  // quote_form_viewed: the card scrolled into view, once per mount. The gap
+  // between a page view and this is the "never scrolled to the form" drop.
+  // Any visible pixel above the bottom quarter of the screen counts: a ratio
+  // threshold would never fire on a phone where the card is taller than the
+  // screen.
+  useEffect(() => {
+    const card = cardRef.current;
+    if (!card || typeof IntersectionObserver === "undefined") return;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (!entries.some((entry) => entry.isIntersecting)) return;
+        observer.disconnect();
+        capture("quote_form_viewed", {
+          form_source: source,
+          prefilled_service: Boolean(initialService || projectReference),
+          has_reference_project: Boolean(projectReference),
+        });
+      },
+      { rootMargin: "0px 0px -25% 0px" },
+    );
+    observer.observe(card);
+    return () => observer.disconnect();
+  }, [source, initialService, projectReference]);
+
   // Also capture here for isolated form renders; marketing layout captures
   // on pages without a form, such as the blog and partner page.
   useEffect(() => {
@@ -520,6 +558,7 @@ export function QuoteForm({
   }, []);
 
   function update<K extends keyof FormState>(key: K, value: FormState[K]) {
+    markStarted(key);
     setForm((f) => ({ ...f, [key]: value }));
   }
 
@@ -535,39 +574,70 @@ export function QuoteForm({
 
   function next() {
     if (step < 2 && canAdvance()) {
+      track("quote_step_completed", {
+        step: 1,
+        service_type: form.service_type,
+        structure_type: form.service_type === "fencing" ? undefined : form.structure_type,
+        needs_concrete: form.needs_concrete || undefined,
+        has_dimensions: Boolean(form.width && form.length),
+        zip: form.zip.trim(),
+      });
       setStep(2);
       requestAnimationFrame(() => scrollToId("quote-card"));
     }
   }
   function back() {
-    if (step > 1) setStep(1);
+    if (step > 1) {
+      track("quote_step_back", { from_step: step });
+      setStep(1);
+    }
   }
 
   async function handleSubmit() {
     if (step !== 2) return;
     if (HCAPTCHA_SITE_KEY && !captchaToken) {
+      track("quote_form_failed", { reason: "captcha_missing" });
       setStatus("err");
       setErrMsg("Please complete the captcha check below.");
       return;
     }
+    track("quote_form_submitted", {
+      service_type: form.service_type,
+      timeline: form.timeline || undefined,
+      budget: form.budget || undefined,
+      is_military: form.is_military,
+      has_email: Boolean(form.email.trim()),
+    });
     setStatus("submitting");
     setErrMsg("");
 
     const payload = buildLeadPayload(form, { source, captchaToken, referenceId: reference?.id });
 
+    let httpFailed = false;
     try {
       const res = await fetch("/api/leads", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...payload, ...captureAttribution() }),
+        body: JSON.stringify({ ...payload, ...captureAttribution(), ...posthogIds() }),
       });
       if (!res.ok) {
         const body = await res.json().catch(() => ({}));
+        httpFailed = true;
+        track("quote_form_failed", { reason: `http_${res.status}` });
         throw new Error(
           typeof body?.error === "string"
             ? body.error
             : "Something went wrong. Please call us directly.",
         );
+      }
+      const created = await res.json().catch(() => ({}));
+      if (typeof created?.id === "string") {
+        identifyLead(created.id, {
+          lead_service_type: form.service_type,
+          lead_form_source: source,
+          lead_zip: form.zip.trim(),
+          is_military: form.is_military,
+        });
       }
       // Stash the lead's contact data for the /thank-you page to pass
       // to Google Ads enhanced conversions via gtag('set','user_data').
@@ -599,6 +669,8 @@ export function QuoteForm({
       // carries no PII — name, phone and ZIP never go in a URL.
       router.push(isQuotePage ? "/thank-you?from=quote" : "/thank-you");
     } catch (err) {
+      // An HTTP error was already tracked above, with its status.
+      if (!httpFailed) track("quote_form_failed", { reason: "network" });
       setStatus("err");
       setErrMsg(err instanceof Error ? err.message : "Unknown error");
       setCaptchaToken(null);
@@ -611,6 +683,7 @@ export function QuoteForm({
 
   const card: ReactNode = (
     <div
+      ref={cardRef}
       id="quote-card"
       className="w-full max-w-[760px] scroll-mt-4 rounded-[12px] border border-forge-silver bg-white p-[clamp(20px,2vw,32px)] text-forge-navy shadow-[var(--shadow-lifted)]"
     >

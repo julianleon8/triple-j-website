@@ -10,6 +10,7 @@ import { checkRateLimit, getClientIp } from '@/lib/rate-limit'
 import { inferIntentStage } from '@/lib/intent-stage'
 import { SITE } from '@/lib/site'
 import { cityFromZip } from '@/lib/locations'
+import { trackLeadCreated } from '@/lib/posthog-server'
 
 export const dynamic = 'force-dynamic'
 
@@ -63,6 +64,11 @@ const leadSchema = z.object({
   // Spoofing this is uninteresting: anyone who can POST already controls name,
   // phone, message and every utm_* field.
   source:           z.enum(['website_form', 'quote_page']).default('website_form'),
+  // The browser's PostHog IDs, so the server's lead_created event joins the
+  // visitor's funnel and session replay. Never stored on the lead row.
+  posthog_distinct_id: z.string().max(200).optional(),
+  posthog_session_id:  z.string().max(200).optional(),
+  posthog_internal:    z.boolean().optional(),
 })
 
 export async function GET(request: NextRequest) {
@@ -189,6 +195,37 @@ export async function POST(request: NextRequest) {
     if (error) throw error
 
     await notifyNewLead({ lead, sizeLine })
+
+    // Identifying fields (name, phone, email, message) stay out of PostHog.
+    trackLeadCreated({
+      leadId: lead.id,
+      distinctId: data.posthog_distinct_id,
+      sessionId: data.posthog_session_id,
+      properties: {
+        // The owner's own test leads: hidden by the project's internal filter.
+        internal_traffic: data.posthog_internal || undefined,
+        source: data.source,
+        service_type: data.service_type,
+        structure_type: data.structure_type,
+        timeline: data.timeline,
+        intent_stage: intentStage,
+        is_military: data.is_military,
+        city,
+        zip: data.zip,
+        has_email: Boolean(data.email),
+        has_reference_project: Boolean(data.reference_project_id),
+        estimated_budget_min: data.estimated_budget_min,
+        estimated_budget_max: data.estimated_budget_max,
+        utm_source: data.utm_source,
+        utm_medium: data.utm_medium,
+        utm_campaign: data.utm_campaign,
+        utm_term: data.utm_term,
+        utm_content: data.utm_content,
+        has_gclid: Boolean(data.gclid),
+        has_fbclid: Boolean(data.fbclid),
+        landing_url: data.landing_url,
+      },
+    })
 
     return NextResponse.json({ success: true, id: lead.id })
   } catch (error) {

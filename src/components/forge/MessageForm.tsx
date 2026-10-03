@@ -6,6 +6,7 @@ import { useEffect, useRef, useState } from "react";
 import type HCaptcha from "@hcaptcha/react-hcaptcha";
 
 import { GoogleAdsConversion } from "@/components/seo/GoogleAdsConversion";
+import { capture, identifyLead, posthogIds } from "@/lib/analytics";
 import { captureAttribution } from "@/lib/marketing-attribution";
 
 import { FieldLabel, PillGroup, SuccessPanel, TextArea, TextInput } from "./form";
@@ -90,12 +91,18 @@ export function MessageForm() {
       const res = await fetch("/api/leads", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...buildMessagePayload(m, captchaToken), ...captureAttribution() }),
+        body: JSON.stringify({ ...buildMessagePayload(m, captchaToken), ...captureAttribution(), ...posthogIds() }),
       });
       if (!res.ok) {
         const body = await res.json().catch(() => ({}));
         throw new Error(typeof body?.error === "string" ? body.error : "Something went wrong. Please call us directly.");
       }
+      // Funnel analytics: no name, phone, email or message text leaves for PostHog.
+      const created = await res.json().catch(() => ({}));
+      if (typeof created?.id === "string") {
+        identifyLead(created.id, { lead_service_type: "other", lead_form_source: "contact_message" });
+      }
+      capture("contact_message_submitted", { topic: m.topic, reach_by: m.reach, language: m.lang });
       // Same enhanced-conversion stash QuoteForm writes before /thank-you;
       // the <GoogleAdsConversion /> in the success panel reads and clears it.
       try {

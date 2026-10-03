@@ -6,6 +6,7 @@ import type HCaptcha from '@hcaptcha/react-hcaptcha'
 
 import { ToggleChip } from '@/components/forge/Chip'
 import { FieldLabel, PillGroup, SuccessPanel, TextArea, TextInput } from '@/components/forge/form'
+import { capture } from '@/lib/analytics'
 import { SITE } from '@/lib/site'
 
 // Lazy-load hCaptcha — splits the 20 KB widget into its own chunk that
@@ -116,6 +117,7 @@ export function PartnerInquiryForm() {
         setErrorMsg(typeof data?.error === 'string' ? data.error : `Submission failed. Please try again or call ${SITE.phone}.`)
         setStatus('err')
       } else {
+        capture('partner_inquiry_submitted', { company_type: p.company_type || undefined })
         setStatus('ok')
       }
     } catch {
