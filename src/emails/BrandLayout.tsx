@@ -12,6 +12,8 @@ import {
 } from '@react-email/components'
 import type { ReactNode } from 'react'
 import { SITE } from '@/lib/site'
+import type { Locale } from '@/i18n/config'
+import { EMAILS } from '@/i18n/copy/emails'
 
 const LOGO_URL = 'https://www.triplejmetaltx.com/images/logo-lion.png'
 // Forge (2026-10-02): navy replaces royal blue. Names kept so the templates
@@ -28,6 +30,8 @@ const DISPLAY_FONT = 'Cinzel, Georgia, "Times New Roman", serif'
 interface BrandLayoutProps {
   preview: string
   children: ReactNode
+  /** Customer emails follow the customer's preferred_language; owner alerts stay English. */
+  locale?: Locale
 }
 
 /**
@@ -39,9 +43,10 @@ interface BrandLayoutProps {
  * Wraps every transactional email — change here cascades to all 7
  * templates without touching them individually.
  */
-export default function BrandLayout({ preview, children }: BrandLayoutProps) {
+export default function BrandLayout({ preview, children, locale = 'en' }: BrandLayoutProps) {
+  const t = EMAILS[locale].layout
   return (
-    <Html>
+    <Html lang={locale}>
       <Head />
       <Preview>{preview}</Preview>
       <Body style={body}>
@@ -66,7 +71,7 @@ export default function BrandLayout({ preview, children }: BrandLayoutProps) {
                   <Link href={SITE.phoneHref} style={headerPhone}>
                     {SITE.phone}
                   </Link>
-                  <Text style={headerHours}>Mon–Sat · 8a–6p</Text>
+                  <Text style={headerHours}>{t.hours}</Text>
                 </td>
               </tr>
             </table>
@@ -81,14 +86,14 @@ export default function BrandLayout({ preview, children }: BrandLayoutProps) {
           {/* ── Footer — family signature + NAP + tagline ─────────────── */}
           <Section style={footer}>
             <Text style={footerSignature}>
-              The Triple J Metal crew
+              {t.signature}
             </Text>
             <Text style={footerFamily}>
-              Family-owned · Founded 2025 · 150+ Central Texas builds
+              {t.family}
             </Text>
             <Hr style={footerDivider} />
             <Text style={footerTagline}>
-              BUILT RIGHT · BUILT FAST · BUILT BY TRIPLE J
+              {t.tagline}
             </Text>
             <Text style={footerNap}>
               {SITE.addressOneLine} ·{' '}

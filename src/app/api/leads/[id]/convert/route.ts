@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { requireOwner } from '@/lib/auth'
 import { getAdminClient } from '@/lib/supabase/admin'
+import { asPreferredLanguage, isMissingLanguageColumn, withoutLanguage } from '@/lib/preferred-language'
 
 export const dynamic = 'force-dynamic'
 
@@ -21,7 +22,9 @@ export async function POST(
 
   const { data: lead, error: leadErr } = await admin
     .from('leads')
-    .select('id, name, phone, email, city, zip')
+    // '*', not a column list: preferred_language (034) may not exist yet, and
+    // naming a missing column fails the whole read.
+    .select('*')
     .eq('id', id)
     .single()
   if (leadErr || !lead) {
@@ -42,18 +45,21 @@ export async function POST(
     return NextResponse.json({ customer_id: existing.id, existed: true })
   }
 
-  const { data: customer, error: insErr } = await admin
-    .from('customers')
-    .insert({
-      lead_id: id,
-      name: lead.name,
-      phone: lead.phone,
-      email: lead.email,
-      city: lead.city,
-      zip: lead.zip,
-    })
-    .select('id')
-    .single()
+  // The customer keeps the lead's language: it picks the quote email, SMS and PDF.
+  const row = {
+    lead_id: id,
+    name: lead.name,
+    phone: lead.phone,
+    email: lead.email,
+    city: lead.city,
+    zip: lead.zip,
+    preferred_language: asPreferredLanguage(lead.preferred_language),
+  }
+  let { data: customer, error: insErr } = await admin.from('customers').insert(row).select('id').single()
+  if (isMissingLanguageColumn(insErr)) {
+    console.error('[convert] preferred_language column missing — apply migration 034.')
+    ;({ data: customer, error: insErr } = await admin.from('customers').insert(withoutLanguage(row)).select('id').single())
+  }
   if (insErr || !customer) {
     return NextResponse.json({ error: 'Failed to create customer' }, { status: 500 })
   }

@@ -31,6 +31,8 @@ interface LeadOwnerAlertProps {
   /** When the customer said they can take a call, e.g. "Evening (after 5)". */
   bestTimeLabel?: string | null
   isMilitary: boolean
+  /** Came in through the Spanish site (leads.preferred_language = 'es'). */
+  isSpanish?: boolean
   message?: string | null
   submittedAt: string
 }
@@ -79,6 +81,7 @@ export default function LeadOwnerAlert(props: LeadOwnerAlertProps) {
   ]
   if (email) rows.push(['Email', <Link key="e" href={`mailto:${email}`} style={dataLink}>{email}</Link>])
   if (bestTimeLabel) rows.push(['Best time', bestTimeLabel])
+  if (props.isSpanish) rows.push(['Language', <strong key="l" style={{ color: '#0a0e1a' }}>Español — call back in Spanish</strong>])
   // Distance is the first thing Julian wants off a new lead — it decides
   // whether the job is worth the truck before anything else on this card does.
   rows.push([
@@ -196,6 +199,7 @@ export function leadOwnerAlertText(props: LeadOwnerAlertProps): string {
   ]
   if (props.email) lines.push(`✉️  ${props.email}`)
   if (props.bestTimeLabel) lines.push(`⏰ Best time: ${props.bestTimeLabel}`)
+  if (props.isSpanish) lines.push(`🗣️  Español — call back in Spanish`)
   lines.push(``)
   lines.push(`— DETAILS —`)
   if (props.structureType) lines.push(`Steel: ${props.structureType}`)

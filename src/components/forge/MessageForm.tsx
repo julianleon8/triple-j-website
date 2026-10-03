@@ -6,6 +6,9 @@ import { useEffect, useRef, useState } from "react";
 import type HCaptcha from "@hcaptcha/react-hcaptcha";
 
 import { GoogleAdsConversion } from "@/components/seo/GoogleAdsConversion";
+import { MESSAGE_FORM } from "@/i18n/copy/forms";
+import { localizeHref } from "@/i18n/routes";
+import { useLocale } from "@/i18n/use-locale";
 import { capture, identifyLead, posthogIds } from "@/lib/analytics";
 import { captureAttribution } from "@/lib/marketing-attribution";
 
@@ -46,7 +49,9 @@ export function canSendMessage(m: MessageInput): boolean {
 /**
  * The /api/leads body for a contact message. The public endpoint takes it as
  * it is: no ZIP, `service_type: "other"`, and the topic, preferred channel and
- * language composed into the notes the owner alert shows.
+ * language composed into the notes the owner alert shows. The Language pill
+ * also sets the lead's stored language: it outranks the page's, because it is
+ * what the person asked for.
  */
 export function buildMessagePayload(m: MessageInput, captchaToken: string | null) {
   const head = `Topic: ${m.topic} · Reach by: ${m.reach} · Language: ${m.lang}`;
@@ -59,14 +64,19 @@ export function buildMessagePayload(m: MessageInput, captchaToken: string | null
     source: "website_form" as const,
     message: `Contact page message — ${head}${text ? ` — ${text}` : ""}`.slice(0, 1000),
     captcha_token: captchaToken ?? undefined,
+    language: m.lang === "Español" ? ("es" as const) : ("en" as const),
   };
 }
 
 const EMPTY: MessageInput = { topic: "New build", name: "", phone: "", email: "", reach: "Call", lang: "English", text: "" };
 
-/** "Send a message" card on /contact (#message). */
+/** "Send a message" card on /contact and /es/contacto (#message). */
 export function MessageForm() {
-  const [m, setM] = useState<MessageInput>(EMPTY);
+  const locale = useLocale();
+  const t = MESSAGE_FORM[locale];
+  // On the Spanish site the Language pill starts on Español.
+  const empty: MessageInput = locale === "es" ? { ...EMPTY, lang: "Español" } : EMPTY;
+  const [m, setM] = useState<MessageInput>(empty);
   const [status, setStatus] = useState<"idle" | "sending" | "sent" | "err">("idle");
   const [err, setErr] = useState("");
   const [captchaToken, setCaptchaToken] = useState<string | null>(null);
@@ -82,7 +92,7 @@ export function MessageForm() {
     if (!canSendMessage(m)) return;
     if (HCAPTCHA_SITE_KEY && !captchaToken) {
       setStatus("err");
-      setErr("Please complete the captcha check below.");
+      setErr(t.captcha);
       return;
     }
     setStatus("sending");
@@ -95,7 +105,7 @@ export function MessageForm() {
       });
       if (!res.ok) {
         const body = await res.json().catch(() => ({}));
-        throw new Error(typeof body?.error === "string" ? body.error : "Something went wrong. Please call us directly.");
+        throw new Error(typeof body?.error === "string" && locale === "en" ? body.error : t.error);
       }
       // Funnel analytics: no name, phone, email or message text leaves for PostHog.
       const created = await res.json().catch(() => ({}));
@@ -116,7 +126,7 @@ export function MessageForm() {
       setStatus("sent");
     } catch (e) {
       setStatus("err");
-      setErr(e instanceof Error ? e.message : "Something went wrong. Please call us directly.");
+      setErr(e instanceof Error ? e.message : t.error);
       setCaptchaToken(null);
       captchaRef.current?.resetCaptcha();
     }
@@ -126,9 +136,9 @@ export function MessageForm() {
     "scroll-mt-4 rounded-[12px] border border-forge-silver bg-white p-[clamp(20px,2vw,32px)] text-forge-navy shadow-[var(--shadow-lifted)]";
 
   if (status === "sent") {
-    const first = m.name.trim().split(/\s+/)[0] || "neighbor";
-    const who = m.lang === "Español" ? "We’ll reach you in Spanish" : "We’ll reach you";
-    const via = m.reach === "Call" ? "by phone" : m.reach === "Text" ? "by text" : "by email";
+    const first = m.name.trim().split(/\s+/)[0] || t.neighbor;
+    const who = t.reachYou(m.lang === "Español");
+    const via = t.via[m.reach];
     const at = m.reach === "Email" ? m.email.trim() : m.phone.trim();
     return (
       <div id="message" className={card}>
@@ -137,15 +147,15 @@ export function MessageForm() {
             per success-panel mount; no-ops without the Ads env vars. */}
         <GoogleAdsConversion />
         <SuccessPanel
-          title={`Got it, ${first}.`}
-          resetLabel="Send another message"
+          title={t.gotIt(first)}
+          resetLabel={t.another}
           onReset={() => {
-            setM(EMPTY);
+            setM(empty);
             setStatus("idle");
             setCaptchaToken(null);
           }}
         >
-          {who} {via} at <b className="text-forge-navy tabular-nums">{at}</b> — same day during business hours.
+          {who} {via} {t.at} <b className="text-forge-navy tabular-nums">{at}</b> {t.sameDay}
         </SuccessPanel>
       </div>
     );
@@ -153,40 +163,40 @@ export function MessageForm() {
 
   return (
     <div id="message" className={card}>
-      <h2 className="font-forge-display text-[clamp(24px,1vw_+_16px,30px)] font-black leading-[1.15]">Send a message</h2>
-      <p className="mt-2 text-[14px] text-forge-slate">Goes straight to the owners’ phones. No black hole.</p>
+      <h2 className="font-forge-display text-[clamp(24px,1vw_+_16px,30px)] font-black leading-[1.15]">{t.heading}</h2>
+      <p className="mt-2 text-[14px] text-forge-slate">{t.sub}</p>
       <div className="mt-6 flex flex-col gap-[22px]">
         <PillGroup
-          label="What’s this about?"
-          options={TOPICS.map((v) => ({ v, label: v }))}
+          label={t.topic}
+          options={TOPICS.map((v) => ({ v, label: t.topics[v] }))}
           value={m.topic}
           onChange={(v) => v && set("topic", v)}
         />
         <div className="grid grid-cols-[repeat(auto-fit,minmax(min(100%,200px),1fr))] gap-2.5">
-          <TextInput type="text" autoComplete="name" placeholder="Full name" aria-label="Full name" value={m.name} onChange={(e) => set("name", e.target.value)} />
-          <TextInput type="tel" autoComplete="tel" placeholder="Phone" aria-label="Phone" value={m.phone} onChange={(e) => set("phone", e.target.value)} />
+          <TextInput type="text" autoComplete="name" placeholder={t.name} aria-label={t.name} value={m.name} onChange={(e) => set("name", e.target.value)} />
+          <TextInput type="tel" autoComplete="tel" placeholder={t.phone} aria-label={t.phone} value={m.phone} onChange={(e) => set("phone", e.target.value)} />
         </div>
         <div className="grid grid-cols-[repeat(auto-fit,minmax(min(100%,200px),1fr))] gap-[22px]">
-          <PillGroup label="Best way to reach you" options={REACH.map((v) => ({ v, label: v }))} value={m.reach} onChange={(v) => v && set("reach", v)} />
-          <PillGroup label="Language" options={LANGS.map((v) => ({ v, label: v }))} value={m.lang} onChange={(v) => v && set("lang", v)} />
+          <PillGroup label={t.reach} options={REACH.map((v) => ({ v, label: t.reaches[v] }))} value={m.reach} onChange={(v) => v && set("reach", v)} />
+          <PillGroup label={t.language} options={LANGS.map((v) => ({ v, label: v }))} value={m.lang} onChange={(v) => v && set("lang", v)} />
         </div>
         {/* The design offers Email as a channel; without an address it could never be used. */}
         {m.reach === "Email" ? (
           <div>
-            <FieldLabel htmlFor="message-email">Email</FieldLabel>
+            <FieldLabel htmlFor="message-email">{t.email}</FieldLabel>
             <TextInput id="message-email" type="email" autoComplete="email" placeholder="you@example.com" value={m.email} onChange={(e) => set("email", e.target.value)} />
           </div>
         ) : null}
         <div>
           <FieldLabel htmlFor="message-text" optional>
-            Message
+            {t.message}
           </FieldLabel>
           <TextArea
             id="message-text"
             rows={4}
             maxLength={800}
             className="min-h-[110px]"
-            placeholder="What are you thinking about building?"
+            placeholder={t.messagePlaceholder}
             value={m.text}
             onChange={(e) => set("text", e.target.value)}
           />
@@ -197,6 +207,7 @@ export function MessageForm() {
               ref={captchaRef}
               sitekey={HCAPTCHA_SITE_KEY}
               theme="light"
+              languageOverride={locale}
               onVerify={(t) => setCaptchaToken(t)}
               onExpire={() => setCaptchaToken(null)}
               onError={() => setCaptchaToken(null)}
@@ -214,12 +225,12 @@ export function MessageForm() {
           disabled={status === "sending" || !canSendMessage(m)}
           className="inline-flex w-full cursor-pointer items-center justify-center gap-2 rounded-[6px] bg-forge-navy px-[26px] py-[15px] text-[16px] font-semibold text-white transition-colors duration-200 hover:bg-forge-navy-raised disabled:cursor-not-allowed disabled:opacity-50"
         >
-          {status === "sending" ? "Sending…" : "Send to Triple J"} <span aria-hidden="true">→</span>
+          {status === "sending" ? t.sending : t.send} <span aria-hidden="true">→</span>
         </button>
         <p className="-mt-2 text-center text-[12px] text-forge-slate">
-          Prefer a full quote?{" "}
-          <Link href="/quote" className="border-b border-forge-silver font-semibold text-forge-navy hover:border-forge-navy">
-            Use the 2-step quote form
+          {t.preferQuote}{" "}
+          <Link href={localizeHref("/quote", locale)} className="border-b border-forge-silver font-semibold text-forge-navy hover:border-forge-navy">
+            {t.quoteLink}
           </Link>
           .
         </p>

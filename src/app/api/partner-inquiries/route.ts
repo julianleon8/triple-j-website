@@ -4,11 +4,12 @@ import { requireOwner } from '@/lib/auth'
 import { getAdminClient } from '@/lib/supabase/admin'
 import { getResend } from '@/lib/resend'
 import PartnerInquiryOwnerAlert, { partnerInquiryOwnerAlertText } from '@/emails/PartnerInquiryOwnerAlert'
-import PartnerInquiryConfirmation, { partnerInquiryConfirmationText } from '@/emails/PartnerInquiryConfirmation'
+import PartnerInquiryConfirmation, { partnerInquiryConfirmationSubject, partnerInquiryConfirmationText } from '@/emails/PartnerInquiryConfirmation'
 import { sendPushBackground } from '@/lib/push'
 import { verifyHCaptchaToken } from '@/lib/captcha'
 import { checkRateLimit, getClientIp } from '@/lib/rate-limit'
 import { SITE } from '@/lib/site'
+import { isMissingLanguageColumn, withoutLanguage } from '@/lib/preferred-language'
 
 export const dynamic = 'force-dynamic'
 
@@ -41,6 +42,8 @@ const partnerInquirySchema = z.object({
   estimated_volume: z.enum(['exploring', '1-5', '6-20', '20-50', '50+']).optional().or(z.literal('')),
   referral_source:  z.string().max(200).optional().or(z.literal('')),
   captcha_token:    z.string().optional(),
+  // /es/socios sends 'es' (2026-10-03): stored, and picks the confirmation email.
+  language:         z.enum(['en', 'es']).default('en'),
 })
 
 export async function GET() {
@@ -81,21 +84,23 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    const { data: inquiry, error } = await getAdminClient()
-      .from('partner_inquiries')
-      .insert({
-        company_name:     data.company_name.trim(),
-        company_type:     data.company_type,
-        contact_name:     data.contact_name.trim(),
-        contact_role:     data.contact_role?.trim() || null,
-        email:            data.email.trim(),
-        phone:            data.phone?.trim() || null,
-        message:          data.message.trim(),
-        estimated_volume: data.estimated_volume || null,
-        referral_source:  data.referral_source?.trim() || null,
-      })
-      .select()
-      .single()
+    const row = {
+      company_name:     data.company_name.trim(),
+      company_type:     data.company_type,
+      contact_name:     data.contact_name.trim(),
+      contact_role:     data.contact_role?.trim() || null,
+      email:            data.email.trim(),
+      phone:            data.phone?.trim() || null,
+      message:          data.message.trim(),
+      estimated_volume: data.estimated_volume || null,
+      referral_source:  data.referral_source?.trim() || null,
+      preferred_language: data.language,
+    }
+    let { data: inquiry, error } = await getAdminClient().from('partner_inquiries').insert(row).select().single()
+    if (isMissingLanguageColumn(error)) {
+      console.error('[partner-inquiries] preferred_language column missing — apply migration 034. Saving without it.')
+      ;({ data: inquiry, error } = await getAdminClient().from('partner_inquiries').insert(withoutLanguage(row)).select().single())
+    }
 
     if (error) throw error
 
@@ -140,12 +145,13 @@ export async function POST(request: NextRequest) {
     const confirmProps = {
       contactName: data.contact_name.trim(),
       companyName: data.company_name.trim(),
+      locale: data.language,
     }
     await getResend().emails.send({
       from: 'Triple J Metal <no-reply@triplejmetaltx.com>',
       replyTo: 'julianleon@triplejmetaltx.com',
       to: data.email,
-      subject: 'We got your partner inquiry — Triple J Metal',
+      subject: partnerInquiryConfirmationSubject(data.language),
       react: PartnerInquiryConfirmation(confirmProps),
       text: partnerInquiryConfirmationText(confirmProps),
       tags: [

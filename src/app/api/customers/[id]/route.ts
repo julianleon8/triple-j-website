@@ -11,6 +11,8 @@ const schema = z.object({
   email: z.string().email().optional().or(z.literal('')),
   city: z.string().max(100).optional(),
   notes: z.string().max(2000).optional(),
+  // Migration 034: picks the quote email, SMS and PDF language.
+  preferred_language: z.enum(['en', 'es']).optional(),
 })
 
 export async function PATCH(

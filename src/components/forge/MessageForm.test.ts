@@ -16,6 +16,7 @@ it('posts a public-API lead: no ZIP, service "other", the details in the notes',
     source: 'website_form',
     message: 'Contact page message — Topic: A question · Reach by: Text · Language: Español — Do you build on caliche?',
     captcha_token: 'tok',
+    language: 'es',
   });
 });
 
@@ -25,4 +26,9 @@ it('needs a name, a 10-digit phone, and an address when email is the channel', (
   expect(canSendMessage({ ...base, name: 'A' })).toBe(false);
   expect(canSendMessage({ ...base, reach: 'Email' })).toBe(false);
   expect(canSendMessage({ ...base, reach: 'Email', email: 'ana@example.com' })).toBe(true);
+});
+
+it('stores the language the person picked, whatever the page', () => {
+  expect(buildMessagePayload({ ...base, lang: 'English' }, null).language).toBe('en');
+  expect(buildMessagePayload(base, null).language).toBe('es');
 });

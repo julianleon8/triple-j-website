@@ -11,6 +11,7 @@ import { inferIntentStage } from '@/lib/intent-stage'
 import { SITE } from '@/lib/site'
 import { cityFromZip } from '@/lib/locations'
 import { trackLeadCreated } from '@/lib/posthog-server'
+import { isMissingLanguageColumn, withoutLanguage } from '@/lib/preferred-language'
 
 export const dynamic = 'force-dynamic'
 
@@ -69,7 +70,12 @@ const leadSchema = z.object({
   posthog_distinct_id: z.string().max(200).optional(),
   posthog_session_id:  z.string().max(200).optional(),
   posthog_internal:    z.boolean().optional(),
+  // The page's language (2026-10-03): /es forms send 'es'. Stored as
+  // leads.preferred_language (migration 034); picks the customer email and
+  // flags the owner alert for a Spanish callback.
+  language:         z.enum(['en', 'es']).default('en'),
 })
+
 
 export async function GET(request: NextRequest) {
   const denied = await requireOwner()
@@ -159,38 +165,45 @@ export async function POST(request: NextRequest) {
     }
 
     // Persist to Supabase
-    const { data: lead, error } = await getAdminClient()
-      .from('leads')
-      .insert({
-        name:            data.name,
-        phone:           data.phone,
-        email:           data.email || null,
-        city,
-        zip:             data.zip || null,
-        service_type:    data.service_type,
-        structure_type:  data.structure_type || null,
-        needs_concrete:  data.needs_concrete || null,
-        current_surface: data.current_surface || null,
-        timeline:        data.timeline || null,
-        best_time_to_call: data.best_time_to_call || null,
-        is_military:     data.is_military,
-        message:         [sizeLine, projectNotes, projectNotes && data.message?.trim() ? `Customer notes:\n${data.message.trim()}` : data.message?.trim()].filter(Boolean).join('\n\n') || null,
-        source:          data.source,
-        utm_source:      data.utm_source || null,
-        utm_medium:      data.utm_medium || null,
-        utm_campaign:    data.utm_campaign || null,
-        utm_term:        data.utm_term || null,
-        utm_content:     data.utm_content || null,
-        gclid:           data.gclid || null,
-        fbclid:          data.fbclid || null,
-        landing_url:     data.landing_url || null,
-        referrer_url:    referrerUrl,
-        intent_stage:    intentStage,
-        estimated_budget_min: data.estimated_budget_min ?? null,
-        estimated_budget_max: data.estimated_budget_max ?? null,
-      })
-      .select()
-      .single()
+    const row = {
+      name:            data.name,
+      phone:           data.phone,
+      email:           data.email || null,
+      city,
+      zip:             data.zip || null,
+      service_type:    data.service_type,
+      structure_type:  data.structure_type || null,
+      needs_concrete:  data.needs_concrete || null,
+      current_surface: data.current_surface || null,
+      timeline:        data.timeline || null,
+      best_time_to_call: data.best_time_to_call || null,
+      is_military:     data.is_military,
+      message:         [sizeLine, projectNotes, projectNotes && data.message?.trim() ? `Customer notes:\n${data.message.trim()}` : data.message?.trim()].filter(Boolean).join('\n\n') || null,
+      source:          data.source,
+      utm_source:      data.utm_source || null,
+      utm_medium:      data.utm_medium || null,
+      utm_campaign:    data.utm_campaign || null,
+      utm_term:        data.utm_term || null,
+      utm_content:     data.utm_content || null,
+      gclid:           data.gclid || null,
+      fbclid:          data.fbclid || null,
+      landing_url:     data.landing_url || null,
+      referrer_url:    referrerUrl,
+      intent_stage:    intentStage,
+      estimated_budget_min: data.estimated_budget_min ?? null,
+      estimated_budget_max: data.estimated_budget_max ?? null,
+      preferred_language: data.language,
+    }
+    let { data: lead, error } = await getAdminClient().from('leads').insert(row).select().single()
+    if (isMissingLanguageColumn(error)) {
+      // Migration 034 not applied: keep the lead, and keep the language in its notes.
+      console.error('[leads] preferred_language column missing — apply migration 034. Saving without it.')
+      const fallback = {
+        ...withoutLanguage(row),
+        message: [row.preferred_language === 'es' ? 'Language: Español' : null, row.message].filter(Boolean).join('\n\n') || null,
+      }
+      ;({ data: lead, error } = await getAdminClient().from('leads').insert(fallback).select().single())
+    }
 
     if (error) throw error
 
@@ -210,6 +223,7 @@ export async function POST(request: NextRequest) {
         timeline: data.timeline,
         intent_stage: intentStage,
         is_military: data.is_military,
+        language: data.language,
         city,
         zip: data.zip,
         has_email: Boolean(data.email),

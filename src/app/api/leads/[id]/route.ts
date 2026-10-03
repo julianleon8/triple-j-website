@@ -50,6 +50,8 @@ const schema = z.object({
   needs_concrete:        z.string().max(50).nullable().optional(),
   message:               z.string().max(2000).nullable().optional(),
   dup_ack:               z.boolean().optional(),
+  // Migration 034: corrected in HQ after a call, or set for a phone lead.
+  preferred_language:    z.enum(['en', 'es']).optional(),
 })
 
 export async function PATCH(

@@ -6,6 +6,9 @@ import type HCaptcha from '@hcaptcha/react-hcaptcha'
 
 import { ToggleChip } from '@/components/forge/Chip'
 import { FieldLabel, PillGroup, SuccessPanel, TextArea, TextInput } from '@/components/forge/form'
+import type { Locale } from '@/i18n/config'
+import { PARTNER_FORM } from '@/i18n/copy/forms'
+import { useLocale } from '@/i18n/use-locale'
 import { capture } from '@/lib/analytics'
 import { SITE } from '@/lib/site'
 
@@ -22,13 +25,8 @@ const HCAPTCHA_SITE_KEY = process.env.NEXT_PUBLIC_HCAPTCHA_SITE_KEY
 
 type CompanyType = 'supplier' | 'manufacturer' | 'dealer' | 'gc' | 'other'
 
-const COMPANY_TYPES: { v: CompanyType; label: string }[] = [
-  { v: 'supplier', label: 'Supplier' },
-  { v: 'manufacturer', label: 'Manufacturer' },
-  { v: 'dealer', label: 'Dealer' },
-  { v: 'gc', label: 'General contractor' },
-  { v: 'other', label: 'Other' },
-]
+// Labels: PARTNER_FORM[locale].companyTypes.
+const COMPANY_TYPES: CompanyType[] = ['supplier', 'manufacturer', 'dealer', 'gc', 'other']
 
 export const COUNTIES = ['Bell', 'McLennan', 'Coryell', 'Williamson', 'Lampasas', 'Falls', 'Milam', 'Burnet'] as const
 const VOLUMES = ['1–2 jobs / mo', '3–5 jobs / mo', '6+ jobs / mo', 'Project by project'] as const
@@ -49,7 +47,7 @@ export type PartnerInput = {
  * volume, so both ride in `message` (which must be 10+ characters) — the
  * owner alert and HQ Partners show it as written.
  */
-export function buildPartnerPayload(p: PartnerInput, captchaToken: string | null) {
+export function buildPartnerPayload(p: PartnerInput, captchaToken: string | null, language: Locale = 'en') {
   const head = [
     `Counties: ${p.counties.length ? p.counties.join(', ') : 'none picked'}`,
     p.volume ? `Volume: ${p.volume}` : '',
@@ -62,6 +60,7 @@ export function buildPartnerPayload(p: PartnerInput, captchaToken: string | null
     phone: p.phone.trim(),
     message: [head, p.notes.trim()].filter(Boolean).join('\n\n').slice(0, 2000),
     captcha_token: captchaToken ?? undefined,
+    language,
   }
 }
 
@@ -70,9 +69,10 @@ export function canSendPartner(p: PartnerInput): boolean {
   return p.company_name.trim().length >= 2 && p.contact_name.trim().length >= 2 && /\S+@\S+/.test(p.email)
 }
 
-export function countyLine(counties: string[]): string {
-  if (!counties.length) return 'Central Texas'
-  return `${counties.join(', ')} ${counties.length === 1 ? 'County' : 'counties'}`
+export function countyLine(counties: string[], locale: Locale = 'en'): string {
+  const t = PARTNER_FORM[locale]
+  if (!counties.length) return t.centralTexas
+  return t.county(counties.join(', '), counties.length > 1)
 }
 
 const EMPTY: PartnerInput = {
@@ -87,6 +87,8 @@ const EMPTY: PartnerInput = {
 }
 
 export function PartnerInquiryForm() {
+  const locale = useLocale()
+  const t = PARTNER_FORM[locale]
   const [p, setP] = useState<PartnerInput>(EMPTY)
   const [status, setStatus] = useState<'idle' | 'submitting' | 'ok' | 'err'>('idle')
   const [errorMsg, setErrorMsg] = useState<string | null>(null)
@@ -101,7 +103,7 @@ export function PartnerInquiryForm() {
     setErrorMsg(null)
     if (!canSendPartner(p)) return
     if (HCAPTCHA_SITE_KEY && !captchaToken) {
-      setErrorMsg('Please complete the captcha check below.')
+      setErrorMsg(t.captcha)
       setStatus('err')
       return
     }
@@ -110,18 +112,18 @@ export function PartnerInquiryForm() {
       const res = await fetch('/api/partner-inquiries', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(buildPartnerPayload(p, captchaToken)),
+        body: JSON.stringify(buildPartnerPayload(p, captchaToken, locale)),
       })
       if (!res.ok) {
         const data = await res.json().catch(() => ({}))
-        setErrorMsg(typeof data?.error === 'string' ? data.error : `Submission failed. Please try again or call ${SITE.phone}.`)
+        setErrorMsg(typeof data?.error === 'string' && locale === 'en' ? data.error : t.failed(SITE.phone))
         setStatus('err')
       } else {
         capture('partner_inquiry_submitted', { company_type: p.company_type || undefined })
         setStatus('ok')
       }
     } catch {
-      setErrorMsg(`Network error. Please try again or call ${SITE.phone}.`)
+      setErrorMsg(t.network(SITE.phone))
       setStatus('err')
     }
     setCaptchaToken(null)
@@ -132,11 +134,11 @@ export function PartnerInquiryForm() {
     'rounded-[12px] border border-forge-silver bg-white p-[clamp(20px,2vw,32px)] text-forge-navy shadow-[var(--shadow-lifted)]'
 
   if (status === 'ok') {
-    const first = p.contact_name.trim().split(/\s+/)[0] || 'there'
+    const first = p.contact_name.trim().split(/\s+/)[0] || t.there
     return (
       <div className={card}>
-        <SuccessPanel title="Inquiry received." resetLabel="Edit inquiry" onReset={() => setStatus('idle')}>
-          Thanks, {first}. We’ll reach back within one business day about installs in {countyLine(p.counties)}.
+        <SuccessPanel title={t.received} resetLabel={t.edit} onReset={() => setStatus('idle')}>
+          {t.thanks(first, countyLine(p.counties, locale))}
         </SuccessPanel>
       </div>
     )
@@ -146,22 +148,22 @@ export function PartnerInquiryForm() {
     <div className={card}>
       <div className="flex flex-col gap-[22px]">
         <PillGroup
-          label="You are a…"
-          options={COMPANY_TYPES}
+          label={t.youAre}
+          options={COMPANY_TYPES.map((v) => ({ v, label: t.companyTypes[v] }))}
           value={p.company_type}
           onChange={(v) => set('company_type', v)}
         />
         <div>
-          <FieldLabel as="p">Company &amp; contact</FieldLabel>
+          <FieldLabel as="p">{t.companyContact}</FieldLabel>
           <div className="grid grid-cols-[repeat(auto-fit,minmax(min(100%,200px),1fr))] gap-2.5">
-            <TextInput placeholder="Company" aria-label="Company" autoComplete="organization" value={p.company_name} onChange={(e) => set('company_name', e.target.value)} />
-            <TextInput placeholder="Your name" aria-label="Your name" autoComplete="name" value={p.contact_name} onChange={(e) => set('contact_name', e.target.value)} />
-            <TextInput type="tel" placeholder="Phone" aria-label="Phone" autoComplete="tel" value={p.phone} onChange={(e) => set('phone', e.target.value)} />
-            <TextInput type="email" placeholder="Email" aria-label="Email" autoComplete="email" value={p.email} onChange={(e) => set('email', e.target.value)} />
+            <TextInput placeholder={t.company} aria-label={t.company} autoComplete="organization" value={p.company_name} onChange={(e) => set('company_name', e.target.value)} />
+            <TextInput placeholder={t.yourName} aria-label={t.yourName} autoComplete="name" value={p.contact_name} onChange={(e) => set('contact_name', e.target.value)} />
+            <TextInput type="tel" placeholder={t.phone} aria-label={t.phone} autoComplete="tel" value={p.phone} onChange={(e) => set('phone', e.target.value)} />
+            <TextInput type="email" placeholder={t.email} aria-label={t.email} autoComplete="email" value={p.email} onChange={(e) => set('email', e.target.value)} />
           </div>
         </div>
         <div>
-          <FieldLabel as="p">Counties you need covered</FieldLabel>
+          <FieldLabel as="p">{t.counties}</FieldLabel>
           <div className="flex flex-wrap gap-2">
             {COUNTIES.map((c) => (
               <ToggleChip key={c} selected={p.counties.includes(c)} onToggle={() => toggleCounty(c)}>
@@ -171,22 +173,22 @@ export function PartnerInquiryForm() {
           </div>
         </div>
         <PillGroup
-          label="Typical volume"
+          label={t.volume}
           optional
           allowDeselect
-          options={VOLUMES.map((v) => ({ v, label: v }))}
+          options={VOLUMES.map((v) => ({ v, label: t.volumes[v] }))}
           value={p.volume}
           onChange={(v) => set('volume', v)}
         />
         <div>
           <FieldLabel htmlFor="partner-notes" optional>
-            Anything else
+            {t.notes}
           </FieldLabel>
           <TextArea
             id="partner-notes"
             rows={3}
             maxLength={1500}
-            placeholder="Product lines, typical building sizes, timelines…"
+            placeholder={t.notesPlaceholder}
             value={p.notes}
             onChange={(e) => set('notes', e.target.value)}
           />
@@ -197,6 +199,7 @@ export function PartnerInquiryForm() {
               ref={captchaRef}
               sitekey={HCAPTCHA_SITE_KEY}
               theme="light"
+              languageOverride={locale}
               onVerify={(t) => setCaptchaToken(t)}
               onExpire={() => setCaptchaToken(null)}
               onError={() => setCaptchaToken(null)}
@@ -214,7 +217,7 @@ export function PartnerInquiryForm() {
           disabled={status === 'submitting' || !canSendPartner(p)}
           className="inline-flex w-full cursor-pointer items-center justify-center gap-2 rounded-[6px] bg-forge-navy px-[26px] py-[15px] text-[16px] font-semibold text-white transition-colors duration-200 hover:bg-forge-navy-raised disabled:cursor-not-allowed disabled:opacity-50"
         >
-          {status === 'submitting' ? 'Sending…' : 'Send Partner Inquiry'} <span aria-hidden="true">→</span>
+          {status === 'submitting' ? t.sending : t.send} <span aria-hidden="true">→</span>
         </button>
       </div>
     </div>

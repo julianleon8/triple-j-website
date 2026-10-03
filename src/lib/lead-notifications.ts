@@ -1,5 +1,5 @@
 import LeadOwnerAlert, { leadOwnerAlertText } from '@/emails/LeadOwnerAlert'
-import LeadCustomerConfirmation, { leadCustomerConfirmationText } from '@/emails/LeadCustomerConfirmation'
+import LeadCustomerConfirmation, { leadCustomerConfirmationSubject, leadCustomerConfirmationText } from '@/emails/LeadCustomerConfirmation'
 import { sendPushBackground } from '@/lib/push'
 import { getResend } from '@/lib/resend'
 import { formatCityOrZip } from '@/lib/locations'
@@ -63,6 +63,8 @@ export interface LeadRecord {
   is_military: boolean | null
   message: string | null
   source: string | null
+  /** 'es' when the lead came in through the Spanish site (migration 034). */
+  preferred_language?: string | null
   created_at?: string
 }
 
@@ -110,6 +112,9 @@ export async function notifyNewLead({ lead, sizeLine = null }: NotifyNewLeadInpu
   // what gets persisted.
   const locationLine = formatLeadLocation(lead.city, lead.zip)
   const submittedAt = `${new Date(lead.created_at ?? Date.now()).toLocaleString('en-US', { timeZone: 'America/Chicago' })} CST`
+  // A Spanish-site lead: the owner alert and push say so, so a Spanish
+  // speaker calls back, and the customer's confirmation is in Spanish.
+  const isSpanish = lead.preferred_language === 'es'
 
   const ownerAlertProps = {
     leadId: lead.id,
@@ -130,11 +135,12 @@ export async function notifyNewLead({ lead, sizeLine = null }: NotifyNewLeadInpu
     timeline: lead.timeline,
     bestTimeLabel: label(lead.best_time_to_call, BEST_TIME_LABELS),
     isMilitary: !!lead.is_military,
+    isSpanish,
     message: lead.message?.trim() || null,
     submittedAt,
   }
 
-  const subject = `${sourcePrefix}: ${displayName(lead)} — ${locationLine} — ${serviceType}${lead.is_military ? ' ⭐' : ''}${lead.timeline === 'asap' ? ' ⚡' : ''}`
+  const subject = `${sourcePrefix}: ${displayName(lead)} — ${locationLine} — ${serviceType}${isSpanish ? ' · Español' : ''}${lead.is_military ? ' ⭐' : ''}${lead.timeline === 'asap' ? ' ⚡' : ''}`
 
   // OWNER_EMAIL unset used to throw here (`undefined!.split`), taking down every
   // lead notification with a TypeError rather than a legible error. Guarded the
@@ -168,12 +174,13 @@ export async function notifyNewLead({ lead, sizeLine = null }: NotifyNewLeadInpu
       serviceType,
       isMilitary: !!lead.is_military,
       timeline: lead.timeline,
+      locale: isSpanish ? ('es' as const) : ('en' as const),
     }
     const customerResult = await getResend().emails.send({
       from: 'Triple J Metal <no-reply@triplejmetaltx.com>',
       replyTo: 'julianleon@triplejmetaltx.com',
       to: lead.email,
-      subject: 'We got your quote request — Triple J Metal',
+      subject: leadCustomerConfirmationSubject(customerProps.locale),
       react: LeadCustomerConfirmation(customerProps),
       text: leadCustomerConfirmationText(customerProps),
       tags: [
@@ -193,7 +200,7 @@ export async function notifyNewLead({ lead, sizeLine = null }: NotifyNewLeadInpu
     (isHot ? '⚡' : '🔔')
   sendPushBackground({
     title: `${pushIcon} ${isHot ? 'HOT lead' : 'New lead'}: ${displayName(lead)}`,
-    body: [locationLine, serviceType.replace('_', ' '), sizeLine].filter(Boolean).join(' · '),
+    body: [locationLine, serviceType.replace('_', ' '), sizeLine, isSpanish ? 'Español' : null].filter(Boolean).join(' · '),
     url: '/hq',
     tag: `lead-${lead.id}`,
   })

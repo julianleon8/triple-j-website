@@ -14,6 +14,7 @@ import { LeadStatusButtons } from './components/LeadStatusButtons'
 import { AttributionCard } from './components/AttributionCard'
 import { ReferrerPicker } from './components/ReferrerPicker'
 import { IntentStagePicker } from './components/IntentStagePicker'
+import { LanguagePicker } from '@/components/hq/LanguagePicker'
 import { zipInfo, formatDistance, formatLeadLocation, BAND_LABELS } from '@/lib/zip'
 import { dialablePhone, isMessengerLead, MESSENGER_INBOX_URL } from '@/lib/lead-contact'
 
@@ -57,6 +58,8 @@ type LeadRecord = {
   lost_at: string | null
   lost_reason: string | null
   lost_reason_notes: string | null
+  // Migration 034 — 'es' for a Spanish-site lead. Absent until it is applied.
+  preferred_language?: string | null
 }
 
 /**
@@ -71,6 +74,10 @@ const CAPTURE_SOURCES = new Set(['phone', 'voice_memo'])
 
 const THANKS_MESSAGE =
   'Thanks for the call — quote coming today. — Julian, Triple J Metal'
+// A Spanish lead gets the same promise in Spanish, signed by the company:
+// whoever speaks Spanish on the crew sends it from their own phone.
+const THANKS_MESSAGE_ES =
+  'Gracias por la llamada — hoy te mandamos la cotización. — Triple J Metal'
 
 export default async function LeadDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
@@ -121,6 +128,11 @@ export default async function LeadDetailPage({ params }: { params: Promise<{ id:
             <p className="mt-0.5 text-[14px] text-(--text-secondary)">
               {[readable(lead.service_type), lead.structure_type, formatLeadLocation(lead.city, lead.zip)].filter(Boolean).join(' · ') || 'Lead'}
             </p>
+            {lead.preferred_language === 'es' && (
+              <p className="mt-1.5 inline-flex rounded-full bg-(--brand-fg)/15 px-2.5 py-0.5 text-[12px] font-semibold text-(--brand-fg)">
+                Español — call back in Spanish
+              </p>
+            )}
           </div>
           <span className={`shrink-0 rounded-full px-2.5 py-1 text-[11px] font-semibold capitalize ${statusClass}`}>
             {lead.status}
@@ -163,7 +175,7 @@ export default async function LeadDetailPage({ params }: { params: Promise<{ id:
         <SendNowCard
           leadId={lead.id}
           phone={dial}
-          message={THANKS_MESSAGE}
+          message={lead.preferred_language === 'es' ? THANKS_MESSAGE_ES : THANKS_MESSAGE}
         />
       )}
 
@@ -208,6 +220,8 @@ export default async function LeadDetailPage({ params }: { params: Promise<{ id:
           <Field label="Source" value={readable(lead.source)} />
         </dl>
       </section>
+
+      <LanguagePicker endpoint={`/api/leads/${lead.id}`} current={lead.preferred_language} />
 
       <IntentStagePicker
         leadId={lead.id}

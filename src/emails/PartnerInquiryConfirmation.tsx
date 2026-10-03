@@ -2,56 +2,62 @@ import { Heading, Text } from '@react-email/components'
 import BrandLayout from './BrandLayout'
 import { napSignature } from './nap'
 import { SITE } from '@/lib/site'
+import type { Locale } from '@/i18n/config'
+import { EMAILS } from '@/i18n/copy/emails'
 
 interface PartnerInquiryConfirmationProps {
   contactName: string
   companyName: string
+  /** The page the inquiry came from: /es/socios inquiries get Spanish. */
+  locale?: Locale
+}
+
+export function partnerInquiryConfirmationSubject(locale: Locale = 'en'): string {
+  return EMAILS[locale].partnerConfirm.subject
 }
 
 export default function PartnerInquiryConfirmation(props: PartnerInquiryConfirmationProps) {
-  const { contactName, companyName } = props
+  const { contactName, companyName, locale = 'en' } = props
+  const t = EMAILS[locale].partnerConfirm
 
   return (
-    <BrandLayout preview={`Thanks ${contactName} — we got your partner inquiry from ${companyName}`}>
+    <BrandLayout locale={locale} preview={t.preview(contactName, companyName)}>
       <Heading as="h2" style={{ fontSize: 20, fontWeight: 700, margin: '0 0 12px', color: '#00182a' }}>
-        Thanks, {contactName}!
+        {t.thanks(contactName)}
       </Heading>
 
       <Text style={{ margin: '0 0 12px' }}>
-        We received your partner inquiry from <strong>{companyName}</strong>.
+        {t.received} <strong>{companyName}</strong>.
       </Text>
 
-      <Text style={{ margin: '0 0 12px' }}>
-        One of the owners will reach out personally within one business day to talk through how a partnership
-        could work — what kind of jobs you typically refer, where in Central Texas they tend to
-        land, and what your customers care about most. No sales script.
-      </Text>
+      <Text style={{ margin: '0 0 12px' }}>{t.reachOut}</Text>
 
       <Text style={{ margin: '0 0 20px' }}>
-        If you want to skip the wait, you can reach us directly at{' '}
+        {t.skip}{' '}
         <a href={SITE.phoneHref} style={{ color: '#00182a', fontWeight: 700 }}>{SITE.phone}</a>{' '}
-        or{' '}
+        {t.or}{' '}
         <a href={SITE.emailHref} style={{ color: '#00182a', fontWeight: 700 }}>{SITE.email}</a>.
       </Text>
 
       <Text style={{ margin: '20px 0 0', color: '#33475a' }}>
-        — The Triple J Metal crew
+        {t.signature}
       </Text>
     </BrandLayout>
   )
 }
 
 export function partnerInquiryConfirmationText(props: PartnerInquiryConfirmationProps): string {
+  const t = EMAILS[props.locale ?? 'en'].partnerConfirm
   return [
-    `Thanks, ${props.contactName}!`,
+    t.thanks(props.contactName),
     ``,
-    `We received your partner inquiry from ${props.companyName}.`,
+    `${t.received} ${props.companyName}.`,
     ``,
-    `One of the owners will reach out personally within one business day to talk through how a partnership could work — what kind of jobs you typically refer, where in Central Texas they tend to land, and what your customers care about most. No sales script.`,
+    t.reachOut,
     ``,
-    `If you want to skip the wait, you can reach us directly at ${SITE.phone} or ${SITE.email}.`,
+    `${t.skip} ${SITE.phone} ${t.or} ${SITE.email}.`,
     ``,
-    `— The Triple J Metal crew`,
+    t.signature,
     ``,
     `—`,
     napSignature(),

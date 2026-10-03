@@ -9,6 +9,7 @@ import { CardSkeleton } from '@/components/hq/Skeleton'
 import { ActivityTimeline, type TimelineLead, type TimelineQuote, type TimelineJob } from '../_components/ActivityTimeline'
 import { ReviewSection } from './components/ReviewSection'
 import { PermissionToggles } from './components/PermissionToggles'
+import { LanguagePicker } from '@/components/hq/LanguagePicker'
 
 type CustomerRecord = {
   id: string
@@ -32,6 +33,8 @@ type CustomerRecord = {
   feature_permission_asked_at: string | null
   repeat_contact_permission: boolean | null
   repeat_contact_asked_at: string | null
+  // Migration 034 — picks the quote email, SMS and PDF language.
+  preferred_language?: string | null
 }
 
 export default async function CustomerDetailPage({ params }: { params: Promise<{ id: string }> }) {
@@ -96,6 +99,8 @@ export default async function CustomerDetailPage({ params }: { params: Promise<{
           <p className="mt-2 whitespace-pre-wrap text-[15px] text-(--text-primary)">{customer.notes}</p>
         </section>
       )}
+
+      <LanguagePicker endpoint={`/api/customers/${customer.id}`} current={customer.preferred_language} />
 
       <ReviewSection
         customerId={customer.id}

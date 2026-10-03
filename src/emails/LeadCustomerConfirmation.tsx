@@ -2,6 +2,8 @@ import { Heading, Text, Section, Link } from '@react-email/components'
 import BrandLayout, { BRAND_COLOR, DISPLAY_FONT, INK_900 } from './BrandLayout'
 import { napSignature } from './nap'
 import { SITE } from '@/lib/site'
+import type { Locale } from '@/i18n/config'
+import { EMAILS, serviceWord } from '@/i18n/copy/emails'
 
 interface LeadCustomerConfirmationProps {
   name: string
@@ -10,34 +12,43 @@ interface LeadCustomerConfirmationProps {
   serviceType: string
   isMilitary: boolean
   timeline?: string | null
+  /** The lead's preferred_language: the Spanish site's leads get Spanish. */
+  locale?: Locale
+}
+
+export function leadCustomerConfirmationSubject(locale: Locale = 'en'): string {
+  return EMAILS[locale].leadConfirm.subject
 }
 
 export default function LeadCustomerConfirmation(props: LeadCustomerConfirmationProps) {
-  const { name, phone, city, serviceType, isMilitary, timeline } = props
-  const service = serviceType.replace(/_/g, ' ')
+  const { name, phone, city, serviceType, isMilitary, timeline, locale = 'en' } = props
+  const t = EMAILS[locale].leadConfirm
+  const service = serviceWord(serviceType, locale)
   const isHot = timeline === 'asap'
+  const [gotA, gotService, gotB, gotCity, gotC] = t.gotIt(service, city)
+  const [nextA, nextB] = t.next(isHot)
 
   return (
     // The preview follows the body's promise (response lock): "today" only for ASAP.
-    <BrandLayout preview={`Got it ${name} — your ${service} request is in. We'll call you back ${isHot ? 'today' : 'within 24 hours'}.`}>
+    <BrandLayout locale={locale} preview={t.preview(name, service, isHot)}>
       {/* ── Eyebrow ──────────────────────────────────────────────── */}
-      <Text style={eyebrow}>QUOTE REQUEST RECEIVED</Text>
+      <Text style={eyebrow}>{t.eyebrow}</Text>
 
       {/* ── Big magazine headline ────────────────────────────────── */}
       <Heading as="h1" style={headline}>
-        Thanks, {name}.
+        {t.thanks(name)}
       </Heading>
       <Text style={subhead}>
-        We got your <strong style={{ color: INK_900 }}>{service}</strong> request for <strong style={{ color: INK_900 }}>{city}</strong>.
+        {gotA}<strong style={{ color: INK_900 }}>{gotService}</strong>{gotB}<strong style={{ color: INK_900 }}>{gotCity}</strong>{gotC}
       </Text>
 
       {/* ── The promise — what happens next ──────────────────────── */}
       <Section style={promiseCard}>
-        <Text style={promiseLabel}>WHAT HAPPENS NEXT</Text>
+        <Text style={promiseLabel}>{t.nextLabel}</Text>
         <Text style={promiseText}>
-          A real person from our Temple crew will call you back at{' '}
+          {nextA}{' '}
           <strong style={{ color: INK_900 }}>{phone}</strong>{' '}
-          {isHot ? 'today' : 'within 24 hours'} with an honest quote. No pressure, no offshore call center, no automated form replies.
+          {nextB}
         </Text>
       </Section>
 
@@ -45,23 +56,21 @@ export default function LeadCustomerConfirmation(props: LeadCustomerConfirmation
       {isMilitary && (
         <Section style={{ ...flagCard, background: '#f6f3e8', borderLeftColor: '#4b5320' }}>
           <Text style={{ ...flagText, color: '#3a4119' }}>
-            ⭐ <strong>Military / First Responder discount noted.</strong> 7% off your install. Thank you for your service.
+            ⭐ <strong>{t.military[0]}</strong> {t.military[1]}
           </Text>
         </Section>
       )}
       {isHot && (
         <Section style={{ ...flagCard, background: '#f4f6f8', borderLeftColor: BRAND_COLOR }}>
           <Text style={{ ...flagText, color: INK_900 }}>
-            ⚡ <strong>ASAP request flagged.</strong> Your callback is moving to the top of the list.
+            ⚡ <strong>{t.hot[0]}</strong> {t.hot[1]}
           </Text>
         </Section>
       )}
 
       {/* ── Soft urgency — call us if you can't wait ─────────────── */}
       <Section style={{ margin: '24px 0 0' }}>
-        <Text style={callNowText}>
-          Can&rsquo;t wait? Call us directly:
-        </Text>
+        <Text style={callNowText}>{t.cantWait}</Text>
         <Link href={SITE.phoneHref} style={callNowButton}>
           📞 {SITE.phone}
         </Link>
@@ -69,43 +78,46 @@ export default function LeadCustomerConfirmation(props: LeadCustomerConfirmation
 
       {/* ── Family signature ─────────────────────────────────────── */}
       <Text style={signature}>
-        — The Triple J Metal crew
+        {t.signature}
         <br />
-        <span style={signatureSub}>Family-owned · Temple, TX</span>
+        <span style={signatureSub}>{t.signatureSub}</span>
       </Text>
     </BrandLayout>
   )
 }
 
 export function leadCustomerConfirmationText(props: LeadCustomerConfirmationProps): string {
+  const locale = props.locale ?? 'en'
+  const t = EMAILS[locale].leadConfirm
   const isHot = props.timeline === 'asap'
+  const [nextA, nextB] = t.next(isHot)
   const lines = [
-    `QUOTE REQUEST RECEIVED`,
+    t.eyebrow,
     ``,
-    `Thanks, ${props.name}.`,
+    t.thanks(props.name),
     ``,
-    `We got your ${props.serviceType.replace(/_/g, ' ')} request for ${props.city}.`,
+    t.gotIt(serviceWord(props.serviceType, locale), props.city).join(''),
     ``,
-    `WHAT HAPPENS NEXT`,
-    `A real person from our Temple crew will call you back at ${props.phone} ${isHot ? 'today' : 'within 24 hours'} with an honest quote. No pressure, no offshore call center, no automated form replies.`,
+    t.nextLabel,
+    `${nextA} ${props.phone} ${nextB}`,
   ]
   if (props.isMilitary) {
     lines.push(``)
-    lines.push(`⭐ Military / First Responder discount noted. 7% off your install. Thank you for your service.`)
+    lines.push(`⭐ ${t.military[0]} ${t.military[1]}`)
   }
   if (isHot) {
     lines.push(``)
-    lines.push(`⚡ ASAP request flagged. Your callback is moving to the top of the list.`)
+    lines.push(`⚡ ${t.hot[0]} ${t.hot[1]}`)
   }
   lines.push(``)
-  lines.push(`Can't wait? Call us directly: ${SITE.phone}`)
+  lines.push(`${t.cantWaitPlain} ${SITE.phone}`)
   lines.push(``)
-  lines.push(`— The Triple J Metal crew`)
-  lines.push(`Family-owned · Temple, TX`)
+  lines.push(t.signature)
+  lines.push(t.signatureSub)
   lines.push(``)
   lines.push(`—`)
   lines.push(napSignature())
-  lines.push(`Built right, built fast, built by Triple J.`)
+  lines.push(EMAILS[locale].layout.taglinePlain)
   return lines.join('\n')
 }
 

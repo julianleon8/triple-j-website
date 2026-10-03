@@ -14,6 +14,7 @@ it('maps onto the partner-inquiries schema, with counties and volume in the mess
     email: 'dana@acme.test', phone: '254-555-0100',
     message: 'Counties: Bell, Coryell · Volume: 3–5 jobs / mo\n\nMostly 30×40 shops.',
     captcha_token: undefined,
+    language: 'en',
   });
 });
 
@@ -33,4 +34,11 @@ it('words the county line for the success panel', () => {
   expect(countyLine([])).toBe('Central Texas');
   expect(countyLine(['Bell'])).toBe('Bell County');
   expect(countyLine(['Bell', 'Coryell'])).toBe('Bell, Coryell counties');
+});
+
+it('says the counties in Spanish on the Spanish site', () => {
+  expect(countyLine([], 'es')).toBe('el centro de Texas');
+  expect(countyLine(['Bell'], 'es')).toBe('el condado de Bell');
+  expect(countyLine(['Bell', 'Coryell'], 'es')).toBe('los condados de Bell, Coryell');
+  expect(buildPartnerPayload(base, null, 'es').language).toBe('es');
 });
