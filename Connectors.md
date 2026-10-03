@@ -21,6 +21,7 @@ Env var values live in `.env` (gitignored) and in Vercel's project settings. `.e
 | **Web Push (VAPID)** | `NEXT_PUBLIC_VAPID_PUBLIC_KEY`, `VAPID_PRIVATE_KEY`, `VAPID_SUBJECT` | `src/lib/push.ts` | HQ push notifications on new leads / hot permits |
 | **Google Maps Static** | `GOOGLE_MAPS_STATIC_KEY` | `src/app/hq/jobs/[id]/components/JobMapHero.tsx` | Job map hero image |
 | **Google Ads** (+ a read-only Google Ads Script, `marketing/google-ads-daily-report.js`, pasted into the account by the owner; it emails a daily spend/leads report and needs no key here) | `NEXT_PUBLIC_GOOGLE_ADS_ID`, `NEXT_PUBLIC_GOOGLE_ADS_CONVERSION_LABEL`, `NEXT_PUBLIC_GOOGLE_ADS_CALL_CONVERSION_LABEL` | `src/components/seo/` (form conversion on `/thank-you`), `src/components/site/TrackedPhone.tsx` + `src/lib/call-conversion.ts` (phone-tap conversion) | Conversion tracking only — no user-facing impact. Account `AW-18112939313`; the form label is live (verified in the production bundle 2026-09-29). The call label is live too (2026-10-01): action "Click to call" (Phone call lead, Primary, "Calls from website visits — clicks on a number"), label set in Vercel Production by the owner and verified in the production bundle. Google's snippet and `onclick` instructions do not apply; `TrackedPhone` fires it. The agent's Vercel token cannot list or create production env vars (403), so env changes are an owner dashboard step |
+| **PostHog** (US Cloud) | `NEXT_PUBLIC_POSTHOG_KEY` | `src/lib/analytics.ts` (event names, init, `capture()`), `src/instrumentation-client.ts` (loader + site-wide link clicks), `src/components/sections/QuoteForm.tsx` (form funnel), `src/lib/posthog-server.ts` (`lead_created` from `/api/leads`); `/ingest` proxy in `next.config.ts` | Analytics only — no user impact. Blank key = nothing loads. See "PostHog" below |
 | **Vercel cron** | `CRON_SECRET` | `src/lib/cron.ts` (auth + run recording), every route under `src/app/api/cron/` | The crons in `vercel.json` stop firing. See "Scheduled jobs" below |
 | **Vercel build** | `VERCEL_GIT_COMMIT_SHA`, `VERCEL_DEPLOYMENT_CREATED_AT` | `src/app/hq/settings/page.tsx` | Build stamp display only |
 | **Setup route** | `SETUP_KEY` | `src/app/api/setup/route.ts` | One-time bootstrap gate |
@@ -180,6 +181,29 @@ Notebook `f4aaf762-3ede-45b9-a1ad-b9d8a6319207`. `~/.claude/skills/` does not ex
 
 ### Vercel Web Analytics is not enabled (found 2026-09-29)
 `src/app/layout.tsx` mounts `<Analytics />`, and `TrackedPhone` sends `phone_displayed` / `phone_clicked`, but the Vercel API answers **"Web Analytics not found"** for `triple-j-website`: it was never turned on, so none of it is recorded. Owner fix: Vercel → project → Analytics → Enable. It cannot be switched on through the Vercel MCP (`update_project` has no such field).
+
+### PostHog — product analytics (added 2026-10-03)
+Funnels, drop-off, heatmaps and session replay for the public site, for the ad budget. **Event names are
+owned by `AnalyticsEvent` in `src/lib/analytics.ts`**; the dashboards are built on them, so add, never rename.
+The ad funnel is `$pageview` → `quote_form_viewed` → `quote_form_started` → `quote_step_completed` →
+`quote_form_submitted` → `lead_created` (server-side, one per saved lead). Phone, text, email, directions and
+quote-link taps are captured site-wide by one click listener, with `cta_location` saying where on the page.
+
+- **Not tracked:** `/hq`, `/login`, `/setup`, `/quotes/[token]`, `/offline`. Never sent as properties: name,
+  phone, email, message. Replay masks every input and records no network bodies.
+- **Lead ↔ person.** A submitted lead calls `identify(<lead UUID>)`, so PostHog → Persons → search the lead ID
+  shows that visitor's pages and recordings.
+- **Internal traffic** carries `internal_traffic = true`: any browser that has opened `/hq` or `/login`, any
+  host other than `triplejmetaltx.com` (previews, localhost), or any page opened with `?tj_internal=1`
+  (`?tj_internal=0` clears it). The project's internal/test filter excludes it. The installed HQ app keeps
+  separate storage on iPhone, so the owner's Safari needs `?tj_internal=1` once.
+- **Load cost.** posthog-js (~100 KB gzipped) is a lazy chunk fetched after the page's `load` event, never in
+  first-load JS. Headless browsers (`navigator.webdriver`) are dropped as bots by the SDK itself.
+- **Proxy.** Browser traffic goes to `/ingest/*` on our own domain, rewritten to `us.i.posthog.com`. PostHog's
+  paths end in `/`, so `skipTrailingSlashRedirect` is on and Next's `/:path+/ → /:path+` redirect is
+  re-created in `redirects()` for everything except `/ingest/`. Verified 2026-10-03: `/about/` still 308s.
+- **Account.** The only existing PostHog project (`Default project`, id 423436, org "MESA") holds El Mexicano
+  Grille's app data. Triple J must not share it: web analytics, replays and person counts would mix.
 
 ### Stripe does not exist
 Listed in project docs since 2026-04-13 as "phase 4", but there is no dependency, no env var, and no code. The only matches in `src/` are an `accentStripe` CSS variable in `src/emails/BrandLayout.tsx`. **QuickBooks is the money rail.** Descoped 2026-09-06 — see `Locked Decisions.md`.

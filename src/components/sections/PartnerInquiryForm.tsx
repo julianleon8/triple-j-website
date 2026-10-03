@@ -5,6 +5,7 @@ import dynamic from 'next/dynamic'
 import type HCaptcha from '@hcaptcha/react-hcaptcha'
 import { TrackedPhoneLink } from '@/components/site/TrackedPhone'
 import { SITE } from '@/lib/site'
+import { capture } from '@/lib/analytics'
 
 // Lazy-load hCaptcha — splits the 20 KB widget into its own chunk that
 // only fetches when this form mounts (i.e. the user is on /partners).
@@ -99,6 +100,7 @@ export function PartnerInquiryForm() {
         captchaRef.current?.resetCaptcha()
         return
       }
+      capture('partner_inquiry_submitted', { company_type: form.company_type || undefined })
       setStatus('ok')
       setForm(EMPTY)
       setCaptchaToken(null)

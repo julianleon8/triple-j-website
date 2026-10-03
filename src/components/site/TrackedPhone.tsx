@@ -165,6 +165,7 @@ export function TrackedPhoneLink({
       href={tracked.href}
       data-tracked-phone-source={tracked.source}
       data-tracked-phone={tracked.display}
+      data-cta-location={surface}
       onClick={() => logCallClick(tracked, surface)}
       className={className}
       {...rest}
@@ -245,6 +246,7 @@ export function TrackedPhoneButtonLink({
       onClick={() => logCallClick(tracked, surface)}
       data-tracked-phone-source={tracked.source}
       data-tracked-phone={tracked.display}
+      data-cta-location={surface}
       className={`${base} ${variants[variant]} ${sizes[size]} ${className}`}
     >
       {icon && iconPosition === 'left' ? (

@@ -61,13 +61,37 @@ const OG_CARD_FILES = [
   "./public/images/red-iron-frame-hero.jpg",
 ];
 
+// PostHog, US Cloud, reached through our own domain (see src/lib/analytics.ts).
+// First-party requests survive the ad blockers that drop posthog.com ones.
+const POSTHOG_INGEST = "https://us.i.posthog.com";
+const POSTHOG_ASSETS = "https://us-assets.i.posthog.com";
+
 const nextConfig: NextConfig = {
+  // PostHog's API paths end in a slash (/e/, /flags/) and Next's built-in
+  // trailing-slash redirect would bounce every one of them. It is switched off
+  // here and re-created in redirects() below for every path except /ingest,
+  // so /about/ still 308s to /about exactly as before.
+  skipTrailingSlashRedirect: true,
+  async rewrites() {
+    return [
+      { source: "/ingest/static/:path*", destination: `${POSTHOG_ASSETS}/static/:path*` },
+      { source: "/ingest/array/:path*", destination: `${POSTHOG_ASSETS}/array/:path*` },
+      { source: "/ingest/:path*", destination: `${POSTHOG_INGEST}/:path*` },
+    ];
+  },
   outputFileTracingIncludes: {
     "/**/opengraph-image*": OG_CARD_FILES,
     "/og-default.jpg": OG_CARD_FILES,
   },
   async redirects() {
     return [
+      // Next's own trailing-slash rule (`/:path+/` → `/:path+`, 308), minus
+      // /ingest — see skipTrailingSlashRedirect above. Must stay first.
+      {
+        source: "/:path((?!ingest/).+)/",
+        destination: "/:path",
+        permanent: true,
+      },
       {
         source: "/services/garages",
         destination: "/services/metal-garages",

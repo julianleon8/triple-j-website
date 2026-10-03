@@ -1,5 +1,24 @@
 # Session Notes
 
+## 2026-10-03 — PostHog wired into the public site (funnel, drop-off, replay)
+
+- **Why:** the owner wants to see where ad visitors drop off. Nothing was being recorded: Vercel Web Analytics
+  was never enabled (found 2026-09-29).
+- **Shipped on `claude/eloquent-hawking-vnaddd`, not `main`:** `src/lib/analytics.ts` (event names, lazy
+  init, `capture()`), `src/instrumentation-client.ts` (loads PostHog after `load`; one click listener names
+  quote/phone/text/email/directions taps with `cta_location`), quote-form funnel events in `QuoteForm.tsx`,
+  `partner_inquiry_submitted`, and a server-side `lead_created` from `/api/leads` (`src/lib/posthog-server.ts`,
+  sent in `after()`, joined to the browser's person and session). `/ingest` reverse proxy with the
+  trailing-slash redirect re-created for every other path; service worker never caches `/ingest`.
+- **Privacy:** no name/phone/email/message as properties (`route.test.ts` asserts it), replay masks inputs
+  and records no bodies, owner and customer-quote routes never tracked. Privacy policy paragraph rewritten,
+  including the Google Ads enhanced-conversion disclosure it lacked.
+- **Verified:** typecheck, lint, 545 tests, vault check, `next build` (placeholder env), and a headless
+  Chromium run against `next start` that walked the funnel and decoded every PostHog batch: events arrive in
+  order with UTMs; posthog-js is one lazy 99 KB chunk; `/about/` still 308s. Not yet seen in real PostHog —
+  there is no Triple J project or key yet.
+- **Found:** the only PostHog project (org "MESA") is El Mexicano Grille's app. Triple J needs its own.
+
 ## 2026-10-01 — SEO action plan (docs/ACTION-PLAN.md) worked through against the live site
 
 Every item was checked against the 46 live sitemap URLs first; the April plan was half stale.

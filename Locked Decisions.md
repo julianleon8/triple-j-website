@@ -16,6 +16,8 @@ Do not copy anything from this file into `AGENTS.md`. That duplication is what p
 
 - **Paid-ad cap and split:** **$500/month total across every paid channel.** October: $400 Google Search + $100 one-time (truck magnets, yard signs). November onward: $400 Google Search + $100 Facebook boosted post. Facebook Marketplace, the Page and groups stay free. Owner-approved; plan in `marketing/lead-plan-2026-09-29.md`. **Google Search campaign `Search | Temple Area | Oct 2026` published 2026-10-01**, ad group 1 (Carports & RV covers) only; planned budget $13/day (about $395/month). Ad text: `marketing/google-ads-campaign-build.md`. (2026-10-01)
 
+- **Analytics:** PostHog records the public site's funnel and session replays in **its own project**, never shared with another business. Event names live in `src/lib/analytics.ts` (add, never rename); the conversion is the server-side `lead_created`. Never tracked: `/hq`, `/login`, `/setup`, `/quotes/[token]`. Never sent as a property: name, phone, email, message; replay masks all inputs. Owner browsers and preview hosts are tagged `internal_traffic`. Setup: `Connectors.md` → PostHog. (2026-10-03)
+
 - **Timeline:** "**same-week**", never say "48-hour build". 48 hrs = materials arrival, not build time. Saying otherwise is misleading. (2026-04-15)
 - **Frame:** "**welded or bolted**" everywhere. Triple J does both. Never "custom welded" alone. (2026-04-15)
 - **Concrete spec:** **3,000 PSI is standard. 4,000 PSI is on request only** — never promised as the default. (2026-05-01 — **REVERSES** the 2026-04-15 lock that made 4,000 PSI a headline differentiator.) Confirmed by Julian 2026-09-06 and now true of the shipped site: all 22 occurrences rewritten, and `scripts/check-vault.mjs` enforces it with no exceptions.

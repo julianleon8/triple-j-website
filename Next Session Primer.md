@@ -1,3 +1,17 @@
+# PostHog — 2026-10-03 · CODE ON BRANCH, NO PROJECT YET
+
+The funnel tracking is on `claude/eloquent-hawking-vnaddd` (see `Connectors.md` → PostHog). It does nothing
+until `NEXT_PUBLIC_POSTHOG_KEY` is set. To go live:
+1. A **separate** PostHog project for Triple J — never the existing `Default project` (El Mexicano Grille).
+2. Its `phc_` key into Vercel → `NEXT_PUBLIC_POSTHOG_KEY` (Production + Preview), then merge the branch.
+3. In that project: session replay on, authorized URL `https://www.triplejmetaltx.com`, internal/test filter
+   `internal_traffic` is not `true` (checked by default), then the ad-funnel dashboard.
+4. Owner's Safari: open the site once with `?tj_internal=1`. Then one real test lead from a phone and confirm
+   the person (search the lead UUID) shows its pageviews, funnel events and recording.
+5. A17 CSP review: watch for `[csp]` lines naming `/ingest` or `blob:` once replay is live.
+
+---
+
 # SEO action plan — 2026-10-01 · WORKED THROUGH, 3 ITEMS LEFT
 
 `docs/ACTION-PLAN.md` now carries a live status line under every item. Left open:

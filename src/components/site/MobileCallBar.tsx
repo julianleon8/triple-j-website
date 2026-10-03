@@ -9,7 +9,7 @@ import { TrackedPhoneLink } from "@/components/site/TrackedPhone";
  */
 export function MobileCallBar() {
   return (
-    <div className="md:hidden fixed bottom-0 inset-x-0 z-40 bg-[color:var(--color-ink-900)]/95 backdrop-blur border-t border-white/10 pb-[env(safe-area-inset-bottom)]">
+    <div data-cta-location="mobile_call_bar" className="md:hidden fixed bottom-0 inset-x-0 z-40 bg-[color:var(--color-ink-900)]/95 backdrop-blur border-t border-white/10 pb-[env(safe-area-inset-bottom)]">
       <div className="grid grid-cols-2 gap-2 p-2">
         <TrackedPhoneLink
           surface="mobile_call_bar"

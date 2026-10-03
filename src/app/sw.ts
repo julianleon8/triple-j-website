@@ -85,6 +85,13 @@ const serwist = new Serwist({
       }),
     },
 
+    // ── PostHog (proxied at /ingest). Never cached: a stale remote config or
+    // recorder script would be served from cache long after PostHog moved on.
+    {
+      matcher: ({ url, sameOrigin }) => sameOrigin && url.pathname.startsWith('/ingest/'),
+      handler: new NetworkOnly(),
+    },
+
     // ── All mutations (POST/PATCH/DELETE) are NetworkOnly.
     // If offline, they fail fast — the client surfaces "you're offline" toast.
     {

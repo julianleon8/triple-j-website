@@ -27,7 +27,7 @@ export default function PrivacyPage() {
         </p>
         <h1 className="mt-3 text-[color:var(--color-ink-900)]">Privacy Policy</h1>
         <p className="mt-2 text-sm text-[color:var(--color-ink-500)]">
-          Last updated April 22, 2026 · {SITE.legalName} · See also our{' '}
+          Last updated October 3, 2026 · {SITE.legalName} · See also our{' '}
           <Link href="/terms" className="text-[color:var(--color-brand-600)] underline-offset-4 hover:underline">
             Terms of Use
           </Link>
@@ -73,8 +73,15 @@ export default function PrivacyPage() {
               Cookies and analytics
             </h2>
             <p className="mt-3">
-              We may use first-party analytics to understand how visitors use our site (for example,
-              page views and performance). You can control cookies through your browser settings.
+              We use analytics tools (Vercel Analytics and PostHog) to understand how visitors use
+              our site: which pages they view, which buttons they tap, how far they get through the
+              quote form, and how quickly pages load. PostHog may also record visits (scrolling, taps
+              and page changes) so we can see where the site is confusing. Anything typed into a form
+              field is hidden from those recordings, and we do not send your name, phone number,
+              email or message to these analytics tools. When you arrive from one of our Google ads,
+              Google Ads measures whether the visit led to a quote request or a call; to make that
+              match it receives the contact details from your quote request in hashed (scrambled)
+              form. You can control or clear cookies through your browser settings.
             </p>
           </section>
 
