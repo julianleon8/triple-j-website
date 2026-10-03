@@ -18,6 +18,7 @@
 - **Checks:** typecheck, lint, 610 tests; production build with the service worker against a stand-in Supabase,
   driven in Chromium: wrong → right, wrong → wrong → right, right first time, not on `OWNER_EMAIL`, server-side
   bounce, bounce → reopen → right. All reset or land on `/hq`. Not run on an iPhone.
+- **Merged to `main`** at the owner's request.
 - **Not fixed here:** `OWNER_EMAIL` itself (Vercel env; the agent token gets 403 on env vars).
 
 ## 2026-10-03 — Internal links, ported onto the Forge redesign
