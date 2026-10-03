@@ -1,4 +1,5 @@
 import type { Locale } from '@/i18n/config'
+import { POST_SLUG_ES } from '@/i18n/routes'
 
 import { BLOG_POSTS, type BlogCategory, type BlogPost } from './blog'
 
@@ -25,9 +26,9 @@ export const BLOG_POSTS_ES: Record<string, PostCopy> = {
     title: 'Guía de permisos para edificios metálicos en el condado de Bell: requisitos en Temple, Belton y Killeen',
     metaTitle: 'Permisos de edificios metálicos, condado de Bell',
     metaDescription:
-      'Quién saca el permiso, qué tamaño lo requiere en Temple y en Killeen, cuánto cuesta y cuánto tarda. Una guía de un contratista local.',
+      'Quién solicita el permiso, qué tamaño lo requiere en Temple y en Killeen, cuánto cuesta y cuánto tarda. Una guía de un contratista local.',
     excerpt:
-      '¿Quién saca el permiso? ¿Qué tamaño requiere permiso en Temple y en Killeen? ¿Cuánto cuesta y cuánto tarda? Una guía de un contratista local sobre los requisitos del condado de Bell.',
+      '¿Quién solicita el permiso? ¿Qué tamaño requiere permiso en Temple y en Killeen? ¿Cuánto cuesta y cuánto tarda? Una guía de un contratista local sobre los requisitos del condado de Bell.',
     readTime: '6 min de lectura',
     tags: ['Permisos', 'Condado de Bell', 'Temple', 'Killeen', 'Belton'],
   },
@@ -82,4 +83,12 @@ export function localizedPost(post: BlogPost, locale: Locale): BlogPost {
 export function getPost(slug: string, locale: Locale): BlogPost | undefined {
   const post = BLOG_POSTS.find((p) => p.slug === slug)
   return post ? localizedPost(post, locale) : undefined
+}
+
+/** The Spanish URL slugs of `/es/blog/[slug]`, one per post. */
+export const SPANISH_POST_SLUGS: string[] = BLOG_POSTS.map((post) => POST_SLUG_ES[post.slug])
+
+/** The English post behind a Spanish URL slug (`/es/blog/<slug>`), or undefined for an unknown one. */
+export function postBySpanishSlug(esSlug: string): BlogPost | undefined {
+  return BLOG_POSTS.find((post) => POST_SLUG_ES[post.slug] === esSlug)
 }

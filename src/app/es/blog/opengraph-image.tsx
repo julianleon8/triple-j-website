@@ -1,23 +1,19 @@
 import { BLOG } from '@/i18n/pages/blog'
 import { OG_CONTENT_TYPE, OG_SIZE, renderOgCard } from '@/lib/og-card'
 
-/**
- * /blog index OG card — the same lines as the fallback card in
- * ./[slug]/opengraph-image.tsx, with the page's share description. Posts keep
- * their own cards; this one covers the index, which shared no og:image before.
- */
+/** /es/blog OG card: the Spanish twin of /blog (src/i18n/pages/blog.ts). */
 
 export const size = OG_SIZE
 export const contentType = OG_CONTENT_TYPE
-export const alt = BLOG.en.og.alt
+export const alt = BLOG.es.og.alt
 
 export default function BlogIndexOpenGraphImage() {
-  const t = BLOG.en.og
+  const t = BLOG.es.og
   return renderOgCard({
     eyebrow: t.eyebrow,
     headline: t.headline,
     accent: t.accent,
     subhead: t.subhead,
-    path: '/blog',
+    path: '/es/blog',
   })
 }

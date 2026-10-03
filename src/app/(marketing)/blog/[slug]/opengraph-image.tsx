@@ -1,3 +1,4 @@
+import { BLOG } from '@/i18n/pages/blog'
 import { BLOG_POSTS } from '@/lib/blog'
 import { OG_CONTENT_TYPE, OG_SIZE, renderOgCard } from '@/lib/og-card'
 
@@ -9,7 +10,7 @@ import { OG_CONTENT_TYPE, OG_SIZE, renderOgCard } from '@/lib/og-card'
 
 export const size = OG_SIZE
 export const contentType = OG_CONTENT_TYPE
-export const alt = 'Triple J Metal — metal building guides for Central Texas'
+export const alt = BLOG.en.og.alt
 
 // Prerender one card per post at build time rather than on first crawl.
 export function generateStaticParams() {
@@ -28,10 +29,11 @@ export default async function BlogOpenGraphImage({
   // The page itself calls notFound() for an unknown slug, but this route is
   // reachable on its own, so fall back to a valid card rather than throwing.
   if (!post) {
+    const t = BLOG.en.og
     return renderOgCard({
-      eyebrow: 'Blog',
-      headline: 'Metal Building Guides',
-      accent: 'For Central Texas.',
+      eyebrow: t.eyebrow,
+      headline: t.headline,
+      accent: t.accent,
       path: '/blog',
     })
   }
