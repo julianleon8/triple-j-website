@@ -92,7 +92,7 @@ export default function LeadOwnerAlert(props: LeadOwnerAlertProps) {
   if (currentSurfaceLabel) rows.push(['Current surface', currentSurfaceLabel])
   if (timelineLabel) rows.push(['Timeline', timelineLabel])
   rows.push(['Military/FR', isMilitary ? '✅ Yes — apply 7% discount' : 'No'])
-  if (message) rows.push(['Notes', <em key="m" style={{ color: '#374151' }}>&ldquo;{message}&rdquo;</em>])
+  if (message) rows.push(['Notes', <em key="m" style={{ color: '#33475a' }}>&ldquo;{message}&rdquo;</em>])
 
   return (
     <BrandLayout preview={`${isHot ? '⚡ HOT — ' : ''}${name} · ${city} · ${serviceType.replace(/_/g, ' ')}`}>
@@ -160,8 +160,8 @@ export default function LeadOwnerAlert(props: LeadOwnerAlertProps) {
       {/* The one thing that decides whether tapping "Call now" right now is a
           good idea. Sits with the buttons, not down in the detail table. */}
       {bestTimeLabel ? (
-        <Text style={{ margin: '-14px 0 22px', fontSize: 13, color: '#6b7280', textAlign: 'center' }}>
-          📞 Best time to call: <strong style={{ color: '#374151' }}>{bestTimeLabel}</strong>
+        <Text style={{ margin: '-14px 0 22px', fontSize: 13, color: '#546678', textAlign: 'center' }}>
+          📞 Best time to call: <strong style={{ color: '#33475a' }}>{bestTimeLabel}</strong>
         </Text>
       ) : null}
 
@@ -169,16 +169,16 @@ export default function LeadOwnerAlert(props: LeadOwnerAlertProps) {
       <Text style={sectionLabel}>LEAD DETAILS</Text>
       <Section style={dataCard}>
         {rows.map(([label, value], i) => (
-          <Row key={label} style={{ background: i % 2 === 0 ? '#f9fafb' : '#ffffff' }}>
+          <Row key={label} style={{ background: i % 2 === 0 ? '#f4f6f8' : '#ffffff' }}>
             <Column style={dataLabelCell}>{label}</Column>
             <Column style={dataValueCell}>{value}</Column>
           </Row>
         ))}
       </Section>
 
-      <Hr style={{ borderColor: '#e5e7eb', margin: '20px 0 12px' }} />
+      <Hr style={{ borderColor: '#e3e9ee', margin: '20px 0 12px' }} />
       <Text style={metaLine}>
-        Lead ID: <code style={{ background: '#f3f4f6', padding: '2px 6px', borderRadius: 4, fontSize: 11 }}>{leadId}</code>
+        Lead ID: <code style={{ background: '#eef2f5', padding: '2px 6px', borderRadius: 4, fontSize: 11 }}>{leadId}</code>
       </Text>
     </BrandLayout>
   )
@@ -234,7 +234,7 @@ const headline = {
 }
 
 const subhead = {
-  color: '#374151',
+  color: '#33475a',
   fontSize: '14px',
   margin: 0,
 }
@@ -265,7 +265,7 @@ const ctaPrimary = {
 
 const ctaSecondary = {
   display: 'block',
-  background: '#f3f4f6',
+  background: '#eef2f5',
   color: INK_900,
   textAlign: 'center' as const,
   padding: '12px 8px',
@@ -274,11 +274,11 @@ const ctaSecondary = {
   fontWeight: 700,
   textDecoration: 'none',
   letterSpacing: '0.01em',
-  border: '1px solid #e5e7eb',
+  border: '1px solid #e3e9ee',
 }
 
 const sectionLabel = {
-  color: '#6b7280',
+  color: '#546678',
   fontSize: '11px',
   fontWeight: 700,
   letterSpacing: '0.16em',
@@ -287,7 +287,7 @@ const sectionLabel = {
 }
 
 const dataCard = {
-  border: '1px solid #e5e7eb',
+  border: '1px solid #e3e9ee',
   borderRadius: 8,
   overflow: 'hidden',
 }
@@ -296,7 +296,7 @@ const dataLabelCell = {
   padding: '10px 14px',
   fontWeight: 600,
   fontSize: 12,
-  color: '#6b7280',
+  color: '#546678',
   width: 120,
   verticalAlign: 'top' as const,
   textTransform: 'uppercase' as const,
@@ -306,7 +306,7 @@ const dataLabelCell = {
 const dataValueCell = {
   padding: '10px 14px',
   fontSize: 14,
-  color: '#111827',
+  color: '#00182a',
   verticalAlign: 'top' as const,
 }
 
@@ -317,7 +317,7 @@ const dataLink = {
 }
 
 const metaLine = {
-  color: '#9ca3af',
+  color: '#788a9c',
   fontSize: 11,
   margin: 0,
 }

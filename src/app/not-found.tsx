@@ -1,8 +1,10 @@
+import Image from "next/image";
 import Link from "next/link";
 import type { Metadata } from "next";
 
-import { ButtonLink } from "@/components/ui/Button";
-import { Container } from "@/components/ui/Container";
+import { ForgeButtonLink } from "@/components/forge/ForgeButton";
+import { Eyebrow } from "@/components/forge/Eyebrow";
+import { buttonClass, type } from "@/components/forge/styles";
 import { ArrowRightIcon } from "@/components/ui/icons";
 import { SITE } from "@/lib/site";
 
@@ -34,6 +36,8 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 };
 
+// The quote link goes to /quote, the dedicated quote page (it pointed at
+// /contact, which is now a message form); its line follows the response lock.
 const RECOVERY_LINKS = [
   {
     label: "Browse our metal building services",
@@ -47,86 +51,71 @@ const RECOVERY_LINKS = [
   },
   {
     label: "Get a free quote",
-    href: "/contact",
-    description: "Same-day callback. Or call us directly.",
+    href: "/quote",
+    description: "Two quick steps — we call you back within 24 hours. Or call us directly.",
   },
 ] as const;
 
 export default function NotFound() {
   return (
-    <div
-      className="min-h-screen flex flex-col bg-white text-[color:var(--color-ink-900)]"
-      style={{ colorScheme: "light" }}
-    >
+    <div data-forge="" className="flex min-h-screen flex-col bg-forge-fog text-forge-navy" style={{ colorScheme: "light" }}>
       {/* Slim brand bar — no full Header (which is a client component
           that pulls in extra deps). Lighter footprint, same recovery
           quality. */}
-      <header className="border-b border-[color:var(--color-ink-100)] bg-[color:var(--color-ink-900)] text-white">
-        <Container size="wide">
-          <div className="flex h-16 items-center justify-between">
-            <Link
-              href="/"
-              className="font-display font-extrabold uppercase tracking-tight text-xl text-white"
-            >
-              Triple J{" "}
-              <span className="text-[color:var(--color-brand-400)]">Metal</span>
-            </Link>
-            <a
-              href={SITE.phoneHref}
-              className="text-sm font-semibold tabular-nums text-white/85 hover:text-white"
-            >
-              {SITE.phone}
-            </a>
-          </div>
-        </Container>
+      <header data-forge="" data-tone="dark" className="border-b border-forge-silver/15 bg-forge-navy text-white">
+        <div className="mx-auto flex h-[72px] w-full max-w-[1360px] items-center justify-between px-[clamp(20px,3vw,40px)]">
+          <Link
+            href="/"
+            aria-label={`${SITE.name} home`}
+            className="inline-flex items-center gap-3 font-forge-display text-[22px] font-black text-white"
+          >
+            <Image src="/images/logo-lion.png" alt="" width={40} height={40} className="size-10 flex-none object-contain" />
+            {SITE.name}
+          </Link>
+          <a href={SITE.phoneHref} className="text-[15px] font-semibold tabular-nums text-white/85 transition-colors hover:text-white">
+            {SITE.phone}
+          </a>
+        </div>
       </header>
 
-      <main className="flex-1 py-20 md:py-28">
-        <Container size="narrow">
-          <div className="text-center">
-            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[color:var(--color-brand-600)]">
-              404 — Page not found
-            </p>
-            <h1 className="mt-4 font-display font-extrabold uppercase tracking-tight text-5xl md:text-6xl leading-[1.05]">
-              That page isn&rsquo;t here.
-            </h1>
-            <p className="mt-5 text-lg text-[color:var(--color-ink-600)] max-w-xl mx-auto leading-relaxed">
+      <main className="flex-1 py-[clamp(64px,8vw,112px)]">
+        <div className="mx-auto w-full max-w-[760px] px-[clamp(20px,3vw,40px)]">
+          <div className="flex flex-col items-center text-center">
+            <Eyebrow align="center">404 — Page not found</Eyebrow>
+            <h1 className={`mt-[18px] ${type.h2} text-forge-navy`}>That page isn&rsquo;t here.</h1>
+            <p className={`mx-auto mt-5 max-w-[560px] ${type.lede} text-forge-slate`}>
               The link may have been retired, mistyped, or was part of an
               old deploy. Pick one of the routes below — or call us directly
               and we&rsquo;ll get you to the right place.
             </p>
           </div>
 
-          <ul className="mt-12 space-y-3">
+          <ul className="mt-12 flex flex-col gap-3">
             {RECOVERY_LINKS.map((link) => (
               <li key={link.href}>
                 <Link
                   href={link.href}
-                  className="group flex items-start justify-between gap-4 rounded-2xl border border-[color:var(--color-ink-200)] bg-white px-5 py-5 hover:border-[color:var(--color-brand-400)] hover:bg-[color:var(--color-ink-50)] transition-colors"
+                  className="group flex items-start justify-between gap-4 rounded-[12px] border border-forge-silver bg-white px-6 py-5 transition-colors duration-200 hover:border-forge-steel"
                 >
                   <div>
-                    <p className="text-lg font-semibold text-[color:var(--color-ink-900)] group-hover:text-[color:var(--color-brand-600)]">
-                      {link.label}
-                    </p>
-                    <p className="mt-1 text-sm text-[color:var(--color-ink-600)]">
-                      {link.description}
-                    </p>
+                    <p className="font-forge-display text-[19px] font-bold text-forge-navy">{link.label}</p>
+                    <p className="mt-1 text-[14px] text-forge-slate">{link.description}</p>
                   </div>
-                  <ArrowRightIcon className="h-5 w-5 mt-1 shrink-0 text-[color:var(--color-ink-400)] group-hover:text-[color:var(--color-brand-600)] transition-colors" />
+                  <ArrowRightIcon className="mt-1 h-5 w-5 shrink-0 text-forge-steel transition-transform duration-200 group-hover:translate-x-0.5 group-hover:text-forge-navy" />
                 </Link>
               </li>
             ))}
           </ul>
 
-          <div className="mt-12 flex flex-col sm:flex-row sm:items-center sm:justify-center gap-3">
-            <ButtonLink href="/" variant="primary" size="lg">
+          <div className="mt-12 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-center">
+            <ForgeButtonLink href="/" variant="navy" size="lg">
               Back to home
-            </ButtonLink>
-            <ButtonLink href={SITE.phoneHref} variant="outline-dark" size="lg" className="!border-[color:var(--color-ink-300)] !text-[color:var(--color-ink-800)] hover:!bg-[color:var(--color-ink-50)] hover:!border-[color:var(--color-ink-500)]">
-              Call {SITE.phone}
-            </ButtonLink>
+            </ForgeButtonLink>
+            <a href={SITE.phoneHref} className={buttonClass("outlineLight", "lg")}>
+              Call <span className="tabular-nums">{SITE.phone}</span>
+            </a>
           </div>
-        </Container>
+        </div>
       </main>
     </div>
   );

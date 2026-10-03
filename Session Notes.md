@@ -1,27 +1,47 @@
 # Session Notes
 
-## 2026-10-03 — Homepage "Welded or bolted" link, internal-link audit, and the fixes
+## 2026-10-03 — HQ gallery edits reach the public pages without a deploy
 
-- **Why:** a Liberty Hill visitor spent 26 min on the site (Mac, then iPhone 19 s later). PostHog showed two
-  dead taps on the hero's "Welded or bolted" on the phone, after which they found the welded-vs-bolted post
-  through `/blog`. It is the most-read post and nothing on the homepage pointed to it. The owner then asked for
-  every under-linked page to be fixed.
-- **Shipped on `claude/youthful-cerf-2m3dfh`, not `main`:** hero strip items link to the post and to `/about`
-  (44 px tap targets); `relatedBlogPosts()` and `nearbyCities()` with tests; a "Also serving near" section on
-  every city page; relatedPosts on 8 more city pages and RV covers; service pages gain panel, specialty and
-  "Cities We Serve" links and a `/military` link; all 5 posts link a service, a city and `/quote`; a "Buying
-  guides" band on the homepage; About, Contact (service-area chips now link, and list all 14 cities) and
-  Partners link onward; the blog author strip links `/about`; footer Lean-To / House Additions → `/quote`.
-- **Audit:** `next build` with placeholder env, then a crawl of the prerendered HTML plus the five on-demand
-  pages from `next start`; links inside `<main>` counted apart from header/footer. 54 pages, zero broken links.
-  Now `scripts/check-links.mjs` (flags thin pages, dead ends, bare blog posts, broken links; `--strict` for exit 1).
-  `/gallery/[id]` pages read Supabase and are not crawled.
-- **Before → after (body links in):** Holland, Salado, Taylor, Troy 1 → 11–12; Lampasas 2 → 11; `/about` 0 → 3;
-  `/partners` 0 → 2; HOA post 4 → 8; `/services/colors` 1 → 8; hybrid-projects 1 → 3. Body links out: `/about`
-  0 → 4, `/contact` 0 → 18, every blog post 4 → 9+.
-- **Not changed, flagged:** copy that conflicts with the locked rules; see `Next Session Primer.md`.
-- Typecheck, lint, 566 tests (9 new), vault check, `next build`, strict link audit, and screenshots on a 390 px
-  phone and 1280 px desktop all pass.
+**In plain terms.** Changing the gallery in HQ updated the database but not the site. The project
+pages were pre-built with nothing to tell them to rebuild, so a deleted photo stayed up until someone
+pushed code. The redesign's pages refresh hourly, so a newly published job took up to an hour to reach
+the Latest builds ticker. Now every HQ gallery change marks the affected pages stale, and the next
+visitor gets a fresh copy. The pages are still cached between edits, so they're as fast as before.
+
+**What changed.** New `src/lib/gallery-revalidate.ts` with `GALLERY_PATHS`, the one list of public
+pages that show gallery data, and `revalidateGallery(itemId)`. It's called after each successful write
+in `/api/gallery` (create), `/api/gallery/[id]` (edit, publish, unpublish, delete),
+`/api/gallery/[id]/photos` (add photo), `/api/gallery/photos/[photoId]` (reorder, cover, delete
+photo), and `/api/hq/job-photo` (only when the job is already published). `/gallery/[id]` also gets
+the hourly `revalidate = 3600` its sibling pages have. **That timer was needed because the 2026-10-01
+incident was a delete made straight in Supabase**, which no API route sees.
+
+**Two things worth knowing.** Patterns for dynamic routes have to include the route group:
+`'/(marketing)/services/[slug]'`, not `'/services/[slug]'`. The second form is accepted silently and
+revalidates nothing; I checked this against Next's own tag function. And this work was started before
+the Forge redesign landed, then rebased onto it. The reader-scan test caught the drift (`Gallery.tsx`
+and `RelatedProjects.tsx` gone, `forge-builds.ts` new), which is the job it's there to do.
+
+**Tests:** 21 new, in `src/lib/gallery-revalidate.test.ts` and
+`src/app/api/gallery/revalidation.test.ts`. They pin the path list, check each dynamic pattern against
+a real page file, fail on an unlisted gallery reader or an unlisted `getBuilds()` page, and cover
+success and failure for every write route. Each guard was checked by breaking the code on purpose.
+
+**Also:** `npm run dev` now passes `--webpack`, like `build`. Next 16's default Turbopack refuses the
+webpack config Serwist adds, so the dev server could not start at all. Both this repo and a fresh
+clone of `julianleon8/Mexicno-Grille` (`~/mexicno-grille`) are linked to Vercel with a pulled
+Production `.env.local`. But Vercel withholds every Sensitive value, so 26 and 31 placeholders still
+need filling by hand (`Connectors.md`).
+
+**Not verified:** a production build. There's no usable local `.env`. See the primer for the
+after-deploy check.
+
+## 2026-10-03 — Forge redesign merged to `main`
+
+Owner: "merge it to main." `main` had the PostHog funnel work; merged it into the Forge branch, kept the Forge
+markup and re-applied every PostHog hook (quote-form funnel events, partner event, CTA location tags, privacy
+paragraph). The new `/contact` message form now links its lead to the PostHog visit and fires
+`contact_message_submitted`. Gate on the merged tree: typecheck, lint, 579 tests, vault check, `next build`.
 
 ## 2026-10-03 — PostHog wired into the public site (funnel, drop-off, replay)
 
@@ -61,6 +81,85 @@
 - **Monday email:** subscription 159678 sends the dashboard (10 charts + AI summary) every Monday 12:00 UTC to
   the owner, the Triple J inbox and Julian's Yahoo; first delivery 2026-10-05. Test send requested on create.
 
+## 2026-10-02 — Unverified claims cut
+
+Owner: cut the roundup's "within days of contract signing", the `/locations` no-travel-fee line and the
+carports "Licensed & insured" trust point. The RV-covers intro's "on-site within days of your approval"
+became same-week scheduling once the build is approved.
+
+## 2026-10-02 — `/services` turnkey line
+
+Owner approved the 2026-10-01 proposal: the `/services` hero no longer says every structure is "delivered
+turnkey"; it says each is sold welded, bolted, or turnkey, with turnkey putting site prep, concrete and
+installation on one contract.
+
+## 2026-10-02 — Blog posts brought to the locks
+
+Owner asked. All five post modules rewritten where they broke a lock: permit-pulling claims (and a
+"licensed contractor" line) now advisory, 3,500-PSI "underspec" line, two unsourced prices, "Concrete
+included" rows, day-count build timeline, a wrong "10 minutes from Fort Cavazos", the military discount
+terms, and blanket competitor claims (named brands, warranty-voiding, "None noted"). Unbacked "140 MPH" →
+design-specific. `check-vault.mjs` now fails on permit-pulling and "concrete included" wording (tests
+exempt). Gate: typecheck, lint, tests, vault check.
+
+## 2026-10-02 — Forge step 13: PBR footer, every remaining route, OG cards, emails, PDF, cleanup
+
+Owner: "do step 13, start with /thank-you and /quote and change the brushed slate to a PBR panel look."
+All on `claude/new-session-471fsd`; `main` untouched.
+
+- **Footer texture:** brushed steel → a drawn **PBR wall panel** (`.forge-pbr`, an SVG tile: 12" pitch,
+  trapezoid rib lit from the left, two stiffeners per pan). The handoff's corrugated PNG was the wrong
+  profile; both texture PNGs (2.3 MB) deleted.
+- **`/quote` and `/thank-you`** in Forge (form first on phones, sticky pitch on desktop, How it works,
+  live recent builds). Their old copy broke locks (concrete on every job, frame-day-one/panels-day-two,
+  "usually within 24 hours" under the guarantee) — rewritten to the locks.
+- **Every other legacy route** in Forge: blog index + posts (`.forge-prose`), privacy/terms (`LegalPage`),
+  404, `/services` + colors/hybrid/PBR-vs-PBU, alternatives, the Temple roundup, `/locations`. Three helper
+  agents did the blog, services and comparison groups in parallel; each reviewed by screenshot.
+- **Real bug found:** compiled JSX dropped the space after `</strong>` (and similar) when the following
+  text run held an HTML entity ("Texasis:"). ~40 spots fixed with `{' '}`; a test guards the post modules.
+- **Lock fixes on the way:** welded-vs-bolted "12 on request" gauge; PBU "$300–$800" (not in the sales
+  pack); RV card "beat every competitor"; Triple J one-liner "turnkey concrete"; 404 "same-day" + `/contact`;
+  customer email preview always said "today".
+- **13b/13c:** OG cards in Cinzel (WOFFs from `@fontsource/cinzel`) with a PBR strip; military card olive/tan;
+  emails navy with a Cinzel→Georgia wordmark; quote PDF registers Cinzel (render test added).
+- **Cleanup:** ten dead section components, legacy `Button`/`Container`/`Reveal`, the `.marketing` heading
+  rules and the legacy hero/texture/reveal/military CSS removed (`globals.css` 836 → 613 lines).
+  `check-vault.mjs` learned a `RETIRED` set for files deleted by a later decision.
+- Gate: typecheck, lint, 555 tests, vault check, `next build` (placeholder Supabase env). **HQ (13d) not
+  touched** — it needs its own design pass.
+
+## 2026-10-02 — Forge redesign built (handoff PR 00–12) on a preview branch
+
+Owner uploaded the finished "Forge" handoff (`docs/redesign-2026-10/forge-handoff/`). Built PR 00–12 on
+`claude/new-session-471fsd`, one commit each; `main` is untouched. Owner picks: D2 mega header, D4 two hero
+buttons, D17 hero shows everything at load. Every other delta follows the package default (2026-10-02 rows
+in `Decisions.md`).
+
+- **PR 00:** merged `claude/focused-gates-iu172r` (vault + redesign docs). The "12-gauge storm upgrade" was
+  wrong: it is the **heavy-duty upgrade, 11-gauge columns welded to the receivers and purlins**; fixed in
+  copy, `copy-fixes.mjs` rewrites it and `check-vault.mjs` fails on "12-gauge".
+- **PR 01–02:** Cinzel + Inter, Forge tokens and `forge-*` utilities in `globals.css`; pages carry
+  `data-forge` to step out of the unlayered `.marketing` heading/paragraph rules. Primitives in
+  `src/components/forge/` (buttons, headings, hero, cards, tabs, FAQ, form controls, reveal, lightbox, build
+  grid). `src/lib/forge-quote.ts` (`requestQuote` → `forge:quote` event prefills the form and scrolls) and
+  `src/lib/forge-builds.ts` (live gallery items; sections hide when empty).
+- **PR 03:** header with Services mega menu, mobile sheet, brushed-steel footer, homepage footer curtain,
+  mobile call bar. `PreFooterCta` left the marketing layout.
+- **PR 04:** centered `QuoteSection` + restyled 2-step form (D7 timeline/budget, permits question into the
+  notes). Submit pipeline and payload unchanged; payload-contract tests added.
+- **PR 05–12:** homepage, service template (+ new `/services/gates`), location template (Temple, Belton
+  ported), gallery + lightbox, About, Contact (message form), Partners (inquiry form), Fort Cavazos.
+- **Dropped as unverifiable (D18):** "Emergency quotes", "2 in-house welders", "Stacks with…", drive times to
+  the main gate, the Fort Cavazos testimonial. `/military` says "30 min from Killeen" and a 24-hour callback.
+- **Kept from before:** `/contact` messages fire the Google Ads conversion (the old `/contact` quote form did
+  via `/thank-you`). Partner form requires email (API). Belton "include concrete" → "offer concrete".
+- Local gate: typecheck, lint, 559 tests, vault check, `next build` (dead-host placeholder Supabase env).
+  Screens checked at 1440 and 390 in Playwright **without gallery data** (no Supabase env in the sandbox), so
+  the builds strip, ticker, recent-builds rows and gallery grid were seen empty — check them on the preview.
+- **Not built:** PR 13 (legacy routes, OG cards, emails, PDF, HQ). `/quote`, `/thank-you`, blog, indexes,
+  privacy/terms still wear the old style under the new header and footer.
+
 ## 2026-10-01 — SEO action plan (docs/ACTION-PLAN.md) worked through against the live site
 
 Every item was checked against the 46 live sitemap URLs first; the April plan was half stale.
@@ -90,6 +189,44 @@ Every item was checked against the 46 live sitemap URLs first; the April plan wa
   needs one for `/gallery/[id]`), and a `next start` smoke test. Not viewed in a browser.
 - **Found, not fixed:** Killeen copy says "Half the Killeen retirees we work with" take Dell/Apple/Tesla jobs
   and "We've cleared architectural review boards there before" — job-history claims to verify with the owner.
+
+## 2026-10-01 — Visual redesign: hero photo, questions 14–25, reference sites
+
+- Merged `claude/youthful-hypatia-28pf1o` into `claude/focused-gates-iu172r`, keeping both sides of
+  the vault conflicts (permit cleanup on `main`, hero spec on the branch).
+- Read the 13 active gallery items (95 photos) from Supabase and rendered three hero options at
+  1440×900 and 390×844: Mexicano Grille frame, horse stables aisle, Rogers carport. The owner picked the
+  Grille frame, then switched to the **Rogers carport** because the Grille photo is too wide on phones.
+  Found 7 byte-identical duplicate photos in the Mexicano Grille item; reported, not changed.
+- Subhead settled as the mockup's one sentence, reversing the earlier log row. Then questions 14–25:
+  no red; alternating navy bands; lion + Cinzel wordmark; lean header; homepage Hero, Builds, Services,
+  Quote; card prices kept; real customer quotes with their build; inline form kept; scope includes emails,
+  quote PDF and HQ; subtle motion; Vercel preview before `main`. 16 rows in `Decisions.md`.
+- Reference sites: a subagent found 9 (about 139k tokens). Screenshots and notes are in
+  `docs/redesign-2026-10/reference-sites.*`. Waiting on the owner's reactions.
+- Deleted the 7 duplicate Mexicano Grille photo rows (owner's call); their storage files remain. The owner
+  rejected all reference sites. Built a full homepage mockup from the logged decisions, then changed the
+  hero call to action to "Start Your Free Quote" with Carport / Barn / Metal Fencing shortcuts (owner). The
+  owner then withdrew the homepage mockup and kept only the header, hero, ticker and type, published as a
+  reference page for a Figma design system. Found the live Services intro breaking the turnkey lock;
+  flagged, not fixed.
+- No `src/` change.
+
+## 2026-10-01 — Visual redesign: hero specified
+
+- The owner started a full visual redesign of the public site. The hero headline "Your land. Your plans.
+  Our steel." is retired, and the hero now reads "Built right. Built fast. Built by Triple J." The last line
+  is a brushed-steel gradient. The layout is centred, the primary button white and the secondary an outline,
+  and the old proof strip becomes a latest-builds ticker fed from the gallery.
+- "The original typography" turned out to mean the lion logo's lettering. Cinzel Black was chosen after four
+  faces were rendered against it. The brand colour moves from royal blue `#1e6bd6` to the logo's navy
+  `#00182a` and slate `#546678`/`#788a9c`, which reverses the 2026-04-14 lock.
+- Mockups (desktop, phone, font comparison, three strip options) and a CSS reference were saved to
+  `docs/redesign-2026-10/`.
+- Not done: the hero photo. The sandbox's network policy denied the gallery storage host
+  (`idrbgxlvvnqduvbqtaei.supabase.co`) and `triplejmetaltx.com`, so the new uploads could not be viewed.
+  The subhead wording also needs the owner's confirmation; see `Next Session Primer.md`.
+- No `src/` change. All commits are on `claude/youthful-hypatia-28pf1o`.
 
 ## 2026-10-01 — Fencing photo, permit scraper limited to 2026, builder call list
 

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { requireOwner } from '@/lib/auth'
 import { getAdminClient } from '@/lib/supabase/admin'
 import { parseColorValue } from '@/lib/gallery-colors'
+import { revalidateGallery } from '@/lib/gallery-revalidate'
 
 export const dynamic = 'force-dynamic'
 
@@ -118,5 +119,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: `Photo record insert failed: ${photoError.message}` }, { status: 500 })
   }
 
+  // is_active defaults to true, so a new item is public the moment it lands.
+  revalidateGallery(item.id)
   return NextResponse.json({ item: { ...item, gallery_photos: [coverPhoto] } }, { status: 201 })
 }

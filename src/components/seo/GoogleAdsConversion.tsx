@@ -11,7 +11,8 @@ declare global {
 
 /**
  * Fires the Google Ads "lead form submitted" conversion event once on mount.
- * Mounted on /thank-you, the post-submit redirect destination of QuoteForm.
+ * Mounted on /thank-you, the post-submit redirect destination of QuoteForm,
+ * and in the /contact message form's success panel (MessageForm).
  *
  * Configure via env (Vercel project settings, all environments):
  *   NEXT_PUBLIC_GOOGLE_ADS_ID         — e.g. "AW-1234567890"

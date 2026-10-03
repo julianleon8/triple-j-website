@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { requireOwner } from '@/lib/auth'
 import { getAdminClient } from '@/lib/supabase/admin'
+import { revalidateGallery } from '@/lib/gallery-revalidate'
 
 export const dynamic = 'force-dynamic'
 
@@ -52,6 +53,8 @@ export async function PATCH(
     .single()
 
   if (error || !data) return NextResponse.json({ error: 'Photo not found' }, { status: 404 })
+
+  revalidateGallery(data.gallery_item_id)
   return NextResponse.json({ photo: data })
 }
 
@@ -103,5 +106,6 @@ export async function DELETE(
     }
   }
 
+  revalidateGallery(photo.gallery_item_id)
   return NextResponse.json({ success: true })
 }

@@ -14,9 +14,16 @@ import type { ReactNode } from 'react'
 import { SITE } from '@/lib/site'
 
 const LOGO_URL = 'https://www.triplejmetaltx.com/images/logo-lion.png'
-const BRAND_COLOR = '#1e6bd6'
-const BRAND_DARK = '#164aa0'
-const INK_900 = '#0a0e1a'
+// Forge (2026-10-02): navy replaces royal blue. Names kept so the templates
+// that import them pick the palette up without edits.
+const BRAND_COLOR = '#00182a'
+const BRAND_DARK = '#0c2538'
+const INK_900 = '#00182a'
+const SLATE = '#546678'
+const STEEL = '#788a9c'
+const STEEL_LIGHT = '#9fb0c0'
+/** Gmail and most clients ignore web fonts, so Cinzel falls back to Georgia. */
+const DISPLAY_FONT = 'Cinzel, Georgia, "Times New Roman", serif'
 
 interface BrandLayoutProps {
   preview: string
@@ -24,10 +31,10 @@ interface BrandLayoutProps {
 }
 
 /**
- * Email shell — dark editorial header + brand-blue accent stripe + white
- * card body + ink footer with family signature + NAP. Mirrors the site's
- * magazine treatment as far as email-safe CSS allows (no flexbox, no
- * gradients, system fonts only).
+ * Email shell — navy header with the lion lockup + steel rule + white card
+ * body + navy footer with family signature + NAP. Mirrors the site's Forge
+ * treatment as far as email-safe CSS allows (no flexbox, no gradients; the
+ * Cinzel wordmark falls back to Georgia where web fonts are ignored).
  *
  * Wraps every transactional email — change here cascades to all 7
  * templates without touching them individually.
@@ -39,7 +46,7 @@ export default function BrandLayout({ preview, children }: BrandLayoutProps) {
       <Preview>{preview}</Preview>
       <Body style={body}>
         <Container style={container}>
-          {/* ── Dark editorial header ─────────────────────────────────── */}
+          {/* ── Navy header ───────────────────────────────────────────── */}
           <Section style={header}>
             <table width="100%" cellPadding={0} cellSpacing={0} role="presentation">
               <tr>
@@ -53,8 +60,7 @@ export default function BrandLayout({ preview, children }: BrandLayoutProps) {
                   />
                 </td>
                 <td style={{ verticalAlign: 'middle' }}>
-                  <Text style={brandWordmarkTop}>TRIPLE J</Text>
-                  <Text style={brandWordmarkBottom}>METAL</Text>
+                  <Text style={brandWordmark}>Triple J Metal</Text>
                 </td>
                 <td style={{ textAlign: 'right', verticalAlign: 'middle' }}>
                   <Link href={SITE.phoneHref} style={headerPhone}>
@@ -66,7 +72,7 @@ export default function BrandLayout({ preview, children }: BrandLayoutProps) {
             </table>
           </Section>
 
-          {/* ── Brand-blue signature stripe ───────────────────────────── */}
+          {/* ── Steel rule under the header ───────────────────────────── */}
           <Section style={accentStripe} />
 
           {/* ── Body card ─────────────────────────────────────────────── */}
@@ -109,14 +115,14 @@ ${SITE.phone} · triplejmetaltx.com
 Built right, built fast, built by Triple J.
 `.trim()
 
-export { BRAND_COLOR, BRAND_DARK, INK_900, LOGO_URL }
+export { BRAND_COLOR, BRAND_DARK, DISPLAY_FONT, INK_900, LOGO_URL, SLATE }
 
 /* ── Styles (inlined object form per react-email convention) ───────── */
 
 const body = {
   margin: 0,
   padding: '24px 0',
-  backgroundColor: '#f5f5f5',
+  backgroundColor: '#f4f6f8',
   fontFamily:
     '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif',
 }
@@ -125,9 +131,10 @@ const container = {
   maxWidth: '620px',
   margin: '0 auto',
   backgroundColor: '#ffffff',
-  borderRadius: '14px',
+  borderRadius: '12px',
   overflow: 'hidden',
-  boxShadow: '0 4px 24px rgba(10, 14, 26, 0.06)',
+  border: '1px solid #c9d3dc',
+  boxShadow: '0 4px 24px rgba(0, 24, 42, 0.06)',
 }
 
 const header = {
@@ -135,28 +142,14 @@ const header = {
   padding: '22px 26px',
 }
 
-const brandWordmarkTop = {
+const brandWordmark = {
   color: '#ffffff',
-  fontSize: '22px',
+  fontSize: '24px',
   fontWeight: 900,
-  letterSpacing: '0.02em',
-  lineHeight: 1,
+  letterSpacing: '0.01em',
+  lineHeight: 1.1,
   margin: 0,
-  textTransform: 'uppercase' as const,
-  fontFamily:
-    '"Arial Black", "Helvetica Neue", Arial, sans-serif',
-}
-
-const brandWordmarkBottom = {
-  color: BRAND_COLOR,
-  fontSize: '20px',
-  fontWeight: 900,
-  letterSpacing: '0.02em',
-  lineHeight: 1,
-  margin: '2px 0 0',
-  textTransform: 'uppercase' as const,
-  fontFamily:
-    '"Arial Black", "Helvetica Neue", Arial, sans-serif',
+  fontFamily: DISPLAY_FONT,
 }
 
 const headerPhone = {
@@ -168,7 +161,7 @@ const headerPhone = {
 }
 
 const headerHours = {
-  color: 'rgba(255, 255, 255, 0.55)',
+  color: STEEL_LIGHT,
   fontSize: '11px',
   margin: '4px 0 0',
   textTransform: 'uppercase' as const,
@@ -176,15 +169,15 @@ const headerHours = {
 }
 
 const accentStripe = {
-  height: '4px',
-  backgroundColor: BRAND_COLOR,
+  height: '3px',
+  backgroundColor: STEEL,
   fontSize: 0,
   lineHeight: 0,
 }
 
 const bodySection = {
   padding: '32px 30px 26px',
-  color: '#1f2937',
+  color: '#24384b',
   fontSize: '15px',
   lineHeight: 1.6,
 }
@@ -198,26 +191,27 @@ const footer = {
 
 const footerSignature = {
   color: '#ffffff',
-  fontSize: '13px',
+  fontSize: '15px',
   fontWeight: 700,
+  fontFamily: DISPLAY_FONT,
   margin: 0,
   letterSpacing: '0.01em',
 }
 
 const footerFamily = {
-  color: 'rgba(255, 255, 255, 0.55)',
+  color: STEEL_LIGHT,
   fontSize: '11px',
   margin: '4px 0 0',
 }
 
 const footerDivider = {
-  borderColor: 'rgba(255, 255, 255, 0.12)',
+  borderColor: 'rgba(201, 211, 220, 0.2)',
   margin: '16px auto',
   width: '40%',
 }
 
 const footerTagline = {
-  color: BRAND_COLOR,
+  color: STEEL_LIGHT,
   fontSize: '10px',
   fontWeight: 700,
   letterSpacing: '0.18em',
@@ -225,7 +219,7 @@ const footerTagline = {
 }
 
 const footerNap = {
-  color: 'rgba(255, 255, 255, 0.55)',
+  color: STEEL_LIGHT,
   fontSize: '11px',
   margin: '10px 0 0',
   lineHeight: 1.5,

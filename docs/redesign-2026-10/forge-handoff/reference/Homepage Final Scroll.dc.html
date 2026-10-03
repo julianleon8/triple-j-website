@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    html, body { margin: 0; padding: 0; background: #00182a; }
+    body { font-family: Inter, system-ui, sans-serif; color: #00182a; -webkit-font-smoothing: antialiased; }
+    a { color: inherit; text-decoration: none; }
+    a:hover { color: inherit; }
+    button, input, textarea { font-family: inherit; }
+    input::placeholder, textarea::placeholder { color: #788a9c; }
+    ::selection { background: #546678; color: #fff; }
+  </style>
+</helmet>
+<div ref="{{ rootRef }}" style="container-type:inline-size;position:relative;background:#fff;color:#00182a;font-family:Inter,system-ui,sans-serif;line-height:1.55;min-height:100%">
+<header style="position:sticky;top:0;z-index:50;width:100%">
+  <div style="height:{{ topInset }}px;background:#00182a;position:relative;z-index:2"></div>
+  <div style="position:relative;z-index:1;background:{{ headerBg }};border-bottom:1px solid {{ headerBorder }};transform:translateY({{ headerShift }});transition:transform .35s cubic-bezier(.22,1,.36,1),background .3s ease-out,border-color .3s ease-out">
+    <div style="max-width:1360px;margin:0 auto;width:100%;padding:0 clamp(20px,3cqw,40px);box-sizing:border-box;display:flex;align-items:center;justify-content:space-between;height:{{ navH }}px;transition:height .3s">
+      <a href="#" aria-label="Triple J Metal" style="display:flex;align-items:center;gap:12px;color:#fff;font-family:Cinzel,serif;font-weight:900;font-size:clamp(19px,1cqw + 8px,22px);white-space:nowrap">
+        <img src="assets/logo-lion.png" alt="" style="width:{{ lionSize }}px;height:{{ lionSize }}px;object-fit:contain;flex-shrink:0">Triple J Metal
+      </a>
+      <sc-if value="{{ isDesktop }}" hint-placeholder-val="{{ true }}">
+        <nav aria-label="Primary" style="display:flex;gap:clamp(18px,2cqw,30px);margin:0 24px;font-size:15px;font-weight:500;color:rgba(255,255,255,.86)">
+          <a href="Triple J Site.dc.html#/carports" style-hover="color:#fff">Services</a><a href="Triple J Site.dc.html#/fencing" style-hover="color:#fff">Fencing</a><a href="#gallery" onClick="{{ jumpToGallery }}" style-hover="color:#fff">Gallery</a><a href="Triple J Site.dc.html#/about" style-hover="color:#fff">About</a><a href="Triple J Site.dc.html#/contact" style-hover="color:#fff">Contact</a>
+        </nav>
+        <div style="display:flex;align-items:center;gap:18px">
+          <sc-if value="{{ showPhone }}" hint-placeholder-val="{{ true }}"><a href="tel:+12543467764" style="color:#fff;font-weight:600;font-size:15px;display:flex;align-items:center;gap:8px;white-space:nowrap"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" style="stroke-width:2;stroke-linecap:round;stroke-linejoin:round"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2z"></path></svg><span style="font-variant-numeric:tabular-nums">254-346-7764</span></a></sc-if>
+          <a href="#quote" onClick="{{ jumpToQuote }}" style="display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:11px 18px;border-radius:6px;font-weight:600;font-size:14px;white-space:nowrap;background:#fff;color:#00182a" style-hover="background:#c9d3dc">Get a Free Quote</a>
+        </div>
+      </sc-if>
+      <sc-if value="{{ isMobile }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;align-items:center;gap:10px">
+          <a href="tel:+12543467764" aria-label="Call" style="display:inline-flex;width:42px;height:42px;border:1px solid rgba(255,255,255,.3);border-radius:8px;align-items:center;justify-content:center;color:#fff"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" style="stroke-width:2;stroke-linecap:round;stroke-linejoin:round"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2z"></path></svg></a>
+          <button type="button" aria-label="Menu" onClick="{{ toggleMenu }}" style="display:inline-flex;width:42px;height:42px;border:1px solid rgba(255,255,255,.3);border-radius:8px;align-items:center;justify-content:center;color:#fff;background:transparent;cursor:pointer">
+            <sc-if value="{{ menuClosed }}" hint-placeholder-val="{{ true }}"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" style="stroke-width:2;stroke-linecap:round"><path d="M4 7h16M4 12h16M4 17h16"></path></svg></sc-if>
+            <sc-if value="{{ menuOpen }}" hint-placeholder-val="{{ false }}"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" style="stroke-width:2;stroke-linecap:round"><path d="M6 6l12 12M18 6L6 18"></path></svg></sc-if>
+          </button>
+        </div>
+      </sc-if>
+    </div>
+  </div>
+  <sc-if value="{{ menuOpen }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;left:0;right:0;top:100%;height:760px;z-index:40;background:#00182a;padding:8px 20px 0;box-sizing:border-box;color:#fff">
+      <nav aria-label="Mobile" style="display:flex;flex-direction:column">
+        <a href="Triple J Site.dc.html#/carports" style="padding:18px 0;font-family:Cinzel,serif;font-weight:700;font-size:24px;border-bottom:1px solid rgba(201,211,220,.18)">Services</a>
+        <a href="Triple J Site.dc.html#/fencing" style="padding:18px 0;font-family:Cinzel,serif;font-weight:700;font-size:24px;border-bottom:1px solid rgba(201,211,220,.18)">Fencing</a>
+        <a href="#gallery" onClick="{{ jumpToGalleryCloseMenu }}" style="padding:18px 0;font-family:Cinzel,serif;font-weight:700;font-size:24px;border-bottom:1px solid rgba(201,211,220,.18)">Gallery</a>
+        <a href="Triple J Site.dc.html#/about" style="padding:18px 0;font-family:Cinzel,serif;font-weight:700;font-size:24px;border-bottom:1px solid rgba(201,211,220,.18)">About</a>
+        <a href="Triple J Site.dc.html#/contact" style="padding:18px 0;font-family:Cinzel,serif;font-weight:700;font-size:24px">Contact</a>
+      </nav>
+      <div style="margin-top:20px;display:flex;flex-direction:column;gap:12px">
+        <a href="#quote" onClick="{{ jumpToQuoteCloseMenu }}" style="display:inline-flex;align-items:center;justify-content:center;padding:15px 26px;border-radius:6px;font-weight:600;font-size:16px;background:#fff;color:#00182a">Get a Free Quote</a>
+        <a href="tel:+12543467764" style="display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:15px 26px;border-radius:6px;font-weight:600;font-size:16px;border:1px solid rgba(255,255,255,.3);color:#fff">Call <span style="font-variant-numeric:tabular-nums">254-346-7764</span></a>
+      </div>
+    </div>
+  </sc-if>
+</header>
+<main style="position:relative;z-index:1;background:{{ mainBg }};transition:background-color .8s cubic-bezier(.22,1,.36,1);padding-bottom:{{ mainPadBottom }}px;box-shadow:0 30px 60px -12px rgba(0,10,20,.6)">
+<div ref="{{ heroWrapRef }}" style="position:relative;margin-top:{{ heroMt }}px;background:#00182a">
+<section ref="{{ heroRef }}" data-screen-label="Hero" style="position:sticky;top:0;min-height:600px;display:flex;flex-direction:column;color:#fff;overflow:clip;background:#00182a">
+  <img ref="{{ heroImgRef }}" src="https://idrbgxlvvnqduvbqtaei.supabase.co/storage/v1/object/public/gallery/items/f548bede-4068-4f8a-9f45-541bec33c5c4/1790436675921.jpg" onError="{{ heroImgFallback }}" alt="23×35 carport with gutters built by Triple J Metal in Rogers, Texas" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:{{ heroPos }};transform:scale(1.06);transform-origin:50% 40%;will-change:transform">
+  <div aria-hidden="true" style="position:absolute;inset:0;background:radial-gradient(ellipse at center,rgba(0,24,42,.55) 0%,rgba(0,24,42,.82) 60%,rgba(0,24,42,.94) 100%)"></div>
+  <div ref="{{ heroContentRef }}" style="position:relative;flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:{{ heroPadTop }}px 20px 64px;will-change:transform">
+    <div ref="{{ heroEyebrowRef }}" style="font-size:clamp(11px,.3cqw + 9px,13px);font-weight:600;letter-spacing:.22em;text-transform:uppercase;color:#c9d3dc;display:inline-flex;align-items:center;gap:14px;opacity:0;transform:translateY(16px)"><span aria-hidden="true" style="width:clamp(20px,3cqw,48px);height:2px;background:linear-gradient(90deg,transparent,#788a9c)"></span>Family-owned · Temple, Texas<span aria-hidden="true" style="width:clamp(20px,3cqw,48px);height:2px;background:linear-gradient(90deg,#788a9c,transparent)"></span></div>
+    <h1 style="margin:22px 0 0;font-family:Cinzel,serif;font-weight:900;letter-spacing:.01em;line-height:1.02;font-size:clamp(35px,7.4cqw,104px);color:#fff">
+      <span data-hline="1" style="display:block;overflow:hidden;padding:.06em .14em .2em;margin:-.06em -.14em -.2em"><span ref="{{ heroL1Ref }}" style="display:block;transform:translateY(110%);will-change:transform">Built right.</span></span>
+      <span data-hline="1" style="display:block;overflow:hidden;padding:.06em .14em .2em;margin:-.06em -.14em -.2em"><span ref="{{ heroL2Ref }}" style="display:block;transform:translateY(110%);will-change:transform">Built fast.</span></span>
+      <span data-hline="1" style="display:block;overflow:hidden;padding:.06em .14em .2em;margin:-.06em -.14em -.2em"><span ref="{{ heroL3Ref }}" style="display:block;transform:translateY(110%);will-change:transform"><span style="background:linear-gradient(180deg,#e9eef2 0%,#9fb0c0 45%,#788a9c 55%,#c9d3dc 100%);-webkit-background-clip:text;background-clip:text;color:transparent">Built by Triple J.</span></span></span>
+    </h1>
+    <p ref="{{ heroSubRef }}" style="max-width:560px;margin:22px auto 0;font-size:clamp(16px,.4cqw + 14px,18px);line-height:1.55;color:rgba(255,255,255,.86);opacity:0;transform:translateY(24px)">Carports, garages, barns and patios, welded or bolted on your property by our own Central Texas crew.</p>
+    <div ref="{{ heroCtasRef }}" style="margin-top:32px;display:flex;flex-wrap:wrap;gap:12px;justify-content:center;opacity:0;transform:translateY(24px)">
+      <a href="#quote" onClick="{{ jumpToQuote }}" style="display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:15px 26px;border-radius:6px;font-weight:600;font-size:16px;white-space:nowrap;background:#fff;color:#00182a" style-hover="background:#c9d3dc">Get a Free Quote <span aria-hidden="true" style="color:#546678">→</span></a>
+      <a href="#gallery" onClick="{{ jumpToGallery }}" style="display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:15px 26px;border-radius:6px;font-weight:600;font-size:16px;white-space:nowrap;border:1px solid rgba(255,255,255,.4);background:transparent;color:#fff" style-hover="border-color:#fff;background:rgba(255,255,255,.08)">See Our Builds</a>
+    </div>
+    <div ref="{{ heroCueRef }}" aria-hidden="true" style="position:absolute;left:50%;bottom:14px;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:8px;font-size:10px;font-weight:600;letter-spacing:.22em;text-transform:uppercase;color:#c9d3dc;opacity:0"><span>Scroll</span><span style="width:1px;height:34px;background:linear-gradient(180deg,#c9d3dc,transparent)"></span></div>
+  </div>
+  <div ref="{{ tickerBarRef }}" style="position:relative;border-top:1px solid rgba(201,211,220,.22);background:rgba(0,24,42,.72);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);display:flex;align-items:center;overflow:hidden;font-size:14px;color:rgba(255,255,255,.88);transform:translateY(100%);will-change:transform">
+    <b style="flex:none;font-weight:700;font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:#c9d3dc;padding:14px 22px 14px clamp(20px,3cqw,40px);border-right:1px solid #546678;background:#00182a;position:relative;z-index:1">Latest builds</b>
+    <div ref="{{ tickerTrackRef }}" data-ticker="1" style="display:flex;gap:44px;padding-left:28px;white-space:nowrap;will-change:transform">
+      <sc-for list="{{ tickerItems }}" as="t" hint-placeholder-count="16">
+        <span style="flex:none">{{ t.title }}<em style="font-style:normal;color:#788a9c;margin-left:6px">{{ t.city }}</em></span>
+      </sc-for>
+    </div>
+  </div>
+</section>
+</div>
+<section id="gallery" ref="{{ buildsWrapRef }}" data-screen-label="Builds" style="position:relative;color:#00182a">
+  <div ref="{{ buildsInnerRef }}" style="position:relative;padding:clamp(40px,7cqw,104px) 0">
+  <div style="max-width:1360px;margin:auto;width:100%;padding:0 clamp(20px,3cqw,40px);box-sizing:border-box">
+    <div data-reveal="1" style="display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:20px 32px">
+      <div style="max-width:720px">
+        <p style="margin:0;font-size:12px;font-weight:600;letter-spacing:.22em;text-transform:uppercase;color:#546678;display:inline-flex;align-items:center;gap:14px"><span aria-hidden="true" style="width:32px;height:2px;background:linear-gradient(90deg,transparent,#788a9c)"></span>Our builds</p>
+        <h2 style="margin:16px 0 0;font-family:Cinzel,serif;font-weight:900;letter-spacing:.01em;line-height:1.05;font-size:clamp(30px,3cqw + 12px,56px);color:#00182a">Real jobs, real addresses.<br><span style="color:#546678">Built down the road.</span></h2>
+        <p style="margin:16px 0 0;font-size:clamp(16px,.3cqw + 14px,18px);line-height:1.55;color:#546678;max-width:600px">Every photo is a Triple J crew job in Central Texas, pulled straight from our live gallery with the title and city we filed it under.</p>
+      </div>
+      <div style="display:flex;align-items:center;gap:18px">
+        <a href="Triple J Site.dc.html#/gallery" style="font-size:15px;font-weight:600;color:#00182a;border-bottom:1px solid #c9d3dc;padding-bottom:2px" style-hover="border-color:#00182a">See the full gallery →</a>
+        <sc-if value="{{ isDesktop }}" hint-placeholder-val="{{ true }}">
+          <div style="display:flex;gap:8px">
+            <button type="button" aria-label="Previous builds" onClick="{{ stripPrev }}" style="height:44px;width:44px;border-radius:6px;border:1px solid #c9d3dc;background:#fff;color:#00182a;display:inline-flex;align-items:center;justify-content:center;cursor:pointer" style-hover="border-color:#00182a"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" style="stroke-width:2;stroke-linecap:round;stroke-linejoin:round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg></button>
+            <button type="button" aria-label="Next builds" onClick="{{ stripNext }}" style="height:44px;width:44px;border-radius:6px;border:1px solid #c9d3dc;background:#fff;color:#00182a;display:inline-flex;align-items:center;justify-content:center;cursor:pointer" style-hover="border-color:#00182a"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" style="stroke-width:2;stroke-linecap:round;stroke-linejoin:round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></button>
+          </div>
+        </sc-if>
+      </div>
+    </div>
+    <div ref="{{ stripRef }}" data-reveal="1" style="margin-top:40px;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;padding:4px clamp(20px,3cqw,40px) 12px;margin-left:calc(-1 * clamp(20px,3cqw,40px));margin-right:calc(-1 * clamp(20px,3cqw,40px))">
+      <div ref="{{ trackRef }}" style="display:flex;gap:16px;will-change:transform">
+      <sc-for list="{{ builds }}" as="b" hint-placeholder-count="8">
+        <a href="#" data-stagger="1" style="position:relative;flex:0 0 min(380px,80cqw);scroll-snap-align:start;border-radius:12px;overflow:hidden;background:#e3e9ee;border:1px solid #c9d3dc;display:flex;flex-direction:column">
+          <div style="position:relative;aspect-ratio:4/3;overflow:hidden;background:#546678">
+            <img src="{{ b.img }}" loading="lazy" alt="{{ b.title }}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover">
+          </div>
+          <div style="padding:16px 18px 18px;background:#fff">
+            <p style="margin:0;font-size:11px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:#788a9c">{{ b.city }}</p>
+            <h3 style="margin:6px 0 0;font-family:Cinzel,serif;font-weight:700;letter-spacing:.01em;font-size:18px;line-height:1.2;color:#00182a">{{ b.title }}</h3>
+          </div>
+        </a>
+      </sc-for>
+      </div>
+    </div>
+  </div>
+  </div>
+</section>
+<section id="services" ref="{{ servicesRef }}" data-screen-label="Services" style="position:relative;background:transparent;color:#fff;padding:clamp(64px,7cqw,104px) 0;overflow:clip">
+  <div style="max-width:1360px;margin:0 auto;width:100%;padding:0 clamp(20px,3cqw,40px);box-sizing:border-box">
+    <div data-reveal="1" style="max-width:760px">
+      <p style="margin:0;font-size:12px;font-weight:600;letter-spacing:.22em;text-transform:uppercase;color:#c9d3dc;display:inline-flex;align-items:center;gap:14px"><span aria-hidden="true" style="width:32px;height:2px;background:linear-gradient(90deg,transparent,#788a9c)"></span>What we build</p>
+      <h2 style="margin:16px 0 0;font-family:Cinzel,serif;font-weight:900;letter-spacing:.01em;line-height:1.05;font-size:clamp(30px,3cqw + 12px,56px);color:#fff">Welded or bolted.<br><span style="background:linear-gradient(180deg,#e9eef2 0%,#9fb0c0 45%,#788a9c 55%,#c9d3dc 100%);-webkit-background-clip:text;background-clip:text;color:transparent">Built whole, by us.</span></h2>
+      <p style="margin:16px 0 0;font-size:clamp(16px,.3cqw + 14px,18px);line-height:1.55;color:rgba(255,255,255,.8);max-width:640px">Every structure is sold welded, bolted, or turnkey — with turnkey, site prep, concrete and installation sit on one contract. No kits, no subcontractors.</p>
+    </div>
+    <div style="margin-top:48px;display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:20px">
+      <sc-for list="{{ serviceCards }}" as="s" hint-placeholder-count="3">
+        <a href="#" data-stagger="1" style="display:flex;flex-direction:column;border-radius:12px;overflow:hidden;border:1px solid rgba(201,211,220,.22);background:#0c2538">
+          <div style="position:relative;aspect-ratio:5/4;overflow:hidden;background:#546678">
+            <img src="{{ s.img }}" loading="lazy" alt="{{ s.headline }}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover">
+          </div>
+          <div style="display:flex;flex-direction:column;flex:1;padding:18px 20px 20px">
+            <p style="margin:0;font-size:11px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:#c9d3dc">{{ s.eyebrow }}</p>
+            <h3 style="margin:8px 0 0;font-family:Cinzel,serif;font-weight:700;letter-spacing:.01em;font-size:20px;line-height:1.2;color:#fff">{{ s.headline }}</h3>
+            <p style="margin:10px 0 0;font-size:14px;line-height:1.55;color:rgba(255,255,255,.72)">{{ s.blurb }}</p>
+            <div style="margin-top:auto;padding-top:14px;display:flex;align-items:center;justify-content:space-between;gap:12px;border-top:1px solid rgba(201,211,220,.18);font-size:13px">
+              <span style="color:#c9d3dc;line-height:1.4">From <b style="color:#fff;font-variant-numeric:tabular-nums;white-space:nowrap">${{ s.price }}</b> <span style="white-space:nowrap">steel + install</span></span>
+              <span style="color:#c9d3dc;font-weight:600;white-space:nowrap">See builds →</span>
+            </div>
+          </div>
+        </a>
+      </sc-for>
+      <a href="Triple J Site.dc.html#/fencing" data-stagger="1" style="position:relative;display:flex;flex-direction:column;border-radius:12px;overflow:hidden;border:1px solid rgba(201,211,220,.45);background:#546678;min-height:100%">
+          <img src="assets/sm-metal-fence-ranch-wire.jpg" alt="Metal ranch fencing built by Triple J Metal" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:60% 50%">
+          <div aria-hidden="true" style="position:absolute;inset:0;background:linear-gradient(to top,rgba(0,24,42,.96) 0%,rgba(0,24,42,.78) 50%,rgba(0,24,42,.3) 100%)"></div>
+          <div style="position:relative;display:flex;flex-direction:column;flex:1;justify-content:flex-end;padding:20px">
+            <p style="margin:0;font-size:11px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:#c9d3dc">Now quoting fencing</p>
+            <h3 style="margin:8px 0 0;font-family:Cinzel,serif;font-weight:900;letter-spacing:.01em;font-size:clamp(24px,1.2cqw + 14px,30px);line-height:1.1;color:#fff">Metal fences. Gates. <span style="background:linear-gradient(180deg,#e9eef2 0%,#9fb0c0 45%,#788a9c 55%,#c9d3dc 100%);-webkit-background-clip:text;background-clip:text;color:transparent">A better boundary.</span></h3>
+            <p style="margin:10px 0 0;font-size:14px;line-height:1.55;color:rgba(255,255,255,.8)">Privacy, pipe and ranch, and ornamental metal fencing for Temple, Belton, Killeen and nearby.</p>
+            <div style="margin-top:16px;display:flex;flex-direction:column;gap:8px">
+              <span style="display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:13px 18px;border-radius:6px;font-weight:600;font-size:15px;background:#fff;color:#00182a">Explore fencing &amp; gates <span aria-hidden="true" style="color:#546678">→</span></span>
+              <span onClick="{{ pickFencing }}" style="display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:12px 18px;border-radius:6px;font-weight:600;font-size:15px;border:1px solid rgba(255,255,255,.4);color:#fff;cursor:pointer">Get a fencing quote</span>
+            </div>
+          </div>
+        </a>
+    </div>
+  </div>
+</section>
+<section id="quote" ref="{{ quoteRef }}" data-screen-label="Quote" style="position:relative;background:transparent;color:#00182a;padding:clamp(64px,7cqw,104px) 0;overflow:clip">
+  <div style="max-width:1360px;margin:0 auto;width:100%;padding:0 clamp(20px,3cqw,40px);box-sizing:border-box">
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,440px),1fr));gap:clamp(32px,4cqw,80px);align-items:start">
+      <div data-reveal="1">
+        <p style="margin:0;font-size:12px;font-weight:600;letter-spacing:.22em;text-transform:uppercase;color:#546678;display:inline-flex;align-items:center;gap:14px"><span aria-hidden="true" style="width:32px;height:2px;background:linear-gradient(90deg,transparent,#788a9c)"></span>Get a quote</p>
+        <h2 style="margin:16px 0 0;font-family:Cinzel,serif;font-weight:900;letter-spacing:.01em;line-height:1.05;font-size:clamp(30px,3cqw + 12px,56px);color:#00182a">Tell us about<br><span style="color:#546678">your build.</span></h2>
+        <p style="margin:16px 0 0;font-size:clamp(16px,.3cqw + 14px,18px);line-height:1.55;color:#546678;max-width:520px">Two quick steps. A real Texas crew on the other end — not a form into a black hole.</p>
+        <div style="margin-top:28px;display:flex;flex-direction:column;gap:12px;font-size:15px;color:#00182a">
+          <div style="display:flex;align-items:center;gap:12px"><span aria-hidden="true" style="width:28px;height:2px;background:#788a9c;flex-shrink:0"></span>Free quote, no obligation</div>
+          <div style="display:flex;align-items:center;gap:12px"><span aria-hidden="true" style="width:28px;height:2px;background:#788a9c;flex-shrink:0"></span>Reply within 24 hours</div>
+          <div style="display:flex;align-items:center;gap:12px"><span aria-hidden="true" style="width:28px;height:2px;background:#788a9c;flex-shrink:0"></span>Military, first-responder &amp; trade discounts honored</div>
+        </div>
+      </div>
+      <div id="quote-card" data-reveal="1" style="scroll-margin-top:16px;border-radius:12px;border:1px solid #c9d3dc;background:#fff;box-shadow:0 24px 48px -24px rgba(0,24,42,.3);padding:clamp(20px,2cqw,32px)">
+        <div style="margin-bottom:24px">
+          <div style="display:flex;align-items:center;justify-content:space-between;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.18em;color:#788a9c;margin-bottom:8px">
+            <span style="white-space:nowrap"><span style="color:#00182a">Step {{ step }}</span> of 2</span><span style="white-space:nowrap">{{ stepLabel }}</span>
+          </div>
+          <div style="position:relative;height:3px;border-radius:9999px;background:#e3e9ee;overflow:hidden" role="progressbar"><div style="position:absolute;top:0;bottom:0;left:0;background:#00182a;width:{{ progressPct }}%;transition:width .5s ease-out"></div></div>
+        </div>
+        <sc-if value="{{ isStep1 }}" hint-placeholder-val="{{ true }}">
+          <div style="display:flex;flex-direction:column;gap:24px">
+            <div>
+              <p style="margin:0 0 10px;font-size:11px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:#546678">The build</p>
+              <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px">
+                <sc-for list="{{ chips }}" as="c" hint-placeholder-count="7">
+                  <button type="button" onClick="{{ c.pick }}" style="position:relative;display:flex;flex-direction:column;overflow:hidden;border-radius:10px;border:2px solid {{ c.border }};background:{{ c.bg }};padding:0;cursor:pointer;text-align:left;color:#00182a;transition:border-color .2s,background .2s">
+                    <div style="position:relative;aspect-ratio:5/4;overflow:hidden;width:100%;background:#546678">
+                      <img src="{{ c.img }}" loading="lazy" alt="{{ c.label }}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover">
+                      <div aria-hidden="true" style="position:absolute;inset:0;background:linear-gradient(to top,rgba(0,24,42,.55),rgba(0,24,42,0) 55%)"></div>
+                      <sc-if value="{{ c.selected }}" hint-placeholder-val="{{ false }}"><span aria-hidden="true" style="position:absolute;top:8px;right:8px;display:inline-flex;align-items:center;justify-content:center;height:28px;width:28px;border-radius:9999px;background:#00182a;color:#fff;font-size:14px;font-weight:700;box-shadow:0 6px 14px rgba(0,24,42,.35)">✓</span></sc-if>
+                    </div>
+                    <div style="padding:10px 12px 12px">
+                      <div style="font-family:Cinzel,serif;font-weight:700;letter-spacing:.01em;font-size:15px;line-height:1.15">{{ c.label }}</div>
+                      <div style="margin-top:3px;font-size:11px;letter-spacing:.04em;text-transform:uppercase;color:#788a9c;line-height:1.25">{{ c.sublabel }}</div>
+                    </div>
+                  </button>
+                </sc-for>
+              </div>
+            </div>
+            <div>
+              <p style="margin:0 0 10px;font-size:11px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:#546678">Construction</p>
+              <div style="display:flex;flex-wrap:wrap;gap:8px">
+                <sc-for list="{{ structurePills }}" as="p" hint-placeholder-count="3"><button type="button" onClick="{{ p.pick }}" style="height:42px;padding:0 16px;border-radius:6px;border:1px solid {{ p.border }};background:{{ p.bg }};color:{{ p.color }};font-size:14px;font-weight:600;cursor:pointer">{{ p.label }}</button></sc-for>
+              </div>
+              <p style="margin:8px 0 0;font-size:12px;color:#788a9c">Welded is permanent; bolted can be moved later.</p>
+            </div>
+            <div>
+              <p style="margin:0 0 10px;font-size:11px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:#546678">Approximate size <span style="color:#788a9c;font-weight:500;letter-spacing:0;text-transform:none">(optional)</span></p>
+              <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px">
+                <input type="number" placeholder="Width" value="{{ width }}" onChange="{{ setWidth }}" style="width:100%;box-sizing:border-box;border-radius:6px;border:1px solid #c9d3dc;background:#fff;padding:0 14px;height:46px;font-size:15px;color:#00182a;outline:none">
+                <input type="number" placeholder="Length" value="{{ length }}" onChange="{{ setLength }}" style="width:100%;box-sizing:border-box;border-radius:6px;border:1px solid #c9d3dc;background:#fff;padding:0 14px;height:46px;font-size:15px;color:#00182a;outline:none">
+                <input type="number" placeholder="Height" value="{{ height }}" onChange="{{ setHeight }}" style="width:100%;box-sizing:border-box;border-radius:6px;border:1px solid #c9d3dc;background:#fff;padding:0 14px;height:46px;font-size:15px;color:#00182a;outline:none">
+              </div>
+              <p style="margin:8px 0 0;font-size:12px;color:#788a9c">W × L × H in feet. Rough is fine — we measure on-site.</p>
+            </div>
+            <div>
+              <p style="margin:0 0 10px;font-size:11px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:#546678">ZIP code</p>
+              <div style="position:relative">
+                <input type="text" maxlength="10" placeholder="ZIP code" value="{{ zip }}" onChange="{{ setZip }}" style="width:100%;box-sizing:border-box;border-radius:6px;border:1px solid #c9d3dc;background:#fff;padding:0 130px 0 14px;height:46px;font-size:15px;color:#00182a;outline:none">
+                <sc-if value="{{ hasZipCity }}" hint-placeholder-val="{{ false }}"><span style="position:absolute;right:14px;top:50%;transform:translateY(-50%);font-size:13px;font-weight:600;color:#00182a;white-space:nowrap;pointer-events:none">{{ zipCity }} ✓</span></sc-if>
+              </div>
+            </div>
+          </div>
+          <div style="position:sticky;bottom:{{ stickyBottom }}px;z-index:2;margin:24px calc(-1 * clamp(20px,2cqw,32px)) calc(-1 * clamp(20px,2cqw,32px));padding:14px clamp(20px,2cqw,32px) clamp(20px,2cqw,32px);background:linear-gradient(to bottom,rgba(255,255,255,0),#fff 16px);border-radius:0 0 12px 12px">
+            <button type="button" onClick="{{ nextStep }}" disabled="{{ cantAdvance }}" style="width:100%;display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:15px 26px;border-radius:6px;font-weight:600;font-size:16px;background:#00182a;color:#fff;border:0;cursor:pointer;opacity:{{ advanceOpacity }};box-shadow:0 10px 24px -12px rgba(0,24,42,.45)">Continue <span aria-hidden="true">→</span></button>
+          </div>
+        </sc-if>
+        <sc-if value="{{ isStep2 }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;flex-direction:column;gap:24px">
+            <div>
+              <p style="margin:0 0 10px;font-size:11px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:#546678">Who to call back</p>
+              <div style="display:flex;flex-direction:column;gap:10px">
+                <input type="text" placeholder="Full name" value="{{ name }}" onChange="{{ setName }}" style="width:100%;box-sizing:border-box;border-radius:6px;border:1px solid #c9d3dc;background:#fff;padding:0 14px;height:46px;font-size:15px;color:#00182a;outline:none">
+                <input type="tel" placeholder="Phone — we text first" value="{{ phone }}" onChange="{{ setPhone }}" style="width:100%;box-sizing:border-box;border-radius:6px;border:1px solid #c9d3dc;background:#fff;padding:0 14px;height:46px;font-size:15px;color:#00182a;outline:none">
+                <input type="email" placeholder="Email (optional)" value="{{ email }}" onChange="{{ setEmail }}" style="width:100%;box-sizing:border-box;border-radius:6px;border:1px solid #c9d3dc;background:#fff;padding:0 14px;height:46px;font-size:15px;color:#00182a;outline:none">
+              </div>
+            </div>
+            <div>
+              <p style="margin:0 0 10px;font-size:11px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:#546678">Concrete pad</p>
+              <div style="display:flex;flex-wrap:wrap;gap:8px"><sc-for list="{{ concretePills }}" as="p" hint-placeholder-count="3"><button type="button" onClick="{{ p.pick }}" style="height:42px;padding:0 16px;border-radius:6px;border:1px solid {{ p.border }};background:{{ p.bg }};color:{{ p.color }};font-size:14px;font-weight:600;cursor:pointer">{{ p.label }}</button></sc-for></div>
+            </div>
+            <div>
+              <p style="margin:0 0 10px;font-size:11px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:#546678">Do you need permits?</p>
+              <div style="display:flex;flex-wrap:wrap;gap:8px"><sc-for list="{{ permitPills }}" as="p" hint-placeholder-count="3"><button type="button" onClick="{{ p.pick }}" style="height:42px;padding:0 16px;border-radius:6px;border:1px solid {{ p.border }};background:{{ p.bg }};color:{{ p.color }};font-size:14px;font-weight:600;cursor:pointer">{{ p.label }}</button></sc-for></div>
+              <p style="margin:8px 0 0;font-size:12px;color:#788a9c">We talk through city, county and HOA requirements before anything gets scheduled.</p>
+            </div>
+            <div>
+              <p style="margin:0 0 10px;font-size:11px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:#546678">Timeline</p>
+              <div style="display:flex;flex-wrap:wrap;gap:8px"><sc-for list="{{ timelinePills }}" as="p" hint-placeholder-count="4"><button type="button" onClick="{{ p.pick }}" style="height:42px;padding:0 16px;border-radius:6px;border:1px solid {{ p.border }};background:{{ p.bg }};color:{{ p.color }};font-size:14px;font-weight:600;cursor:pointer">{{ p.label }}</button></sc-for></div>
+            </div>
+            <div>
+              <p style="margin:0 0 10px;font-size:11px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:#546678">Budget range <span style="color:#788a9c;font-weight:500;letter-spacing:0;text-transform:none">(optional)</span></p>
+              <div style="display:flex;flex-wrap:wrap;gap:8px"><sc-for list="{{ budgetPills }}" as="p" hint-placeholder-count="5"><button type="button" onClick="{{ p.pick }}" style="height:42px;padding:0 16px;border-radius:6px;border:1px solid {{ p.border }};background:{{ p.bg }};color:{{ p.color }};font-size:14px;font-weight:600;cursor:pointer;font-variant-numeric:tabular-nums">{{ p.label }}</button></sc-for></div>
+              <p style="margin:8px 0 0;font-size:12px;color:#788a9c">Honest pricing, no surprises. We scope the build to what you want to spend — not the other way around.</p>
+            </div>
+            <div>
+              <p style="margin:0 0 10px;font-size:11px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:#546678">Discount <span style="color:#788a9c;font-weight:500;letter-spacing:0;text-transform:none">(optional)</span></p>
+              <label style="display:flex;cursor:pointer;align-items:flex-start;gap:12px;border-radius:8px;border:1px solid #c9d3dc;background:#fff;padding:12px 14px">
+                <input type="checkbox" style="margin-top:3px;height:16px;width:16px;flex-shrink:0;accent-color:#00182a">
+                <span style="font-size:14px;color:#00182a;line-height:1.45">Military, veteran or first responder<span style="display:block;font-size:12px;color:#788a9c">Discount applied to your quote. ID checked at the estimate.</span></span>
+              </label>
+            </div>
+            <div>
+              <p style="margin:0 0 10px;font-size:11px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:#546678">Anything else <span style="color:#788a9c;font-weight:500;letter-spacing:0;text-transform:none">(optional)</span></p>
+              <textarea rows="3" placeholder="HOA requirements, site access, existing anchors…" style="width:100%;box-sizing:border-box;border-radius:6px;border:1px solid #c9d3dc;background:#fff;padding:12px 14px;min-height:80px;font-size:15px;color:#00182a;outline:none;resize:vertical"></textarea>
+            </div>
+          </div>
+          <div style="margin-top:24px;display:flex;gap:12px;justify-content:space-between">
+            <button type="button" onClick="{{ prevStep }}" style="height:50px;padding:0 18px;border-radius:6px;border:1px solid #c9d3dc;background:#fff;font-size:14px;font-weight:600;color:#546678;cursor:pointer">← Back</button>
+            <button type="button" style="flex:1;display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:15px 26px;border-radius:6px;font-weight:600;font-size:16px;background:#00182a;color:#fff;border:0;cursor:pointer">Send to Triple J <span aria-hidden="true">→</span></button>
+          </div>
+          <p style="margin:18px 0 0;text-align:center;font-size:12px;color:#546678;line-height:1.5">Free · no obligation · reply within 24 hours.</p>
+          <p style="margin:6px 0 0;text-align:center;font-size:11px;color:#788a9c">By submitting you consent to be contacted by phone or text.</p>
+        </sc-if>
+      </div>
+    </div>
+  </div>
+</section>
+</main>
+<footer ref="{{ footerRef }}" data-screen-label="Footer" style="position:relative;z-index:0;overflow:hidden;background:#00182a;color:rgba(255,255,255,.8);border-top:1px solid rgba(201,211,220,.15)">
+  <sc-if value="{{ hasFooterTex }}" hint-placeholder-val="{{ true }}">
+    <img src="{{ footerTexSrc }}" alt="" aria-hidden="true" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 100%;opacity:{{ footerTexOpacity }};pointer-events:none">
+    <div aria-hidden="true" style="position:absolute;inset:0;background:linear-gradient(to bottom,#00182a 0%,rgba(0,24,42,.72) 30%,rgba(0,24,42,.42) 70%,rgba(0,24,42,.3) 100%);pointer-events:none"></div>
+  </sc-if>
+  <div ref="{{ footerInnerRef }}" style="position:relative;max-width:1360px;margin:0 auto;width:100%;padding:0 clamp(20px,3cqw,40px);box-sizing:border-box;will-change:transform">
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:clamp(36px,3cqw,48px);padding:clamp(56px,5cqw,80px) 0">
+      <div style="grid-column:span {{ footerBrandSpan }}">
+        <a href="#" aria-label="Triple J Metal" style="display:inline-flex;align-items:center;gap:14px;color:#fff;font-family:Cinzel,serif;font-weight:900;font-size:clamp(24px,1cqw + 16px,30px)">
+          <img src="assets/logo-lion.png" alt="Triple J Metal lion emblem" style="width:56px;height:56px;object-fit:contain;flex-shrink:0">Triple J Metal
+        </a>
+        <p style="margin:20px 0 0;font-size:17px;font-weight:600;color:#fff;line-height:1.4;max-width:420px">Built right, built fast, built by Triple J.</p>
+        <p style="margin:10px 0 0;font-size:14px;color:#788a9c;max-width:420px">Family-owned · Founded 2025 · 150+ jobs across Central Texas</p>
+        <address style="margin-top:22px;font-style:normal;font-size:14px;color:#c9d3dc;display:flex;flex-direction:column;gap:8px">
+          <div style="display:flex;align-items:flex-start;gap:10px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#788a9c" style="margin-top:2px;flex-shrink:0;stroke-width:2;stroke-linecap:round;stroke-linejoin:round"><path d="M20 10c0 7-8 13-8 13s-8-6-8-13a8 8 0 0 1 16 0Z"></path><circle cx="12" cy="10" r="3"></circle></svg><span>3319 Tem-Bel Ln<br>Temple, TX 76502</span></div>
+          <div style="display:flex;align-items:center;gap:10px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#788a9c" style="flex-shrink:0;stroke-width:2;stroke-linecap:round;stroke-linejoin:round"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2z"></path></svg><a href="tel:+12543467764" style="font-weight:700;color:#fff;font-size:16px;font-variant-numeric:tabular-nums">254-346-7764</a></div>
+        </address>
+        <div style="margin-top:22px;display:flex;align-items:center;gap:10px">
+          <a href="#" aria-label="Instagram" style="display:inline-flex;height:36px;width:36px;align-items:center;justify-content:center;border-radius:8px;border:1px solid rgba(201,211,220,.25);color:#c9d3dc" style-hover="border-color:#fff;color:#fff"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" style="stroke-width:2;stroke-linecap:round;stroke-linejoin:round"><rect x="3" y="3" width="18" height="18" rx="5"></rect><circle cx="12" cy="12" r="4"></circle><circle cx="17.5" cy="6.5" r="0.75" fill="currentColor" stroke="none"></circle></svg></a>
+          <a href="#" aria-label="Facebook" style="display:inline-flex;height:36px;width:36px;align-items:center;justify-content:center;border-radius:8px;border:1px solid rgba(201,211,220,.25);color:#c9d3dc" style-hover="border-color:#fff;color:#fff"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" style="stroke-width:2;stroke-linecap:round;stroke-linejoin:round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path></svg></a>
+        </div>
+      </div>
+      <div>
+        <h3 style="margin:0;font-size:12px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:#c9d3dc">Services</h3>
+        <ul style="margin:18px 0 0;padding:0;list-style:none;display:flex;flex-direction:column;gap:10px;font-size:14px">
+          <li><a href="Triple J Site.dc.html#/fencing" style-hover="color:#fff">Metal Fencing &amp; Gates</a></li><li><a href="Triple J Site.dc.html#/carports" style-hover="color:#fff">Carports</a></li><li><a href="Triple J Site.dc.html#/gates" style-hover="color:#fff">Gates</a></li><li><a href="#" style-hover="color:#fff">Metal Garages</a></li><li><a href="#" style-hover="color:#fff">Metal Barns</a></li><li><a href="#" style-hover="color:#fff">RV &amp; Boat Covers</a></li><li><a href="#" style-hover="color:#fff">Lean-To Patios</a></li><li><a href="#" style-hover="color:#fff">House Additions</a></li>
+          <li style="padding-top:4px"><a href="#" style="color:#788a9c;font-size:12px;text-transform:uppercase;letter-spacing:.08em;font-weight:600" style-hover="color:#fff">View all →</a></li>
+        </ul>
+      </div>
+      <div>
+        <h3 style="margin:0;font-size:12px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:#c9d3dc">Service Areas</h3>
+        <ul style="margin:18px 0 0;padding:0;list-style:none;display:flex;flex-direction:column;gap:10px;font-size:14px">
+          <li><a href="Triple J Site.dc.html#/temple" style-hover="color:#fff">Temple, TX</a></li><li><a href="Triple J Site.dc.html#/belton" style-hover="color:#fff">Belton, TX</a></li><li><a href="#" style-hover="color:#fff">Killeen, TX</a></li><li><a href="#" style-hover="color:#fff">Harker Heights, TX</a></li><li><a href="#" style-hover="color:#fff">Copperas Cove, TX</a></li><li><a href="#" style-hover="color:#fff">Waco, TX</a></li><li><a href="#" style-hover="color:#fff">Georgetown, TX</a></li><li><a href="#" style-hover="color:#fff">Round Rock, TX</a></li>
+          <li style="padding-top:4px"><a href="#" style="color:#788a9c;font-size:12px;text-transform:uppercase;letter-spacing:.08em;font-weight:600" style-hover="color:#fff">View all →</a></li>
+        </ul>
+      </div>
+      <div>
+        <h3 style="margin:0;font-size:12px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:#c9d3dc">Company</h3>
+        <ul style="margin:18px 0 0;padding:0;list-style:none;display:flex;flex-direction:column;gap:10px;font-size:14px">
+          <li><a href="Triple J Site.dc.html#/carports" style-hover="color:#fff">Services</a></li><li><a href="Triple J Site.dc.html#/fencing" style-hover="color:#fff">Fencing</a></li><li><a href="Triple J Site.dc.html#/gallery" style-hover="color:#fff">Gallery</a></li><li><a href="Triple J Site.dc.html#/about" style-hover="color:#fff">About</a></li><li><a href="Triple J Site.dc.html#/contact" style-hover="color:#fff">Contact</a></li><li><a href="#" style-hover="color:#fff">Blog</a></li><li><a href="Triple J Site.dc.html#/partners" style-hover="color:#fff">Partners</a></li><li><a href="Triple J Site.dc.html#/military" style-hover="color:#fff">Fort Cavazos Military</a></li><li><a href="#" style-hover="color:#fff">Compare Builders</a></li>
+          <li style="padding-top:4px"><a href="#quote" onClick="{{ jumpToQuote }}" style="color:#c9d3dc;font-weight:700;font-size:12px;text-transform:uppercase;letter-spacing:.08em" style-hover="color:#fff">Get a Free Quote →</a></li>
+        </ul>
+      </div>
+    </div>
+    <div style="border-top:1px solid rgba(201,211,220,.15);padding:22px 0;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px;font-size:12px;color:#788a9c">
+      <div>© 2026 Triple J Metal LLC. All rights reserved.</div>
+      <div style="display:flex;align-items:center;gap:20px"><a href="#" style-hover="color:#fff">Privacy</a><a href="#" style-hover="color:#fff">Terms</a><a href="Triple J Site.dc.html#/partners" style-hover="color:#fff">Partners</a></div>
+    </div>
+  </div>
+</footer>
+<sc-if value="{{ isMobile }}" hint-placeholder-val="{{ false }}">
+  <div style="position:sticky;bottom:0;left:0;right:0;z-index:40;background:rgba(0,24,42,.95);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border-top:1px solid rgba(201,211,220,.2);padding-bottom:{{ bottomInset }}px">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:8px">
+      <a href="tel:+12543467764" style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:48px;border-radius:6px;background:#fff;color:#00182a;font-weight:700">
+        <span style="display:flex;align-items:center;gap:8px;line-height:1"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" style="stroke-width:2;stroke-linecap:round;stroke-linejoin:round"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2z"></path></svg><span>Call Now</span></span>
+        <span style="font-size:10px;font-weight:500;color:#546678;margin-top:2px;letter-spacing:.03em">English · Español</span>
+      </a>
+      <a href="#quote" onClick="{{ jumpToQuote }}" style="display:flex;align-items:center;justify-content:center;gap:8px;height:48px;border-radius:6px;border:1px solid rgba(255,255,255,.3);color:#fff;font-weight:600">Free Quote <span aria-hidden="true">→</span></a>
+    </div>
+  </div>
+</sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;viewport&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;auto&quot;,&quot;desktop&quot;,&quot;mobile&quot;],&quot;default&quot;:&quot;auto&quot;,&quot;tsType&quot;:&quot;'auto'|'desktop'|'mobile'&quot;,&quot;section&quot;:&quot;Preview&quot;},&quot;heroPinScreens&quot;:{&quot;editor&quot;:&quot;range&quot;,&quot;default&quot;:0.9,&quot;min&quot;:0.4,&quot;max&quot;:1.4,&quot;step&quot;:0.1,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Scroll&quot;},&quot;curtainDepth&quot;:{&quot;editor&quot;:&quot;range&quot;,&quot;default&quot;:0.55,&quot;min&quot;:0,&quot;max&quot;:1,&quot;step&quot;:0.05,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Scroll&quot;},&quot;footerTexture&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;brushed steel&quot;,&quot;corrugated panel&quot;,&quot;none&quot;],&quot;default&quot;:&quot;brushed steel&quot;,&quot;tsType&quot;:&quot;'brushed steel'|'corrugated panel'|'none'&quot;,&quot;section&quot;:&quot;Footer&quot;},&quot;footerTextureOpacity&quot;:{&quot;editor&quot;:&quot;range&quot;,&quot;default&quot;:0.55,&quot;min&quot;:0,&quot;max&quot;:1,&quot;step&quot;:0.05,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Footer&quot;}}">
+class Component extends DCLogic {
+  MODE = 'A'; PIN_BUILDS = false;
+  state = { width: 1280, vh: 800, scrolled: false, headerHidden: false, theme: 'light', menuOpen: false, step: 1, service: '', structure: 'unsure', concrete: '', permits: '', budget: '', timeline: '', width_ft: '', length_ft: '', height_ft: '', zip: '', name: '', phone: '', email: '' };
+  rootRef = React.createRef(); stripRef = React.createRef(); trackRef = React.createRef();
+  heroWrapRef = React.createRef(); heroRef = React.createRef(); heroImgRef = React.createRef(); heroContentRef = React.createRef(); heroEyebrowRef = React.createRef(); heroL1Ref = React.createRef(); heroL2Ref = React.createRef(); heroL3Ref = React.createRef(); heroSubRef = React.createRef(); heroCtasRef = React.createRef(); heroCueRef = React.createRef(); tickerBarRef = React.createRef(); tickerTrackRef = React.createRef();
+  buildsWrapRef = React.createRef(); buildsInnerRef = React.createRef(); servicesRef = React.createRef(); quoteRef = React.createRef(); footerRef = React.createRef(); footerInnerRef = React.createRef();
+
+  componentDidMount() {
+    const root = this.rootRef.current; if (!root) return;
+    this.reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    this.getScrollEl = () => { let el = root.parentElement; while (el && el !== document.documentElement) { const o = getComputedStyle(el).overflowY; if (o === 'auto' || o === 'scroll') return el; el = el.parentElement; } return null; };
+    this.measure = () => {
+      const sp = this.getScrollEl(); const w = root.getBoundingClientRect().width; const h = sp ? sp.clientHeight : window.innerHeight;
+      if (!w || !h) return;
+      const st = {}; if (Math.abs(w - this.state.width) > 1) st.width = w;
+      if (!this.vhInit || st.width !== undefined || Math.abs(h - this.state.vh) > 140) { st.vh = h; this.vhInit = true; }
+      if (Object.keys(st).length) this.setState(st);
+      this.layout(st.width !== undefined ? st.width : this.state.width, st.vh !== undefined ? st.vh : this.state.vh);
+      if (sp && sp !== this.spObserved) { if (this.spObserved) this.ro.unobserve(this.spObserved); this.ro.observe(sp); this.spObserved = sp; }
+    };
+    this.ro = new ResizeObserver(() => this.measure()); this.ro.observe(root);
+    window.addEventListener('resize', this.measure);
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => this.measure());
+    this.measure();
+    // load-time entrance: hero pieces transition into their first scroll state, then go instantaneous
+    const ease = 'cubic-bezier(.22,1,.36,1)';
+    const entr = [this.heroEyebrowRef, this.heroL1Ref, this.heroL2Ref, this.heroL3Ref, this.heroSubRef, this.heroCtasRef, this.tickerBarRef, this.heroCueRef].map(r => r.current).filter(Boolean);
+    entr.forEach((el, i) => { el.style.transition = 'transform .9s ' + ease + ' ' + (i * 0.1) + 's, opacity .9s ' + ease + ' ' + (i * 0.1) + 's'; });
+    this.entrTimer = setTimeout(() => entr.forEach(el => { el.style.transition = 'none'; }), 1800);
+    // one-shot reveals + staggered cards
+    const sp0 = this.getScrollEl();
+    const rev = Array.from(root.querySelectorAll('[data-reveal]')); const stag = Array.from(root.querySelectorAll('[data-stagger]'));
+    const show = (el) => { el.style.opacity = '1'; el.style.transform = 'none'; };
+    if (this.reduce || !('IntersectionObserver' in window)) { rev.forEach(show); stag.forEach(show); }
+    else {
+      rev.forEach(el => { el.style.opacity = '0'; el.style.transform = 'translateY(14px)'; el.style.transition = 'opacity .6s ' + ease + ', transform .6s ' + ease; });
+      stag.forEach(el => { el.style.opacity = '0'; el.style.transform = 'translateY(22px)'; });
+      this.io = new IntersectionObserver((entries) => { entries.forEach(e => { if (e.isIntersecting) { show(e.target); this.io.unobserve(e.target); } }); }, { root: sp0, threshold: 0.12 });
+      rev.forEach(el => this.io.observe(el));
+      this.io2 = new IntersectionObserver((entries) => { let i = 0; entries.forEach(e => { if (!e.isIntersecting) return; const el = e.target; const d = (i++ * 90) + 'ms'; el.style.transition = 'opacity .7s ' + ease + ' ' + d + ', transform .7s ' + ease + ' ' + d; show(el); this.io2.unobserve(el); }); }, { root: sp0, threshold: 0.15 });
+      stag.forEach(el => this.io2.observe(el));
+      this.revealTimer = setTimeout(() => { rev.forEach(show); stag.forEach(show); }, 6000);
+    }
+    // scroll loop: polls the scroll position each frame, writes transforms directly (no re-render)
+    this.lastY = null; this.lastT = performance.now(); this.vel = 0; this.tickX = 0;
+    const frame = (now) => {
+      this.raf = requestAnimationFrame(frame);
+      const sp = this.getScrollEl(); const y = sp ? sp.scrollTop : (window.scrollY || document.documentElement.scrollTop || 0);
+      const dt = Math.min(0.05, Math.max(0.001, (now - this.lastT) / 1000)); this.lastT = now;
+      const dy = this.lastY === null ? 0 : y - this.lastY;
+      this.vel += (dy / dt - this.vel) * 0.12;
+      if (this.lastY === null || dy !== 0 || this.dirty) { this.dirty = false; this.update(y, dy, sp); }
+      this.lastY = y; this.tick(dt);
+    };
+    this.raf = requestAnimationFrame(frame);
+  }
+  componentDidUpdate(prev) { if (prev.viewport !== this.props.viewport || prev.heroPinScreens !== this.props.heroPinScreens || prev.curtainDepth !== this.props.curtainDepth) { this.measure(); this.dirty = true; } }
+  componentWillUnmount() { cancelAnimationFrame(this.raf); if (this.ro) this.ro.disconnect(); if (this.io) this.io.disconnect(); if (this.io2) this.io2.disconnect(); clearTimeout(this.revealTimer); clearTimeout(this.entrTimer); window.removeEventListener('resize', this.measure); }
+
+  layout(w, vh) {
+    const vp = this.props.viewport; const forced = vp === 'desktop' || vp === 'mobile'; const isDesktop = forced ? vp === 'desktop' : w > 760;
+    const barH = isDesktop ? 0 : 72 + (vp === 'mobile' ? 20 : 0);
+    const avail = Math.max(vh - barH, isDesktop ? 600 : 560);
+    this.isDesktopM = isDesktop; this.vhM = vh; this.availM = avail;
+    const pinScreens = +(this.props.heroPinScreens ?? 0.9);
+    this.pinDist = this.reduce ? 0 : Math.round(vh * pinScreens * (isDesktop ? 1 : 0.7));
+    const hero = this.heroRef.current, wrap = this.heroWrapRef.current;
+    if (hero && wrap) { hero.style.minHeight = avail + 'px'; wrap.style.height = (hero.offsetHeight + this.pinDist) + 'px'; }
+    const track = this.trackRef.current, strip = this.stripRef.current;
+    this.stripOverflow = track ? Math.max(0, track.scrollWidth - track.clientWidth) : 0;
+    const bw = this.buildsWrapRef.current, bi = this.buildsInnerRef.current;
+    if (this.PIN_BUILDS && bw && bi && strip) {
+      if (this.reduce) { strip.style.overflowX = 'auto'; bi.style.position = 'relative'; bi.style.height = ''; bi.style.top = ''; bw.style.height = ''; this.scrubDist = 0; }
+      else { this.scrubDist = Math.round(this.stripOverflow * (isDesktop ? 1 : 0.7)); bi.style.height = ''; bi.style.top = '0px'; const need = bi.offsetHeight; const H = Math.max(avail, need); bi.style.height = H + 'px'; bi.style.top = (need > avail ? avail - need : 0) + 'px'; bw.style.height = (H + this.scrubDist) + 'px'; }
+    }
+    const tr = this.tickerTrackRef.current; this.tickHalf = tr ? tr.scrollWidth / 2 : 0;
+    this.dirty = true; this.lastP = undefined; this.lastX = undefined; this.lastF = undefined;
+  }
+  update(y, dy, sp) {
+    const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+    const spTop = sp ? sp.getBoundingClientRect().top : 0; const top = (el) => el.getBoundingClientRect().top - spTop;
+    const vh = this.vhM || this.state.vh; const s = this.state; const A = this.MODE === 'A';
+    let hidden = s.headerHidden;
+    if (s.menuOpen || y < 80) hidden = false; else if (dy > 8) hidden = true; else if (dy < -8) hidden = false;
+    const scrolled = y > 40;
+    const svc = this.servicesRef.current, qt = this.quoteRef.current;
+    let theme = 'light'; if (qt && top(qt) < vh * 0.35) theme = 'quote'; else if (svc && top(svc) < vh * 0.35) theme = 'dark';
+    if (hidden !== s.headerHidden || scrolled !== s.scrolled || theme !== s.theme) this.setState({ headerHidden: hidden, scrolled, theme });
+    const wrap = this.heroWrapRef.current;
+    if (wrap) {
+      const t = top(wrap); const pd = this.pinDist || 1;
+      const p = this.reduce ? 1 : clamp(-t / pd, 0, 1);
+      this.heroVisible = t + wrap.offsetHeight > 0;
+      const exit = Math.max(0, -t - this.pinDist);
+      if (p !== this.lastP || (!A && exit !== this.lastExit)) { this.applyHero(p, exit); this.lastP = p; this.lastExit = exit; }
+    }
+    const bw = this.buildsWrapRef.current, tr = this.trackRef.current;
+    if (bw && tr && !this.reduce) {
+      const t2 = top(bw); let x;
+      if (this.PIN_BUILDS) { const q = this.scrubDist ? clamp(-t2 / this.scrubDist, 0, 1) : 0; x = -q * this.stripOverflow; }
+      else { const q = clamp((vh - t2) / (vh * 0.9), 0, 1); const e = 1 - Math.pow(1 - q, 2); const drift = Math.min(this.stripOverflow * (this.isDesktopM ? .35 : .25), this.isDesktopM ? 480 : 300); x = (1 - e) * drift; }
+      if (x !== this.lastX) { tr.style.transform = 'translate3d(' + x.toFixed(2) + 'px,0,0)'; this.lastX = x; }
+    }
+    const f = this.footerRef.current, fi = this.footerInnerRef.current;
+    if (f && fi && !this.reduce) {
+      const ft = top(f); const fh = f.offsetHeight; const span = Math.min(fh, vh) || 1;
+      const pf = clamp((vh - ft) / span, 0, 1);
+      const depth = +(this.props.curtainDepth ?? 0.55) * (this.isDesktopM ? 1 : 0.75);
+      const yy = -(1 - pf) * span * depth;
+      if (yy !== this.lastF) { fi.style.transform = 'translate3d(0,' + yy.toFixed(2) + 'px,0)'; this.lastF = yy; }
+    }
+  }
+  applyHero(p, exit) {
+    const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+    const seg = (a, b) => { const v = clamp((p - a) / (b - a), 0, 1); return 1 - Math.pow(1 - v, 2); };
+    const A = this.MODE === 'A'; const r = (k) => this[k].current;
+    const img = r('heroImgRef');
+    if (img) img.style.transform = A ? 'scale(' + (1.06 + 0.1 * p).toFixed(4) + ')' : 'translate3d(0,' + (-7 * p).toFixed(3) + '%,0) scale(1.12)';
+    const line = (el, v) => { if (!el) return; if (A) el.style.transform = 'translate3d(0,' + ((1 - v) * 110).toFixed(2) + '%,0)'; else { el.style.transform = 'translate3d(0,' + ((1 - v) * 44).toFixed(2) + 'px,0)'; el.style.opacity = v.toFixed(3); } };
+    const soft = (el, v, d) => { if (!el) return; el.style.opacity = v.toFixed(3); el.style.transform = 'translate3d(0,' + ((1 - v) * d).toFixed(2) + 'px,0)'; };
+    soft(r('heroEyebrowRef'), 1, 16); line(r('heroL1Ref'), 1); line(r('heroL2Ref'), seg(0.04, 0.34)); line(r('heroL3Ref'), seg(0.28, 0.58));
+    soft(r('heroSubRef'), seg(0.52, 0.78), 24); soft(r('heroCtasRef'), seg(0.62, 0.88), 24);
+    const bar = r('tickerBarRef'); if (bar) bar.style.transform = 'translate3d(0,' + ((1 - seg(0.72, 1)) * 100).toFixed(2) + '%,0)';
+    const cue = r('heroCueRef'); if (cue) cue.style.opacity = (1 - seg(0, 0.12)).toFixed(3);
+    if (!A) { const c = r('heroContentRef'); if (c) c.style.transform = exit > 0 ? 'translate3d(0,' + (exit * 0.25).toFixed(1) + 'px,0)' : 'none'; }
+  }
+  tick(dt) {
+    const tr = this.tickerTrackRef.current; if (!tr || this.reduce || !this.heroVisible || !this.tickHalf) return;
+    const boost = Math.min(Math.abs(this.vel) * 0.5, 520);
+    this.tickX = (this.tickX + (40 + boost) * dt) % this.tickHalf;
+    tr.style.transform = 'translate3d(' + (-this.tickX).toFixed(2) + 'px,0,0)';
+  }
+
+  scrollToId(id) {
+    const root = this.rootRef.current; const t = root && root.querySelector('#' + id); if (!t) return;
+    const off = 84; const sp = this.getScrollEl ? this.getScrollEl() : null;
+    if (sp) sp.scrollTo({ top: t.getBoundingClientRect().top - sp.getBoundingClientRect().top + sp.scrollTop - off, behavior: 'smooth' });
+    else window.scrollTo({ top: t.getBoundingClientRect().top + window.scrollY - off, behavior: 'smooth' });
+  }
+  stripBy(dir) {
+    if (this.PIN_BUILDS && !this.reduce && this.scrubDist) { const sp = this.getScrollEl(); const step = (this.scrubDist / Math.max(1, this.stripOverflow)) * 396 * 2 * dir; (sp || window).scrollBy({ top: step, behavior: 'smooth' }); return; }
+    const el = this.stripRef.current; if (el) el.scrollBy({ left: el.clientWidth * 0.8 * dir, behavior: 'smooth' });
+  }
+  set(k) { return (e) => this.setState({ [k]: e.target.value }); }
+  pills(list, key) {
+    return list.map(o => { const sel = this.state[key] === o.v; return { label: o.label, pick: () => this.setState({ [key]: o.v }), border: sel ? '#00182a' : '#c9d3dc', bg: sel ? '#00182a' : '#fff', color: sel ? '#fff' : '#00182a' }; });
+  }
+
+  renderVals() {
+    const s = this.state;
+    const vp = this.props.viewport;
+    const forced = vp === 'desktop' || vp === 'mobile'; const isDesktop = forced ? vp === 'desktop' : s.width > 760;
+    const embeddedMobile = vp === 'mobile';
+    const topInset = embeddedMobile ? 54 : 0;
+    const navH = isDesktop ? 84 : 72;
+    const canAdvance = s.step === 1 ? (s.service !== '' && s.zip.trim().length >= 5) : (s.name.trim().length >= 2 && s.phone.trim().length >= 10);
+    const chipDefs = [
+      { v: 'fencing', label: 'Metal Fencing', sublabel: 'Privacy, ranch, ornamental & gates', img: 'assets/sm-metal-fence-ranch-wire.jpg' },
+      { v: 'lean_to', label: 'Lean-To / Patio', sublabel: 'Attached or freestanding', img: 'assets/sm-porch-cover-lean-to.jpg' },
+      { v: 'other', label: 'Other / Custom', sublabel: 'Tell us what you need', img: 'assets/sm-red-iron-frame-hero.jpg' },
+      { v: 'carport', label: 'Carport / RV Cover', sublabel: 'Welded or bolted · tall clearance available', img: 'assets/sm-carport-gable-residential.jpg' },
+      { v: 'garage', label: 'Metal Garage', sublabel: 'Fully enclosed', img: 'assets/sm-metal-garage-green.jpg' },
+      { v: 'barn', label: 'Metal Barn', sublabel: 'Ranch & ag', img: 'assets/sm-carport-concrete-rural.jpg' },
+    ];
+    const zipMap = { 76501: 'Temple', 76502: 'Temple', 76504: 'Temple', 76508: 'Temple', 76513: 'Belton', 76540: 'Killeen', 76541: 'Killeen', 76542: 'Killeen', 76543: 'Killeen', 76544: 'Fort Cavazos', 76549: 'Killeen', 76548: 'Harker Heights', 76522: 'Copperas Cove', 76571: 'Salado', 76550: 'Lampasas', 76534: 'Holland', 76574: 'Taylor', 76579: 'Troy', 76559: 'Nolanville', 78626: 'Georgetown', 78628: 'Georgetown', 78633: 'Georgetown', 78664: 'Round Rock', 78665: 'Round Rock', 78681: 'Round Rock' };
+    const z5 = s.zip.trim().slice(0, 5);
+    const zipCity = zipMap[z5] || (/^767\d\d$/.test(z5) ? 'Waco' : '');
+    const pick = (v) => (e) => { if (e && e.preventDefault) e.preventDefault(); this.setState({ service: v, step: 1 }); this.scrollToId('quote-card'); };
+    const builds = [
+      { title: '23 X 35 Carport W/ Gutter System', city: 'Rogers', img: 'assets/sm-carport-gable-residential.jpg' },
+      { title: '25 X 55 Lean-To Patio', city: 'Copperas Cove', img: 'assets/sm-porch-cover-lean-to.jpg' },
+      { title: 'RV Cover 20 x 35 (Double-Wide)', city: 'Copperas Cove', img: 'assets/sm-double-carport-install.jpg' },
+      { title: 'Tractor Cover', city: 'Waco', img: 'assets/sm-carport-concrete-rural.jpg' },
+      { title: 'Restaurant Re-Build! Mexicano Grille', city: 'Belton', img: 'assets/sm-red-iron-frame-hero.jpg' },
+      { title: '12 X 20 Enclosed Lounging Area', city: 'Temple', img: 'assets/sm-metal-garage-green.jpg' },
+      { title: 'Hybrid Block X Metal Horse Stables', city: 'Temple', img: 'assets/sm-carport-truck-concrete-hero.jpg' },
+      { title: '20x20 Gabled Carport', city: 'Killeen', img: 'assets/sm-carport-residential-completed.jpg' },
+    ];
+    return {
+      rootRef: this.rootRef, stripRef: this.stripRef, trackRef: this.trackRef,
+      heroWrapRef: this.heroWrapRef, heroRef: this.heroRef, heroImgRef: this.heroImgRef, heroContentRef: this.heroContentRef, heroEyebrowRef: this.heroEyebrowRef, heroL1Ref: this.heroL1Ref, heroL2Ref: this.heroL2Ref, heroL3Ref: this.heroL3Ref, heroSubRef: this.heroSubRef, heroCtasRef: this.heroCtasRef, heroCueRef: this.heroCueRef, tickerBarRef: this.tickerBarRef, tickerTrackRef: this.tickerTrackRef,
+      buildsWrapRef: this.buildsWrapRef, buildsInnerRef: this.buildsInnerRef, servicesRef: this.servicesRef, quoteRef: this.quoteRef, footerRef: this.footerRef, footerInnerRef: this.footerInnerRef,
+      isDesktop, isMobile: !isDesktop, showPhone: forced ? vp === 'desktop' : s.width >= 1100, topInset, bottomInset: embeddedMobile ? 20 : 0,
+      heroMt: -(navH + topInset), heroPadTop: navH + topInset + 36, heroPos: isDesktop ? '50% 50%' : '40% 50%',
+      mainPadBottom: isDesktop ? 0 : 72, footerBrandSpan: isDesktop ? 2 : 1,
+      mainBg: s.theme === 'dark' ? '#00182a' : s.theme === 'quote' ? '#f4f6f8' : '#ffffff',
+      navH, lionSize: isDesktop ? 44 : 38,
+      headerBg: s.scrolled ? '#00182a' : 'transparent', headerBorder: s.scrolled ? 'rgba(201,211,220,.18)' : 'transparent', headerShift: s.headerHidden ? '-100%' : '0',
+      menuOpen: s.menuOpen, menuClosed: !s.menuOpen,
+      toggleMenu: () => this.setState({ menuOpen: !s.menuOpen, headerHidden: false }),
+      jumpToQuote: (e) => { e.preventDefault(); this.scrollToId('quote-card'); },
+      jumpToQuoteCloseMenu: (e) => { e.preventDefault(); this.setState({ menuOpen: false }); this.scrollToId('quote-card'); },
+      jumpToGallery: (e) => { e.preventDefault(); this.scrollToId('gallery'); },
+      jumpToGalleryCloseMenu: (e) => { e.preventDefault(); this.setState({ menuOpen: false }); this.scrollToId('gallery'); },
+      heroImgFallback: (e) => { if (!e.target.dataset.fb) { e.target.dataset.fb = '1'; e.target.src = 'assets/sm-carport-gable-residential.jpg'; } },
+      stripPrev: () => this.stripBy(-1), stripNext: () => this.stripBy(1),
+      pickFencing: (e) => { e.preventDefault(); e.stopPropagation(); pick('fencing')(e); },
+      tickerItems: builds.concat(builds),
+      builds,
+      serviceCards: [
+        { eyebrow: 'Carports & RV Covers', headline: 'Welded or bolted, residential or ranch.', blurb: 'Single, double, triple, custom spans — or extra-tall clearance for RVs, boats and trailers. Built and installed by our crew, usually within the week.', img: 'assets/sm-carport-gable-residential.jpg', price: '3,000' },
+        { eyebrow: 'Garages', headline: 'Enclosed shop space — your spec, our crew.', blurb: '30×30 bolted steel-and-install base starts here. Walls, roll-up doors, walk-throughs, and insulation are quoted on top per your spec.', img: 'assets/sm-metal-garage-green.jpg', price: '5,500' },
+        { eyebrow: 'Barns', headline: 'Pole, equipment, hay — built to span.', blurb: 'Long clear-spans for ag and ranch use. Welded red-iron primary, sheet on the skin.', img: 'assets/sm-carport-concrete-rural.jpg', price: '6,500' },
+      ],
+      step: s.step, stepLabel: s.step === 1 ? 'Your build' : 'Who to call back', progressPct: s.step === 1 ? 50 : 100,
+      hasFooterTex: (this.props.footerTexture ?? 'brushed steel') !== 'none',
+      footerTexSrc: (this.props.footerTexture ?? 'brushed steel') === 'corrugated panel' ? 'https://d8j0ntlcm91z4.cloudfront.net/user_3DLI4FSq7BQXZkJw7PcwwpkdBMB/hf_20261001_131952_ebd31efa-26aa-4343-a4f4-ae7a64070211.png' : 'https://d8j0ntlcm91z4.cloudfront.net/user_3DLI4FSq7BQXZkJw7PcwwpkdBMB/hf_20261001_131950_22f2f391-961a-43f7-b64c-f07bf310a151.png',
+      footerTexOpacity: this.props.footerTextureOpacity ?? 0.55,
+      zipCity, hasZipCity: !!zipCity, stickyBottom: isDesktop ? 0 : 72 + (embeddedMobile ? 20 : 0),
+      isStep1: s.step === 1, isStep2: s.step === 2,
+      cantAdvance: !canAdvance, advanceOpacity: canAdvance ? 1 : 0.5,
+      nextStep: () => { if (canAdvance) this.setState({ step: 2 }); }, prevStep: () => this.setState({ step: 1 }),
+      chips: chipDefs.map(c => { const sel = s.service === c.v; return { ...c, selected: sel, pick: () => this.setState({ service: c.v }), border: sel ? '#00182a' : '#c9d3dc', bg: sel ? '#f4f6f8' : '#fff' }; }),
+      structurePills: this.pills([{ v: 'welded', label: 'Welded' }, { v: 'bolted', label: 'Bolted' }, { v: 'unsure', label: 'Not sure' }], 'structure'),
+      concretePills: this.pills([{ v: 'yes', label: 'Include it' }, { v: 'already_have', label: 'Have a slab' }, { v: 'unsure', label: 'Not sure' }], 'concrete'),
+      permitPills: this.pills([{ v: 'yes', label: 'Yes' }, { v: 'no', label: 'No' }, { v: 'unsure', label: 'Not sure' }], 'permits'),
+      budgetPills: this.pills([{ v: 'u5', label: 'Under $5k' }, { v: '5-10', label: '$5k–$10k' }, { v: '10-20', label: '$10k–$20k' }, { v: '20p', label: '$20k+' }, { v: 'unsure', label: 'Not sure yet' }], 'budget'),
+      timelinePills: this.pills([{ v: 'asap', label: 'ASAP' }, { v: 'this_month', label: 'This month' }, { v: 'planning', label: 'Just planning' }], 'timeline'),
+      width: s.width_ft, length: s.length_ft, height: s.height_ft, zip: s.zip, name: s.name, phone: s.phone, email: s.email,
+      setWidth: this.set('width_ft'), setLength: this.set('length_ft'), setHeight: this.set('height_ft'), setZip: this.set('zip'), setName: this.set('name'), setPhone: this.set('phone'), setEmail: this.set('email'),
+    };
+  }
+}
+</script>
+</body>
+</html>

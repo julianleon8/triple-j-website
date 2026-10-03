@@ -97,6 +97,26 @@ export type LocationData = {
    *  Up to 3 render. Omit or leave empty to suppress the section. */
   relatedPosts?: string[]
   localSource?: { label: string; url: string }
+
+  // ── Forge page fields (2026-10-02 redesign; all optional — the template
+  //    falls back to the fields above and skips a section with no data) ────
+  heroEyebrow?: string
+  /** object-position for the hero photo. */
+  heroPosition?: string
+  /** Hero fact strip. Derived from distance/county/habla when absent. */
+  facts?: { k: string; v: string; s?: string }[]
+  introEyebrow?: string
+  introHeading?: string
+  /** Line under the neighborhood chips. */
+  areaNote?: string
+  landHeading?: string
+  whyHeading?: string
+  /** Numbered "Why a local crew" rows. Falls back to `whyLocalBullets`. */
+  why?: { t: string; b: string }[]
+  /** Navy callout beside the "why" list; its button scrolls to the quote form. */
+  quoteCallout?: { eyebrow: string; headline: string; blurb: string; ctaLabel: string }
+  /** gallery_items.city values counted as "near" this city. Defaults to `name`. */
+  galleryCities?: string[]
 }
 
 export const LOCATIONS: Record<string, LocationData> = {
@@ -384,48 +404,37 @@ export const LOCATIONS: Record<string, LocationData> = {
     ],
 
     // ── NEW personalization (HQ-pride + lakeside lifestyle, per 2026-04-23 design pass) ──
-    heroImage: '/images/locations/temple/temple-aerial.jpg',
-    heroImageAlt: 'Aerial drone view of Temple, Texas — Triple J Metal home base',
+    heroImage: "/images/locations/temple/temple-aerial.jpg",
+    heroImageAlt: "Aerial view of Temple, Texas — Triple J Metal home base",
     customHeadline: {
-      line1: 'Built in Temple.',
-      line2: 'Built where we live.',
+      line1: "Built in Temple.",
+      line2: "Built where we live.",
     },
-    heroSubhead:
-      "Triple J's shop, yard, and crew all live here. From Lake Belton's lakeside neighborhoods to Western Hills residential streets, we build same-week across the city we call home.",
-    distanceFromTemple: '0 mi · Where we live',
+    heroSubhead: "Triple J’s shop sits on Tem-Bel Ln in Temple. This isn’t a service area for us — it’s home. Welded or bolted carports, garages and lakeside RV covers, built same-week across the city we live in.",
+    distanceFromTemple: "0 mi · where we live",
     habla: true,
-    localIntro:
-      "This is where we live and where we work. Triple J's shop sits on Tem-Bel Ln, our crew lives across town, and Temple's a railroad town — we weld like one. From Lake Belton's lakeside properties to the Western Hills residential corridor, we build same-week across the city we call home. Hablamos español con Juan y Freddy.",
+    localIntro: "Our shop sits on Tem-Bel Ln and our crew lives across town. Temple’s a railroad town — we weld like one. From Lake Belton’s lakeside properties to the Western Hills residential corridor, we build same-week across the city we call home.",
     landmarks: [
       {
-        name: 'Lake Belton',
-        blurb:
-          "Temple's weekend center. Lakeside properties need RV covers, boat covers, and shoreline barns engineered for Lake Belton's wind exposure — we build same-week before storm season.",
-        imageSrc: '/images/locations/temple/lake-belton.jpg',
-        imageAlt: 'Lake Belton shoreline near Temple, Texas',
+        name: "Lake Belton",
+        blurb: "Temple’s weekend center. Lakeside properties need RV covers, boat covers and shoreline barns built for the lake’s wind exposure — we build same-week before storm season.",
+        imageSrc: "/images/locations/temple/lake-belton.jpg",
+        imageAlt: "Lake Belton shoreline near Temple, Texas",
       },
       {
-        name: 'Downtown Temple & Santa Fe Heritage',
-        blurb:
-          "The 1910 Santa Fe depot anchors downtown Temple and the city's railroad heritage. Built to last over a century — the same standard we hold ourselves to with welded red-iron framing.",
-        imageSrc: '/images/locations/temple/downtown-temple.jpg',
-        imageAlt: 'Downtown Temple, Texas — historic Santa Fe railroad district',
+        name: "Downtown & the Santa Fe depot",
+        blurb: "The 1910 Santa Fe depot anchors downtown and the city’s railroad heritage. Built to last over a century — the same standard we hold our welded red-iron framing to.",
+        imageSrc: "/images/locations/temple/downtown-temple.jpg",
+        imageAlt: "Downtown Temple, Texas — historic Santa Fe railroad district",
       },
       {
-        name: 'Scott & White',
-        blurb:
-          "Baylor Scott & White is Temple's biggest employer and pulls professional families into Western Hills, Heritage Acres, and the lakeside developments — the residential market we know best.",
-        imageSrc: '/images/locations/temple/scott-white-temple.webp',
-        imageAlt: 'Baylor Scott & White Medical Center in Temple, Texas',
+        name: "Baylor Scott & White",
+        blurb: "Temple’s biggest employer pulls professional families into Western Hills, Heritage Acres and the lakeside developments — the residential market we know best.",
+        imageSrc: "/images/locations/temple/scott-white-temple.webp",
+        imageAlt: "Baylor Scott & White Medical Center in Temple, Texas",
       },
     ],
-    neighborhoods: [
-      'Western Hills',
-      'Lake Belton / Lakeside',
-      'Sammons Trail',
-      'Stagecoach Trail',
-      'All of Temple',
-    ],
+    neighborhoods: ["Western Hills", "Heritage Acres", "Lake Belton / Lakeside", "North Temple", "South Temple · I-35", "East Temple · FM 93", "Rural Bell County"],
     topServices: ['carports', 'metal-garages', 'turnkey-carports-with-concrete'],
     whyLocalBullets: [
       'Our shop, our yard, our crew — all on Tem-Bel Ln in Temple. No driving in from out of state, no kit in a box.',
@@ -455,6 +464,32 @@ export const LOCATIONS: Record<string, LocationData> = {
       'bell-county-metal-building-permit-guide-2025',
       'blackland-prairie-soil-metal-building-foundation',
     ],
+    // ── Forge design (2026-10-02), ported verbatim from the handoff ──
+    heroEyebrow: "Service area · Home base",
+    heroPosition: "50% 50%",
+    facts: [
+      { k: "From HQ", v: "0 mi", s: "Where we live" },
+      { k: "County", v: "Bell County", s: "Our home county" },
+      { k: "Shop", v: "3319 Tem-Bel Ln", s: "Temple, TX 76502" },
+      { k: "Language", v: "English & Español", s: "Hablamos español con Juan y Freddy" },
+    ],
+    introEyebrow: "Where we live",
+    introHeading: "Not a service area. Home.",
+    areaNote: "We also serve nearby Nolanville, Rogers, Belton and Troy.",
+    landHeading: "Temple, the way we know it.",
+    whyHeading: "When other companies send a kit, we send a crew.",
+    why: [
+      { t: "The shop is down the road", b: "Our shop, our yard, our crew — all on Tem-Bel Ln in Temple. No driving in from out of state, no kit in a box." },
+      { t: "Welded or bolted", b: "Welded or bolted red iron — your choice for Texas wind, hail and Lake Belton shoreline gusts." },
+      { t: "Not a chain", b: "Founded by a Temple family and run out of Temple. Multi-source Texas steel, so one supplier running short never delays your build." },
+    ],
+    quoteCallout: {
+      eyebrow: "HOA-grade builds",
+      headline: "Built for Temple’s HOA-grade neighborhoods.",
+      blurb: "Concealed-fastener standing seam, Board & Batten siding, color-matched to your home — for Western Hills, Heritage Acres and Lake Belton subdivisions where the builds need to read residential, not utility.",
+      ctaLabel: "Ask about HOA specs",
+    },
+    galleryCities: ["Temple", "Belton", "Rogers", "Killeen"],
   },
 
   belton: {
@@ -488,44 +523,31 @@ export const LOCATIONS: Record<string, LocationData> = {
     ],
 
     // ── NEW personalization (county-seat authority + range, per 2026-04-23 design pass) ──
-    heroImage: '/images/locations/belton/downtown-belton.jpg',
-    heroImageAlt: 'Downtown Belton, Texas — Bell County seat',
+    heroImage: "/images/locations/belton/downtown-belton.jpg",
+    heroImageAlt: "Downtown Belton, Texas — Bell County seat",
     customHeadline: {
-      line1: 'Built in Belton.',
-      line2: "Bell County's home crew.",
+      line1: "Built in Belton.",
+      line2: "Bell County’s home crew.",
     },
-    heroSubhead:
-      "10 minutes south of HQ. The closest Bell County city to our Temple shop, the courthouse where every permit gets pulled, and the ranch country that opens up beyond city limits.",
-    distanceFromTemple: '10 mi south · 15 min from HQ',
+    heroSubhead: "Belton runs the county courthouse, and the 1885 courthouse still stands. We build with that kind of intention. Welded or bolted carports, ranch barns and lakeside RV covers — same-week across Bell County, 15 minutes from our Temple shop.",
+    distanceFromTemple: "10 mi south · 15 min",
     habla: true,
-    localIntro:
-      "Belton runs the county courthouse, and we know everyone in the permit office. The 1885 courthouse still stands — we build with that kind of intention. From Lakeshore Drive lake-houses to Pendleton ranch land, we build same-week across all of Bell County. Hablamos español con Juan y Freddy.",
+    localIntro: "From Lakeshore Drive lake houses to Pendleton ranch land, we build same-week across all of Belton. The closest Bell County city to our Temple shop, the courthouse where every permit gets pulled, and the ranch country that opens up beyond city limits.",
     landmarks: [
-  {
-    "name": "Bell County Courthouse",
-    "blurb": "The Bell County Courthouse is a local landmark. Permit requirements and filing responsibilities depend on the location and scope of your project.",
-    "imageSrc": "/images/locations/belton/bell-county-courthouse.jpg",
-    "imageAlt": "1885 Bell County Courthouse in downtown Belton, Texas"
-  },
-  {
-    "name": "Lake Belton & BLORA",
-    "blurb": "Belton's lake country runs along the western edge — Lakeshore Drive properties, weekend barns, RV and boat covers. Lakeside structures we've been building for years.",
-    "imageSrc": "/images/locations/belton/lake-belton.jpg",
-    "imageAlt": "Lake Belton shoreline in Belton, Texas"
-  },
-  {
-    "name": "Pendleton & Ranch Country",
-    "blurb": "South Bell County opens into pasture, ranch land, and rural property. Welded red-iron barns, equipment sheds, and lean-tos — the structures rural buyers actually need."
-  }
-],
-    neighborhoods: [
-      'Lakeshore Drive',
-      'Heritage Place',
-      'North Belton',
-      'Pendleton',
-      'Sparta',
-      'All of Bell County',
+      {
+        name: "1885 Bell County Courthouse",
+        blurb: "The courthouse still stands downtown, and it’s where Bell County permits get pulled. We build with the same kind of intention.",
+        imageSrc: "/images/locations/belton/bell-county-courthouse.jpg",
+        imageAlt: "1885 Bell County Courthouse in downtown Belton, Texas",
+      },
+      {
+        name: "Lake Belton & BLORA",
+        blurb: "Belton’s lake country runs along the western edge — Lakeshore Drive properties, weekend barns, RV and boat covers. Lakeside structures we’ve been building for years.",
+        imageSrc: "/images/locations/belton/lake-belton.jpg",
+        imageAlt: "Lake Belton shoreline in Belton, Texas",
+      },
     ],
+    neighborhoods: ["Downtown Belton", "North Belton", "Lakeshore Drive", "Lake Belton & BLORA", "US-190 corridor", "FM 2271", "Pendleton", "Rural Bell County"],
     topServices: ['carports', 'barns', 'rv-covers'],
     whyLocalBullets: [
   "We can discuss permit requirements; confirm filing and approval responsibilities before work starts.",
@@ -563,6 +585,32 @@ export const LOCATIONS: Record<string, LocationData> = {
       'bell-county-metal-building-permit-guide-2025',
       'hoa-compliant-metal-buildings-heritage-oaks-bella-charca',
     ],
+    // ── Forge design (2026-10-02), ported verbatim from the handoff ──
+    heroEyebrow: "Service area · Bell County seat",
+    heroPosition: "50% 50%",
+    facts: [
+      { k: "From HQ", v: "10 mi south", s: "15 min from our Temple shop" },
+      { k: "County", v: "Bell County seat", s: "Where permits get pulled" },
+      { k: "Coverage", v: "US-190 · FM 2271", s: "Lake Belton to ranch country" },
+      { k: "Language", v: "English & Español", s: "Hablamos español con Juan y Freddy" },
+    ],
+    introEyebrow: "Where we build",
+    introHeading: "Lake houses to ranch land.",
+    areaNote: "We’re also close to Salado and Jarrell for customers on the southern end of Bell County.",
+    landHeading: "Belton, the way we know it.",
+    whyHeading: "Not a dealer. A crew 15 minutes away.",
+    why: [
+      { t: "Fastest install in Bell County", b: "15 minutes from our Temple shop — no national-dealer dispatch lag." },
+      { t: "A real local crew", b: "National outfits have Belton pages but no local crew. We schedule faster, offer concrete, and actually know your neighborhood." },
+      { t: "Welded or bolted", b: "Red iron for Texas wind, hail and Lake Belton shoreline gusts — your choice, built by our own crew." },
+    ],
+    quoteCallout: {
+      eyebrow: "Permit advisory",
+      headline: "We know the courthouse.",
+      blurb: "We discuss permit requirements for your Belton property before anything gets scheduled. Filing and approval responsibilities are confirmed in your written scope — no surprises once the crew shows up.",
+      ctaLabel: "Ask about permits",
+    },
+    galleryCities: ["Belton", "Temple", "Killeen", "Copperas Cove"],
   },
 
   salado: {

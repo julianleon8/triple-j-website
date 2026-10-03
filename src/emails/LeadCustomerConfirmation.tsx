@@ -1,5 +1,5 @@
 import { Heading, Text, Section, Link } from '@react-email/components'
-import BrandLayout, { BRAND_COLOR, INK_900 } from './BrandLayout'
+import BrandLayout, { BRAND_COLOR, DISPLAY_FONT, INK_900 } from './BrandLayout'
 import { napSignature } from './nap'
 import { SITE } from '@/lib/site'
 
@@ -18,7 +18,8 @@ export default function LeadCustomerConfirmation(props: LeadCustomerConfirmation
   const isHot = timeline === 'asap'
 
   return (
-    <BrandLayout preview={`Got it ${name} — your ${service} request is in. We'll call you back today.`}>
+    // The preview follows the body's promise (response lock): "today" only for ASAP.
+    <BrandLayout preview={`Got it ${name} — your ${service} request is in. We'll call you back ${isHot ? 'today' : 'within 24 hours'}.`}>
       {/* ── Eyebrow ──────────────────────────────────────────────── */}
       <Text style={eyebrow}>QUOTE REQUEST RECEIVED</Text>
 
@@ -42,15 +43,15 @@ export default function LeadCustomerConfirmation(props: LeadCustomerConfirmation
 
       {/* ── Conditional flags — military / ASAP ──────────────────── */}
       {isMilitary && (
-        <Section style={{ ...flagCard, background: '#eff6ff', borderLeftColor: BRAND_COLOR }}>
-          <Text style={{ ...flagText, color: '#1e3a8a' }}>
+        <Section style={{ ...flagCard, background: '#f6f3e8', borderLeftColor: '#4b5320' }}>
+          <Text style={{ ...flagText, color: '#3a4119' }}>
             ⭐ <strong>Military / First Responder discount noted.</strong> 7% off your install. Thank you for your service.
           </Text>
         </Section>
       )}
       {isHot && (
-        <Section style={{ ...flagCard, background: '#fef2f2', borderLeftColor: '#dc2626' }}>
-          <Text style={{ ...flagText, color: '#991b1b' }}>
+        <Section style={{ ...flagCard, background: '#f4f6f8', borderLeftColor: BRAND_COLOR }}>
+          <Text style={{ ...flagText, color: INK_900 }}>
             ⚡ <strong>ASAP request flagged.</strong> Your callback is moving to the top of the list.
           </Text>
         </Section>
@@ -121,30 +122,31 @@ const eyebrow = {
 
 const headline = {
   color: INK_900,
-  fontSize: '32px',
-  fontWeight: 800,
-  letterSpacing: '-0.02em',
-  lineHeight: 1.05,
+  fontFamily: DISPLAY_FONT,
+  fontSize: '30px',
+  fontWeight: 900,
+  letterSpacing: '0.01em',
+  lineHeight: 1.1,
   margin: '0 0 8px',
 }
 
 const subhead = {
-  color: '#374151',
+  color: '#33475a',
   fontSize: '16px',
   margin: '0 0 24px',
   lineHeight: 1.5,
 }
 
 const promiseCard = {
-  background: '#f9fafb',
-  border: '1px solid #e5e7eb',
+  background: '#f4f6f8',
+  border: '1px solid #e3e9ee',
   borderRadius: 10,
   padding: '18px 20px',
   margin: '0 0 16px',
 }
 
 const promiseLabel = {
-  color: '#6b7280',
+  color: '#546678',
   fontSize: '11px',
   fontWeight: 700,
   letterSpacing: '0.16em',
@@ -153,7 +155,7 @@ const promiseLabel = {
 }
 
 const promiseText = {
-  color: '#374151',
+  color: '#33475a',
   fontSize: '14px',
   lineHeight: 1.6,
   margin: 0,
@@ -173,7 +175,7 @@ const flagText = {
 }
 
 const callNowText = {
-  color: '#6b7280',
+  color: '#546678',
   fontSize: '13px',
   margin: '0 0 8px',
 }
@@ -199,7 +201,7 @@ const signature = {
 }
 
 const signatureSub = {
-  color: '#6b7280',
+  color: '#546678',
   fontSize: '12px',
   fontWeight: 400,
 }

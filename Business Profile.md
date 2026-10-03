@@ -46,8 +46,8 @@
 ### Standard (same-week builds)
 - 14-gauge steel + PBR/PBU R-Panels on Galvalume® substrate + 40-year painted finish
 
-### Premium Storm/HOA Upgrade
-- 12-gauge steel + Board & Batten or concealed-fastener standing-seam systems + 40-year painted finish
+### Premium HOA Upgrade
+- Heavy-duty upgrade: 11-gauge columns, welded to the receivers and purlins (the rest of the frame stays 14-gauge) + Board & Batten or concealed-fastener standing-seam systems + 40-year painted finish
 - For luxury subdivisions (Heritage Oaks, Bella Charca) with strict HOA guidelines
 ## Google Business Profile status — 2026-09-26
 

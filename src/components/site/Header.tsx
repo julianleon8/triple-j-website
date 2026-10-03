@@ -3,253 +3,413 @@
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState, type MouseEvent } from "react";
 
-import { ButtonLink } from "@/components/ui/Button";
-import { Container } from "@/components/ui/Container";
-import {
-  CloseIcon,
-  MenuIcon,
-  PhoneIcon,
-} from "@/components/ui/icons";
-import { NAV_LINKS, SITE } from "@/lib/site";
-import {
-  TrackedPhoneButtonLink,
-  TrackedPhoneLink,
-  TrackedPhoneNumber,
-} from "@/components/site/TrackedPhone";
+import { ChevronDownIcon, CloseIcon, MenuIcon, PhoneIcon } from "@/components/ui/icons";
+import { TrackedPhoneLink, TrackedPhoneNumber } from "@/components/site/TrackedPhone";
+import { scrollToId } from "@/lib/forge-quote";
+import { MEGA_AREAS, MEGA_SERVICES, NAV_LINKS, SITE } from "@/lib/site";
 
 /**
- * Site header — magazine treatment.
- *
- * Behavior:
- *  - On `/` (homepage), the header is **transparent over the dark
- *    hero** at scrollY≈0. After scrolling past ~80px, it transitions
- *    to a dark backdrop-blur sticky bar.
- *  - On every other route, the header stays dark+blur from the start
- *    so it remains visible over light content (text pages, list pages).
- *  - Top thin bar simplified to phone + "Same-Week Installs" badge
- *    (was phone + hours + address).
- *  - Wordmark is a Barlow Condensed lockup — "TRIPLE J" with a
- *    brand-blue "METAL" accent. Subline shows service region.
- *  - Active link gets a brand-blue underline.
- *  - Mobile: hamburger opens a full-screen drawer.
+ * The page-specific call to action. Contact and Partners have their own
+ * forms; everywhere else the button scrolls to the page's quote section, or
+ * opens /quote on a page without one.
+ */
+export function headerCta(pathname: string): { label: string; short: string; href: string; target: string | null } {
+  if (pathname === "/contact") return { label: "Send a Message", short: "Message", href: "#message", target: "message" };
+  if (pathname === "/partners") return { label: "Partner Inquiry", short: "Inquire", href: "#inquire", target: "inquire" };
+  return { label: "Get a Free Quote", short: "Free Quote", href: "/quote", target: "quote" };
+}
+
+/** Plain <a> click handler: scroll to the in-page target when it exists. */
+export function onCtaClick(target: string | null, after?: () => void) {
+  return (e: MouseEvent<HTMLAnchorElement>) => {
+    after?.();
+    if (!target) return;
+    if (document.getElementById(target)) {
+      e.preventDefault();
+      scrollToId(target);
+    }
+  };
+}
+
+function isActive(pathname: string, href: string): boolean {
+  if (href === "/services") {
+    return pathname.startsWith("/services") || pathname.startsWith("/locations") || pathname === "/military";
+  }
+  return pathname === href || pathname.startsWith(href + "/");
+}
+
+const navLinkCls = "border-b-2 py-2 transition-colors duration-200 hover:text-white";
+
+/**
+ * Forge header. Sticky navy bar (84px, 72px under 900px) with the lion and
+ * Cinzel wordmark, a Services mega menu, and a route-aware CTA. On the
+ * homepage it starts transparent over the hero and turns navy after 40px.
+ * It hides on scroll-down past 140px and returns on scroll-up, never while a
+ * menu is open. Under 900px a call button and a full-height menu sheet
+ * replace the nav.
  */
 export function Header() {
   const pathname = usePathname();
   const isHome = pathname === "/";
+  const cta = headerCta(pathname);
 
-  const [scrolled, setScrolled] = useState(false);
-  const [mobileOpen, setMobileOpen] = useState(false);
+  // Menus remember the path they were opened on; navigating closes them.
+  const [mega, setMega] = useState<{ path: string; keyboard: boolean } | null>(null);
+  const [menuPath, setMenuPath] = useState<string | null>(null);
+  const megaOpen = mega?.path === pathname;
+  const menuOpen = menuPath === pathname;
 
+  const [atTop, setAtTop] = useState(true);
+  const [hidden, setHidden] = useState(false);
+
+  const headerRef = useRef<HTMLElement>(null);
+  const triggerRef = useRef<HTMLButtonElement>(null);
+  const menuBtnRef = useRef<HTMLButtonElement>(null);
+  const firstMegaLink = useRef<HTMLAnchorElement>(null);
+  const anyOpen = useRef(false);
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 80);
-    onScroll();
+    anyOpen.current = megaOpen || menuOpen;
+  }, [megaOpen, menuOpen]);
+
+  const closeMega = () => setMega(null);
+  const closeMenu = () => setMenuPath(null);
+
+  // Scroll state: one listener, state only flips at thresholds.
+  useEffect(() => {
+    let last = window.scrollY;
+    let raf = 0;
+    const read = () => {
+      raf = 0;
+      const y = window.scrollY;
+      setAtTop(y <= 40);
+      if (anyOpen.current || y < 140) {
+        setHidden(false);
+        last = y;
+        return;
+      }
+      if (y - last > 6) {
+        setHidden(true);
+        last = y;
+      } else if (last - y > 6) {
+        setHidden(false);
+        last = y;
+      }
+    };
+    const onScroll = () => {
+      if (!raf) raf = requestAnimationFrame(read);
+    };
+    raf = requestAnimationFrame(read);
     window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      if (raf) cancelAnimationFrame(raf);
+    };
   }, []);
 
-  // Lock body scroll while mobile drawer is open
+  // Keyboard-opened mega: move focus into the panel.
   useEffect(() => {
-    if (mobileOpen) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "";
+    if (megaOpen && mega?.keyboard) firstMegaLink.current?.focus();
+  }, [megaOpen, mega?.keyboard]);
+
+  // Esc closes either menu; the mobile sheet also traps Tab and locks scroll.
+  useEffect(() => {
+    if (!megaOpen && !menuOpen) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        if (megaOpen) {
+          setMega(null);
+          triggerRef.current?.focus();
+        }
+        if (menuOpen) {
+          setMenuPath(null);
+          menuBtnRef.current?.focus();
+        }
+        return;
+      }
+      if (menuOpen && e.key === "Tab" && headerRef.current) {
+        const f = Array.from(
+          headerRef.current.querySelectorAll<HTMLElement>("[data-menu-focus] a[href], [data-menu-focus] button"),
+        ).filter((el) => el.offsetParent !== null);
+        if (!f.length) return;
+        const first = f[0];
+        const last = f[f.length - 1];
+        if (e.shiftKey && document.activeElement === first) {
+          e.preventDefault();
+          last.focus();
+        } else if (!e.shiftKey && document.activeElement === last) {
+          e.preventDefault();
+          first.focus();
+        }
+      }
+    };
+    document.addEventListener("keydown", onKey);
+    let prevOverflow = "";
+    if (menuOpen) {
+      prevOverflow = document.documentElement.style.overflow;
+      document.documentElement.style.overflow = "hidden";
     }
     return () => {
-      document.body.style.overflow = "";
+      document.removeEventListener("keydown", onKey);
+      if (menuOpen) document.documentElement.style.overflow = prevOverflow;
     };
-  }, [mobileOpen]);
+  }, [megaOpen, menuOpen]);
 
-  // Transparent state only applies on the homepage at the top of the page.
-  // Anywhere else, the header is dark+blur from load.
-  const transparent = isHome && !scrolled;
+  const transparent = isHome && atTop && !megaOpen && !menuOpen;
+  const shift = hidden && !megaOpen && !menuOpen;
 
   return (
-    <header className="sticky top-0 z-50 w-full">
-      {/* Top thin bar — phone + Same-Week Installs badge.
-          Hides on scroll OR when in transparent-over-hero mode. */}
+    <header
+      ref={headerRef}
+      data-forge=""
+      data-tone="dark"
+      onMouseLeave={closeMega}
+      className="sticky top-0 z-50 w-full transition-transform duration-[350ms] ease-forge motion-reduce:transition-none"
+      style={{ transform: shift ? "translateY(-100%)" : undefined }}
+    >
       <div
-        className={`bg-[color:var(--color-ink-950)] text-white text-[13px] overflow-hidden transition-[max-height,opacity] duration-300 ease-out ${
-          scrolled || transparent ? "max-h-0 opacity-0" : "max-h-12 opacity-100"
+        data-menu-focus=""
+        className={`relative z-[2] border-b transition-[background-color,border-color] duration-300 ease-out ${
+          transparent ? "border-transparent bg-transparent" : "border-forge-silver/[.16] bg-forge-navy"
         }`}
       >
-        <Container size="wide">
-          <div className="flex h-10 items-center justify-between gap-6">
-            <TrackedPhoneLink
-              surface="header_topbar"
-              mode="children-only"
-              className="flex shrink-0 whitespace-nowrap items-center gap-1.5 text-white/85 hover:text-white"
-            >
-              <PhoneIcon className="h-3.5 w-3.5" />
-              <span className="font-semibold tracking-tight tabular-nums">
-                <TrackedPhoneNumber />
-              </span>
-            </TrackedPhoneLink>
-            <span className="inline-flex items-center gap-1.5 rounded-full bg-[color:var(--color-brand-600)]/20 border border-[color:var(--color-brand-400)]/30 px-2.5 py-0.5 text-[11px] font-bold uppercase tracking-[0.15em] text-[color:var(--color-brand-300)]">
-              <span aria-hidden="true">⚡</span>
-              {pathname === "/services/metal-fencing" ? "Metal Fencing · Central Texas" : pathname === "/quote" ? "Free Quotes · Central Texas" : "Same-Week Installs · Central Texas"}
-            </span>
-          </div>
-        </Container>
-      </div>
-
-      {/* Main nav */}
-      <div
-        className={`relative z-50 border-b transition-all duration-300 ease-out ${
-          transparent
-            ? "bg-transparent border-transparent"
-            : scrolled
-              ? "bg-[color:var(--color-ink-900)]/85 backdrop-blur-md border-white/10 shadow-lg shadow-black/20"
-              : "bg-[color:var(--color-ink-900)] border-white/10"
-        }`}
-      >
-        <Container size="wide">
-          <div
-            className={`flex items-center justify-between transition-all duration-300 ${
-              scrolled ? "h-16" : "h-20"
-            }`}
+        <div className="mx-auto flex h-[72px] w-full max-w-[1360px] items-center justify-between px-[clamp(20px,3vw,40px)] min-[900px]:h-[84px]">
+          <Link
+            href="/"
+            aria-label={`${SITE.name} home`}
+            className="flex items-center gap-3 whitespace-nowrap font-forge-display text-[clamp(19px,1vw_+_8px,22px)] font-black text-white"
           >
-            {/* Logo lockup — magazine treatment */}
-            <Link
-              href="/"
-              aria-label={SITE.name}
-              className="flex items-center gap-3 shrink-0 group"
-            >
-              <Image
-                src="/images/logo-lion.png"
-                alt=""
-                width={44}
-                height={44}
-                priority
-                className={`transition-all duration-300 shrink-0 -mt-1 ${
-                  scrolled ? "h-9 w-9" : "h-11 w-11"
-                } object-contain`}
-              />
-              <div className="hidden sm:flex flex-col leading-none">
-                <span className="font-display font-extrabold uppercase tracking-tight text-white text-2xl leading-none whitespace-nowrap">
-                  Triple J{" "}
-                  <span className="text-[color:var(--color-brand-400)]">
-                    Metal
-                  </span>
-                </span>
-                <span className="text-white/45 text-[10px] font-semibold mt-1.5 tracking-[0.2em] uppercase">
-                  Central Texas
-                </span>
-              </div>
-            </Link>
+            <Image
+              src="/images/logo-lion.png"
+              alt=""
+              width={44}
+              height={44}
+              priority
+              className="size-[38px] flex-none object-contain min-[900px]:size-11"
+            />
+            {SITE.name}
+          </Link>
 
-            {/* Desktop nav — active gets brand-blue underline */}
-            <nav
-              aria-label="Primary"
-              className="hidden xl:flex items-center gap-1"
-            >
-              {NAV_LINKS.map((link) => {
-                const active =
-                  pathname === link.href || (pathname.startsWith(link.href + "/") && !NAV_LINKS.some((item) => item.href !== link.href && pathname === item.href));
+          {/* Desktop nav */}
+          <nav
+            aria-label="Primary"
+            className="mx-6 hidden items-center gap-[clamp(18px,2vw,30px)] text-[15px] font-medium text-white/86 min-[900px]:flex"
+          >
+            {NAV_LINKS.map((link) => {
+              const active = isActive(pathname, link.href);
+              const underline = active ? "border-forge-silver" : "border-transparent";
+              if (link.href === "/services") {
                 return (
-                  <Link
+                  <button
                     key={link.href}
-                    href={link.href}
-                    aria-current={active ? "page" : undefined}
-                    className="group relative px-3.5 py-2 text-[15px] font-medium text-white/85 hover:text-white transition-colors"
+                    ref={triggerRef}
+                    type="button"
+                    aria-expanded={megaOpen}
+                    aria-controls="forge-mega"
+                    onMouseEnter={() => setMega({ path: pathname, keyboard: false })}
+                    onClick={(e) =>
+                      setMega(megaOpen ? null : { path: pathname, keyboard: e.detail === 0 })
+                    }
+                    className={`${navLinkCls} ${underline} inline-flex cursor-pointer items-center gap-1.5 bg-transparent`}
                   >
                     {link.label}
-                    <span
+                    <ChevronDownIcon
+                      width={14}
+                      height={14}
                       aria-hidden="true"
-                      className={`absolute left-3.5 right-3.5 -bottom-0.5 h-[2px] bg-[color:var(--color-brand-400)] rounded-full origin-center transition-transform duration-300 ${
-                        active ? "scale-x-100" : "scale-x-0 group-hover:scale-x-100"
-                      }`}
+                      className={`transition-transform duration-300 ease-forge ${megaOpen ? "rotate-180" : ""}`}
                     />
-                  </Link>
+                  </button>
                 );
-              })}
-            </nav>
+              }
+              return (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  aria-current={active ? "page" : undefined}
+                  onMouseEnter={closeMega}
+                  className={`${navLinkCls} ${underline}`}
+                >
+                  {link.label}
+                </Link>
+              );
+            })}
+          </nav>
 
-            {/* Right side: phone + CTA */}
-            <div className="flex items-center gap-3">
-              <TrackedPhoneLink
-                surface="header_dropdown"
-                mode="children-only"
-                className="hidden md:flex whitespace-nowrap shrink-0 items-center gap-2 text-white font-semibold text-[15px] px-3 py-2 hover:text-[color:var(--color-brand-300)] transition-colors"
-              >
-                <PhoneIcon className="h-4 w-4" />
-                <span className="tabular-nums">
-                  <TrackedPhoneNumber />
-                </span>
-              </TrackedPhoneLink>
-              <ButtonLink
-                href="/quote"
-                variant="primary"
-                size="md"
-                className="hidden sm:inline-flex"
-              >
-                Get a Free Quote
-              </ButtonLink>
-
-              {/* Mobile hamburger */}
-              <button
-                type="button"
-                aria-label={mobileOpen ? "Close menu" : "Open menu"}
-                aria-expanded={mobileOpen}
-                onClick={() => setMobileOpen((v) => !v)}
-                className="xl:hidden inline-flex items-center justify-center h-11 w-11 rounded-md text-white hover:bg-white/10"
-              >
-                {mobileOpen ? (
-                  <CloseIcon className="h-6 w-6" />
-                ) : (
-                  <MenuIcon className="h-6 w-6" />
-                )}
-              </button>
-            </div>
+          {/* Desktop right cluster */}
+          <div onMouseEnter={closeMega} className="hidden items-center gap-[18px] min-[900px]:flex">
+            <TrackedPhoneLink
+              surface="header"
+              mode="children-only"
+              className="hidden items-center gap-2 whitespace-nowrap text-[15px] font-semibold text-white min-[1180px]:flex"
+            >
+              <PhoneIcon width={16} height={16} aria-hidden="true" />
+              <TrackedPhoneNumber className="tabular-nums" />
+            </TrackedPhoneLink>
+            <a
+              href={cta.href}
+              onClick={onCtaClick(cta.target)}
+              className="inline-flex items-center justify-center whitespace-nowrap rounded-[6px] bg-white px-[18px] py-[11px] text-[14px] font-semibold leading-[1.55] text-forge-navy transition-colors duration-200 hover:bg-forge-silver"
+            >
+              {cta.label}
+            </a>
           </div>
-        </Container>
+
+          {/* Mobile: call + menu */}
+          <div className="flex items-center gap-2.5 min-[900px]:hidden">
+            <TrackedPhoneLink
+              surface="header_mobile"
+              mode="children-only"
+              aria-label={`Call ${SITE.phone}`}
+              className="inline-flex size-11 items-center justify-center rounded-[8px] border border-white/30 text-white"
+            >
+              <PhoneIcon width={18} height={18} aria-hidden="true" />
+            </TrackedPhoneLink>
+            <button
+              ref={menuBtnRef}
+              type="button"
+              aria-label={menuOpen ? "Close menu" : "Open menu"}
+              aria-expanded={menuOpen}
+              aria-controls="forge-mobile-menu"
+              onClick={() => setMenuPath(menuOpen ? null : pathname)}
+              className="inline-flex size-11 cursor-pointer items-center justify-center rounded-[8px] border border-white/30 bg-transparent text-white"
+            >
+              {menuOpen ? <CloseIcon width={20} height={20} /> : <MenuIcon width={20} height={20} />}
+            </button>
+          </div>
+        </div>
       </div>
 
-      {/* Mobile drawer. Closed, it is also invisible and ignores taps: Android
-          in-app browsers size 100vh around the address bar unreliably, so
-          -translate-y-full alone can leave a sliver of drawer over the page
-          eating taps. Visibility is in the transition so closing still slides. */}
+      {/* Mega menu (≥900px). Always in the DOM so the links are crawlable. */}
       <div
-        className={`xl:hidden fixed inset-x-0 top-0 bottom-0 z-40 bg-[color:var(--color-ink-900)] pt-20 transition-[transform,visibility] duration-300 ease-out ${
-          mobileOpen ? "translate-y-0" : "-translate-y-full invisible pointer-events-none"
-        }`}
-        aria-hidden={!mobileOpen}
+        id="forge-mega"
+        hidden={!megaOpen}
+        className="absolute inset-x-0 top-full z-[1] border-b border-forge-silver/[.16] bg-forge-navy text-white shadow-[var(--shadow-mega)] max-[899px]:!hidden"
       >
-        <Container size="wide">
-          <nav
-            aria-label="Mobile"
-            className="flex flex-col py-6 divide-y divide-white/10"
-          >
-            {NAV_LINKS.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                onClick={() => setMobileOpen(false)}
-                className="py-4 text-2xl font-display font-extrabold uppercase tracking-tight text-white hover:text-[color:var(--color-brand-300)]"
-              >
-                {link.label}
-              </Link>
-            ))}
-          </nav>
-          <div className="mt-4 flex flex-col gap-3">
-            <ButtonLink
-              href="/quote"
-              variant="primary"
-              size="lg"
-              onClick={() => setMobileOpen(false)}
-            >
-              Get a Free Quote
-            </ButtonLink>
-            <TrackedPhoneButtonLink
-              surface="header_drawer"
-              variant="outline-dark"
-              size="lg"
-              icon={<PhoneIcon className="h-5 w-5" />}
-            />
+        <div className="mx-auto grid w-full max-w-[1360px] grid-cols-[minmax(0,1.3fr)_minmax(0,.9fr)_minmax(0,1fr)] gap-[clamp(24px,3vw,48px)] px-[clamp(20px,3vw,40px)] pt-7 pb-8">
+          <div>
+            <p className="mb-3.5 text-[11px] font-bold uppercase tracking-[.2em] text-forge-steel-light">What we build</p>
+            <div className="flex flex-col gap-1.5">
+              {MEGA_SERVICES.map((m, i) => (
+                <Link
+                  key={m.href}
+                  ref={i === 0 ? firstMegaLink : undefined}
+                  href={m.href}
+                  onClick={closeMega}
+                  className="-mx-2 flex items-center gap-3.5 rounded-[8px] p-2 transition-colors duration-200 hover:bg-forge-navy-raised"
+                >
+                  <span className="relative h-[54px] w-[72px] flex-none overflow-hidden rounded-[6px] bg-forge-slate">
+                    <Image src={m.img} alt="" fill sizes="72px" className="object-cover" style={{ objectPosition: m.pos }} />
+                  </span>
+                  <span className="flex flex-col gap-0.5">
+                    <span className="font-forge-display text-[17px] font-bold">{m.label}</span>
+                    <span className="text-[13px] text-forge-steel-light">{m.sub}</span>
+                  </span>
+                </Link>
+              ))}
+            </div>
           </div>
-        </Container>
+          <div>
+            <p className="mb-3.5 text-[11px] font-bold uppercase tracking-[.2em] text-forge-steel-light">Where we build</p>
+            <div className="flex flex-col border-t border-forge-silver/[.14]">
+              {MEGA_AREAS.map((m) => (
+                <Link
+                  key={m.href}
+                  href={m.href}
+                  onClick={closeMega}
+                  className="flex items-center justify-between gap-3 border-b border-forge-silver/[.14] py-3.5 transition-colors duration-200 hover:text-forge-silver"
+                >
+                  <span className="flex flex-col gap-0.5">
+                    <span className="font-forge-display text-[17px] font-bold">{m.label}</span>
+                    <span className="text-[13px] text-forge-steel-light">{m.sub}</span>
+                  </span>
+                  <span aria-hidden="true" className="text-forge-steel">
+                    →
+                  </span>
+                </Link>
+              ))}
+            </div>
+            <p className="mt-3.5 text-[13px] leading-[1.5] text-forge-steel-light">
+              Plus Killeen, Harker Heights, Waco and more — within ~90 minutes of Temple.
+            </p>
+          </div>
+          <Link
+            href="/military"
+            onClick={closeMega}
+            className="relative flex min-h-[220px] flex-col justify-end overflow-hidden rounded-[12px] border border-forge-silver/[.22] bg-forge-slate p-5"
+          >
+            <Image src="/images/carport-truck-concrete-hero.jpg" alt="" fill sizes="400px" className="object-cover" />
+            <span aria-hidden="true" className="absolute inset-0" style={{ background: "var(--scrim-mega-military)" }} />
+            <span className="relative text-[11px] font-bold uppercase tracking-[.2em] text-forge-tan">
+              Fort Cavazos · 7% off
+            </span>
+            <span className="relative mt-2 font-forge-display text-[22px] font-black leading-[1.15]">
+              Same-week installs for PCS families.
+            </span>
+            <span className="relative mt-2.5 text-[14px] font-semibold text-forge-silver">See the military page →</span>
+          </Link>
+        </div>
+      </div>
+
+      {/* Mobile menu sheet (<900px) */}
+      <div
+        id="forge-mobile-menu"
+        data-menu-focus=""
+        hidden={!menuOpen}
+        className="absolute inset-x-0 top-full z-[1] h-[calc(100dvh_-_72px)] overflow-y-auto overscroll-contain bg-forge-navy px-5 pt-2 pb-8 text-white min-[900px]:!hidden"
+      >
+        <p className="mt-[18px] mb-1.5 text-[11px] font-bold uppercase tracking-[.2em] text-forge-steel-light">Services</p>
+        <nav aria-label="Mobile services" className="flex flex-col">
+          {MEGA_SERVICES.map((m) => (
+            <Link key={m.href} href={m.href} onClick={closeMenu} className={mobileRow}>
+              {m.label}
+            </Link>
+          ))}
+        </nav>
+        <p className="mt-6 mb-1.5 text-[11px] font-bold uppercase tracking-[.2em] text-forge-steel-light">Service areas</p>
+        <nav aria-label="Mobile service areas" className="flex flex-col">
+          {MEGA_AREAS.map((m) => (
+            <Link key={m.href} href={m.href} onClick={closeMenu} className={mobileRow}>
+              {m.label}
+            </Link>
+          ))}
+        </nav>
+        <p className="mt-6 mb-1.5 text-[11px] font-bold uppercase tracking-[.2em] text-forge-steel-light">Company</p>
+        <nav aria-label="Mobile company" className="flex flex-col">
+          {NAV_LINKS.filter((l) => l.href !== "/services").map((l) => (
+            <Link key={l.href} href={l.href} onClick={closeMenu} className={mobileRow}>
+              {l.label}
+            </Link>
+          ))}
+          <Link
+            href="/military"
+            onClick={closeMenu}
+            className="flex items-center justify-between gap-3 py-3.5 font-forge-display text-[22px] font-bold"
+          >
+            Fort Cavazos Military
+            <span className="font-sans text-[11px] font-bold uppercase tracking-[.14em] text-forge-tan">7% off</span>
+          </Link>
+        </nav>
+        <div className="mt-5 flex flex-col gap-3">
+          <a
+            href={cta.href}
+            onClick={onCtaClick(cta.target, closeMenu)}
+            className="inline-flex items-center justify-center rounded-[6px] bg-white px-[26px] py-[15px] text-[16px] font-semibold text-forge-navy"
+          >
+            {cta.label}
+          </a>
+          <TrackedPhoneLink
+            surface="header_drawer"
+            mode="children-only"
+            className="inline-flex items-center justify-center gap-2 rounded-[6px] border border-white/30 px-[26px] py-[15px] text-[16px] font-semibold text-white"
+          >
+            Call <TrackedPhoneNumber className="tabular-nums" />
+          </TrackedPhoneLink>
+        </div>
       </div>
     </header>
   );
 }
+
+const mobileRow = "border-b border-forge-silver/[.16] py-3.5 font-forge-display text-[22px] font-bold";

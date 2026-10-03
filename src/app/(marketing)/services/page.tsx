@@ -1,12 +1,14 @@
+import { PreFooterCta } from "@/components/site/PreFooterCta";
 import { BreadcrumbJsonLd } from "@/components/seo/BreadcrumbJsonLd";
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 
-import { Container } from "@/components/ui/Container";
-import { Reveal } from "@/components/ui/Reveal";
-import { ArrowRightIcon } from "@/components/ui/icons";
-import { SERVICES, SERVICE_SLUGS } from "@/lib/services";
+import { Breadcrumb } from "@/components/forge/Breadcrumb";
+import { PhotoCard, RuleList } from "@/components/forge/cards";
+import { ForgeReveal } from "@/components/forge/ForgeReveal";
+import { PageHero } from "@/components/forge/PageHero";
+import { SERVICE_PHOTOS, SERVICES, SERVICE_SLUGS } from "@/lib/services";
 import { SITE } from "@/lib/site";
 
 export const metadata: Metadata = {
@@ -17,20 +19,28 @@ export const metadata: Metadata = {
 };
 
 /**
- * /services list page — magazine treatment.
+ * /services list page — Forge treatment.
  *
- * Layout: full-bleed photo hero → featured flagship card (Carports) →
- * 3-up grid of the other 5 services + 1 Resources callout. PreFooterCta
- * + Footer in the marketing layout handle the closer (no QuoteForm here).
+ * Layout: navy photo hero → featured flagship card (Carports) → auto-fill
+ * grid of Forge photo cards for the other services + 1 Resources callout.
+ * PreFooterCta + Footer in the marketing layout handle the closer (no
+ * QuoteForm here).
  *
  * Photo notes (some are placeholders — flag for swap when better shots
  * land in /public/images/services/):
  *   barns, rv-covers, hoa-compliant-structures use the closest available
- *   photo with heavier gradient. The 'V'-overlaid title text does enough
- *   semantic work to read as intentional, not missing.
+ *   photo. The card scrim and Cinzel title do enough semantic work to read
+ *   as intentional, not missing.
  */
 
 const FLAGSHIP_SLUG = "carports";
+
+const RESOURCE_LINKS = [
+  { href: "/services/colors", label: "39 Color Options" },
+  { href: "/services/pbr-vs-pbu-panels", label: "PBR vs PBU Panel Guide" },
+  { href: "/services/hybrid-projects", label: "Custom Hybrid Projects" },
+  { href: "/locations", label: "Service Locations" },
+];
 
 /**
  * Hero photo per service — sourced from real Triple J builds in /hq/gallery
@@ -52,226 +62,152 @@ const FLAGSHIP_SLUG = "carports";
  *   FROM gallery_items gi JOIN gallery_photos gp ON gp.gallery_item_id = gi.id
  *   WHERE gp.is_cover = true AND gi.is_active = true ORDER BY gi.created_at DESC;
  */
-const SERVICE_PHOTOS: Record<string, string> = {
-  carports: "https://idrbgxlvvnqduvbqtaei.supabase.co/storage/v1/object/public/gallery/1777195148318.jpg",
-  "turnkey-carports-with-concrete": "https://idrbgxlvvnqduvbqtaei.supabase.co/storage/v1/object/public/gallery/1777195038839.jpeg",
-  "metal-garages": "/images/metal-garage-green.jpg",
-  barns: "https://idrbgxlvvnqduvbqtaei.supabase.co/storage/v1/object/public/gallery/1777195257805.jpg",
-  "rv-covers": "https://idrbgxlvvnqduvbqtaei.supabase.co/storage/v1/object/public/gallery/1777195863079.jpg",
-  "hoa-compliant-structures": "https://idrbgxlvvnqduvbqtaei.supabase.co/storage/v1/object/public/gallery/1777194918087.jpg",
-  "metal-fencing": "/images/metal-fence-ranch-wire.webp",
-};
 
 export default function ServicesPage() {
   const flagship = SERVICES[FLAGSHIP_SLUG];
   const otherSlugs = SERVICE_SLUGS.filter((s) => s !== FLAGSHIP_SLUG);
 
   return (
-    <>
+    <div data-forge="">
       <BreadcrumbJsonLd items={[{ name: "Services", path: "/services" }]} />
-      {/* ── Hero — full-bleed photo + dark gradient ────────────────── */}
-      <section className="relative overflow-hidden bg-black text-white">
-        <div className="absolute inset-0">
-          <Image
-            src="/images/red-iron-frame-hero.jpg"
-            alt="Welded red iron frame going up on a Central Texas metal building site"
-            fill
-            priority
-            sizes="100vw"
-            className="object-cover opacity-50"
-          />
-        </div>
-        <div
-          aria-hidden="true"
-          className="absolute inset-0 bg-gradient-to-tr from-black/95 via-black/80 to-[color:var(--color-brand-700)]/40"
-        />
 
-        <Container size="wide" className="relative">
-          <div className="py-24 sm:py-32 lg:py-40 max-w-3xl">
-            <span className="inline-flex items-center rounded-full bg-red-600 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.18em] text-white shadow-sm">
-              What We Build
-            </span>
-            <h1 className="mt-6 font-display font-extrabold uppercase tracking-tight leading-[0.95] text-white text-5xl sm:text-6xl md:text-7xl">
-              Six things we build.
-              <br />
-              <span className="text-[color:var(--color-brand-400)]">
-                Built whole, by us.
-              </span>
-            </h1>
-            <p className="mt-6 text-lg sm:text-xl leading-relaxed text-white/75 max-w-2xl">
-              Welded or bolted red-iron steel — delivered turnkey with site
-              prep, concrete, and install all under one contract. Same-week
-              scheduling across Bell, Coryell, and McLennan counties.
-            </p>
-          </div>
-        </Container>
-      </section>
+      {/* ── Hero — full-bleed photo under the navy scrim ───────────── */}
+      <PageHero
+        breadcrumb={<Breadcrumb trail={[]} current="Services" jsonLd={false} />}
+        image={{
+          src: "/images/red-iron-frame-hero.jpg",
+          alt: "Welded red iron frame going up on a Central Texas metal building site",
+          position: "50% 40%",
+        }}
+        eyebrow="What We Build"
+        h1a="Six things we build."
+        h1b="Built whole, by us."
+        lede="Every structure is sold welded, bolted, or turnkey — with turnkey, site prep, concrete and installation sit on one contract. No kits, no subcontractors. Same-week scheduling across Bell, Coryell, and McLennan counties."
+        ledeMax="max-w-[640px]"
+      />
 
       {/* ── Featured flagship + grid ─────────────────────────────── */}
       <section
+        data-forge=""
+        data-tone="light"
         aria-labelledby="services-grid-heading"
-        className="relative py-20 md:py-24 bg-gradient-to-b from-white to-[color:var(--color-ink-50)] overflow-hidden"
+        className="bg-forge-fog py-[clamp(64px,7vw,104px)] text-forge-navy"
       >
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute inset-0 opacity-[0.04] bg-grid-decoration"
-        />
-
-        <Container size="wide" className="relative">
+        <div className="mx-auto w-full max-w-[1360px] px-[clamp(20px,3vw,40px)]">
           <h2 id="services-grid-heading" className="sr-only">
             Service lineup
           </h2>
 
           {/* ── Flagship feature card — Carports ── */}
-          <Reveal>
+          <ForgeReveal>
             <Link
               href={`/services/${flagship.slug}`}
-              className="group relative grid grid-cols-1 lg:grid-cols-5 overflow-hidden rounded-2xl bg-[color:var(--color-ink-900)] text-white shadow-md hover:shadow-2xl transition-all duration-300 ease-out"
+              className="group grid grid-cols-1 overflow-hidden rounded-[12px] border border-forge-navy bg-forge-navy text-white transition-colors duration-300 hover:border-forge-steel lg:grid-cols-5"
             >
               {/* Photo column (3/5 on lg) */}
-              <div className="relative aspect-[16/10] lg:aspect-auto lg:col-span-3 overflow-hidden">
+              <div className="relative aspect-[16/10] overflow-hidden bg-forge-slate lg:col-span-3 lg:aspect-auto lg:min-h-[440px]">
                 <Image
                   src={SERVICE_PHOTOS[flagship.slug]}
                   alt={flagship.title}
                   fill
                   sizes="(max-width: 1024px) 100vw, 60vw"
-                  className="object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+                  className="object-cover"
                 />
-                <div className="absolute inset-0 bg-gradient-to-r from-black/40 via-transparent to-transparent lg:from-transparent lg:via-transparent lg:to-[color:var(--color-ink-900)]/85" />
               </div>
 
               {/* Content column (2/5 on lg) */}
-              <div className="relative lg:col-span-2 flex flex-col justify-center p-7 md:p-9 lg:p-10">
-                <span className="inline-flex w-fit items-center rounded-full bg-red-600 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.18em] text-white shadow-sm">
+              <div className="flex flex-col justify-center px-[clamp(22px,3vw,40px)] py-[clamp(26px,3vw,44px)] lg:col-span-2">
+                <span className="text-[11px] font-semibold uppercase tracking-[.2em] text-forge-silver">
                   Flagship
                 </span>
-                <h3 className="mt-5 font-display font-extrabold uppercase tracking-tight leading-[0.95] text-white text-4xl sm:text-5xl md:text-6xl">
+                <h3 className="mt-3 font-forge-display text-[clamp(32px,2.4vw_+_14px,52px)] font-black leading-[1.05] tracking-[.01em] text-white">
                   {flagship.shortTitle}
                 </h3>
-                <p className="mt-4 text-base sm:text-lg leading-relaxed text-white/75">
+                <p className="mt-4 text-[clamp(16px,.3vw_+_14px,18px)] leading-[1.55] text-white/80 [text-wrap:pretty]">
                   {flagship.mainBenefit}
                 </p>
 
                 {/* 3 feature bullets */}
-                <ul className="mt-6 space-y-2.5">
-                  {flagship.features.slice(0, 3).map((f) => (
-                    <li
-                      key={f.title}
-                      className="flex items-start gap-2.5 text-sm text-white/80"
-                    >
-                      <span
-                        aria-hidden="true"
-                        className="mt-0.5 shrink-0 inline-flex items-center justify-center h-5 w-5 rounded-full bg-[color:var(--color-brand-600)]/25 text-[color:var(--color-brand-300)] text-xs font-bold"
-                      >
-                        ✓
-                      </span>
-                      <span>{f.title}</span>
-                    </li>
-                  ))}
-                </ul>
+                <RuleList
+                  className="mt-6"
+                  itemClassName="text-[15px] leading-[1.45] text-white/85"
+                  items={flagship.features.slice(0, 3).map((f) => f.title)}
+                />
 
-                <span className="mt-7 inline-flex items-center gap-1.5 text-sm font-bold uppercase tracking-wider text-[color:var(--color-brand-400)] group-hover:gap-2.5 transition-all">
-                  See {flagship.shortTitle} details
-                  <ArrowRightIcon className="h-4 w-4" />
+                <span className="mt-7 border-t border-forge-silver/[.18] pt-4 text-[14px] font-semibold text-forge-silver transition-colors group-hover:text-white">
+                  See {flagship.shortTitle} details <span aria-hidden="true">→</span>
                 </span>
               </div>
             </Link>
-          </Reveal>
+          </ForgeReveal>
 
-          {/* ── 3-up grid of the other 5 services + Resources card ── */}
-          <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-            {otherSlugs.map((slug, i) => {
+          {/* ── Photo cards for the other services + Resources card ── */}
+          <ForgeReveal
+            stagger
+            className="mt-4 grid grid-cols-[repeat(auto-fill,minmax(min(100%,290px),1fr))] gap-4"
+          >
+            {otherSlugs.map((slug) => {
               const svc = SERVICES[slug];
-              return (
-                <Reveal key={slug} delay={i * 80}>
-                  <Link
-                    href={`/services/${slug}`}
-                    className="group relative flex flex-col h-full overflow-hidden rounded-2xl bg-[color:var(--color-ink-900)] shadow-md hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 ease-out"
-                  >
-                    {/* Photo with title overlay */}
-                    <div className="relative aspect-[4/3] overflow-hidden">
-                      {SERVICE_PHOTOS[slug] ? <Image
-                        src={SERVICE_PHOTOS[slug]}
-                        alt={svc.title}
-                        fill
-                        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                        className="object-cover transition-transform duration-700 ease-out group-hover:scale-110"
-                      /> : <div aria-hidden="true" className="absolute inset-0 bg-brand-900 bg-[repeating-linear-gradient(90deg,transparent_0px,transparent_35px,#64748b_35px,#64748b_42px)]" />}
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/40 to-black/20" />
-                      <div className="absolute inset-0 bg-gradient-to-tl from-transparent via-transparent to-[color:var(--color-brand-600)]/0 group-hover:to-[color:var(--color-brand-600)]/30 transition-colors duration-500" />
-
-                      <div className="absolute inset-x-0 bottom-0 p-5 md:p-6">
-                        <h3 className="font-display font-extrabold uppercase tracking-tight leading-none text-white text-2xl md:text-3xl">
-                          {svc.shortTitle}
-                        </h3>
-                      </div>
-
-                      <div className="absolute top-4 right-4 translate-y-[-4px] opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300">
-                        <span className="inline-flex items-center gap-1.5 rounded-full bg-[color:var(--color-brand-600)] px-3 py-1.5 text-xs font-bold uppercase tracking-wider text-white shadow-lg">
-                          View
-                          <ArrowRightIcon className="h-3.5 w-3.5" />
-                        </span>
-                      </div>
-                    </div>
-
-                    {/* Body panel */}
-                    <div className="flex flex-col gap-3 p-5 md:p-6 bg-white flex-1">
-                      <p className="text-[15px] leading-relaxed text-[color:var(--color-ink-600)]">
-                        {svc.mainBenefit}
-                      </p>
-                      <span className="mt-auto inline-flex items-center gap-1.5 text-sm font-bold text-[color:var(--color-brand-600)] group-hover:gap-2.5 transition-all">
-                        See details
-                        <ArrowRightIcon className="h-4 w-4" />
-                      </span>
-                    </div>
-                  </Link>
-                </Reveal>
+              const photo = SERVICE_PHOTOS[slug];
+              return photo ? (
+                <PhotoCard
+                  key={slug}
+                  href={`/services/${slug}`}
+                  img={photo}
+                  title={svc.shortTitle}
+                  sub={svc.mainBenefit}
+                  cta="See details"
+                />
+              ) : (
+                <Link
+                  key={slug}
+                  href={`/services/${slug}`}
+                  className="group relative flex min-h-[280px] flex-col justify-end overflow-hidden rounded-[12px] border border-forge-silver bg-forge-navy-raised p-[22px] text-white"
+                >
+                  <span className="font-forge-display text-[24px] font-black leading-[1.1]">{svc.shortTitle}</span>
+                  <span className="mt-1.5 text-[14px] text-white/82">{svc.mainBenefit}</span>
+                  <span className="mt-3.5 text-[14px] font-semibold text-forge-silver group-hover:text-white">
+                    See details <span aria-hidden="true">→</span>
+                  </span>
+                </Link>
               );
             })}
 
             {/* ── Resources card — replaces the SEO helper links strip ── */}
-            <Reveal delay={otherSlugs.length * 80}>
-              <div className="relative flex flex-col h-full overflow-hidden rounded-2xl bg-[color:var(--color-ink-900)] text-white p-7 md:p-8 shadow-md border border-white/5">
-                {/* Subtle brand-blue radial */}
-                <div
-                  aria-hidden="true"
-                  className="pointer-events-none absolute -top-20 -right-20 h-60 w-60 rounded-full bg-[color:var(--color-brand-600)]/20 blur-3xl"
-                />
-                <div className="relative">
-                  <span className="inline-flex w-fit items-center rounded-full bg-[color:var(--color-brand-600)]/20 border border-[color:var(--color-brand-400)]/30 px-2.5 py-0.5 text-[11px] font-bold uppercase tracking-[0.18em] text-[color:var(--color-brand-300)]">
-                    Resources
-                  </span>
-                  <h3 className="mt-4 font-display font-extrabold uppercase tracking-tight leading-none text-white text-2xl md:text-3xl">
-                    Specs &amp; guides
-                  </h3>
-                  <p className="mt-3 text-sm leading-relaxed text-white/65">
-                    Pick a finish, compare panel systems, or see where we build.
-                  </p>
+            <div
+              data-tone="dark"
+              className="flex min-h-[280px] flex-col rounded-[12px] border border-forge-navy bg-forge-navy p-[22px] text-white"
+            >
+              <span className="text-[11px] font-semibold uppercase tracking-[.2em] text-forge-silver">
+                Resources
+              </span>
+              <h3 className="mt-2.5 font-forge-display text-[24px] font-black leading-[1.1] text-white">
+                Specs &amp; guides
+              </h3>
+              <p className="mt-2 mb-5 text-[14px] leading-[1.55] text-white/72">
+                Pick a finish, compare panel systems, or see where we build.
+              </p>
 
-                  <ul className="mt-6 space-y-3">
-                    {[
-                      { href: "/services/colors", label: "39 Color Options" },
-                      { href: "/services/pbr-vs-pbu-panels", label: "PBR vs PBU Panel Guide" },
-                      { href: "/services/hybrid-projects", label: "Custom Hybrid Projects" },
-                      { href: "/locations", label: "Service Locations" },
-                    ].map((link) => (
-                      <li key={link.href}>
-                        <Link
-                          href={link.href}
-                          className="group inline-flex items-center gap-2 text-base font-semibold text-white hover:text-[color:var(--color-brand-300)] transition-colors"
-                        >
-                          {link.label}
-                          <ArrowRightIcon className="h-4 w-4 text-[color:var(--color-brand-400)] group-hover:translate-x-0.5 transition-transform" />
-                        </Link>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              </div>
-            </Reveal>
-          </div>
-        </Container>
+              <ul className="m-0 mt-auto flex list-none flex-col border-t border-forge-silver/[.18] p-0 pt-2">
+                {RESOURCE_LINKS.map((link) => (
+                  <li key={link.href}>
+                    <Link
+                      href={link.href}
+                      className="flex items-center justify-between gap-3 border-b border-forge-silver/[.12] py-2.5 text-[15px] font-semibold text-white transition-colors hover:text-forge-silver"
+                    >
+                      {link.label}
+                      <span aria-hidden="true" className="text-forge-silver">
+                        →
+                      </span>
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </ForgeReveal>
+        </div>
       </section>
-    </>
+      <PreFooterCta />
+    </div>
   );
 }

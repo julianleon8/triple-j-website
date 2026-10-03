@@ -1,0 +1,56 @@
+/* Forge — color tokens. Every value below is lifted verbatim from the approved
+   design files (Triple J Site.dc.html, Homepage Final Scroll.dc.html) and the
+   locked hero mockup (docs/redesign-2026-10/hero-mockup.html). */
+:root {
+  /* ── Base palette: the lion logo's navy, slate and silver ── */
+  --color-navy:         #00182a; /* ink on light; dark bands; primary button on light */
+  --color-navy-raised:  #0c2538; /* cards/panels on navy; hover of navy button; mega-menu row hover */
+  --color-slate:        #546678; /* secondary text on light; 2nd headline line on light; image-loading bg */
+  --color-steel:        #788a9c; /* tertiary text, numerals, rules, placeholders, arrows on dark */
+  --color-steel-light:  #9fb0c0; /* meta + eyebrow-labels on dark */
+  --color-silver:       #c9d3dc; /* borders on light; eyebrows on dark; hover bg of white button */
+  --color-mist:         #e3e9ee; /* hairlines on light; progress track; photo placeholder */
+  --color-fog:          #f4f6f8; /* off-white section band; selected chip bg; row hover */
+  --color-highlight:    #e9eef2; /* top stop of the brushed-steel gradient */
+  --color-white:        #ffffff;
+
+  /* ── Fort Cavazos (military page only) ── */
+  --color-olive:        #4b5320; /* eyebrow text, card top-rule, discount header, selected pill */
+  --color-tan:          #c5b481; /* rules, numerals, 7% ring on olive/navy */
+  --color-tan-light:    #e2d6ae; /* small caps text on olive */
+
+  /* ── Link accent — EXCEPTION, pending owner confirmation ──
+     Requested 2026-10-02 for the service-page "Related" link buttons only.
+     Conflicts with the locked "no royal blue" rule; see handoff README. */
+  --color-link-accent:       #1e6bd6;
+  --color-link-accent-hover: #1851b5;
+
+  /* ── Semantic: text ── */
+  --text-ink:              var(--color-navy);
+  --text-muted:            var(--color-slate);
+  --text-subtle:           var(--color-steel);
+  --text-on-dark:          #ffffff;
+  --text-on-dark-lede:     rgba(255, 255, 255, 0.86); /* hero ledes, nav links */
+  --text-on-dark-body:     rgba(255, 255, 255, 0.80); /* section ledes, footer body */
+  --text-on-dark-soft:     rgba(255, 255, 255, 0.75); /* list body on navy */
+  --text-on-dark-caption:  rgba(255, 255, 255, 0.72); /* fact-strip sublines, card blurbs */
+  --text-on-dark-meta:     var(--color-steel-light);
+  --text-on-dark-eyebrow:  var(--color-silver);
+
+  /* ── Semantic: surfaces ── */
+  --surface-page:          #ffffff;
+  --surface-alt:           var(--color-fog);
+  --surface-dark:          var(--color-navy);
+  --surface-dark-raised:   var(--color-navy-raised);
+
+  /* ── Semantic: borders ── */
+  --border-default:        var(--color-silver);   /* cards, inputs, pills (1px) */
+  --border-hairline:       var(--color-mist);     /* dividers inside cards, list rows */
+  --border-strong:         var(--color-navy);     /* selected / focused control */
+  --border-dark-faint:     rgba(201, 211, 220, 0.12); /* spec-sheet rows */
+  --border-dark-subtle:    rgba(201, 211, 220, 0.16); /* header bottom, mobile menu rows */
+  --border-dark:           rgba(201, 211, 220, 0.18); /* list rows on navy, fact-strip dividers */
+  --border-dark-strong:    rgba(201, 211, 220, 0.22); /* cards on navy */
+  --border-on-dark-control: rgba(255, 255, 255, 0.30); /* icon buttons, mobile secondary CTA */
+  --border-on-dark-button:  rgba(255, 255, 255, 0.40); /* outline button on photo */
+}

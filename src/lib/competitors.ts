@@ -143,7 +143,7 @@ export const COMPETITORS: Record<CompetitorSlug, Competitor> = {
     type: 'self',
     homeUrl: 'https://www.triplejmetaltx.com/',
     oneLiner:
-      'Temple, TX family-owned metal building contractor — welded or bolted red iron steel, turnkey concrete, same-week installs across Bell + neighboring counties.',
+      'Temple, TX family-owned metal building contractor — welded or bolted red iron steel, concrete available, same-week installs across Bell + neighboring counties.',
     coverage: 'Bell, McLennan, Coryell, Williamson, Lampasas, Falls, Milam, Burnet counties (90-minute radius from Temple)',
     asOf: '2026-04-26',
   },

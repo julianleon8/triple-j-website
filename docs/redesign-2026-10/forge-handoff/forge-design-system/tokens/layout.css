@@ -1,0 +1,36 @@
+/* Forge — layout, spacing, radii, control sizes. */
+:root {
+  --container-max:  1360px;
+  --gutter:         clamp(20px, 3vw, 40px);       /* container side padding */
+  --section-y:      clamp(64px, 7vw, 104px);      /* standard section top/bottom padding */
+  --section-y-sm:   clamp(48px, 5vw, 80px);       /* map band, page-header bottom */
+  --section-y-xs:   32px;                         /* "Related" link row */
+  --split-gap:      clamp(32px, 4vw, 72px);       /* two-column splits (80px max on About/Quote) */
+  --split-min:      420px;                        /* auto-fit minmax(min(100%, 420px), 1fr) */
+  --card-min:       300px;                        /* feature / landmark / gallery card min track */
+  --build-card-min: 260px;                        /* build-card auto-fill track */
+  --gap-grid:       16px;
+  --gap-grid-lg:    20px;
+
+  /* Spacing steps actually used (px): 2 4 6 8 10 12 14 16 18 20 22 24 26 28 30 32 36 40 44 48 */
+  --space-1: 4px;  --space-2: 8px;  --space-3: 12px; --space-4: 16px;
+  --space-5: 20px; --space-6: 24px; --space-7: 28px; --space-8: 32px;
+  --space-9: 36px; --space-10: 40px; --space-11: 44px; --space-12: 48px;
+
+  /* Radii */
+  --radius-control: 6px;    /* buttons, inputs, pills, filters */
+  --radius-icon:    8px;    /* 44px icon buttons, checkbox row, lightbox image, social chips */
+  --radius-tile:    10px;   /* option tabs, service chips in quote form, inner calc box, map callout */
+  --radius-card:    12px;   /* cards, panels, form card, photo cards */
+  --radius-pill:    9999px; /* neighborhood/county chips, FAQ toggle, step progress, badges */
+
+  /* Control sizes */
+  --header-h:          84px;  /* desktop (approved hero mockup). Site mock used 80 */
+  --header-h-mobile:   72px;  /* mobile (approved hero mockup). Site mock used 64 */
+  --lion-size:         44px;  /* 38px on mobile; 56px in footer */
+  --control-h:         46px;  /* text inputs, secondary form buttons */
+  --pill-h:            42px;  /* selectable option pills */
+  --tap-min:           44px;  /* icon buttons, filter buttons, related links */
+  --chip-h:            36px;  /* neighborhood chips (34px service-area, 38px county) */
+  --callbar-h:         48px;  /* mobile call-bar buttons */
+}

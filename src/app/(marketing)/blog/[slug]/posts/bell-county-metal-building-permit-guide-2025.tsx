@@ -1,4 +1,3 @@
-import Link from 'next/link'
 import { ComparisonTable } from '@/components/ui/ComparisonTable'
 
 export default function BellCountyPermitPost() {
@@ -6,14 +5,15 @@ export default function BellCountyPermitPost() {
     <>
       <p>
         One of the first questions we get on every quote call is: &#8220;Do I need a permit for this?&#8221;
-        The honest answer in <strong>Bell County, Texas</strong> is: it depends on size, jurisdiction, and what
+        The honest answer in <strong>Bell County, Texas</strong>{' '}is: it depends on size, jurisdiction, and what
         your property is zoned. The rules in Temple, Killeen, Belton, and unincorporated Bell County
         are different from each other &#8212; and the consequences of building without the right permit
         can follow your property deed for decades.
       </p>
       <p>
-        This is a working guide from a local contractor who pulls permits in Bell County regularly.
-        We&#8217;ll tell you what triggers a permit, who handles it, what it costs, and how long it takes.
+        This is a working guide from a local crew that builds across Bell County. We&#8217;ll walk through
+        what usually triggers a permit, who can apply for one, what it tends to cost, and how long it
+        takes &#8212; and where to confirm each answer for your own lot.
       </p>
 
       <h2>Why Permits Matter More Than Most Contractors Admit</h2>
@@ -34,7 +34,7 @@ export default function BellCountyPermitPost() {
 
       <ComparisonTable
         caption="Metal building permit thresholds by Bell County jurisdiction"
-        headers={['Jurisdiction', 'Permit Threshold', 'Who Pulls the Permit', 'Typical Turnaround']}
+        headers={['Jurisdiction', 'Permit Threshold', 'Who Can Apply', 'Typical Turnaround']}
         highlightCol={1}
         rows={[
           ['City of Temple',        'Structures ≥ 200 sq ft',    'Licensed contractor or owner-builder', '5–10 business days'],
@@ -46,7 +46,7 @@ export default function BellCountyPermitPost() {
       />
 
       <p>
-        <strong>Important:</strong> These thresholds apply to detached accessory structures on residential lots.
+        <strong>Important:</strong>{' '}These thresholds apply to detached accessory structures on residential lots.
         Commercial properties, properties in floodplains, and properties with HOA covenants may have
         additional or different requirements. Always verify with the applicable building department
         before breaking ground.
@@ -58,14 +58,14 @@ export default function BellCountyPermitPost() {
         permit fees for a metal carport or garage in this range:
       </p>
       <ul>
-        <li><strong>Small structures (under 300 sq ft):</strong> $50–$150 permit fee</li>
-        <li><strong>Mid-size (300–800 sq ft):</strong> $150–$350</li>
-        <li><strong>Larger structures (800+ sq ft):</strong> $350–$800+, may require stamped engineering</li>
+        <li><strong>Small structures (under 300 sq ft):</strong>{' '}$50–$150 permit fee</li>
+        <li><strong>Mid-size (300–800 sq ft):</strong>{' '}$150–$350</li>
+        <li><strong>Larger structures (800+ sq ft):</strong>{' '}$350–$800+, may require stamped engineering</li>
       </ul>
       <p>
-        These are the permit fees only &#8212; not the cost of stamped engineering drawings, which can add
-        $300–$800 for structures that require them. Some municipalities also charge plan review fees
-        separately from the permit issuance fee.
+        These are the permit fees only &#8212; stamped engineering drawings, where a structure needs them,
+        are a separate cost. Some municipalities also charge plan review fees separately from the permit
+        issuance fee.
       </p>
 
       <h2>When Does a Structure Require Stamped Engineering?</h2>
@@ -81,26 +81,25 @@ export default function BellCountyPermitPost() {
         <li>Any structure submitted by a licensed contractor for permit (some jurisdictions)</li>
       </ul>
       <p>
-        Triple J can provide stamped engineering drawings through our engineering partner for projects
-        that require them. This is included in the quote discussion &#8212; not a surprise add-on at permit time.
+        If your city will want stamped drawings for your structure, we&#8217;ll say so during the quote and
+        talk through how to get them &#8212; it&#8217;s part of the quote discussion, not a surprise at permit time.
       </p>
 
-      <h2>Who Should Pull the Permit &#8212; You or the Contractor?</h2>
+      <h2>Who Applies for the Permit &#8212; You or the Contractor?</h2>
       <p>
-        When you hire Triple J Metal, <strong>we pull the permit.</strong> We are a licensed contractor in
-        Texas, which means we can pull permits for projects we&#8217;re contracted to build. The permit is
-        in our name, we&#8217;re responsible for the inspection, and the liability for code compliance sits
-        with us &#8212; not you.
+        It depends on the jurisdiction and the project. Some cities let the property owner apply; some
+        expect the contractor to. <strong>Triple J&#8217;s role is advisory:</strong>{' '}we give permit
+        guidance and talk through approvals before we schedule, and who files is confirmed in your written
+        scope &#8212; so you know before you sign, not after the steel arrives.
       </p>
       <p>
-        This is different from many bolted kit companies, who ship you a structure and explicitly state
-        in their terms that the customer is responsible for permits, site prep, and inspections. When you&#8217;re
-        the permit holder and you don&#8217;t know the local process, you&#8217;re exposed.
+        Whoever builds your structure, ask the same questions: who applies for the permit, who prepares
+        the site, and who meets the inspector? Get the answers in the written scope. When you&#8217;re the
+        permit holder and you don&#8217;t know the local process, you&#8217;re exposed.
       </p>
       <p>
-        If you want to pull your own permit as an owner-builder, that&#8217;s your legal right in Texas.
-        Most municipalities allow it for your primary residence. Just understand that the inspection
-        process and any code violations fall on you.
+        If you&#8217;d rather apply yourself as an owner-builder, many Texas cities allow it for your primary
+        residence. Just understand that the inspection process and any code violations fall on you.
       </p>
 
       <h2>Setback Requirements: What to Verify Before You Pick a Location</h2>
@@ -110,15 +109,15 @@ export default function BellCountyPermitPost() {
         residential setbacks for accessory structures are:
       </p>
       <ul>
-        <li><strong>Rear yard:</strong> 5–10 feet from property line (varies by city)</li>
-        <li><strong>Side yard:</strong> 3–5 feet minimum</li>
-        <li><strong>Front yard:</strong> Behind the front face of the main dwelling, typically no accessory structures allowed in front setback</li>
-        <li><strong>Drainage easements:</strong> No permanent structures allowed within the easement footprint (check your plat)</li>
+        <li><strong>Rear yard:</strong>{' '}5–10 feet from property line (varies by city)</li>
+        <li><strong>Side yard:</strong>{' '}3–5 feet minimum</li>
+        <li><strong>Front yard:</strong>{' '}Behind the front face of the main dwelling, typically no accessory structures allowed in front setback</li>
+        <li><strong>Drainage easements:</strong>{' '}No permanent structures allowed within the easement footprint (check your plat)</li>
       </ul>
       <p>
-        Before we quote your project, we&#8217;ll ask for your property address and confirm the applicable
-        setbacks with the relevant jurisdiction. Better to catch a setback issue during quote than
-        after the concrete is poured.
+        Before we quote your project, we&#8217;ll ask for your property address, talk through the setbacks
+        that usually apply there, and point you to the city or county office that confirms them. Better
+        to catch a setback issue during the quote than after the concrete is poured.
       </p>
 
       <h2>HOA Covenants Are Separate from Building Permits</h2>
@@ -126,9 +125,6 @@ export default function BellCountyPermitPost() {
         If your property is in a subdivision with a Homeowners Association &#8212; Heritage Oaks in Killeen,
         Bella Charca in Nolanville, and dozens of other Central Texas communities &#8212; your HOA architectural
         review committee must approve your structure separately from the city building permit.
-        Our guide to{' '}
-        <Link href="/blog/hoa-compliant-metal-buildings-heritage-oaks-bella-charca">HOA-compliant metal buildings</Link> covers what
-        those reviews look for.
       </p>
       <p>
         A city permit does not override an HOA covenant. A structure that passes city permitting but
@@ -140,14 +136,9 @@ export default function BellCountyPermitPost() {
       <h2>Start with the Quote Call</h2>
       <p>
         The fastest way to understand what your specific project requires is to describe it to us.
-        When you call or fill out the <Link href="/quote">quote form</Link>, tell us the address, the structure size, and your
-        intended use. We&#8217;ll check the jurisdiction, verify setbacks, and include the permit cost
-        in your quote. One contract, one crew, no surprises.
-      </p>
-      <p>
-        Building in Bell County? See our <Link href="/locations/temple">Temple</Link>,{' '}
-        <Link href="/locations/belton">Belton</Link>, and <Link href="/locations/killeen">Killeen</Link> pages, or browse{' '}
-        <Link href="/services/carports">carports</Link> and <Link href="/services/metal-garages">garages</Link>.
+        When you call or fill out the quote form, tell us the address, the structure size, and your
+        intended use. We&#8217;ll tell you what your jurisdiction usually requires, flag setbacks and HOA
+        review, and write who handles the permit into your scope. No surprises.
       </p>
     </>
   )

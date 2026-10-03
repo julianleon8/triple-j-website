@@ -1,16 +1,22 @@
-import { BreadcrumbJsonLd } from '@/components/seo/BreadcrumbJsonLd'
 import type { Metadata } from 'next'
 import Image from 'next/image'
+import Link from 'next/link'
 
-import { Container } from '@/components/ui/Container'
+import { Breadcrumb } from '@/components/forge/Breadcrumb'
+import { BuildGrid } from '@/components/forge/BuildGrid'
+import { FeatureCard, RuleList } from '@/components/forge/cards'
+import { Eyebrow } from '@/components/forge/Eyebrow'
+import { ForgeReveal } from '@/components/forge/ForgeReveal'
+import { SectionHeading } from '@/components/forge/SectionHeading'
+import { buttonClass, type } from '@/components/forge/styles'
 import { QuoteForm } from '@/components/sections/QuoteForm'
-import { HowItWorks } from '@/components/sections/HowItWorks'
-import { Gallery } from '@/components/sections/Gallery'
-import { TrackedPhoneButtonLink } from '@/components/site/TrackedPhone'
+import { BreadcrumbJsonLd } from '@/components/seo/BreadcrumbJsonLd'
+import { TrackedPhoneLink, TrackedPhoneNumber } from '@/components/site/TrackedPhone'
 import { PhoneIcon } from '@/components/ui/icons'
-import { getAdminClient } from '@/lib/supabase/admin'
-import { parseQuotePrefill } from '@/lib/quote-prefill'
+import { getBuilds } from '@/lib/forge-builds'
 import type { ProjectReference } from '@/lib/project-reference'
+import { parseQuotePrefill } from '@/lib/quote-prefill'
+import { getAdminClient } from '@/lib/supabase/admin'
 import { SITE } from '@/lib/site'
 import { getSiteUrl } from '@/lib/site-url'
 
@@ -90,14 +96,51 @@ async function loadReference(id: string): Promise<ProjectReference | undefined> 
   }
 }
 
+/**
+ * How it works on /quote (Locked: the homepage dropped it, /quote keeps it).
+ * The pre-Forge copy promised concrete on every job and a frame-day-one,
+ * panels-day-two build — the retired 48-hour claim. Rewritten to the locks:
+ * concrete available and priced separately; same-week scheduling once the
+ * scope is settled. The response promise is the hero's line, not repeated.
+ */
+const HOW = [
+  {
+    title: 'Call or request a free quote',
+    body: 'Tell us where, what size, and what you’re using it for. We come out, measure, and give you an honest, on-the-spot price.',
+  },
+  {
+    title: 'Site prep and concrete, if you need them',
+    body: 'Need a pad? Our crew grades it, runs the forms and pours it — concrete is available on any build and priced separately. One contract, one phone number.',
+  },
+  {
+    title: 'Same-week scheduling',
+    body: 'Your install date is confirmed after we review scope, materials, site readiness and any required approvals. You keep your weekend; we keep our word.',
+  },
+] as const
+
 export default async function QuotePage({ searchParams }: PageProps<'/quote'>) {
   const baseUrl = getSiteUrl()
   const prefill = parseQuotePrefill(await searchParams)
-  const isFencing = prefill.service === "fencing" && !prefill.projectId
+  const isFencing = prefill.service === 'fencing' && !prefill.projectId
   const reference = prefill.projectId ? await loadReference(prefill.projectId) : undefined
+  const builds = isFencing ? [] : await getBuilds({ order: 'featured', limit: 6 })
+
+  const points = isFencing
+    ? [
+        'Metal privacy, pipe/ranch, ornamental fencing and gates.',
+        'Share your layout and any city or HOA requirements.',
+        'Se habla español — pregunta por Juan o Freddy.',
+        'Military, first-responder & trade discounts honored.',
+      ]
+    : [
+        'Welded or bolted — your call, quoted both ways.',
+        'Building permits? We’ll talk you through it.',
+        'Se habla español — pregunta por Juan o Freddy.',
+        'Military, first-responder & trade discounts honored.',
+      ]
 
   return (
-    <>
+    <div data-forge="">
       <BreadcrumbJsonLd items={[{ name: 'Free Quote', path: '/quote' }]} />
       <script
         type="application/ld+json"
@@ -106,108 +149,133 @@ export default async function QuotePage({ searchParams }: PageProps<'/quote'>) {
         }}
       />
 
-      {/* Hero + form.
-          This band owns the dark ground the bare QuoteForm is styled against —
-          the card is white-on-white without it. Do not lighten this section
-          without giving the form its own backdrop. */}
-      <section className="relative overflow-hidden bg-black text-white py-14 md:py-20">
-        <div className="absolute inset-0">
-          <Image
-            src="/images/red-iron-frame-hero.jpg"
-            alt=""
-            fill
-            priority
-            sizes="100vw"
-            className="object-cover opacity-50"
-          />
-        </div>
-        <div
-          aria-hidden="true"
-          className="absolute inset-0 bg-gradient-to-tr from-black/95 via-black/80 to-[color:var(--color-brand-700)]/40"
+      {/* Hero + form. This navy band is the ground the bare QuoteForm card
+          (chrome={false}) sits on — do not lighten it without giving the card
+          its own backdrop. */}
+      <section data-forge="" data-tone="dark" className="relative overflow-hidden bg-forge-navy text-white">
+        <Image
+          src="/images/red-iron-frame-hero.jpg"
+          alt=""
+          fill
+          priority
+          sizes="100vw"
+          className="object-cover"
+          style={{ objectPosition: '50% 40%' }}
         />
-
-        <Container size="wide" className="relative">
-          <div className="grid gap-12 lg:grid-cols-[1.1fr_1fr] lg:gap-16 lg:items-start">
+        <div aria-hidden="true" className="pointer-events-none absolute inset-0" style={{ background: 'var(--scrim-hero-page)' }} />
+        <div className="relative mx-auto w-full max-w-[1360px] px-[clamp(20px,3vw,40px)] pt-[clamp(24px,3vw,40px)] pb-[clamp(56px,6vw,96px)]">
+          <Breadcrumb trail={[]} current="Free Quote" jsonLd={false} />
+          <div className="mt-[clamp(28px,4vw,56px)] grid gap-[clamp(36px,4vw,64px)] lg:grid-cols-[minmax(0,1fr)_minmax(0,600px)] lg:items-start">
             {/* Form first in the DOM: on a phone, an ad visitor should land on
                 the thing they came to do, not scroll past a pitch to reach it. */}
-            <div id="quote" className="order-1 lg:order-2 scroll-mt-24">
-              <QuoteForm chrome={false} source="quote_page" projectReference={reference} initialService={prefill.service} initialZip={prefill.zip} />
+            <div id="quote" className="order-1 scroll-mt-24 lg:order-2">
+              <QuoteForm
+                chrome={false}
+                source="quote_page"
+                projectReference={reference}
+                initialService={prefill.service}
+                initialZip={prefill.zip}
+              />
             </div>
 
-            <div className="order-2 lg:order-1">
-              <span className="inline-flex items-center rounded-full bg-red-600 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.18em] text-white shadow-sm">
-                Free Quote
-              </span>
-
-              <h1 className="mt-5 font-display font-extrabold uppercase tracking-tight leading-[0.95] text-white text-4xl sm:text-5xl lg:text-6xl">
+            <div className="order-2 lg:sticky lg:top-[calc(var(--forge-header-h)_+_24px)] lg:order-1 lg:pt-4">
+              <Eyebrow tone="dark">Free quote</Eyebrow>
+              <h1 className={`mt-[18px] ${type.h1} text-white`}>
                 Tell us about
                 <br />
-                <span className="text-[color:var(--color-brand-400)]">{isFencing ? "your fence." : "your build."}</span>
+                <span className="forge-steel-text">{isFencing ? 'your fence.' : 'your build.'}</span>
               </h1>
-
-              <p className="mt-6 text-lg sm:text-xl font-semibold text-white">
+              <p className="mt-6 text-[clamp(18px,.5vw_+_15px,21px)] font-semibold text-white">
                 Same day, guaranteed within 24 hours.
               </p>
-              <p className="mt-2 text-base text-white/70 leading-relaxed max-w-md">
-                Two quick steps, then a real Texas crew calls you back — Julian or Juan,
-                not an offshore call center.
+              <p className={`mt-2 max-w-[480px] ${type.heroLede} text-white/78`}>
+                Two quick steps, then a real Texas crew calls you back — Julian or Juan, not an offshore call center.
               </p>
 
               {/* Cold traffic off a Marketplace ad often just wants to call.
                   Equal weight to the form, and tracked so ?src= attribution and
                   the swapped number agree about the visit. */}
               <div className="mt-8">
-                <TrackedPhoneButtonLink
-                  surface="quote_page_hero"
-                  variant="outline-dark"
-                  size="lg"
-                  label="Or just call "
-                  icon={<PhoneIcon className="h-5 w-5" />}
-                />
+                <TrackedPhoneLink surface="quote_page_hero" mode="children-only" className={buttonClass('outlineDark', 'lg')}>
+                  <PhoneIcon className="h-5 w-5" />
+                  Or just call <TrackedPhoneNumber className="tabular-nums" />
+                </TrackedPhoneLink>
               </div>
 
-              <dl className="mt-10 flex flex-wrap gap-x-8 gap-y-4 border-t border-white/15 pt-6">
-                <div>
-                  <dt className="text-[11px] font-bold uppercase tracking-[0.15em] text-white/50">Since</dt>
-                  <dd className="mt-1 font-display text-2xl font-extrabold text-white">{SITE.established}</dd>
-                </div>
-                <div>
-                  <dt className="text-[11px] font-bold uppercase tracking-[0.15em] text-white/50">Projects</dt>
-                  <dd className="mt-1 font-display text-2xl font-extrabold text-white">{SITE.stats.projects}</dd>
-                </div>
-                <div>
-                  <dt className="text-[11px] font-bold uppercase tracking-[0.15em] text-white/50">Clients</dt>
-                  <dd className="mt-1 font-display text-2xl font-extrabold text-white">{SITE.stats.clients}</dd>
-                </div>
+              <dl className="mt-10 flex flex-wrap gap-x-10 gap-y-5 border-t border-forge-silver/20 pt-6">
+                {[
+                  { k: 'Since', v: SITE.established },
+                  { k: 'Projects', v: SITE.stats.projects },
+                  { k: 'Clients', v: SITE.stats.clients },
+                ].map((f) => (
+                  <div key={f.k}>
+                    <dt className="text-[11px] font-bold uppercase tracking-[.2em] text-forge-steel-light">{f.k}</dt>
+                    <dd className="mt-1.5 font-forge-display text-[28px] font-black leading-none tabular-nums text-white">{f.v}</dd>
+                  </div>
+                ))}
               </dl>
 
-              <ul className="mt-8 space-y-3 text-sm text-white/75">
-                <li className="flex gap-3">
-                  <span aria-hidden="true" className="text-[color:var(--color-brand-400)]">·</span>
-                  {isFencing ? "Metal privacy, pipe/ranch, ornamental fencing and gates." : "Welded or bolted — your call, quoted both ways."}
-                </li>
-                <li className="flex gap-3">
-                  <span aria-hidden="true" className="text-[color:var(--color-brand-400)]">·</span>
-                  {isFencing ? "Share your layout and any city or HOA requirements." : "Building permits? We’ll talk you through it."}
-                </li>
-                <li className="flex gap-3">
-                  <span aria-hidden="true" className="text-[color:var(--color-brand-400)]">·</span>
-                  Se habla español — pregunta por Juan o Freddy.
-                </li>
-                <li className="flex gap-3">
-                  <span aria-hidden="true" className="text-[color:var(--color-brand-400)]">·</span>
-                  Military, first-responder &amp; trade discounts honored.
-                </li>
-              </ul>
+              <RuleList className="mt-8" itemClassName="text-[15px] text-white/80" items={points} />
             </div>
           </div>
-        </Container>
+        </div>
       </section>
 
-      {isFencing ? <section className="py-16 bg-white"><Container size="narrow">
-        <h2>Your fence, from inquiry to installation</h2>
-        <p className="mt-5 text-lg text-ink-600">Send your approximate footage, style, and gate needs. We’ll review the site and scope, provide a written quote, and confirm an installation schedule after materials and any required approvals are settled.</p>
-      </Container></section> : <><HowItWorks /><Gallery /></>}
-    </>
+      {isFencing ? (
+        <section data-forge="" data-tone="light" className="bg-white py-[clamp(64px,7vw,104px)] text-forge-navy">
+          <ForgeReveal className="mx-auto w-full max-w-[1360px] px-[clamp(20px,3vw,40px)]">
+            <SectionHeading
+              eyebrow="Metal fencing"
+              line1="Your fence, from inquiry"
+              line2="to installation."
+              ledeMax="max-w-[640px]"
+              lede="Send your approximate footage, style, and gate needs. We’ll review the site and scope, provide a written quote, and confirm an installation schedule after materials and any required approvals are settled."
+            />
+          </ForgeReveal>
+        </section>
+      ) : (
+        <>
+          <section
+            aria-labelledby="how-heading"
+            data-forge=""
+            data-tone="light"
+            className="bg-forge-fog py-[clamp(64px,7vw,104px)] text-forge-navy"
+          >
+            <div className="mx-auto w-full max-w-[1360px] px-[clamp(20px,3vw,40px)]">
+              <ForgeReveal className="max-w-[760px]">
+                <SectionHeading
+                  headingId="how-heading"
+                  eyebrow="How it works"
+                  line1="Three steps."
+                  line2="One company. Done."
+                  lede="We built Triple J to cut out the worst part of hiring a contractor: the endless coordination. You call once — we take it from there."
+                />
+              </ForgeReveal>
+              <ForgeReveal stagger className="mt-11 grid grid-cols-[repeat(auto-fit,minmax(min(100%,300px),1fr))] gap-4">
+                {HOW.map((h, i) => (
+                  <FeatureCard key={h.title} index={i} title={h.title}>
+                    {h.body}
+                  </FeatureCard>
+                ))}
+              </ForgeReveal>
+            </div>
+          </section>
+
+          {builds.length >= 3 ? (
+            <section data-forge="" data-tone="light" className="bg-white py-[clamp(64px,7vw,104px)] text-forge-navy">
+              <div className="mx-auto w-full max-w-[1360px] px-[clamp(20px,3vw,40px)]">
+                <ForgeReveal className="flex flex-wrap items-end justify-between gap-x-8 gap-y-4">
+                  <SectionHeading eyebrow="Built by Triple J" line1="A few places we’ve" line2="left our mark." className="max-w-[720px]" />
+                  <Link href="/gallery" className="border-b border-forge-silver pb-0.5 text-[15px] font-semibold transition-colors hover:border-forge-navy">
+                    See the full gallery →
+                  </Link>
+                </ForgeReveal>
+                <BuildGrid items={builds} />
+              </div>
+            </section>
+          ) : null}
+        </>
+      )}
+    </div>
   )
 }

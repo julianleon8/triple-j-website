@@ -61,18 +61,18 @@ export default function CronDigestOwnerAlert(props: CronDigestOwnerAlertProps) {
         </span>
       </Text>
 
-      <Heading as="h2" style={{ fontSize: 22, fontWeight: 700, margin: '6px 0 4px', color: '#111827' }}>
+      <Heading as="h2" style={{ fontSize: 22, fontWeight: 700, margin: '6px 0 4px', color: '#00182a' }}>
         {heading}
       </Heading>
       {subhead && (
-        <Text style={{ fontSize: 13, color: '#6b7280', margin: '0 0 16px' }}>{subhead}</Text>
+        <Text style={{ fontSize: 13, color: '#546678', margin: '0 0 16px' }}>{subhead}</Text>
       )}
 
       {items.length > 0 && (
-        <Section style={{ border: '1px solid #e5e7eb', borderRadius: 8, overflow: 'hidden' }}>
+        <Section style={{ border: '1px solid #e3e9ee', borderRadius: 8, overflow: 'hidden' }}>
           {items.map((item, i) => (
-            <Row key={`${item.primary}-${i}`} style={{ background: i % 2 === 0 ? '#f9fafb' : '#ffffff' }}>
-              <Column style={{ padding: '10px 14px', fontSize: 13, color: '#111827' }}>
+            <Row key={`${item.primary}-${i}`} style={{ background: i % 2 === 0 ? '#f4f6f8' : '#ffffff' }}>
+              <Column style={{ padding: '10px 14px', fontSize: 13, color: '#00182a' }}>
                 {item.href ? (
                   <Link href={item.href} style={{ color: BRAND_COLOR, fontWeight: 700 }}>
                     {item.primary}
@@ -81,7 +81,7 @@ export default function CronDigestOwnerAlert(props: CronDigestOwnerAlertProps) {
                   <span style={{ fontWeight: 700 }}>{item.primary}</span>
                 )}
                 {item.secondary && (
-                  <span style={{ color: '#6b7280' }}> — {item.secondary}</span>
+                  <span style={{ color: '#546678' }}> — {item.secondary}</span>
                 )}
               </Column>
             </Row>
@@ -90,13 +90,13 @@ export default function CronDigestOwnerAlert(props: CronDigestOwnerAlertProps) {
       )}
 
       {moreCount > 0 && (
-        <Text style={{ margin: '10px 0 0', fontSize: 13, color: '#6b7280' }}>
+        <Text style={{ margin: '10px 0 0', fontSize: 13, color: '#546678' }}>
           + {moreCount} more not listed here.
         </Text>
       )}
 
       {footnote && (
-        <Text style={{ margin: '18px 0 0', fontSize: 13, color: '#374151', lineHeight: 1.6 }}>
+        <Text style={{ margin: '18px 0 0', fontSize: 13, color: '#33475a', lineHeight: 1.6 }}>
           {footnote}
         </Text>
       )}

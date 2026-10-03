@@ -45,7 +45,7 @@ _Last updated: 2026-04-15_
 - Geofence: Killeen-Temple-Belton-Harker Heights corridor
 - Military hooks: PCSing, BAH, VA Loans, Fort Cavazos Military Discount
 - Primary hook: Same-week scheduling (was "48-hour" — corrected 2026-04-15)
-- Secondary hook: Turnkey concrete included
+- Secondary hook: turnkey available — site prep, concrete and install on one contract (concrete priced separately)
 
 ## Niche Landing Pages That Convert (per NotebookLM research 2026-04-15)
 High-converting contractors build specific pages for these intents — do these next:

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { requireOwner } from '@/lib/auth'
 import { getAdminClient } from '@/lib/supabase/admin'
+import { revalidateGallery } from '@/lib/gallery-revalidate'
 
 export const dynamic = 'force-dynamic'
 
@@ -48,6 +49,10 @@ export async function PATCH(
     .single()
 
   if (error || !data) return NextResponse.json({ error: 'Item not found' }, { status: 404 })
+
+  // Unconditional: unpublishing (is_active → false) must clear the public
+  // pages too, and the prior state isn't known here.
+  revalidateGallery(id)
   return NextResponse.json({ item: data })
 }
 
@@ -74,6 +79,7 @@ export async function DELETE(
     .eq('id', id)
 
   if (error) return NextResponse.json({ error: 'Delete failed' }, { status: 500 })
+  revalidateGallery(id)
 
   const storagePaths = (photos ?? [])
     .map((p) => {

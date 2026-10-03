@@ -49,12 +49,21 @@ const rootMd = readdirSync(ROOT).filter((f) => f.endsWith('.md')).sort()
     'dev/feedback_turnkey_vs_steel_install.md',
     'dev/feedback_no_public_pricing_yet.md',
   ])
+  // Deleted by a later decision. Decisions.md rows that cite them are history
+  // and stay as written; Locked Decisions.md and AGENTS.md must not cite them.
+  const RETIRED = new Set([
+    'src/components/ui/Reveal.tsx', // Forge step 13a, 2026-10-02
+    'src/lib/use-reveal.ts', // Forge step 13a, 2026-10-02
+    'src/components/ui/Button.tsx', // Forge step 13a, 2026-10-02
+    'src/components/ui/Button.test.ts', // Forge step 13a, 2026-10-02
+  ])
   for (const f of ['Decisions.md', 'Locked Decisions.md', 'AGENTS.md']) {
     if (!has(f)) continue
     read(f).split('\n').forEach((line, i) => {
       for (const m of line.matchAll(/`((?:dev|docs|seo|src|scripts)\/[A-Za-z0-9._/-]+)`/g)) {
         const p = m[1]
         if (GRANDFATHERED.has(p) || has(p)) continue
+        if (f === 'Decisions.md' && RETIRED.has(p)) continue
         fail(f, i + 1, `cites \`${p}\`, which does not exist`)
       }
     })
@@ -111,6 +120,9 @@ const rootMd = readdirSync(ROOT).filter((f) => f.endsWith('.md')).sort()
     [/Triple JJJ/i, 'retired brand alias'],
     [/Triple J Metal Buildings LLC/i, 'retired legal alias - the legal name is "Triple J Metal LLC"'],
     [/4,?000 PSI concrete/i, '4,000 PSI is on-request only, never the promised default (reversed 2026-05-01)'],
+    [/\b12[- ]gauge\b/i, '14-gauge is standard; the upgrade is 11-gauge heavy-duty columns welded to receivers and purlins, never 12-gauge (2026-10-02)'],
+    [/\bwe (?:pull|file|submit) (?:the |your |all )?(?:city )?permits?\b|\bpulls permits\b/i, 'permits are advisory only: never say we pull, file or submit the permit (2026-09-07)'],
+    [/\bconcrete included\b/i, 'say "concrete available" (priced separately), never "concrete included" (2026-09-28)'],
   ]
   const EXEMPT = new Set(['Decisions.md', 'Session Notes.md', 'Locked Decisions.md'])
 
@@ -139,6 +151,8 @@ const rootMd = readdirSync(ROOT).filter((f) => f.endsWith('.md')).sort()
   const srcFiles = execFileSync('git', ['ls-files', 'src'], { encoding: 'utf8' })
     .split('\n')
     .filter((f) => /\.(ts|tsx)$/.test(f))
+    // Tests never ship, and some spell out banned phrases to assert they're gone.
+    .filter((f) => !/\.test\.tsx?$/.test(f))
   // The 4,000 PSI drift found on 2026-09-06 was carried here as a non-failing
   // warning while the copy decision was outstanding. It was resolved the same
   // day -- all 22 occurrences rewritten to "3,000 PSI standard, 4,000 on

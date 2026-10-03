@@ -2,9 +2,14 @@ import { BreadcrumbJsonLd } from '@/components/seo/BreadcrumbJsonLd'
 import type { Metadata } from 'next'
 import Image from 'next/image'
 import Link from 'next/link'
-import { Container } from '@/components/ui/Container'
-import { ButtonLink } from '@/components/ui/Button'
-import { QuoteForm } from '@/components/sections/QuoteForm'
+import { Breadcrumb } from '@/components/forge/Breadcrumb'
+import { FeatureCard } from '@/components/forge/cards'
+import { ForgeButtonLink } from '@/components/forge/ForgeButton'
+import { ForgeReveal } from '@/components/forge/ForgeReveal'
+import { PageHero } from '@/components/forge/PageHero'
+import { QuoteSection } from '@/components/forge/QuoteSection'
+import { SectionHeading } from '@/components/forge/SectionHeading'
+import { buttonClass, type } from '@/components/forge/styles'
 import { TrackedPhoneLink } from '@/components/site/TrackedPhone'
 import { getAdminClient } from '@/lib/supabase/admin'
 import { describeGalleryColors } from '@/lib/gallery-colors'
@@ -41,6 +46,16 @@ export const metadata: Metadata = {
   },
 }
 
+const section = 'py-[clamp(64px,7vw,104px)]'
+const container = 'mx-auto w-full max-w-[1360px] px-[clamp(20px,3vw,40px)]'
+
+const HYBRID_TYPES = [
+  { title: 'Horse Stalls', desc: 'Custom stall layouts, hybrid stables, run-in shelters with tack rooms.' },
+  { title: 'Commercial Warehouses', desc: 'All-black exteriors, roll-ups, lean-tos for shop/storage hybrids.' },
+  { title: 'Decks & Patios', desc: 'Metal-framed decks, patio covers tied into existing roofs, custom porches.' },
+  { title: 'One-Off Custom', desc: 'Whatever you sketched. We engineer it, weld it, bolt it, hand it over.' },
+]
+
 export default async function HybridProjectsPage() {
   const { data: projects } = await getAdminClient()
     .from('gallery_items')
@@ -58,7 +73,7 @@ export default async function HybridProjectsPage() {
   const projectList = projects ?? []
 
   return (
-    <>
+    <div data-forge="">
       <BreadcrumbJsonLd
         items={[
           { name: 'Services', path: '/services' },
@@ -66,65 +81,65 @@ export default async function HybridProjectsPage() {
         ]}
       />
       {/* ── Hero ── */}
-      <section className="relative bg-ink-900 text-white py-20 md:py-28 overflow-hidden">
-        <div className="hero-glow absolute inset-0 pointer-events-none" aria-hidden="true" />
-        <Container className="relative">
-          <div className="max-w-3xl">
-            <span className="text-xs font-semibold uppercase tracking-[0.15em] text-brand-400">
-              Custom & Commercial
-            </span>
-            <h1 className="mt-3 text-white">Hybrid Projects — Beyond the Standard Catalog</h1>
-            <p className="mt-5 text-lg text-white/75 leading-relaxed max-w-2xl">
-              Horse stalls, all-black warehouses, decks, hybrid stables, custom commercial. The builds
-              that don&apos;t fit a clean carport or garage spec — but that we engineer, weld, bolt, and
-              hand over complete just the same. Same Temple crew. Same on-site construction.
-            </p>
-            <div className="mt-8 flex flex-wrap gap-4">
-              <ButtonLink href="#quote" variant="primary" size="lg">
-                Get a Custom Quote
-              </ButtonLink>
-              <TrackedPhoneLink
-                surface="hybrid_projects_hero"
-                className="inline-flex items-center gap-2 h-12 px-6 rounded-lg border-2 border-white/30 text-white font-semibold hover:border-white/60 transition-colors text-sm"
-              >
-                Call&nbsp;
-              </TrackedPhoneLink>
-            </div>
-          </div>
-        </Container>
-      </section>
+      <PageHero
+        variant="plain"
+        breadcrumb={
+          <Breadcrumb trail={[{ name: 'Services', href: '/services' }]} current="Hybrid Projects" jsonLd={false} />
+        }
+        eyebrow="Custom & Commercial"
+        h1a="Hybrid Projects"
+        h1b="Beyond the Standard Catalog"
+        lede={
+          <>
+            Horse stalls, all-black warehouses, decks, hybrid stables, custom commercial. The builds
+            that don&apos;t fit a clean carport or garage spec — but that we engineer, weld, bolt, and
+            hand over complete just the same. Same Temple crew. Same on-site construction.
+          </>
+        }
+        ledeMax="max-w-[640px]"
+        actions={
+          <>
+            <ForgeButtonLink href="#quote" variant="white" size="lg" arrow>
+              Get a Custom Quote
+            </ForgeButtonLink>
+            <TrackedPhoneLink surface="hybrid_projects_hero" className={buttonClass('outlineDark', 'lg')}>
+              Call&nbsp;
+            </TrackedPhoneLink>
+          </>
+        }
+      />
 
       {/* ── Project grid (auto-pulled from /hq/gallery type=Hybrid) ── */}
-      <section className="py-14 md:py-20 bg-white">
-        <Container size="wide">
-          <div className="flex items-baseline justify-between mb-8">
-            <h2 className="text-ink-900">Recent Hybrid Builds</h2>
+      <section data-forge="" data-tone="light" className={`bg-white text-forge-navy ${section}`}>
+        <div className={container}>
+          <div className="flex flex-wrap items-end justify-between gap-x-8 gap-y-5">
+            <SectionHeading line1="Recent Hybrid Builds" />
             <Link
               href="/gallery"
-              className="text-sm font-semibold text-brand-600 hover:text-brand-700"
+              className="border-b border-forge-silver pb-0.5 text-[15px] font-semibold text-forge-navy transition-colors hover:border-forge-navy"
             >
               See all projects →
             </Link>
           </div>
 
           {projectList.length === 0 ? (
-            <div className="rounded-2xl border-2 border-dashed border-ink-200 bg-ink-50 px-6 py-16 text-center">
-              <p className="text-base font-semibold text-ink-700">
+            <div className="mt-10 rounded-[12px] border border-dashed border-forge-silver bg-forge-fog px-6 py-16 text-center">
+              <p className="text-[16px] font-semibold text-forge-navy">
                 Hybrid project photos coming soon.
               </p>
-              <p className="mt-2 text-sm text-ink-500 max-w-md mx-auto">
+              <p className="mx-auto mt-2 max-w-md text-[14px] leading-[1.6] text-forge-slate">
                 We&apos;re prepping a fresh set of horse stalls, warehouses, and custom builds for this
                 page. Call us in the meantime — we can walk you through past hybrid jobs over the
                 phone or show photos from a recent build.
               </p>
               <div className="mt-6">
-                <ButtonLink href="#quote" variant="primary" size="md">
+                <ForgeButtonLink href="#quote" variant="navy" size="md">
                   Talk About Your Project
-                </ButtonLink>
+                </ForgeButtonLink>
               </div>
             </div>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <ForgeReveal stagger className="mt-10 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {projectList.map((project) => {
                 const cover = pickCover(project.gallery_photos as GalleryPhoto[] | null)
                 if (!cover) return null
@@ -138,111 +153,101 @@ export default async function HybridProjectsPage() {
                   <Link
                     key={project.id}
                     href={`/gallery/${project.id}`}
-                    className="group block rounded-2xl overflow-hidden border border-ink-100 bg-ink-50 hover:shadow-lg hover:-translate-y-0.5 transition-all"
+                    className="group flex flex-col overflow-hidden rounded-[12px] border border-forge-silver bg-white text-forge-navy transition-[border-color,box-shadow] duration-300 ease-forge hover:border-forge-steel hover:shadow-[var(--shadow-card-hover)]"
                   >
-                    <article>
-                      <div className="relative aspect-4/3 overflow-hidden bg-ink-200">
+                    <article className="flex flex-1 flex-col">
+                      <div className="relative aspect-[4/3] overflow-hidden bg-forge-slate">
                         <Image
                           src={cover.url}
                           alt={cover.alt || project.title}
                           fill
                           sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                          className="object-cover transition-transform duration-500 group-hover:scale-105"
+                          className="object-cover"
                           unoptimized={cover.url.startsWith('/')}
                         />
                         {project.is_featured && (
-                          <span className="absolute top-3 left-3 bg-brand-600 text-white text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded-full shadow">
+                          <span className="absolute top-3 left-3 rounded-[4px] bg-forge-navy px-2 py-1 text-[10px] font-bold uppercase tracking-[.16em] text-white">
                             Featured
                           </span>
                         )}
                       </div>
-                      <div className="p-5">
-                        <div className="flex items-center justify-between mb-2">
-                          <span className="text-xs font-semibold text-ink-400 uppercase tracking-wide">
+                      <div className="px-[18px] pt-4 pb-[18px]">
+                        <div className="mb-1.5 flex items-center justify-between gap-3">
+                          <span className="text-[11px] font-semibold uppercase tracking-[.2em] text-forge-slate">
                             Hybrid · {project.city}
                           </span>
                           {project.tag && (
-                            <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-ink-100 text-ink-600">
+                            <span className="rounded-[4px] border border-forge-mist bg-forge-fog px-2 py-0.5 text-[10px] font-bold uppercase tracking-[.12em] text-forge-slate">
                               {project.tag}
                             </span>
                           )}
                         </div>
-                        <h3 className="text-base font-bold text-ink-900 leading-snug">
+                        <h3 className="font-forge-display text-[19px] font-bold leading-[1.25] text-forge-navy">
                           {project.title}
                         </h3>
                         {colorLine && (
-                          <p className="mt-1.5 text-xs text-ink-500">{colorLine}</p>
+                          <p className="mt-1.5 text-[13px] text-forge-slate">{colorLine}</p>
                         )}
                       </div>
                     </article>
                   </Link>
                 )
               })}
-            </div>
+            </ForgeReveal>
           )}
-        </Container>
+        </div>
       </section>
 
-
       {/* ── What counts as a hybrid project ── */}
-      <section className="py-14 md:py-20 bg-white">
-        <Container>
-          <div className="max-w-3xl">
-            <span className="text-xs font-semibold uppercase tracking-[0.15em] text-brand-600">
-              What we mean by &quot;Hybrid&quot;
-            </span>
-            <h2 className="mt-3 text-ink-900">Anything that isn&apos;t a standard kit.</h2>
-            <p className="mt-4 text-ink-700 leading-relaxed">
+      <section
+        data-forge=""
+        data-tone="light"
+        className={`border-t border-forge-mist bg-forge-fog text-forge-navy ${section}`}
+      >
+        <div className={container}>
+          <ForgeReveal className="max-w-[760px]">
+            <SectionHeading eyebrow={'What we mean by "Hybrid"'} line1={"Anything that isn't a standard kit."} />
+            <p className={`mt-4 text-forge-slate ${type.lede}`}>
               Most of what we build fits a clean category — a 30×40 carport, a barn, an RV cover,
               a metal garage. But a real chunk of our work is custom: a horse stall layout the owner
               sketched on a napkin, an all-black warehouse for a body shop, a deck-and-cover combo
               behind a ranch house, a workshop that needs both a slab and a loft.
             </p>
-            <p className="mt-3 text-ink-700 leading-relaxed">
+            <p className={`mt-3 text-forge-slate ${type.lede}`}>
               We don&apos;t subcontract these. The same welder-owners who build the standard projects
               are the ones engineering and erecting the hybrids — Freddy on the iron, Julian as the
               second welder, Juan on the supply chain.
             </p>
-          </div>
+          </ForgeReveal>
 
-          <div className="mt-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            {[
-              { title: 'Horse Stalls', desc: 'Custom stall layouts, hybrid stables, run-in shelters with tack rooms.' },
-              { title: 'Commercial Warehouses', desc: 'All-black exteriors, roll-ups, lean-tos for shop/storage hybrids.' },
-              { title: 'Decks & Patios', desc: 'Metal-framed decks, patio covers tied into existing roofs, custom porches.' },
-              { title: 'One-Off Custom', desc: 'Whatever you sketched. We engineer it, weld it, bolt it, hand it over.' },
-            ].map((item) => (
-              <div
-                key={item.title}
-                className="rounded-xl border border-ink-100 bg-ink-50 p-5"
-              >
-                <h3 className="text-base font-bold text-ink-900">{item.title}</h3>
-                <p className="mt-2 text-sm text-ink-600 leading-relaxed">{item.desc}</p>
-              </div>
+          <ForgeReveal stagger className="mt-11 grid grid-cols-[repeat(auto-fit,minmax(min(100%,260px),1fr))] gap-4">
+            {HYBRID_TYPES.map((item, i) => (
+              <FeatureCard key={item.title} index={i} title={item.title}>
+                {item.desc}
+              </FeatureCard>
             ))}
-          </div>
-        </Container>
+          </ForgeReveal>
+        </div>
       </section>
 
       {/* ── Why Triple J — the engineering reality ── */}
-      <section className="py-14 md:py-20 bg-ink-50 border-y border-ink-100">
-        <Container>
-          <div className="max-w-3xl">
-            <span className="text-xs font-semibold uppercase tracking-[0.15em] text-brand-600">
-              How we actually build
-            </span>
-            <h2 className="mt-3 text-ink-900">
-              Every welded structure is reinforced with permanent bolts.
-            </h2>
-            <p className="mt-4 text-ink-700 leading-relaxed">
+      <section data-forge="" data-tone="light" className={`bg-white text-forge-navy ${section}`}>
+        <div className={container}>
+          <ForgeReveal className="max-w-[760px]">
+            <SectionHeading
+              eyebrow="How we actually build"
+              line1="Every welded structure is reinforced with permanent bolts."
+              balance
+            />
+            <p className={`mt-4 text-forge-slate ${type.lede}`}>
               Most contractors will tell you it&apos;s welded <em>or</em> bolted. The reality at Triple J
-              is more honest: every welded build is welded <em>and</em> bolted. To weld red iron
+              is more honest: every welded build is welded <em>and</em>{' '}bolted. To weld red iron
               on-site, the crew first bolts everything together so it&apos;s sturdy and held in the
               correct position — then the welds happen. The bolts stay in (rubber gaskets keep
               the connections sealed) so what you get is a structure with both the rigid permanence
               of welded connections and the redundancy of mechanical fasteners.
             </p>
-            <p className="mt-3 text-ink-700 leading-relaxed">
+            <p className={`mt-3 text-forge-slate ${type.lede}`}>
               That matters most on hybrid projects, because the geometry is rarely off-the-shelf.
               Custom horse stalls have non-standard spans. Commercial warehouses might combine
               clear-span trusses with offset purlin patterns. A deck-and-cover combo ties a new
@@ -250,24 +255,33 @@ export default async function HybridProjectsPage() {
               the geometry exactly while the welds set, and leaves you with both anchoring methods
               when we&apos;re done.
             </p>
-          </div>
-        </Container>
+          </ForgeReveal>
+        </div>
       </section>
-
 
       {/* ── CTA / Quote form ── */}
-      <section className="py-16 md:py-24 bg-ink-900 text-white">
-        <Container size="narrow">
-          <div className="text-center mb-8">
-            <h2 className="text-white">Got something unusual? Let&apos;s talk.</h2>
-            <p className="mt-3 text-white/75 text-base max-w-xl mx-auto">
-              Tell us what you&apos;re picturing. We&apos;ll come out, take measurements, and send you a fixed
-              quote — no kit upcharges, no subcontractor markups.
-            </p>
-          </div>
-          <QuoteForm />
-        </Container>
+      <section
+        data-forge=""
+        data-tone="dark"
+        className="bg-forge-navy py-[clamp(48px,5vw,80px)] text-white"
+      >
+        <div className={container}>
+          <SectionHeading
+            tone="dark"
+            align="center"
+            line1="Got something unusual?"
+            line2={"Let's talk."}
+            ledeMax="max-w-xl"
+            lede={
+              <>
+                Tell us what you&apos;re picturing. We&apos;ll come out, take measurements, and send you a fixed
+                quote — no kit upcharges, no subcontractor markups.
+              </>
+            }
+          />
+        </div>
       </section>
-    </>
+      <QuoteSection />
+    </div>
   )
 }

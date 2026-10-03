@@ -1,11 +1,10 @@
-import Link from 'next/link'
 import { ComparisonTable } from '@/components/ui/ComparisonTable'
 
 export default function HoaCompliantPost() {
   return (
     <>
       <p>
-        Heritage Oaks in <Link href="/locations/killeen">Killeen</Link> and Bella Charca in <Link href="/locations/nolanville">Nolanville</Link> are two of the fastest-growing luxury
+        Heritage Oaks in Killeen and Bella Charca in Nolanville are two of the fastest-growing luxury
         communities in Central Texas. Homes in these neighborhoods run $500,000 to $900,000. The HOA
         architectural guidelines in both communities were written to protect those property values &#8212;
         which means a standard utility-grade metal shed or kit carport will get rejected by the
@@ -13,8 +12,8 @@ export default function HoaCompliantPost() {
       </p>
       <p>
         This isn&#8217;t an obstacle if you know what panel types, finishes, and structural approaches
-        actually pass HOA review. Here&#8217;s what we&#8217;ve learned building in these communities from the
-        Triple J Metal crew in Temple, TX.
+        actually pass HOA review. Here&#8217;s what the Triple J Metal crew in Temple, TX looks at when we
+        plan a build for these communities.
       </p>
 
       <h2>Why Standard Metal Buildings Fail HOA Review</h2>
@@ -22,13 +21,13 @@ export default function HoaCompliantPost() {
         Most HOA architectural guidelines in luxury Central Texas subdivisions prohibit:
       </p>
       <ul>
-        <li><strong>Utility-grade appearance:</strong> Exposed fastener heads on the visible roof and wall surfaces</li>
-        <li><strong>Industrial color palettes:</strong> Unpainted Galvalume or bright colors that don&#8217;t coordinate with the home exterior</li>
-        <li><strong>Visible hardware:</strong> Bolted connections and exposed rafter tails on the structure perimeter</li>
-        <li><strong>Non-compliant setbacks:</strong> Structures that don&#8217;t maintain minimum distances from property lines, the main dwelling, and drainage easements</li>
+        <li><strong>Utility-grade appearance:</strong>{' '}Exposed fastener heads on the visible roof and wall surfaces</li>
+        <li><strong>Industrial color palettes:</strong>{' '}Unpainted Galvalume or bright colors that don&#8217;t coordinate with the home exterior</li>
+        <li><strong>Visible hardware:</strong>{' '}Bolted connections and exposed rafter tails on the structure perimeter</li>
+        <li><strong>Non-compliant setbacks:</strong>{' '}Structures that don&#8217;t maintain minimum distances from property lines, the main dwelling, and drainage easements</li>
       </ul>
       <p>
-        A standard <Link href="/services/pbr-vs-pbu-panels">PBR panel</Link> with exposed screws &#8212; which is the correct choice for an agricultural barn
+        A standard PBR panel with exposed screws &#8212; which is the correct choice for an agricultural barn
         or a rural carport &#8212; will typically fail HOA review in these communities because of the visible
         fastener requirement. This isn&#8217;t a flaw in the panel system; it&#8217;s a mismatch between product
         intent and HOA standard.
@@ -55,8 +54,7 @@ export default function HoaCompliantPost() {
         Standing seam panels &#8212; including snap-lock, mechanical-lock, and concealed-clip systems &#8212;
         have no exposed fasteners on the roof or wall surface. The panels interlock at raised seams, and the
         fastener is hidden inside the seam. The result looks architectural rather than industrial &#8212;
-        similar to what you&#8217;d see on a $400/sq ft custom home. See our{' '}
-        <Link href="/services/hoa-compliant-structures">HOA-compliant structures</Link> for examples.
+        similar to what you&#8217;d see on a $400/sq ft custom home.
       </p>
       <p>
         Most HOA architectural guidelines that specify &#8220;no visible fasteners&#8221; or &#8220;architectural metal
@@ -65,17 +63,17 @@ export default function HoaCompliantPost() {
       </p>
       <p>
         Standing seam panels cost more per square foot than PBR, and installation is slower because
-        the seaming process requires a specialized tool to form the seam correctly in the field. For
-        a typical 20&#215;24 carport in Heritage Oaks, the premium over standard PBR construction is
-        roughly $1,500&#8211;$3,000 depending on pitch and panel width.
+        the seaming process requires a specialized tool to form the seam correctly in the field. We
+        quote standing seam next to the PBR and PBU options, so you see the difference on your build
+        before you choose.
       </p>
 
       <h2>Color Selection for HOA Review</h2>
       <p>
         Most HOA communities require that accessory structure colors coordinate with the main dwelling
         exterior. Heritage Oaks and Bella Charca homes are built primarily in neutral palettes &#8212;
-        warm whites, tans, greiges, and gray-browns. The Premium-line concealed-fastener colors that consistently
-        pass HOA review in these communities:
+        warm whites, tans, greiges, and gray-browns. Premium-line concealed-fastener colors that suit
+        those palettes (your ARC still has the final say):
       </p>
       <ul>
         <li>Regal White and Dove Gray &#8212; for homes with white or light gray siding</li>
@@ -85,8 +83,7 @@ export default function HoaCompliantPost() {
       </ul>
       <p>
         If your HOA requires a specific color match, we can request physical samples from our panel
-        suppliers before finalizing the color selection. The full range is on our{' '}
-        <Link href="/services/colors">panel colors page</Link>. Don&#8217;t rely on monitor swatches for a HOA
+        suppliers before finalizing the color selection. Don&#8217;t rely on monitor swatches for a HOA
         color-match requirement &#8212; the physical sample is the only reliable way to compare.
       </p>
 
@@ -95,16 +92,16 @@ export default function HoaCompliantPost() {
         Most HOA architectural review committees require a written application that includes:
       </p>
       <ol>
-        <li><strong>Plot plan or site plan</strong> showing the proposed structure location relative to property lines, the main dwelling, and easements</li>
-        <li><strong>Structure dimensions</strong> (length, width, height at eave and ridge)</li>
-        <li><strong>Exterior materials specification</strong> (panel type, manufacturer, product name, color)</li>
-        <li><strong>Color samples</strong> or manufacturer color card</li>
-        <li><strong>Photos or renderings</strong> of similar completed structures (optional but recommended)</li>
+        <li><strong>Plot plan or site plan</strong>{' '}showing the proposed structure location relative to property lines, the main dwelling, and easements</li>
+        <li><strong>Structure dimensions</strong>{' '}(length, width, height at eave and ridge)</li>
+        <li><strong>Exterior materials specification</strong>{' '}(panel type, manufacturer, product name, color)</li>
+        <li><strong>Color samples</strong>{' '}or manufacturer color card</li>
+        <li><strong>Photos or renderings</strong>{' '}of similar completed structures (optional but recommended)</li>
       </ol>
       <p>
-        We can provide all of these materials as part of the quoting process. Many HOA ARC committees
-        meet monthly &#8212; factor this into your timeline, and see our{' '}
-        <Link href="/blog/bell-county-metal-building-permit-guide-2025">Bell County permit guide</Link> for how the city side works. If you&#8217;re targeting a specific build date, work
+        We provide the structure, materials and color details for your application with the quote; the
+        plot plan usually comes from your property survey. Many HOA ARC committees
+        meet monthly &#8212; factor this into your timeline. If you&#8217;re targeting a specific build date, work
         backward from the next ARC meeting date and allow 2&#8211;4 weeks for the approval process.
       </p>
 
@@ -116,13 +113,15 @@ export default function HoaCompliantPost() {
         single point of accountability if the ARC requires revisions.
       </p>
       <p>
-        When Triple J builds in Heritage Oaks or Bella Charca, we handle the ARC submission materials,
-        pull the city permit, pour the slab with anchor bolts, and erect the standing seam structure &#8212;
-        all under one contract. If the ARC requests a change, we revise the submission. If the permit
-        requires a stamped drawing, we coordinate the engineer. One phone call, one contract, one crew.
+        On a turnkey build in Heritage Oaks or Bella Charca, site prep, the slab with anchor bolts and
+        the standing seam structure sit on one contract. We prepare the structure and materials details
+        for your ARC submission and revise them if the committee asks for a change. On the city permit
+        we&#8217;re advisory: we talk you through what the city requires &#8212; including whether it wants
+        stamped drawings &#8212; and who files is confirmed in your written scope. One phone call, one
+        contract, one crew.
       </p>
       <p>
-        Fill out the <Link href="/quote">quote form</Link> or call our Temple, TX office. Mention your HOA community and
+        Fill out the quote form below or call our Temple, TX office. Mention your HOA community and
         your approximate structure size &#8212; we&#8217;ll tell you exactly what panel system makes sense and
         what the ARC submission will need to include.
       </p>

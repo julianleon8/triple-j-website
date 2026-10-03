@@ -1,11 +1,14 @@
-import { BreadcrumbJsonLd } from '@/components/seo/BreadcrumbJsonLd'
-import { Crew } from "@/components/sections/Crew"
+import Image from 'next/image'
 import type { Metadata } from 'next'
-import Link from 'next/link'
-import { Container } from '@/components/ui/Container'
-import { ButtonLink } from '@/components/ui/Button'
-import { QuoteForm } from '@/components/sections/QuoteForm'
-import { TrackedPhoneLink } from '@/components/site/TrackedPhone'
+
+import { Breadcrumb } from '@/components/forge/Breadcrumb'
+import { FeatureCard, NumberedRow, RuleList } from '@/components/forge/cards'
+import { ForgeReveal } from '@/components/forge/ForgeReveal'
+import { PageHero } from '@/components/forge/PageHero'
+import { QuoteSection } from '@/components/forge/QuoteSection'
+import { SectionHeading } from '@/components/forge/SectionHeading'
+import { BreadcrumbJsonLd } from '@/components/seo/BreadcrumbJsonLd'
+import { TrackedPhoneLink, TrackedPhoneNumber } from '@/components/site/TrackedPhone'
 import { SITE } from '@/lib/site'
 import { getSiteUrl } from '@/lib/site-url'
 
@@ -40,181 +43,222 @@ function jsonLd(baseUrl: string) {
   }
 }
 
-const ABOUT_LINK = 'font-semibold text-brand-700 underline underline-offset-4 hover:text-brand-800'
+const CREW = [
+  {
+    name: 'Juan',
+    role: 'Co-owner · Relationships',
+    body: 'The family connection behind Triple J. Juan builds relationships with customers across Central Texas.',
+  },
+  {
+    name: 'Julian',
+    role: 'Sales · Operations',
+    body: 'Your point of contact for planning the build, talking through options and keeping the details moving.',
+  },
+  {
+    name: 'Freddy',
+    role: 'Foreman · Fabrication',
+    body: 'Jose Alfredo “Freddy” leads the crew — the measurements, cuts and welds that bring your plans to life.',
+  },
+]
+
+const APART = [
+  {
+    title: 'Local crew — not a dealer',
+    body: 'We don’t sell kits. We build structures. Every job is handled by our own Temple-based crew from start to finish.',
+  },
+  {
+    title: 'Welded or bolted',
+    body: 'Both options, built by us. Framing, anchoring and any engineering requirements are confirmed for your design and site.',
+  },
+  {
+    title: 'Concrete on the same contract',
+    body: 'Site prep, concrete and the structure quoted together. Concrete is priced separately so you see exactly what’s included.',
+  },
+  {
+    title: 'Same-week scheduling',
+    body: 'Your install date is confirmed after we review scope, materials, site readiness and any required approvals.',
+  },
+  {
+    title: 'Custom dimensions',
+    body: 'Not catalog sizes. You tell us the width, length and height — we build exactly that, any configuration, any roof style.',
+  },
+  {
+    title: 'Permit planning',
+    body: 'We give permit guidance and discuss approvals before scheduling. Filing responsibilities are confirmed in your written scope.',
+  },
+]
+
+const HOW = [
+  {
+    title: 'Show up when we say we will',
+    body: 'If we schedule a build date, we’re there. No rescheduling after you’ve cleared the site.',
+  },
+  {
+    title: 'One company, start to finish',
+    body: 'Site prep, concrete, steel structure, cleanup — the same crew under one contract.',
+  },
+  {
+    title: 'Built to outlast the contract',
+    body: 'Welded red iron and permanent bolts on Galvalume® substrate — real estate improvements your kids inherit in working condition.',
+  },
+  {
+    title: 'Permanent, not portable',
+    body: 'No kits that rattle loose in the first Texas thunderstorm. Every weld and anchor is built for the wind our county actually sees.',
+  },
+  {
+    title: 'Honest pricing, no surprises',
+    body: 'We quote the full job upfront — including concrete if you need it. No add-ons after the fact.',
+  },
+]
 
 export default function AboutPage() {
   const baseUrl = getSiteUrl()
   return (
-    <>
+    <div data-forge="">
       <BreadcrumbJsonLd items={[{ name: 'About', path: '/about' }]} />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd(baseUrl)).replace(/</g, '\\u003c') }}
       />
 
-      {/* ── Hero ── */}
-      <section className="relative bg-ink-900 text-white py-20 md:py-28 overflow-hidden">
-        <div className="hero-glow absolute inset-0 pointer-events-none" aria-hidden="true" />
-        <Container className="relative">
-          <div className="max-w-3xl">
-            <span className="text-xs font-semibold uppercase tracking-[0.15em] text-brand-400">
-              About Us
-            </span>
-            <h1 className="mt-3 text-white">
-              Temple&rsquo;s Local Metal Building Family — Not a National Chain
-            </h1>
-            <p className="mt-5 text-lg text-white/75 leading-relaxed max-w-2xl">
-              Triple J Metal was founded by a Temple family and operates out of Temple, TX.
-              We build every structure ourselves — no subcontractors, no kit drops, no hand-offs.
-              One crew. One contract. Done right.
-            </p>
-          </div>
-        </Container>
-      </section>
+      {/* 1 · Hero */}
+      <PageHero
+        breadcrumb={<Breadcrumb trail={[{ name: 'Company' }]} current="About" jsonLd={false} />}
+        image={{
+          src: '/images/red-iron-frame-hero.jpg',
+          alt: 'Red iron frame going up on a Triple J Metal jobsite',
+          position: '50% 40%',
+        }}
+        contentMax="max-w-[800px]"
+        eyebrow="About Triple J"
+        h1a="Temple’s metal building family."
+        h1b="Not a national chain."
+        lede="Founded by a Temple family and run out of Temple, TX. We build every structure ourselves — no subcontractors, no kit drops, no hand-offs. One crew. One contract. Done right."
+        facts={[
+          { k: 'Projects', v: `${SITE.stats.projects} completed` },
+          { k: 'On-site', v: 'Mon–Sat' },
+          { k: 'After approval', v: 'Same-week' },
+          { k: 'Founded', v: `${SITE.established} · Temple, TX` },
+        ]}
+      />
 
-      {/* ── Stats strip ── */}
-      <section className="bg-(--color-brand-600) text-white py-5">
-        <Container>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
-            {[
-              { stat: '150+',      label: 'Projects Completed' },
-              { stat: 'Mon–Sat',   label: 'On-Site Availability' },
-              { stat: 'Same-Week', label: 'On-Site After Approval' },
-              { stat: 'Temple TX', label: 'Family Business' },
-            ].map(({ stat, label }) => (
-              <div key={label}>
-                <div className="text-xl font-extrabold">{stat}</div>
-                <div className="text-xs text-white/75 mt-0.5 uppercase tracking-wide">{label}</div>
-              </div>
-            ))}
-          </div>
-        </Container>
-      </section>
-
-      <Crew />
-
-      {/* ── What makes us different ── */}
-      <section className="py-16 md:py-20 bg-ink-50">
-        <Container>
-          <h2 className="mb-10 text-center">What Sets Us Apart</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {[
-              {
-                headline: 'Local Crew — Not a Dealer',
-                body: 'We don\'t sell kits. We build structures. Every job is handled by our own Temple-based crew from start to finish.',
-              },
-              {
-                headline: 'Welded Steel Option',
-                body: 'We offer welded and bolted steel options. Framing, anchoring, and any engineering requirements are confirmed for your design and site.',
-              },
-              {
-                headline: 'Turnkey Concrete — Same Contract',
-                body: 'We can quote site prep, concrete, and the structure together. Concrete is separately priced so you can see exactly what your project includes.',
-              },
-              {
-                headline: 'Same-Week Scheduling',
-                body: 'Ask about same-week scheduling. We confirm your installation date after reviewing scope, materials, site readiness, and required approvals.',
-              },
-              {
-                headline: 'Custom Dimensions',
-                body: 'Our structures aren\'t catalog sizes. You tell us the width, length, and height — we build exactly that. Any configuration, any roof style.',
-              },
-              {
-                headline: 'Permit Planning',
-                body: 'We provide permit guidance and discuss required approvals before scheduling. Filing responsibilities and any additional services are confirmed in your written scope.',
-              },
-            ].map(({ headline, body }) => (
-              <div
-                key={headline}
-                className="rounded-xl border border-ink-100 bg-white p-6"
-              >
-                <div className="w-8 h-1 bg-(--color-brand-600) rounded mb-4" />
-                <h3 className="text-base font-bold text-ink-900 mb-2">{headline}</h3>
-                <p className="text-sm text-ink-500 leading-relaxed">{body}</p>
-              </div>
-            ))}
-          </div>
-        </Container>
-      </section>
-
-      {/* ── Materials & suppliers ── */}
-      <section className="py-16 md:py-20 bg-white">
-        <Container size="narrow">
-          <h2 className="mb-6">Texas Steel. Texas Suppliers.</h2>
-          <p className="text-ink-600 text-lg leading-relaxed mb-8">
-            We source steel from leading regional Texas suppliers — PBR and PBU panels, Galvalume®
-            roofing, and premium concealed-fastener standing-seam systems for HOA-grade builds.
-            Multi-source by design: we&rsquo;re never bottlenecked when a single supplier runs short
-            on a color or gauge. Keeping the supply chain in Texas means faster turnarounds and
-            direct support from people who know the local climate.
-          </p>
-          <div className="flex items-center gap-4 flex-wrap">
-            <div className="flex items-center gap-2 text-sm font-semibold text-ink-700">
-              <span className="text-(--color-brand-600)">✓</span> Regional Texas suppliers — multi-source
-            </div>
-            <div className="flex items-center gap-2 text-sm font-semibold text-ink-700">
-              <span className="text-(--color-brand-600)">✓</span> 100% Texas-Sourced Materials
-            </div>
-            <div className="flex items-center gap-2 text-sm font-semibold text-ink-700">
-              <span className="text-(--color-brand-600)">✓</span> Galvalume® substrate · 40-year paint warranty
-            </div>
-          </div>
-        </Container>
-      </section>
-
-      {/* ── Values / mission ── */}
-      <section className="py-16 bg-ink-900 text-white">
-        <Container size="narrow">
-          <h2 className="text-white mb-6">How We Work</h2>
-          <ul className="space-y-4">
-            {[
-              ['Show up when we say we will', 'If we schedule a build date, we\'re there. No rescheduling after you\'ve cleared the site.'],
-              ['One company, start to finish', 'Site prep, concrete, steel structure, cleanup — all done by the same crew under one contract.'],
-              ['Built to outlast the contract', 'Welded red iron + permanent bolts on Galvalume® substrate. These structures are real estate improvements that outlast the buyer who paid for them — your kids will inherit them in working condition.'],
-              ['Permanent, not portable', 'We don\'t ship kits that rattle loose in the first Texas thunderstorm. Every weld and every anchor bolt is rated for the wind loads our county actually sees.'],
-              ['Honest pricing, no surprises', 'We quote the full job upfront — including concrete if you need it. No add-ons after the fact.'],
-            ].map(([title, desc]) => (
-              <li key={title as string} className="flex items-start gap-4">
-                <span className="text-(--color-brand-400) font-bold shrink-0 mt-1">✓</span>
-                <div>
-                  <div className="font-bold text-white">{title}</div>
-                  <div className="text-sm text-white/65 mt-0.5 leading-relaxed">{desc}</div>
-                </div>
-              </li>
-            ))}
-          </ul>
-        </Container>
-      </section>
-
-      {/* ── CTA ── */}
-      <section className="py-16 bg-ink-50">
-        <Container size="narrow" className="text-center">
-          <h2 className="mb-4">Ready to Build?</h2>
-          <p className="text-ink-500 text-lg mb-8">
-            Get a free quote from Temple&rsquo;s local metal building crew. We call back same day.
-          </p>
-          <div className="flex flex-wrap gap-4 justify-center">
-            <ButtonLink href="#quote" variant="primary" size="lg">
-              Get a Free Quote
-            </ButtonLink>
-            <TrackedPhoneLink
-              surface="about_hero"
-              className="inline-flex items-center gap-2 h-12 px-6 rounded-lg border-2 border-ink-300 text-ink-800 font-semibold hover:border-ink-500 transition-colors text-sm"
+      {/* 2 · Crew */}
+      <section data-forge="" data-tone="light" className="bg-white py-[clamp(64px,7vw,104px)] text-forge-navy">
+        <div className="mx-auto grid w-full max-w-[1360px] grid-cols-[repeat(auto-fit,minmax(min(100%,420px),1fr))] items-stretch gap-[clamp(32px,4vw,80px)] px-[clamp(20px,3vw,40px)]">
+          <ForgeReveal className="relative min-h-[380px] overflow-hidden rounded-[12px] bg-forge-slate">
+            <Image
+              src="/images/carport-truck-concrete-hero.jpg"
+              alt="Finished Triple J Metal carport over a truck on a fresh concrete pad"
+              fill
+              sizes="(min-width: 900px) 640px, 100vw"
+              className="object-cover"
+            />
+            <div
+              className="absolute inset-x-0 bottom-0 px-6 pt-16 pb-[22px] text-[15px] text-white"
+              style={{ background: 'var(--scrim-caption)' }}
             >
-              Call&nbsp;
-            </TrackedPhoneLink>
-          </div>
-          <p className="mt-8 text-sm text-ink-500 leading-relaxed">
-            Not ready yet? <Link href="/gallery" className={ABOUT_LINK}>See recent builds</Link>,{' '}
-            <Link href="/services" className={ABOUT_LINK}>browse what we build</Link>, or check{' '}
-            <Link href="/locations" className={ABOUT_LINK}>where we work</Link>. Supplier, dealer, or GC?{' '}
-            See our <Link href="/partners" className={ABOUT_LINK}>install partner page</Link>.
-          </p>
-        </Container>
+              From the first measurement to the final weld.
+            </div>
+          </ForgeReveal>
+          <ForgeReveal>
+            <SectionHeading
+              eyebrow="Meet Triple J"
+              line1="Three names."
+              line2="One family business."
+              lede="Juan, Julian and Jose Alfredo. The people behind the name, based right here in Temple."
+              ledeMax="max-w-[540px]"
+            />
+            <div className="mt-7 border-t border-forge-mist">
+              {CREW.map((c) => (
+                <div key={c.name} className="border-b border-forge-mist py-5">
+                  <div className="flex flex-wrap items-baseline gap-x-4 gap-y-1">
+                    <h3 className="m-0 font-forge-display text-[24px] font-bold text-forge-navy">{c.name}</h3>
+                    <span className="text-[12px] font-semibold uppercase tracking-[.16em] text-forge-slate">{c.role}</span>
+                  </div>
+                  <p className="mt-2 text-[15px] leading-[1.6] text-forge-slate">{c.body}</p>
+                </div>
+              ))}
+            </div>
+            <div className="mt-5 flex flex-wrap items-center gap-x-5 gap-y-2 text-[15px]">
+              <TrackedPhoneLink
+                surface="about_crew"
+                mode="children-only"
+                className="border-b border-forge-silver font-semibold text-forge-navy transition-colors hover:border-forge-navy"
+              >
+                Talk with our team · <TrackedPhoneNumber className="tabular-nums" />
+              </TrackedPhoneLink>
+              <span className="text-forge-slate">English &amp; Español</span>
+            </div>
+          </ForgeReveal>
+        </div>
       </section>
 
-      {/* ── Quote form ── */}
-      <QuoteForm />
-    </>
+      {/* 3 · What sets us apart */}
+      <section data-forge="" data-tone="light" className="bg-forge-fog py-[clamp(64px,7vw,104px)] text-forge-navy">
+        <div className="mx-auto w-full max-w-[1360px] px-[clamp(20px,3vw,40px)]">
+          <ForgeReveal className="max-w-[760px]">
+            <SectionHeading eyebrow="What sets us apart" line1="No kits. No subs." line2="No hand-offs." />
+          </ForgeReveal>
+          <ForgeReveal stagger className="mt-11 grid grid-cols-[repeat(auto-fit,minmax(min(100%,300px),1fr))] gap-4">
+            {APART.map((a, i) => (
+              <FeatureCard key={a.title} index={i} title={a.title}>
+                {a.body}
+              </FeatureCard>
+            ))}
+          </ForgeReveal>
+        </div>
+      </section>
+
+      {/* 4 · Materials (never name a supplier) */}
+      <section data-forge="" data-tone="light" className="bg-white py-[clamp(64px,7vw,104px)] text-forge-navy">
+        <div className="mx-auto grid w-full max-w-[1360px] grid-cols-[repeat(auto-fit,minmax(min(100%,420px),1fr))] items-center gap-[clamp(32px,4vw,80px)] px-[clamp(20px,3vw,40px)]">
+          <ForgeReveal>
+            <SectionHeading eyebrow="Materials" line1="Texas steel." line2="Texas suppliers." />
+            <p className="mt-[18px] max-w-[580px] text-[clamp(16px,.3vw_+_14px,18px)] leading-[1.65] text-forge-slate">
+              PBR and PBU panels, Galvalume® roofing, and concealed-fastener standing-seam systems for HOA-grade builds —
+              sourced from leading regional Texas suppliers. Multi-source by design, so we’re never bottlenecked when one
+              supplier runs short on a color or gauge.
+            </p>
+            <RuleList
+              className="mt-[26px]"
+              itemClassName="text-[15px] text-forge-navy"
+              items={[
+                'Regional Texas suppliers — multi-source',
+                '14-gauge standard · 11-gauge heavy-duty columns',
+                'Galvalume® substrate · 40-year painted finish',
+              ]}
+            />
+          </ForgeReveal>
+          <ForgeReveal className="relative aspect-[4/3] overflow-hidden rounded-[12px] border border-forge-silver bg-forge-slate">
+            <Image
+              src="/images/carport-residential-completed.jpg"
+              alt="Completed residential metal carport with painted steel panels"
+              fill
+              sizes="(min-width: 900px) 640px, 100vw"
+              className="object-cover"
+            />
+          </ForgeReveal>
+        </div>
+      </section>
+
+      {/* 5 · How we work (navy) */}
+      <section data-forge="" data-tone="dark" className="bg-forge-navy py-[clamp(64px,7vw,104px)] text-white">
+        <div className="mx-auto w-full max-w-[1360px] px-[clamp(20px,3vw,40px)]">
+          <ForgeReveal className="max-w-[760px]">
+            <SectionHeading tone="dark" eyebrow="How we work" line1="You keep your weekend." line2="We keep our word." />
+          </ForgeReveal>
+          <ForgeReveal className="mt-10 grid grid-cols-[repeat(auto-fit,minmax(min(100%,420px),1fr))] gap-x-[clamp(32px,4vw,72px)] border-t border-forge-silver/[.18]">
+            {HOW.map((h, i) => (
+              <NumberedRow key={h.title} index={i} title={h.title}>
+                {h.body}
+              </NumberedRow>
+            ))}
+          </ForgeReveal>
+        </div>
+      </section>
+
+      {/* 6 · Quote */}
+      <QuoteSection />
+    </div>
   )
 }

@@ -11,10 +11,10 @@ import type { BriefItem, MorningBrief } from '@/lib/jobs/morning-brief'
 export default function MorningBriefEmail({ brief, hqHref }: { brief: MorningBrief; hqHref: string }) {
   return (
     <BrandLayout preview={`${brief.heading} — ${brief.subject}`}>
-      <Heading as="h2" style={{ fontSize: 22, fontWeight: 700, margin: '6px 0 4px', color: '#111827' }}>
+      <Heading as="h2" style={{ fontSize: 22, fontWeight: 700, margin: '6px 0 4px', color: '#00182a' }}>
         {brief.heading}
       </Heading>
-      <Text style={{ fontSize: 13, color: '#6b7280', margin: '0 0 16px' }}>{brief.subhead}</Text>
+      <Text style={{ fontSize: 13, color: '#546678', margin: '0 0 16px' }}>{brief.subhead}</Text>
 
       <ItemList
         title="Waiting on a first call — oldest first"
@@ -30,7 +30,7 @@ export default function MorningBriefEmail({ brief, hqHref }: { brief: MorningBri
       />
 
       {brief.draftCount > 0 && (
-        <Text style={{ margin: '18px 0 0', fontSize: 13, color: '#374151' }}>
+        <Text style={{ margin: '18px 0 0', fontSize: 13, color: '#33475a' }}>
           {brief.draftCount} {brief.draftCount === 1 ? 'captured call is' : 'captured calls are'} still a
           draft — finish {brief.draftCount === 1 ? 'it' : 'them'} in HQ → Leads.
         </Text>
@@ -60,27 +60,27 @@ export default function MorningBriefEmail({ brief, hqHref }: { brief: MorningBri
 function ItemList({ title, items, more, empty }: { title: string; items: BriefItem[]; more: number; empty: string }) {
   return (
     <>
-      <Text style={{ margin: '18px 0 6px', fontSize: 13, fontWeight: 700, color: '#111827', textTransform: 'uppercase', letterSpacing: 0.3 }}>
+      <Text style={{ margin: '18px 0 6px', fontSize: 13, fontWeight: 700, color: '#00182a', textTransform: 'uppercase', letterSpacing: 0.3 }}>
         {title}
       </Text>
       {items.length === 0 ? (
-        <Text style={{ margin: 0, fontSize: 13, color: '#6b7280' }}>{empty}</Text>
+        <Text style={{ margin: 0, fontSize: 13, color: '#546678' }}>{empty}</Text>
       ) : (
-        <Section style={{ border: '1px solid #e5e7eb', borderRadius: 8, overflow: 'hidden' }}>
+        <Section style={{ border: '1px solid #e3e9ee', borderRadius: 8, overflow: 'hidden' }}>
           {items.map((item, i) => (
-            <Row key={item.href} style={{ background: i % 2 === 0 ? '#f9fafb' : '#ffffff' }}>
-              <Column style={{ padding: '10px 14px', fontSize: 13, color: '#111827' }}>
+            <Row key={item.href} style={{ background: i % 2 === 0 ? '#f4f6f8' : '#ffffff' }}>
+              <Column style={{ padding: '10px 14px', fontSize: 13, color: '#00182a' }}>
                 <Link href={item.href} style={{ color: BRAND_COLOR, fontWeight: 700 }}>
                   {item.primary}
                 </Link>
-                <span style={{ color: '#6b7280' }}> — {item.secondary}</span>
+                <span style={{ color: '#546678' }}> — {item.secondary}</span>
               </Column>
             </Row>
           ))}
         </Section>
       )}
       {more > 0 && (
-        <Text style={{ margin: '8px 0 0', fontSize: 13, color: '#6b7280' }}>+ {more} more in HQ.</Text>
+        <Text style={{ margin: '8px 0 0', fontSize: 13, color: '#546678' }}>+ {more} more in HQ.</Text>
       )}
     </>
   )

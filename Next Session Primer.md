@@ -1,17 +1,51 @@
-# Internal links — 2026-10-03 · DONE ON `claude/youthful-cerf-2m3dfh`, NOT ON `main`; COPY CONFLICTS FOUND
+# Gallery revalidation — 2026-10-03 · LIVE, CHECK ON PRODUCTION ONCE
 
-All six audit items are fixed and `node scripts/check-links.mjs --base <url> --strict` passes (Locked Decisions →
-Internal linking). Merge to `main` is the owner's call. Found while editing the five posts, **not changed**
-because each is a claim, not a link — decide, then fix:
-1. **Permits.** The Bell County post says "we pull the permit" and the HOA post says "pull the city permit";
-   Locked Decisions says permits are advisory only, never "we pull".
-2. **Concrete PSI.** The soil post says "anything under 3,500 on Blackland Prairie is underspec" while Triple J's
-   own standard is 3,000.
-3. **Welded post** says 12-gauge frames and 140 MPH, while its own table says 14-gauge standard, 12 on request,
-   and wind rating "design-specific".
-4. **PCS post** says Temple is "10 minutes from Fort Cavazos". Check the distance before it stays.
-5. Fencing has no blog post to link (nothing relevant exists); a fencing guide would give it one.
-6. `/privacy` and `/terms` keep one body link each, on purpose.
+HQ gallery writes now call `revalidateGallery()` (Gallery freshness in `Locked Decisions.md`), so a
+publish reaches the Latest builds ticker, the gallery and Recent builds at the next page view rather
+than within the hour. It passed tests but had no production build: there is no usable local `.env`.
+**Check once:** in `/hq/gallery`, change a published item's title, then load `/gallery/<id>` and `/` in
+a private window. Both should show the new title on the first or second load. If they stay stale,
+check the pattern spelling first: dynamic routes need the `(marketing)` group.
+
+**Edits made straight in Supabase** (MCP, SQL, the dashboard) bypass this and take up to an hour,
+through the `revalidate = 3600` backstop. Edit through HQ when the change must show at once.
+
+**Local env:** both `~/triple-j-website` and `~/mexicno-grille` are linked to Vercel and have a pulled
+Production `.env.local`, but every Sensitive value came back as a `[SENSITIVE]` placeholder (26 and 31
+of them). They need filling or blanking by hand before local dev works; see `Connectors.md`.
+`npm run dev` now passes `--webpack`, like `build`, because Turbopack refuses Serwist's webpack config.
+
+# Forge redesign — 2026-10-03 · MERGED TO `main` (LIVE); HQ STILL TO DO
+
+The whole Forge handoff (`docs/redesign-2026-10/forge-handoff/`) is **on `main` and live** since 2026-10-03:
+PR 00–12, step 13a–13c (every public route, OG cards, customer emails, quote PDF, legacy cleanup) and the
+owner's **PBR-panel footer**, merged from `claude/new-session-471fsd` together with main's PostHog work.
+Decisions: the 2026-10-02 rows of `Decisions.md` + matching `Locked Decisions.md`.
+
+**Waiting on the owner:**
+1. Check the live site page by page at phone and desktop width — the gallery-driven sections (builds strip,
+   ticker, recent builds, gallery grid) were never seen with real photos in the sandbox.
+2. **Blog posts were brought to the locks** (2026-10-02, owner asked): permit-pulling claims are now advisory,
+   PSI/price/concrete/competitor/timeline lines fixed (row in `Decisions.md`); `check-vault.mjs` now rejects the
+   retired permit-pulling and concrete-included wording. Skim the five posts on the preview.
+3. **`/services` hero lede fixed** (owner approved): turnkey is named as one of three ways a structure is sold,
+   not a blanket label (row in `Decisions.md`).
+4. **Unverified claims cut** (owner): roundup "within days of contract signing", `/locations` travel-fee line,
+   carports "Licensed & insured"; RV intro "within days of your approval" → same-week after approval.
+5. `src/lib/colors.ts` hot-links swatch images from a panel maker's site (the domain is in page source, and
+   the Dark Gray, Black and Antique Premium swatches 404). Needs our own swatch images.
+6. Still open from before: Freddy on the 11-gauge wording; `/contact` "same day" (keep?); contact messages
+   counting as Ads conversions (narrow to "New build"?); real testimonials; a gates photo.
+
+**Next build step — 13d, HQ.** Its own design pass with the owner: HQ is forced-dark "Shop floor"; do not
+alias `brand-*` onto navy (contrast dies on `#0b0d0f`). Barlow, the `brand-*` tokens and the global
+royal-blue focus ring stay until then because only HQ uses them.
+
+**Working notes:** primitives in `src/components/forge/`; wrap pages in `data-forge`. Blog bodies use
+`.forge-prose`; legal pages use `LegalPage`. **JSX gotcha:** write `</strong>{' '}text`, never `</strong> text`,
+when the text run holds an HTML entity — the space is dropped (`blog/[slug]/posts.test.ts` guards posts).
+`next build` needs a Supabase URL for `/gallery/[id]` — dead-host placeholders inline, never real keys.
+Dev: `npx next dev --webpack`. Tailwind math in `clamp()`/`calc()` needs `_+_` / `_-_`.
 
 ---
 
@@ -39,6 +73,58 @@ firing" for the real alert id (it read the alert from PostHog), so `alert:read` 
 - **A18 (owner, one click):** Vercel → Domains → `triplejmetaltx.com` → redirect 307 → 308.
 - **A15 blog cadence** and **A16 HowTo** (recommended dropped) are the owner's call; A8 GBP is still blocked.
 - Ask the owner about two Killeen claims (retirees → Round Rock jobs; cleared HOA review boards).
+
+---
+
+# Visual redesign — 2026-10-01 · HERO PUBLISHED FOR FIGMA, NOTHING BUILT
+
+All work is on branch `claude/focused-gates-iu172r` (the previous `claude/youthful-hypatia-28pf1o` is merged
+into it), not `main`. **No `src/` file has changed.** Every answer is in `Locked Decisions.md` (Tagline,
+Marketing headline face, Brand colour, Light/dark, Homepage order, Header, Service-card prices, Trust before
+reviews, Motion, Redesign review) and in the 2026-10-01 rows of `Decisions.md`.
+
+**Settled this session:** the hero photo is the **Rogers 23×35 carport** (the Mexicano Grille frame was
+picked, then dropped as too wide on phones). The subhead is the mockup's one sentence. No red. Bands go Hero
+navy, Builds light, Services navy, Quote light, Footer navy. The logo is the lion + "Triple J Metal" in
+Cinzel. The header is lean: 5 links, phone, quote button; Blog and Partners go to the footer. The homepage is
+**Hero, Builds, Services, Quote** (inline form kept). Card prices stay. Trust comes from real customer
+quotes, collected with permission and shown with their build. Scope: **site + emails + quote PDF + HQ**.
+Motion is subtle. Review happens on a **Vercel preview link** before anything merges to `main`.
+
+**Narrowed to the hero (owner, end of session):** the full homepage mockup was withdrawn and deleted.
+Only the **header, hero, Latest builds ticker and typography** stay: `docs/redesign-2026-10/hero-mockup.html`
+and its renders (`hero-rogers-{desktop,phone}.jpg` are the approved state). They were published as a
+private design canvas, "Triple J Hero" (https://claude.ai/artifact/VsYi1MwUophTohKwBKQcmB: desktop hero,
+phone hero, type-and-colour sheet), for the owner, who will build a design system from it **in Figma** and design the rest of
+the site there, in an interactive session. The homepage-section answers stay logged as preferences; the
+Figma design overrides them.
+
+**Waiting on the owner:**
+1. The Figma design system and the rest-of-site design. Then the whole site plan; no `src/` change before it.
+2. Customer quotes into `testimonials.md` (3–5, with permission, from jobs in the gallery).
+3. **Live copy breaks a lock:** the homepage Services intro says every structure is "delivered turnkey —
+   site prep, concrete pad, and installation all under one contract", a blanket turnkey label above priced
+   cards (2026-09-28 lock). Proposed fix: "Every structure is sold welded, bolted, or turnkey — with turnkey,
+   site prep, concrete and installation sit on one contract. No kits, no subcontractors." Owner approves.
+4. 7 orphaned storage files from the deleted duplicate Grille photos (5.9 MB, listed in `Decisions.md`) can
+   be removed in the Supabase dashboard. `/gallery/[id]` is static and never revalidated, so HQ gallery
+   edits show only after a deploy; a task card was offered for that fix.
+
+**Found while specifying (not built):**
+- **HQ is in scope**, so `brand-*` / `--brand-fg` (44 marketing + 61 HQ files) and `--font-display` (35
+  files) can be rewritten globally. HQ headings use `uppercase` Barlow; with Cinzel, drop `uppercase`.
+- **`#1e6bd6` is hard-coded** in `src/app/layout.tsx` (theme colour), `src/emails/BrandLayout.tsx`,
+  `src/emails/PartnerInquiryConfirmation.tsx`, `src/lib/quote-pdf.tsx` and HQ charts. Emails need a serif
+  fallback (Gmail ignores web fonts). The PDF must register a Cinzel font file. OG cards (`src/lib/og-fonts`)
+  need Cinzel.
+- **Fonts load with `display: "optional"`.** Use `swap` for Cinzel. Write headlines in sentence case.
+- **Quotes tied to builds** need a link from a quote to a `gallery_items` row; `testimonials.md` has no
+  such field yet.
+- **Hero CSS + photo crops** are in `docs/redesign-2026-10/hero-mockup.html` (`?photo=rogers|grille|stables`).
+- **Rendering mockups here:** the sandbox's headless Chromium rejects the proxy's TLS certificate. Route
+  requests through Node with Playwright's `route.fetch()`; never disable TLS checks. Global Playwright
+  is at `/opt/node22/lib/node_modules`.
+- `npm run dev` fails on `main` (Turbopack vs Serwist). Use `next dev --webpack`.
 
 ---
 

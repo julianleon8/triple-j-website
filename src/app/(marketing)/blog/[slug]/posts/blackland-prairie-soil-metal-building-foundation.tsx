@@ -1,4 +1,3 @@
-import Link from 'next/link'
 import { ComparisonTable } from '@/components/ui/ComparisonTable'
 
 export default function BlacklandPrairiePost() {
@@ -6,8 +5,8 @@ export default function BlacklandPrairiePost() {
     <>
       <p>
         Central Texas sits on one of the most problematic soil types in North America for construction
-        foundations. <strong>Blackland Prairie clay</strong> &#8212; the dark, expansive soil that runs through Bell County,
-        <Link href="/locations/temple">Temple</Link>, <Link href="/locations/killeen">Killeen</Link>, and <Link href="/locations/belton">Belton</Link> &#8212; swells dramatically when wet and shrinks and cracks when dry. The
+        foundations. <strong>Blackland Prairie clay</strong>{' '}&#8212; the dark, expansive soil that runs through Bell County,
+        Temple, Killeen, and Belton &#8212; swells dramatically when wet and shrinks and cracks when dry. The
         same soil that makes this region excellent farmland will heave, tilt, and crack a concrete slab
         that wasn&#8217;t designed for it.
       </p>
@@ -19,7 +18,7 @@ export default function BlacklandPrairiePost() {
 
       <h2>What Makes Blackland Prairie Clay Different</h2>
       <p>
-        The key property of Bell County&#8217;s expansive clay is its <strong>Plasticity Index (PI)</strong> &#8212; a measure
+        The key property of Bell County&#8217;s expansive clay is its <strong>Plasticity Index (PI)</strong>{' '}&#8212; a measure
         of how much water the soil absorbs before it becomes plastic (pliable). Bell County soils
         commonly have PI values above 40, sometimes above 60. For context, non-expansive soils have
         a PI under 15.
@@ -37,10 +36,10 @@ export default function BlacklandPrairiePost() {
       <h2>How Soil Type Affects Concrete Specification</h2>
       <p>
         Standard concrete mix for a residential slab is 3,000 PSI, and that is what{' '}
-        <strong>Triple J pours as standard</strong> for carport and garage slabs. What matters more
+        <strong>Triple J pours as standard</strong>{' '}for carport and garage slabs. What matters more
         than the number on the mix ticket is what sits under and around it: correct thickness,
         reinforcement, a perimeter beam, and anchor depth set for the soil actually on your lot. For
-        the most reactive clay sites we can pour a <strong>4,000 PSI mix on request</strong> &#8212;
+        the most reactive clay sites we can pour a <strong>4,000 PSI mix on request</strong>{' '}&#8212;
         the higher strength rating makes the slab more resistant to cracking under differential
         movement, the scenario where one edge of your slab moves up while the other stays flat.
       </p>
@@ -107,7 +106,7 @@ export default function BlacklandPrairiePost() {
         <li>2% grade toward drainage direction across slab surface</li>
       </ul>
       <p>
-        This is what &#8220;<Link href="/services/turnkey-carports-with-concrete">turnkey</Link>&#8221; means in practice &#8212; the foundation is engineered for where you actually
+        This is what &#8220;turnkey&#8221; means in practice &#8212; the foundation is engineered for where you actually
         live, not just poured to minimum standards to keep the quote competitive.
       </p>
 
@@ -116,7 +115,7 @@ export default function BlacklandPrairiePost() {
         If you&#8217;re getting quotes from multiple contractors in Central Texas, ask each one:
       </p>
       <ul>
-        <li>What PSI concrete do you use? (Anything under 3,500 on Blackland Prairie is underspec.)</li>
+        <li>What PSI concrete do you use? (3,000 PSI is the residential standard &#8212; ask what thickness, reinforcement and perimeter beam come with it.)</li>
         <li>What rebar spacing do you use?</li>
         <li>How do you handle anchor placement &#8212; wet-set or post-pour?</li>
         <li>Do you grade the site for drainage?</li>
@@ -127,7 +126,7 @@ export default function BlacklandPrairiePost() {
         conditions before &#8212; or whether they&#8217;re applying a generic quote from somewhere else.
       </p>
       <p>
-        Call us or fill out the <Link href="/quote">quote form</Link>. Site address is helpful &#8212; we can review county soil
+        Call us or fill out the quote form below. Site address is helpful &#8212; we can review county soil
         maps for your specific parcel before we quote the foundation.
       </p>
     </>

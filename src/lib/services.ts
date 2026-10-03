@@ -45,6 +45,48 @@ export type ServiceData = {
   initialService?: "fencing"
   trustPoints?: string[]
   featuresHeading?: string
+  /** Quote-form service preselected by this page's quote section. */
+  quoteService?: "fencing" | "carport" | "garage" | "barn" | "rv_cover"
+  /** gallery_items.type values whose live builds this page shows (≥3 to render). */
+  galleryTypes?: string[]
+  /** gallery_items.tag the builds must also carry (turnkey → "Turnkey"). */
+  galleryTag?: string
+  /** Forge design content (2026-10-02). Pages without it render the shared
+   *  template from the fields above; a section with no data is skipped. */
+  forge?: ServiceForge
+}
+
+export type ServiceOption = {
+  label: string
+  title: string
+  body: string
+  price?: string
+  note?: string
+  /** Omitted when no real photo exists — never a placeholder. */
+  img?: string
+  structure?: 'welded' | 'bolted'
+  concrete?: 'yes'
+}
+
+export type ServiceForge = {
+  /** Short name used in menus, breadcrumbs and "Related" buttons. */
+  menu: string
+  eyebrow: string
+  h1a: string
+  h1b: string
+  lede: string
+  img: string
+  imgAlt: string
+  pos: string
+  facts: { k: string; v: string; s: string }[]
+  optEyebrow: string
+  optHeading: string
+  optLede: string
+  options: ServiceOption[]
+  techHeading: string
+  specs: { k: string; v: string }[]
+  /** Two service slugs for the "Related" row. */
+  related: string[]
 }
 
 export const SERVICES: Record<string, ServiceData> = {
@@ -59,31 +101,133 @@ export const SERVICES: Record<string, ServiceData> = {
     heroHeadline: 'Metal Fencing & Gates in Temple, Belton & Killeen',
     heroCopy: 'More privacy at home. A defined boundary for your land. An entrance that fits your property. Triple J Metal builds metal privacy fencing, pipe and ranch fencing, ornamental metal fences, and gates for Central Texas properties. Tell our Temple-based crew what you need, and we’ll work through the layout with you.',
     mainBenefit: 'Your fence, your layout — with a local metal crew you can talk to directly.',
-    featuresHeading: 'Find the Right Fence for Your Property',
+    featuresHeading: 'Find the right fence for your property.',
     initialService: 'fencing',
     trustPoints: ['Temple-based crew', 'English & Spanish', 'Project-specific quotes'],
     features: [
-      { title: 'Metal Privacy Fencing', description: 'Create a more private yard or screen a work area with metal panels. We’ll discuss height, finish, post layout, and the look you want before quoting.' },
-      { title: 'Pipe & Ranch Fencing', description: 'Define your acreage, frontage, or ranch entrance with pipe fencing. Tell us how the land is used so we can discuss the right layout and any livestock containment needs.' },
-      { title: 'Ornamental Metal Fencing', description: 'Frame your property with an open metal fence that preserves the view. Discuss picket style, spacing, height, and finish with our crew.' },
-      { title: 'Gates & Property Access', description: 'Plan pedestrian or driveway access alongside your fence. Share the number of gates and approximate opening widths so access is part of the quote from the start.' },
-      { title: 'A Quote Built Around Your Site', description: 'Fence length, height, materials, terrain, access, and any old-fence removal affect the scope. We’ll confirm what is included in your written quote.' },
-      { title: 'Help Choosing a Layout', description: 'Not sure where to begin? Send your ZIP, approximate footage, and a description of the property. We’ll discuss options and next steps with you.' },
+      { title: "Metal privacy fencing", description: "Screen a yard or work area with metal panels. Height, finish, post layout and look are discussed before quoting." },
+      { title: "Pipe & ranch fencing", description: "Define acreage, frontage or a ranch entrance. Tell us how the land is used and any livestock containment needs." },
+      { title: "Ornamental metal fencing", description: "An open metal fence that frames the property and keeps the view. Picket style, spacing, height and finish are yours to pick." },
+      { title: "Gates & property access", description: "Plan pedestrian or driveway gates alongside the fence so access is part of the quote from the start." },
+      { title: "A quote built around your site", description: "Length, height, materials, terrain, access and any old-fence removal affect the scope — all confirmed in your written quote." },
+      { title: "Help choosing a layout", description: "Not sure where to begin? Send your ZIP, approximate footage and a description of the property. We’ll talk options." },
     ],
-    technicalAuthority: 'Based in Temple, we take fencing inquiries from Temple, Belton, Killeen, Harker Heights, and surrounding Central Texas communities. A fence needs to fit its site: slopes, drainage, gate openings, property boundaries, and applicable city or HOA requirements all matter. Share your address and any existing plans so the proposed layout and materials can be reviewed before installation.',
+    technicalAuthority: "Based in Temple, we take fencing inquiries from Temple, Belton, Killeen, Harker Heights and surrounding Central Texas communities. Slopes, drainage, gate openings, property boundaries and applicable city or HOA requirements all matter. Share your address and any existing plans so the layout and materials can be reviewed before installation.",
     competitorRows: [],
     faqs: [
-      { q: 'What types of metal fencing do you offer?', a: 'We offer metal privacy fencing, pipe and ranch fencing, ornamental metal fencing, and gates. Use the quote form to choose a style, or select “Not sure yet” and tell us what you want the fence to do.' },
-      { q: 'How much does a metal fence cost?', a: 'Every fence is quoted to its scope. Total linear feet, height, material and finish, gate count, terrain, and removal work affect the price. Send approximate measurements to get the conversation started; final pricing follows scope and site review.' },
-      { q: 'Can I request gates with my fence?', a: 'Yes. Include pedestrian or driveway gates in your request, with approximate opening widths if known. Gate operation and any special hardware are confirmed during quoting.' },
-      { q: 'Do I need exact measurements to request a quote?', a: 'No. Approximate linear footage and height are enough to start. We’ll confirm measurements and the layout before a final scope is agreed.' },
-      { q: 'When can you install my fence?', a: 'Tell us your preferred timing. We confirm scheduling after reviewing the site, scope, material availability, and any required approvals. The quote form is an inquiry, not a reserved installation date.' },
-      { q: 'Will metal fencing work with my city or HOA rules?', a: 'Requirements vary by property and fence design. Share any HOA guidelines, survey, or approval documents you already have. Materials, height, placement, and approval responsibilities need to be confirmed for your project before work starts.' },
+      { q: "What types of metal fencing do you offer?", a: "Metal privacy fencing, pipe and ranch fencing, ornamental metal fencing, and gates. Use the quote form to choose a style, or tell us what you want the fence to do." },
+      { q: "How much does a metal fence cost?", a: "Every fence is quoted to its scope. Total linear feet, height, material and finish, gate count, terrain and removal work affect the price. Send approximate measurements to start; final pricing follows scope and site review." },
+      { q: "Do I need exact measurements to request a quote?", a: "No. Approximate linear footage and height are enough to start. We’ll confirm measurements and the layout before a final scope is agreed." },
+      { q: "When can you install my fence?", a: "Tell us your preferred timing. We confirm scheduling after reviewing the site, scope, material availability and any required approvals. The quote form is an inquiry, not a reserved installation date." },
+      { q: "Will metal fencing work with my city or HOA rules?", a: "Requirements vary by property and fence design. Share any HOA guidelines, survey or approval documents you already have. Materials, height, placement and approval responsibilities are confirmed before work starts." },
     ],
     militaryAngle: false,
-    relatedSlugs: ['carports', 'barns', 'metal-garages'],
+    relatedSlugs: ['gates', 'carports', 'barns', 'metal-garages'],
+    quoteService: 'fencing',
+    galleryTypes: ['Fencing'],
+    forge: {
+      menu: "Metal Fencing",
+      eyebrow: "Now quoting fencing",
+      h1a: "Metal fencing.",
+      h1b: "A better boundary.",
+      lede: "More privacy at home. A defined boundary for your land. Triple J Metal builds metal privacy fencing, pipe and ranch fencing, and ornamental metal fences for Central Texas properties — tell our Temple-based crew what you need and we’ll work through the layout with you.",
+      img: "/images/metal-fence-ranch-wire.webp",
+      imgAlt: "Metal ranch wire fencing built by Triple J Metal",
+      pos: "60% 50%",
+      facts: [
+        { k: "Styles", v: "Privacy · Pipe · Ornamental", s: "Gates in the same quote" },
+        { k: "Service area", v: "Temple, Belton, Killeen", s: "And nearby Central Texas" },
+        { k: "Quotes", v: "Project-specific", s: "Footage, height, finish, terrain" },
+        { k: "Crew", v: "English & Español", s: "Talk to the people building it" },
+      ],
+      optEyebrow: "Find your fence",
+      optHeading: "What should it do?",
+      optLede: "Privacy, a defined property line, or an open frame that keeps the view. Pick a style to see how we approach it.",
+      options: [
+        { label: "Privacy", title: "Metal privacy fencing", body: "Create a more private yard or screen a work area with metal panels. We’ll discuss height, finish, post layout and the look you want before quoting.", price: "Quoted to scope", note: "Height · finish · post layout" },
+        { label: "Pipe & ranch", title: "Pipe & ranch fencing", body: "Define your acreage, frontage or ranch entrance with pipe fencing. Tell us how the land is used so we can discuss the right layout and any livestock containment needs.", price: "Quoted to scope", note: "Acreage · frontage · livestock", img: "/images/metal-fence-ranch-wire.webp" },
+        { label: "Ornamental", title: "Ornamental metal fencing", body: "Frame your property with an open metal fence that preserves the view. Discuss picket style, spacing, height and finish with our crew.", price: "Quoted to scope", note: "Picket style · spacing · finish" },
+        { label: "Gates", title: "Gates & property access", body: "Plan pedestrian or driveway access alongside your fence. Share the number of gates and approximate opening widths so access is part of the quote from the start.", price: "Quoted to scope", note: "Gate count · opening widths" },
+      ],
+      techHeading: "A fence has to fit its site.",
+      specs: [
+        { k: "Styles", v: "Privacy, pipe & ranch, ornamental" },
+        { k: "Gates", v: "Pedestrian or driveway, planned in" },
+        { k: "Quote factors", v: "Length, height, material, terrain, access, removal" },
+        { k: "Site review", v: "Slopes, drainage, boundaries" },
+        { k: "Approvals", v: "City & HOA requirements confirmed first" },
+      ],
+      related: ["gates", "carports"],
+    },
   },
 
+  gates: {
+    slug: 'gates',
+    title: 'Metal Gates',
+    shortTitle: 'Gates',
+    keywordGap: null,
+    metaTitle: 'Metal Gates in Temple, Belton & Killeen',
+    metaDescription: "Walk gates, driveway gates and ranch entrances, planned with your metal fence by Temple-based Triple J Metal. Request a free quote.",
+    heroHeadline: 'Metal Gates in Temple, Belton & Killeen',
+    heroCopy: "Walk gates, driveway gates and ranch entrances, planned alongside your metal fence by our Temple-based crew. Tell us how many openings you need and roughly how wide — access is part of the quote from the start.",
+    mainBenefit: "Access planned in, not bolted on later.",
+    featuresHeading: "Access planned in, not bolted on later.",
+    initialService: 'fencing',
+    trustPoints: ['Temple-based crew', 'English & Spanish', 'Project-specific quotes'],
+    features: [
+      { title: "Pedestrian gates", description: "Walk-through gates for yards, side yards and work areas, planned into the fence layout." },
+      { title: "Driveway gates", description: "Openings sized to the vehicles and trailers that use them. An approximate width is enough to start." },
+      { title: "Ranch & pipe entrances", description: "Entrances for acreage and ranch frontage, laid out around how the land is used and any livestock needs." },
+      { title: "Opening widths, up front", description: "Share the number of gates and approximate widths so access is part of the quote from the start." },
+      { title: "Hardware confirmed in writing", description: "Gate operation and any special hardware are confirmed during quoting and listed in your written quote." },
+      { title: "Matched to your fence", description: "Privacy, pipe and ranch, or ornamental — each gate is planned with the fence style around it." },
+    ],
+    technicalAuthority: "A gate has to work with its site: the slope across the opening, drainage, how vehicles turn in, property boundaries, and any city or HOA requirements. Share your address, approximate opening widths and any existing plans so the layout and materials can be reviewed before installation.",
+    competitorRows: [],
+    faqs: [
+      { q: "Can I add gates to a new fence?", a: "Yes. Include pedestrian or driveway gates in your request, with approximate opening widths if known. Gate operation and any special hardware are confirmed during quoting." },
+      { q: "Do I need exact opening widths?", a: "No. Approximate widths are enough to start. We’ll confirm measurements and the layout before a final scope is agreed." },
+      { q: "How much does a gate cost?", a: "Every gate is quoted to its scope — opening width, gate type, material and finish, hardware and site conditions all affect the price. Send approximate measurements to get the conversation started." },
+      { q: "Will a gate work with my HOA or city rules?", a: "Requirements vary by property and design. Share any HOA guidelines, survey or approval documents you already have; materials, height, placement and approval responsibilities are confirmed before work starts." },
+    ],
+    militaryAngle: false,
+    relatedSlugs: ['metal-fencing', 'carports'],
+    quoteService: 'fencing',
+    galleryTypes: ['Fencing'],
+    forge: {
+      menu: "Gates",
+      eyebrow: "Gates & property access",
+      h1a: "Metal gates.",
+      h1b: "An entrance that fits.",
+      lede: "Walk gates, driveway gates and ranch entrances, planned alongside your metal fence by our Temple-based crew. Tell us how many openings you need and roughly how wide — access is part of the quote from the start.",
+      img: "/images/metal-fence-ranch-wire.webp",
+      imgAlt: "Metal ranch fence line where a gate entrance is planned",
+      pos: "20% 50%",
+      facts: [
+        { k: "Types", v: "Walk · Drive · Ranch", s: "Pedestrian to full entrance" },
+        { k: "Sizing", v: "Openings planned first", s: "Approximate widths are enough" },
+        { k: "Hardware", v: "Confirmed in your quote", s: "Operation & special hardware" },
+        { k: "Paired with", v: "Your fence style", s: "Privacy, pipe or ornamental" },
+      ],
+      optEyebrow: "Pick the opening",
+      optHeading: "How do you come and go?",
+      optLede: "Every gate starts with how it gets used — on foot, by truck, or with a trailer and livestock behind you.",
+      options: [
+        { label: "Walk gate", title: "Pedestrian gates", body: "A walk-through gate for the yard, side yard or work area, matched to the fence it sits in. Tell us where you come and go and we’ll plan the opening into the layout.", price: "Quoted to scope", note: "Location · opening width" },
+        { label: "Driveway gate", title: "Driveway gates", body: "A driveway gate sized to the vehicles and trailers that use it. Share the approximate opening width; gate operation and any special hardware are confirmed during quoting.", price: "Quoted to scope", note: "Opening width · operation · hardware" },
+        { label: "Ranch entrance", title: "Ranch & pipe entrances", body: "Frame an acreage or ranch entrance with pipe fencing and a gate built for how the land is used — equipment, trailers or livestock behind it.", price: "Quoted to scope", note: "Frontage · equipment · livestock", img: "/images/metal-fence-ranch-wire.webp" },
+      ],
+      techHeading: "Measure twice, open once.",
+      specs: [
+        { k: "Types", v: "Pedestrian, driveway, ranch entrance" },
+        { k: "To quote", v: "Gate count + approximate widths" },
+        { k: "Hardware", v: "Confirmed during quoting" },
+        { k: "Site review", v: "Slope, drainage, turn-in, boundaries" },
+        { k: "Approvals", v: "City & HOA requirements confirmed first" },
+      ],
+      related: ["metal-fencing", "carports"],
+    },
+  },
 
   // ─── GAP 2: Welded vs Bolted ─────────────────────────────────────────────
   carports: {
@@ -99,55 +243,62 @@ export const SERVICES: Record<string, ServiceData> = {
       "Triple J Metal builds and installs welded or bolted red iron carports in Temple, Belton, Killeen, and surrounding Central Texas communities. Choose the dimensions, roof style, and coverage that fit your property. Our crew can include site prep and a separately priced concrete pad in the same contract.",
     mainBenefit: "Welded or bolted red iron, sized for your vehicles and installed by our local crew.",
     features: [
-  {
-    "title": "Welded Red Iron — Permanent",
-    "description": "On-site welded red iron with material and connection details confirmed for your project. Standard framing is 14-gauge; a 12-gauge upgrade is available where appropriate."
-  },
-  {
-    "title": "Bolted Red Iron — Affordable",
-    "description": "We offer bolted red iron structures with delivery and installation by our crew. Site preparation and concrete can be included in the quoted scope."
-  },
-  {
-    "title": "Same-Week Scheduling",
-    "description": "Ask about same-week availability. Installation dates are confirmed after scope, materials, site readiness, and any required approvals are reviewed."
-  },
-  {
-    "title": "Any Size or Configuration",
-    "description": "Single-car, double-car, or commercial-width. Open sides, partial sides, or fully enclosed. We build to your dimensions, not to a standard catalog."
-  },
-  {
-    "title": "Concrete Pad Available",
-    "description": "Need a concrete slab poured first? We handle site prep and concrete in the same contract. No need to hire a separate concrete crew."
-  },
-  {
-    "title": "Texas-Sourced Red Iron Steel",
-    "description": "Panels sourced from leading regional Texas suppliers — PBR/PBU R-Panels on Galvalume® substrate with painted finish options for your project. Material availability is confirmed during scheduling."
-  }
-],
-    technicalAuthority:
-      "We review the site, intended use, dimensions, and foundation needs before finalizing your carports project. Steel gauge, anchoring, engineering requirements, finishes, and warranty terms are confirmed for the selected design. Concrete is available as a separately priced part of the same contract. We can discuss permit requirements; filing and approval responsibilities must be confirmed before work starts.",
+      { title: "Welded red iron — permanent", description: "On-site welded red iron. Standard framing is 14-gauge; a heavy-duty upgrade with 11-gauge columns is available where appropriate." },
+      { title: "Bolted red iron — affordable", description: "Bolted red iron structures with delivery and installation by our crew. Site prep and concrete can be included." },
+      { title: "Same-week scheduling", description: "Ask about same-week availability. Dates are confirmed after scope, materials, site readiness and approvals are reviewed." },
+      { title: "Any size or configuration", description: "Single-car, double-car or commercial-width. Open, partial or fully enclosed sides. Built to your dimensions, not a catalog." },
+      { title: "Concrete pad available", description: "Need a slab poured first? We handle site prep and concrete in the same contract — no separate concrete crew to hire." },
+      { title: "Texas-sourced steel", description: "PBR/PBU R-Panels on Galvalume® substrate from regional Texas suppliers, with painted finish options for your project." },
+    ],
+    technicalAuthority: "We review the site, intended use, dimensions and foundation needs before finalizing your carport. Steel gauge, anchoring, engineering requirements, finishes and warranty terms are confirmed for the selected design. We can discuss permit requirements; filing and approval responsibilities are confirmed before work starts.",
     competitorRows: [],
     faqs: [
-  {
-    "q": "What's the difference between welded and bolted carports?",
-    "a": "Welded and bolted describe how structural connections are made. We offer both. The right choice depends on the design, intended use, site conditions, and budget. Wind performance depends on the complete engineered system, including anchoring, rather than the connection method alone."
-  },
-  {
-    "q": "Do you handle permits?",
-    "a": "We can discuss permit requirements for your location and project. Requirements vary; confirm the applicable approvals and who is responsible for filing before work begins."
-  },
-  {
-    "q": "How much does a custom carport cost?",
-    "a": "The 20×20 flat-roof carport at 10 ft height starts at $3,000 bolted or $3,300 welded for steel and installation, before tax. Concrete, walls, and other add-ons are priced separately. Final pricing depends on the selected dimensions and scope."
-  },
-  {
-    "q": "Do you install on existing concrete?",
-    "a": "Yes. If you already have a slab, we anchor directly to it. We can also pour a new pad as part of the same job if needed."
-  }
-],
+      { q: "What’s the difference between welded and bolted?", a: "Welded and bolted describe how structural connections are made. We offer both. The right choice depends on the design, intended use, site conditions and budget. Wind performance depends on the complete engineered system, including anchoring — not the connection method alone." },
+      { q: "How much does a custom carport cost?", a: "A 20×20 flat-roof carport at 10 ft starts at $3,000 bolted or $3,300 welded for steel and installation, before tax. Concrete, walls and other add-ons are priced separately. Final pricing follows the selected dimensions and scope." },
+      { q: "Do you install on existing concrete?", a: "Yes. If you already have a slab, we anchor directly to it. We can also pour a new pad as part of the same job." },
+      { q: "Do you handle permits?", a: "We can discuss permit requirements for your location and project. Requirements vary; confirm the applicable approvals and who is responsible for filing before work begins." },
+    ],
     militaryAngle: false,
     relatedSlugs: ['turnkey-carports-with-concrete', 'rv-covers', 'metal-garages'],
     relatedPosts: ['welded-vs-bolted-metal-buildings-central-texas'],
+    featuresHeading: "Everything a carport needs, from one crew.",
+    trustPoints: ['Texas-sourced red iron steel', 'Temple-based crew'],
+    quoteService: 'carport',
+    galleryTypes: ['Carport', 'RV Cover'],
+    forge: {
+      menu: "Carports",
+      eyebrow: "Carports & RV covers",
+      h1a: "Custom metal carports.",
+      h1b: "Welded or bolted.",
+      lede: "Triple J Metal builds and installs welded or bolted red iron carports in Temple, Belton, Killeen and surrounding Central Texas communities. Choose the dimensions, roof style and coverage that fit your property — site prep and a separately priced concrete pad can ride on the same contract.",
+      img: "/images/carport-gable-residential.jpg",
+      imgAlt: "Gable-roof metal carport built by Triple J Metal on a residential property",
+      pos: "50% 55%",
+      facts: [
+        { k: "Starting at", v: "$3,000", s: "20×20 bolted · steel + install" },
+        { k: "Construction", v: "Welded or bolted", s: "Red iron, built by our crew" },
+        { k: "Scheduling", v: "Same-week", s: "Confirmed after scope review" },
+        { k: "Concrete", v: "Same contract", s: "Site prep + pad, priced separately" },
+      ],
+      optEyebrow: "Welded or bolted",
+      optHeading: "Choose how it’s built.",
+      optLede: "Both are red iron and both are installed by our own crew. The right one depends on the design, how you’ll use it, the site and your budget.",
+      options: [
+        { label: "Welded", title: "Welded red iron. Permanent.", body: "On-site welded red iron with material and connection details confirmed for your project. Standard framing is 14-gauge; a heavy-duty upgrade with 11-gauge columns is available where appropriate.", price: "From $3,300", note: "20×20 flat roof · 10 ft · steel + install, before tax", img: "/images/red-iron-frame-hero.jpg", structure: "welded" },
+        { label: "Bolted", title: "Bolted red iron. Affordable.", body: "Bolted red iron, delivered and installed by our crew — and it can be moved later. Site preparation and concrete can be included in the quoted scope.", price: "From $3,000", note: "20×20 flat roof · 10 ft · steel + install, before tax", img: "/images/double-carport-install.jpg", structure: "bolted" },
+        { label: "Turnkey + concrete", title: "Pad and carport. One contract.", body: "Plan the pad and the carport together. We handle site prep, concrete and the steel structure under one contract, itemized so you can see exactly what’s included.", price: "Quoted to scope", note: "Concrete priced separately · 3,000 PSI std, 4,000 on request", img: "/images/carport-truck-concrete-hero.jpg", concrete: "yes" },
+      ],
+      techHeading: "Sized for your site, not a catalog.",
+      specs: [
+        { k: "Framing", v: "14-gauge red iron standard" },
+        { k: "Heavy-duty upgrade", v: "11-gauge columns, welded to receivers & purlins" },
+        { k: "Panels", v: "PBR / PBU on Galvalume®" },
+        { k: "Finish", v: "40-year painted finish" },
+        { k: "Sizes", v: "Single, double, commercial — your dimensions" },
+        { k: "Concrete", v: "3,000 PSI standard · 4,000 PSI on request" },
+      ],
+      related: ["metal-fencing", "gates"],
+    },
   },
 
   // ─── GAP 1: Turnkey + Concrete ───────────────────────────────────────────
@@ -222,7 +373,11 @@ export const SERVICES: Record<string, ServiceData> = {
       'welded-vs-bolted-metal-buildings-central-texas',
       'blackland-prairie-soil-metal-building-foundation',
     ],
+    quoteService: 'carport',
+    galleryTypes: ["Carport"],
+    galleryTag: 'Turnkey',
   },
+
 
   // ─── Metal Garages ───────────────────────────────────────────────────────
   'metal-garages': {
@@ -259,9 +414,9 @@ export const SERVICES: Record<string, ServiceData> = {
           'Don\'t want to source your own concrete crew? We pour the pad, install the garage, and hand you the keys — one invoice.',
       },
       {
-        title: '12-Gauge Storm Upgrade',
+        title: 'Heavy-Duty Upgrade',
         description:
-          'Upgrade from 14-gauge to 12-gauge steel for maximum durability in Central Texas hail country. Ideal for insured structures.',
+          'Standard framing is 14-gauge. The heavy-duty upgrade adds 11-gauge columns, welded to the receivers and purlins.',
       },
       {
         title: 'Insulation Ready',
@@ -289,7 +444,10 @@ export const SERVICES: Record<string, ServiceData> = {
     militaryAngle: false,
     relatedSlugs: ['carports', 'turnkey-carports-with-concrete', 'barns'],
     relatedPosts: ['welded-vs-bolted-metal-buildings-central-texas'],
+    quoteService: 'garage',
+    galleryTypes: ["Garage"],
   },
+
 
   // ─── Barns ───────────────────────────────────────────────────────────────
   barns: {
@@ -308,7 +466,7 @@ export const SERVICES: Record<string, ServiceData> = {
       {
         title: 'Welded Red Iron Framing',
         description:
-          '14-gauge or 12-gauge red iron steel, welded on-site. Permanent, storm-proof, and built to last decades without bolt connections loosening.',
+          '14-gauge red iron steel with an optional 11-gauge heavy-duty column upgrade, welded on-site. Permanent, storm-proof, and built to last decades without bolt connections loosening.',
       },
       {
         title: 'Any Configuration',
@@ -356,7 +514,10 @@ export const SERVICES: Record<string, ServiceData> = {
     militaryAngle: false,
     relatedSlugs: ['turnkey-carports-with-concrete', 'metal-garages', 'carports'],
     relatedPosts: ['welded-vs-bolted-metal-buildings-central-texas'],
+    quoteService: 'barn',
+    galleryTypes: ["Barn"],
   },
+
 
   // ─── GAP 3: Speed + Military ─────────────────────────────────────────────
   'rv-covers': {
@@ -373,8 +534,8 @@ export const SERVICES: Record<string, ServiceData> = {
       "Custom RV and boat covers across Central Texas — same-week scheduling, military discount, concrete available.",
     heroHeadline: 'RV & Boat Covers — Same-Week Installs, Texas Hail Won\'t Wait',
     heroCopy:
-      "Texas hail season doesn't send a calendar invite. A single storm can total an unprotected RV or boat in minutes. Triple J Metal builds tall-clearance RV and boat covers for Central Texas properties — most jobs are scheduled and on-site within days of your approval. If you just bought an RV, just PCS'd to Fort Cavazos, or just had a close call with hail — call us today.",
-    mainBenefit: 'Same-week installs beat every competitor in Central Texas. Military discount available for Fort Cavazos families.',
+      "Texas hail season doesn't send a calendar invite. A single storm can total an unprotected RV or boat in minutes. Triple J Metal builds tall-clearance RV and boat covers for Central Texas properties — with same-week scheduling once your build is approved. If you just bought an RV, just PCS'd to Fort Cavazos, or just had a close call with hail — call us today.",
+    mainBenefit: 'Same-week scheduling. Military discount available for Fort Cavazos families.',
     features: [
   {
     "title": "Tall Clearance for Class A & Class C RVs",
@@ -424,7 +585,10 @@ export const SERVICES: Record<string, ServiceData> = {
     ],
     militaryAngle: true,
     relatedSlugs: ['carports', 'turnkey-carports-with-concrete', 'hoa-compliant-structures'],
+    quoteService: 'rv_cover',
+    galleryTypes: ["RV Cover"],
   },
+
 
   // ─── GAP 4: HOA / Luxury Subdivision ────────────────────────────────────
   'hoa-compliant-structures': {
@@ -451,9 +615,9 @@ export const SERVICES: Record<string, ServiceData> = {
           'The architectural siding standard for luxury residential construction — available in the same color palette as your primary home\'s exterior for seamless matching.',
       },
       {
-        title: '12-Gauge Storm Upgrade',
+        title: 'Heavy-Duty Upgrade',
         description:
-          'Premium structures deserve premium steel. 12-gauge framing provides greater rigidity and meets the structural requirements of HOA engineering reviews.',
+          'For premium structures, the heavy-duty upgrade adds 11-gauge columns, welded to the receivers and purlins. The rest of the frame stays 14-gauge.',
       },
       {
         title: 'Low Disruption — Same-Week Build',
@@ -497,5 +661,21 @@ export const SERVICES: Record<string, ServiceData> = {
     relatedPosts: ['hoa-compliant-metal-buildings-heritage-oaks-bella-charca'],
   },
 }
+
+/**
+ * One photo per service for the services index cards and the hero of service
+ * pages without Forge content. See src/app/(marketing)/services/page.tsx for
+ * where each one came from and how to find better candidates.
+ */
+export const SERVICE_PHOTOS: Record<string, string> = {
+  carports: "https://idrbgxlvvnqduvbqtaei.supabase.co/storage/v1/object/public/gallery/1777195148318.jpg",
+  "turnkey-carports-with-concrete": "https://idrbgxlvvnqduvbqtaei.supabase.co/storage/v1/object/public/gallery/1777195038839.jpeg",
+  "metal-garages": "/images/metal-garage-green.jpg",
+  barns: "https://idrbgxlvvnqduvbqtaei.supabase.co/storage/v1/object/public/gallery/1777195257805.jpg",
+  "rv-covers": "https://idrbgxlvvnqduvbqtaei.supabase.co/storage/v1/object/public/gallery/1777195863079.jpg",
+  "hoa-compliant-structures": "https://idrbgxlvvnqduvbqtaei.supabase.co/storage/v1/object/public/gallery/1777194918087.jpg",
+  "metal-fencing": "/images/metal-fence-ranch-wire.webp",
+  gates: "/images/metal-fence-ranch-wire.webp",
+};
 
 export const SERVICE_SLUGS = Object.keys(SERVICES)

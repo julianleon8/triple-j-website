@@ -11,3 +11,16 @@ describe("gallery URL filters", () => {
     }
   });
 });
+
+describe("filter counts", () => {
+  it("counts each filter and hides the empty ones", async () => {
+    const { filtersWithCounts } = await import("./gallery-filters");
+    const counts = filtersWithCounts(["Carport", "Carport", "Barn", "Porch Cover"]);
+    expect(counts.map((f) => [f.slug, f.count])).toEqual([
+      ["all", 4],
+      ["carports", 2],
+      ["barns", 1],
+      ["patios", 1],
+    ]);
+  });
+});

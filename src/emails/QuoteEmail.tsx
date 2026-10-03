@@ -41,49 +41,49 @@ export default function QuoteEmail({
 }: QuoteEmailProps) {
   return (
     <BrandLayout preview={`Your quote ${quoteNumber} from Triple J Metal — ${customerName}`}>
-      <Heading as="h2" style={{ fontSize: 20, fontWeight: 700, margin: '0 0 8px', color: '#111827' }}>
+      <Heading as="h2" style={{ fontSize: 20, fontWeight: 700, margin: '0 0 8px', color: '#00182a' }}>
         Quote {quoteNumber}
       </Heading>
-      <Text style={{ color: '#374151', margin: '0 0 20px' }}>
+      <Text style={{ color: '#33475a', margin: '0 0 20px' }}>
         Hi {customerName}, here is your quote from Triple J Metal LLC. Review the details below and
         click the button to accept or decline.
       </Text>
 
-      <Section style={{ border: '1px solid #e5e7eb', borderRadius: 6, overflow: 'hidden', marginBottom: 16 }}>
-        <Row style={{ backgroundColor: '#f9fafb', borderBottom: '1px solid #e5e7eb' }}>
-          <Column style={{ padding: '10px 16px', fontSize: 11, fontWeight: 700, color: '#6b7280', textTransform: 'uppercase', width: '55%' }}>Description</Column>
-          <Column style={{ padding: '10px 8px', fontSize: 11, fontWeight: 700, color: '#6b7280', textTransform: 'uppercase', textAlign: 'center', width: '15%' }}>Qty</Column>
-          <Column style={{ padding: '10px 8px', fontSize: 11, fontWeight: 700, color: '#6b7280', textTransform: 'uppercase', textAlign: 'right', width: '15%' }}>Unit</Column>
-          <Column style={{ padding: '10px 16px', fontSize: 11, fontWeight: 700, color: '#6b7280', textTransform: 'uppercase', textAlign: 'right', width: '15%' }}>Total</Column>
+      <Section style={{ border: '1px solid #e3e9ee', borderRadius: 6, overflow: 'hidden', marginBottom: 16 }}>
+        <Row style={{ backgroundColor: '#f4f6f8', borderBottom: '1px solid #e3e9ee' }}>
+          <Column style={{ padding: '10px 16px', fontSize: 11, fontWeight: 700, color: '#546678', textTransform: 'uppercase', width: '55%' }}>Description</Column>
+          <Column style={{ padding: '10px 8px', fontSize: 11, fontWeight: 700, color: '#546678', textTransform: 'uppercase', textAlign: 'center', width: '15%' }}>Qty</Column>
+          <Column style={{ padding: '10px 8px', fontSize: 11, fontWeight: 700, color: '#546678', textTransform: 'uppercase', textAlign: 'right', width: '15%' }}>Unit</Column>
+          <Column style={{ padding: '10px 16px', fontSize: 11, fontWeight: 700, color: '#546678', textTransform: 'uppercase', textAlign: 'right', width: '15%' }}>Total</Column>
         </Row>
         {lineItems.map((item, i) => (
-          <Row key={i} style={{ borderBottom: '1px solid #f3f4f6' }}>
-            <Column style={{ padding: '10px 16px', fontSize: 14, color: '#111827' }}>{item.description}</Column>
-            <Column style={{ padding: '10px 8px', fontSize: 14, color: '#374151', textAlign: 'center' }}>{item.quantity}</Column>
-            <Column style={{ padding: '10px 8px', fontSize: 14, color: '#374151', textAlign: 'right' }}>${item.unit_price.toFixed(2)}</Column>
-            <Column style={{ padding: '10px 16px', fontSize: 14, color: '#111827', textAlign: 'right' }}>${item.total_price.toFixed(2)}</Column>
+          <Row key={i} style={{ borderBottom: '1px solid #eef2f5' }}>
+            <Column style={{ padding: '10px 16px', fontSize: 14, color: '#00182a' }}>{item.description}</Column>
+            <Column style={{ padding: '10px 8px', fontSize: 14, color: '#33475a', textAlign: 'center' }}>{item.quantity}</Column>
+            <Column style={{ padding: '10px 8px', fontSize: 14, color: '#33475a', textAlign: 'right' }}>${item.unit_price.toFixed(2)}</Column>
+            <Column style={{ padding: '10px 16px', fontSize: 14, color: '#00182a', textAlign: 'right' }}>${item.total_price.toFixed(2)}</Column>
           </Row>
         ))}
       </Section>
 
       <Section style={{ marginBottom: 24 }}>
         <Row>
-          <Column style={{ textAlign: 'right', paddingRight: 16, fontSize: 13, color: '#6b7280' }}>Subtotal</Column>
-          <Column style={{ width: 120, textAlign: 'right', fontSize: 13, color: '#374151' }}>${subtotal.toFixed(2)}</Column>
+          <Column style={{ textAlign: 'right', paddingRight: 16, fontSize: 13, color: '#546678' }}>Subtotal</Column>
+          <Column style={{ width: 120, textAlign: 'right', fontSize: 13, color: '#33475a' }}>${subtotal.toFixed(2)}</Column>
         </Row>
         {taxAmount > 0 && (
           <Row>
-            <Column style={{ textAlign: 'right', paddingRight: 16, fontSize: 13, color: '#6b7280' }}>Tax (8.25%)</Column>
-            <Column style={{ width: 120, textAlign: 'right', fontSize: 13, color: '#374151' }}>${taxAmount.toFixed(2)}</Column>
+            <Column style={{ textAlign: 'right', paddingRight: 16, fontSize: 13, color: '#546678' }}>Tax (8.25%)</Column>
+            <Column style={{ width: 120, textAlign: 'right', fontSize: 13, color: '#33475a' }}>${taxAmount.toFixed(2)}</Column>
           </Row>
         )}
         <Row>
-          <Column style={{ textAlign: 'right', paddingRight: 16, fontSize: 16, fontWeight: 700, color: '#111827', paddingTop: 8 }}>Total</Column>
-          <Column style={{ width: 120, textAlign: 'right', fontSize: 16, fontWeight: 700, color: '#111827', paddingTop: 8 }}>${total.toFixed(2)}</Column>
+          <Column style={{ textAlign: 'right', paddingRight: 16, fontSize: 16, fontWeight: 700, color: '#00182a', paddingTop: 8 }}>Total</Column>
+          <Column style={{ width: 120, textAlign: 'right', fontSize: 16, fontWeight: 700, color: '#00182a', paddingTop: 8 }}>${total.toFixed(2)}</Column>
         </Row>
       </Section>
 
-      <Text style={{ color: '#6b7280', fontSize: 13, margin: '0 0 20px' }}>
+      <Text style={{ color: '#546678', fontSize: 13, margin: '0 0 20px' }}>
         This quote is valid until{' '}
         <strong>
           {new Date(validUntil).toLocaleDateString('en-US', {
@@ -96,8 +96,8 @@ export default function QuoteEmail({
       </Text>
 
       {notes && (
-        <Section style={{ backgroundColor: '#f9fafb', borderRadius: 6, padding: 16, marginBottom: 24 }}>
-          <Text style={{ color: '#374151', fontSize: 13, margin: 0 }}>{notes}</Text>
+        <Section style={{ backgroundColor: '#f4f6f8', borderRadius: 6, padding: 16, marginBottom: 24 }}>
+          <Text style={{ color: '#33475a', fontSize: 13, margin: 0 }}>{notes}</Text>
         </Section>
       )}
 

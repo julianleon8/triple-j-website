@@ -1,19 +1,23 @@
 import type { Metadata } from 'next'
-import Image from 'next/image'
 import Link from 'next/link'
 
-import { Container } from '@/components/ui/Container'
-import { Reveal } from '@/components/ui/Reveal'
-import { ButtonLink } from '@/components/ui/Button'
-import { QuoteForm } from '@/components/sections/QuoteForm'
-import { TrustBar } from '@/components/sections/TrustBar'
+import { Breadcrumb } from '@/components/forge/Breadcrumb'
+import { RuleList } from '@/components/forge/cards'
+import { ForgeButtonLink } from '@/components/forge/ForgeButton'
+import { ForgeReveal } from '@/components/forge/ForgeReveal'
+import { MilitaryCalculator } from '@/components/forge/MilitaryCalculator'
+import { PageHero } from '@/components/forge/PageHero'
+import { QuoteSection } from '@/components/forge/QuoteSection'
+import { SectionHeading } from '@/components/forge/SectionHeading'
+import { buttonClass } from '@/components/forge/styles'
 import { BreadcrumbJsonLd } from '@/components/seo/BreadcrumbJsonLd'
-import { TrackedPhoneButtonLink } from '@/components/site/TrackedPhone'
+import { TrackedPhoneLink, TrackedPhoneNumber } from '@/components/site/TrackedPhone'
+import { LOCATIONS } from '@/lib/locations'
 import { getSiteUrl } from '@/lib/site-url'
 import { SITE } from '@/lib/site'
 
 /**
- * /military — Fort Cavazos PCS-season landing page.
+ * /military — Fort Cavazos PCS-season landing page (Forge, olive + tan accents).
  *
  * Discoverable as a footer link + intentionally NOT in the header nav
  * (per 2026-04-24 decision: keep focused for paid search/social ad
@@ -23,6 +27,11 @@ import { SITE } from '@/lib/site'
  * Military discount: 7% off every install for active-duty, retired,
  * Reserve/Guard, and first responders. Confirmed 2026-04-24.
  *
+ * Not shipped from the design (D18, 2026-10-02): the "stacks with whatever
+ * else we're running" line, per-city drive times to the main gate, and the
+ * placeholder Fort Cavazos testimonial — none is verified. A real review from
+ * testimonials.md can take the right-hand slot of the Hablamos español band.
+ *
  * Schema: per-page @graph with a Service node scoped to the Fort Cavazos
  * catchment + a WebPage node referencing the canonical LocalBusiness +
  * Organization graph emitted by the marketing layout. See
@@ -31,49 +40,64 @@ import { SITE } from '@/lib/site'
 
 const MILITARY_DISCOUNT_PCT = 7
 
+// Every catchment city has a location page; the tile shows its county.
 const FORT_CAVAZOS_CATCHMENT = [
-  { slug: 'killeen', name: 'Killeen', distance: '15 min from Cavazos main gate' },
-  { slug: 'harker-heights', name: 'Harker Heights', distance: '10 min from Cavazos main gate' },
-  { slug: 'copperas-cove', name: 'Copperas Cove', distance: '20 min from Cavazos main gate' },
-  { slug: 'nolanville', name: 'Nolanville', distance: '12 min from Cavazos main gate' },
-  { slug: 'belton', name: 'Belton', distance: '25 min from Cavazos main gate' },
+  { slug: 'harker-heights', name: 'Harker Heights' },
+  { slug: 'nolanville', name: 'Nolanville' },
+  { slug: 'killeen', name: 'Killeen' },
+  { slug: 'copperas-cove', name: 'Copperas Cove' },
+  { slug: 'belton', name: 'Belton', featured: true },
 ] as const
 
 const PCS_SCENARIOS = [
   {
     eyebrow: 'Pre-deployment',
     title: 'Protect the truck before you ship out.',
-    body: "Welded carport installed before your deployment date so the truck doesn't sit in Texas sun and hail for 9 to 12 months. Spouse comes home to a covered driveway, not a cracked dashboard.",
+    body: 'A welded carport installed before your deployment date, so the truck doesn’t sit in Texas sun and hail for 9 to 12 months.',
   },
   {
     eyebrow: 'TDY-friendly',
-    title: "Cover for the spouse's vehicle during TDY.",
-    body: "Quick-install bolted carport sized for the daily-driver — so weather doesn't add to the mental load while you're traveling for training. We coordinate the build week with the household, not the deployment cycle.",
+    title: 'Cover the spouse’s vehicle during TDY.',
+    body: 'A quick-install bolted carport sized for the daily driver. We coordinate build week with the household, not the deployment cycle.',
   },
   {
     eyebrow: 'Overseas tour',
-    title: 'RV / boat storage during a 2-3 year tour.',
-    body: 'Welded RV cover or fully-enclosed garage so the toys ride out the tour under steel — not a tarp that fails in a Bell County hailstorm. We size for what you own, not for what fits a national kit.',
+    title: 'RV or boat storage for a 2–3 year tour.',
+    body: 'A welded RV cover or enclosed garage so the toys ride out the tour under steel — not a tarp that fails in a Bell County hailstorm.',
   },
 ] as const
 
+// Step 1 keeps the locked response promise ("within 24 hours"); same-day
+// wording belongs to /quote only.
 const TIMELINE_STEPS = [
   {
-    n: '1',
-    title: 'Same-day callback',
-    body: `Call ${SITE.phone} or send a quote request. Juan or Julian gets back to you the same day — usually within an hour during business hours.`,
+    title: 'Callback within 24 hours',
+    body: `Call ${SITE.phone} or send a quote request. Juan or Julian gets back to you within 24 hours.`,
   },
   {
-    n: '2',
-    title: 'Site visit (or photo walk-through)',
-    body: 'On-site visit at your home or rental, OR a video walk-through if you\'re still PCSing in. We measure the lot, talk size + style + concrete, and email the quote that day.',
+    title: 'Site visit or video walk-through',
+    body: 'On-site at your home or rental — or a video walk-through if you’re still PCSing in. We measure, talk size, style and concrete, and email the quote that day.',
   },
   {
-    n: '3',
-    title: 'Build week scheduled around your orders',
-    body: "Most installs land same-week to the week after — built around PCS arrivals, deployment dates, and TDY blocks. We don't overpromise, and we don't disappear.",
+    title: 'Build week around your orders',
+    body: 'Most installs land same-week to the week after — built around PCS arrivals, deployment dates and TDY blocks. We don’t overpromise, and we don’t disappear.',
   },
 ] as const
+
+const MORE_FOR_FAMILIES = [
+  { href: '/blog/fort-cavazos-pcs-metal-carport', label: 'How military families get a metal carport on military timelines' },
+  { href: '/locations/killeen', label: 'Metal carports in Killeen, TX' },
+  { href: '/locations/harker-heights', label: 'Metal carports in Harker Heights, TX' },
+  { href: '/blog/bell-county-metal-building-permit-guide-2025', label: 'Bell County permit guide (Killeen + Harker Heights)' },
+] as const
+
+const pad = 'py-[clamp(64px,7vw,104px)]'
+const wrap = 'mx-auto w-full max-w-[1360px] px-[clamp(20px,3vw,40px)]'
+const split =
+  'mx-auto grid w-full max-w-[1360px] grid-cols-[repeat(auto-fit,minmax(min(100%,420px),1fr))] gap-[clamp(32px,4vw,80px)] px-[clamp(20px,3vw,40px)]'
+const badge =
+  'inline-flex h-[30px] items-center rounded-full border px-3 text-[11px] font-bold uppercase tracking-[.18em]'
+const lede = 'text-[clamp(16px,.3vw_+_14px,18px)] leading-[1.65] text-forge-slate'
 
 export const metadata: Metadata = {
   // The root layout's `%s | Triple J Metal` template adds the brand — never
@@ -101,7 +125,10 @@ function jsonLd(baseUrl: string) {
   const cities = FORT_CAVAZOS_CATCHMENT.map((c) => ({
     '@type': 'City',
     name: `${c.name}, TX`,
-    containedInPlace: { '@type': 'AdministrativeArea', name: 'Bell County, Texas' },
+    containedInPlace: {
+      '@type': 'AdministrativeArea',
+      name: `${LOCATIONS[c.slug]?.county ?? 'Bell County'}, Texas`,
+    },
   }))
 
   return {
@@ -165,7 +192,7 @@ function jsonLd(baseUrl: string) {
 export default function MilitaryPage() {
   const baseUrl = getSiteUrl()
   return (
-    <div data-theme="military">
+    <div data-forge="">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
@@ -174,333 +201,228 @@ export default function MilitaryPage() {
       />
       <BreadcrumbJsonLd items={[{ name: 'Fort Cavazos Military', path: '/military' }]} />
 
-      {/* ── Hero ───────────────────────────────────────────────────────── */}
-      <section className="relative bg-ink-900 text-white py-20 md:py-28 overflow-hidden">
-        <div className="absolute inset-0 -z-10">
-          <Image
-            src="/images/carport-truck-concrete-hero.jpg"
-            alt="Welded metal carport over a pickup truck on a residential property near Fort Cavazos, Texas"
-            fill
-            priority
-            sizes="100vw"
-            className="object-cover opacity-30"
-          />
-          {/* Light-tactical overlay — faint digital-camo tile behind the
-              dark gradient so the hero reads "tactical" without becoming a
-              literal camo wallpaper. Opacity stays low (~10%) to preserve
-              text legibility. */}
-          <div
-            aria-hidden="true"
-            className="absolute inset-0 bg-mil-camo opacity-10 mix-blend-overlay"
-          />
-          <div
-            className="absolute inset-0"
-            style={{
-              background:
-                'linear-gradient(135deg, rgba(0,0,0,0.92) 0%, rgba(15,23,42,0.85) 50%, rgba(75,83,32,0.35) 100%)',
-            }}
-            aria-hidden="true"
-          />
-        </div>
-        <div className="hero-glow absolute inset-0 pointer-events-none" aria-hidden="true" />
-        <Container className="relative">
-          <div className="max-w-3xl">
-            <div className="flex flex-wrap items-center gap-2 mb-5">
-              <span className="inline-flex items-center gap-1.5 rounded-full bg-[color:var(--color-accent-red)]/20 border border-[color:var(--color-accent-red)]/40 px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.18em] text-[color:var(--color-accent-red)]">
-                Fort Cavazos
-              </span>
-              <span className="inline-flex items-center gap-1.5 rounded-full bg-white/10 border border-white/20 px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.18em] text-white">
-                {MILITARY_DISCOUNT_PCT}% Military Discount Honored
-              </span>
-            </div>
-            <h1 className="font-display font-extrabold uppercase tracking-tight text-white text-4xl sm:text-5xl md:text-6xl leading-[1.05]">
-              Fort Cavazos Carports —{' '}
-              <span className="text-[color:var(--color-brand-400)]">Same-Week Installs</span> for
-              PCS Families
-            </h1>
-            <p className="mt-6 text-lg md:text-xl text-white/80 max-w-2xl leading-relaxed">
-              Welded or bolted carports, RV covers, and garages built around your orders, with
-              same-week scheduling. Local Temple crew, 25 minutes from the Cavazos main gate. Hablamos
-              español con Juan y Freddy.
-            </p>
-            <div className="mt-8 flex flex-wrap items-center gap-3">
-              <ButtonLink
-                href="#quote"
-                variant="primary"
-                size="lg"
-                className="!bg-white !text-[color:var(--color-ink-900)] hover:!bg-white/90"
-              >
-                Get my PCS quote
-              </ButtonLink>
-              <TrackedPhoneButtonLink
-                surface="military_hero"
-                variant="outline-dark"
-                size="lg"
-              />
-            </div>
-            <p className="mt-5 text-sm text-white/55">
-              Active-duty · Retired · Reserve/Guard · First responders — all eligible. Mention your
-              service when you call or check the box on the quote form.
-            </p>
+      {/* 1 · Hero */}
+      <PageHero
+        size="military"
+        scrim="military"
+        image={{
+          src: '/images/carport-truck-concrete-hero.jpg',
+          alt: 'Welded metal carport over a pickup truck near Fort Cavazos, Texas',
+        }}
+        breadcrumb={<Breadcrumb trail={[{ name: 'Military' }]} current="Fort Cavazos" jsonLd={false} />}
+        contentMax="max-w-[820px]"
+        above={
+          <div className="flex flex-wrap gap-2">
+            <span className={`${badge} border-forge-tan/60 bg-forge-olive/45 text-forge-tan-light`}>Fort Cavazos</span>
+            <span className={`${badge} border-white/30 bg-white/8 text-white`}>
+              {MILITARY_DISCOUNT_PCT}% military discount honored
+            </span>
           </div>
-        </Container>
-      </section>
+        }
+        h1a="Fort Cavazos carports."
+        h1b="Same-week for PCS families."
+        ledeMax="max-w-[640px]"
+        lede="Welded or bolted carports, RV covers and garages built around your orders, with same-week scheduling. Local Temple crew, 30 min from Killeen. Hablamos español con Juan y Freddy."
+        actions={
+          <>
+            <ForgeButtonLink href="#quote" variant="white" size="lg" arrow>
+              Get my PCS quote
+            </ForgeButtonLink>
+            <TrackedPhoneLink surface="military_hero" mode="children-only" className={buttonClass('outlineDark', 'lg')}>
+              Call <TrackedPhoneNumber className="tabular-nums" />
+            </TrackedPhoneLink>
+          </>
+        }
+        after={
+          <p className="mt-[18px] text-[14px] text-white/72">
+            Active-duty · Retired · Reserve/Guard · First responders — all eligible.
+          </p>
+        }
+      />
 
-      <TrustBar />
-
-      {/* ── PCS Orders Don't Wait ──────────────────────────────────────── */}
-      <section className="py-20 md:py-28 bg-white">
-        <Container>
-          <Reveal className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-start">
-            <div>
-              <span className="text-xs font-semibold uppercase tracking-[0.18em] text-brand-600">
-                Same-week scheduling
+      {/* 2 · PCS + discount panel */}
+      <section data-forge="" data-tone="light" className={`bg-white ${pad} text-forge-navy`}>
+        <div className={`${split} items-start`}>
+          <ForgeReveal>
+            <SectionHeading
+              eyebrow="Same-week scheduling"
+              eyebrowTone="military"
+              line1="PCS orders don’t wait."
+              line2="Neither do we."
+            />
+            <p className={`mt-[18px] max-w-[580px] ${lede}`}>
+              Wait in a long build queue and your household goods show up first. The truck’s sat through a Texas
+              summer, and the spouse is improvising shade with a tarp.
+            </p>
+            <p className={`mt-3.5 max-w-[580px] ${lede}`}>
+              We’re a local Temple crew, 30 minutes from Killeen. Most installs land within a week of approval —
+              concrete poured the same week, structure built the next. Built around the PCS calendar, not a franchise
+              wait list.
+            </p>
+          </ForgeReveal>
+          <ForgeReveal className="overflow-hidden rounded-[12px] border border-forge-silver bg-forge-fog">
+            <div className="flex items-center gap-4 bg-forge-olive px-[26px] py-6 text-white">
+              <span className="inline-flex size-[60px] flex-none items-center justify-center rounded-full border-2 border-forge-tan font-forge-display text-[20px] font-black">
+                {MILITARY_DISCOUNT_PCT}%
               </span>
-              <h2 className="mt-3 font-display font-extrabold uppercase tracking-tight text-[color:var(--color-ink-900)] text-4xl sm:text-5xl md:text-6xl leading-[1.05]">
-                PCS orders don&apos;t wait. Neither do we.
-              </h2>
-              <p className="mt-6 text-lg leading-relaxed text-[color:var(--color-ink-700)]">
-                Wait in a long build queue and your household goods show up first. The truck&apos;s
-                sat through a Texas summer, and the spouse is improvising shade with a tarp.
-              </p>
-              <p className="mt-4 text-lg leading-relaxed text-[color:var(--color-ink-700)]">
-                Triple J Metal is a local Temple crew, 25 minutes from the Cavazos main gate. Most
-                installs land within a week of approval — concrete poured the same week, structure
-                built the next. Built around the PCS calendar, not the franchise wait list.
-              </p>
-            </div>
-            <div className="rounded-2xl border border-[color:var(--color-ink-200)] bg-[color:var(--color-ink-50)] p-7 md:p-9">
-              <div className="flex items-center gap-3 mb-4">
-                <div className="h-12 w-12 rounded-full bg-[color:var(--color-brand-600)] text-white flex items-center justify-center font-extrabold text-xl">
-                  {MILITARY_DISCOUNT_PCT}%
-                </div>
-                <h3 className="font-display font-extrabold uppercase tracking-tight text-2xl text-[color:var(--color-ink-900)]">
-                  Fort Cavazos Military Discount
+              <div>
+                <p className="text-[11px] font-bold uppercase tracking-[.2em] text-forge-tan-light">Off every install</p>
+                <h3 className="mt-1 font-forge-display text-[clamp(20px,.8vw_+_14px,26px)] font-black leading-[1.15]">
+                  Fort Cavazos military discount
                 </h3>
               </div>
-              <p className="text-[15px] leading-relaxed text-[color:var(--color-ink-700)]">
-                <strong>{MILITARY_DISCOUNT_PCT}% off every install</strong> for active-duty,
-                retired, Reserve/Guard, and first responders connected to Fort Cavazos. Stacks with
-                whatever else we&apos;re running — no fine print, no expiration, no &ldquo;valid on
-                select sizes only.&rdquo;
+            </div>
+            <div className="px-[26px] pt-6 pb-[26px]">
+              <p className="text-[15px] leading-[1.65] text-forge-navy">
+                For active-duty, retired, Reserve/Guard and first responders.
               </p>
-              <ul className="mt-5 space-y-2.5 text-[15px] text-[color:var(--color-ink-700)]">
-                <li className="flex gap-2.5">
-                  <span className="text-brand-600 font-bold">·</span>
-                  Honored on welded, bolted, and turnkey-with-concrete builds.
-                </li>
-                <li className="flex gap-2.5">
-                  <span className="text-brand-600 font-bold">·</span>
-                  Honored on RV covers, boat covers, and fully-enclosed garages.
-                </li>
-                <li className="flex gap-2.5">
-                  <span className="text-brand-600 font-bold">·</span>
-                  Verified by service ID, military email, or DD-214 — your call.
-                </li>
-              </ul>
+              <MilitaryCalculator pct={MILITARY_DISCOUNT_PCT} />
+              <RuleList
+                tone="tan"
+                className="mt-5 !gap-2.5"
+                itemClassName="text-[14px] text-forge-navy"
+                items={[
+                  'Welded, bolted and turnkey-with-concrete builds',
+                  'RV covers, boat covers and enclosed garages',
+                  'Verified by service ID, military email or DD-214',
+                ]}
+              />
             </div>
-          </Reveal>
-        </Container>
+          </ForgeReveal>
+        </div>
       </section>
 
-      {/* ── Common PCS scenarios ───────────────────────────────────────── */}
-      <section className="py-20 md:py-24 bg-[color:var(--color-ink-50)]">
-        <Container>
-          <Reveal>
-            <span className="text-xs font-semibold uppercase tracking-[0.18em] text-brand-600">
-              PCS scenarios we build for
-            </span>
-            <h2 className="mt-3 font-display font-extrabold uppercase tracking-tight text-[color:var(--color-ink-900)] text-4xl sm:text-5xl leading-[1.05] max-w-3xl">
-              We&apos;ve built for every PCS season since we opened.
-            </h2>
-          </Reveal>
-          <div className="mt-12 grid md:grid-cols-3 gap-6">
+      {/* 3 · PCS scenarios */}
+      <section data-forge="" data-tone="light" className={`bg-forge-fog ${pad} text-forge-navy`}>
+        <div className={wrap}>
+          <ForgeReveal className="max-w-[780px]">
+            <SectionHeading
+              eyebrow="PCS scenarios we build for"
+              eyebrowTone="military"
+              line1="Every PCS season since we opened."
+              balance
+            />
+          </ForgeReveal>
+          <ForgeReveal stagger className="mt-11 grid grid-cols-[repeat(auto-fit,minmax(min(100%,300px),1fr))] gap-4">
             {PCS_SCENARIOS.map((s) => (
-              <Reveal key={s.title}>
-                <div className="h-full rounded-2xl bg-white border border-[color:var(--color-ink-200)] p-7 hover:border-[color:var(--color-brand-400)] transition-colors">
-                  <span className="text-[10px] font-bold uppercase tracking-[0.18em] text-[color:var(--color-accent-red)]">
-                    {s.eyebrow}
-                  </span>
-                  <h3 className="mt-3 font-display font-extrabold uppercase tracking-tight text-xl text-[color:var(--color-ink-900)]">
-                    {s.title}
-                  </h3>
-                  <p className="mt-3 text-[15px] leading-relaxed text-[color:var(--color-ink-700)]">
-                    {s.body}
-                  </p>
-                </div>
-              </Reveal>
-            ))}
-          </div>
-        </Container>
-      </section>
-
-      {/* ── Service area ───────────────────────────────────────────────── */}
-      <section className="py-20 md:py-24 bg-white">
-        <Container>
-          <Reveal>
-            <span className="text-xs font-semibold uppercase tracking-[0.18em] text-brand-600">
-              Where we build
-            </span>
-            <h2 className="mt-3 font-display font-extrabold uppercase tracking-tight text-[color:var(--color-ink-900)] text-4xl sm:text-5xl leading-[1.05] max-w-3xl">
-              Every city in the Fort Cavazos catchment.
-            </h2>
-            <p className="mt-5 text-lg leading-relaxed text-[color:var(--color-ink-700)] max-w-2xl">
-              Killeen and Harker Heights are our highest-volume military markets. We also build for
-              Cavazos families across the rest of Bell County and into Coryell County for Copperas
-              Cove.
-            </p>
-          </Reveal>
-          <div className="mt-10 grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
-            {FORT_CAVAZOS_CATCHMENT.map((c) => (
-              <Link
-                key={c.slug}
-                href={`/locations/${c.slug}`}
-                className="group rounded-xl border border-[color:var(--color-ink-200)] bg-[color:var(--color-ink-50)] p-5 hover:border-[color:var(--color-brand-400)] hover:bg-white transition-colors"
+              <div
+                key={s.title}
+                className="rounded-[12px] border border-t-[3px] border-forge-silver border-t-forge-olive bg-white px-[26px] pt-[26px] pb-7"
               >
-                <div className="font-display font-extrabold uppercase tracking-tight text-lg text-[color:var(--color-ink-900)] group-hover:text-[color:var(--color-brand-600)]">
-                  {c.name}, TX
-                </div>
-                <div className="mt-1 text-xs text-[color:var(--color-ink-500)]">{c.distance}</div>
-              </Link>
+                <p className="text-[11px] font-bold uppercase tracking-[.2em] text-forge-olive">{s.eyebrow}</p>
+                <h3 className="mt-2.5 font-forge-display text-[20px] font-bold leading-[1.25] text-forge-navy">{s.title}</h3>
+                <p className="mt-2.5 text-[15px] leading-[1.65] text-forge-slate">{s.body}</p>
+              </div>
             ))}
-          </div>
-        </Container>
+          </ForgeReveal>
+        </div>
       </section>
 
-      {/* ── Approval/site-visit timeline ───────────────────────────────── */}
-      <section className="py-20 md:py-24 bg-ink-900 text-white">
-        <div className="hero-glow absolute" aria-hidden="true" />
-        <Container className="relative">
-          <Reveal>
-            <span className="text-xs font-semibold uppercase tracking-[0.18em] text-[color:var(--color-brand-400)]">
-              How it works on a military timeline
-            </span>
-            <h2 className="mt-3 font-display font-extrabold uppercase tracking-tight text-white text-4xl sm:text-5xl leading-[1.05] max-w-3xl">
-              Quote to keys, built around your orders.
-            </h2>
-          </Reveal>
-          <div className="mt-12 grid md:grid-cols-3 gap-6">
-            {TIMELINE_STEPS.map((s) => (
-              <Reveal key={s.n}>
-                <div className="rounded-2xl border border-white/10 bg-white/5 p-7 h-full">
-                  <div className="text-5xl font-display font-extrabold text-[color:var(--color-brand-400)]">
-                    {s.n}
-                  </div>
-                  <h3 className="mt-3 font-display font-extrabold uppercase tracking-tight text-xl text-white">
-                    {s.title}
-                  </h3>
-                  <p className="mt-3 text-[15px] leading-relaxed text-white/70">{s.body}</p>
-                </div>
-              </Reveal>
+      {/* 4 · Catchment */}
+      <section data-forge="" data-tone="light" className={`bg-white ${pad} text-forge-navy`}>
+        <div className={wrap}>
+          <ForgeReveal className="max-w-[780px]">
+            <SectionHeading
+              eyebrow="Where we build"
+              eyebrowTone="military"
+              line1="Every city in the Cavazos catchment."
+              balance
+              ledeMax="max-w-[640px]"
+              lede="Killeen and Harker Heights are our highest-volume military markets. We also build for Cavazos families across Bell County and into Coryell County."
+            />
+          </ForgeReveal>
+          <ForgeReveal className="mt-10 grid grid-cols-[repeat(auto-fit,minmax(min(100%,200px),1fr))] gap-3">
+            {FORT_CAVAZOS_CATCHMENT.map((c) => {
+              const featured = 'featured' in c && c.featured
+              return (
+                <Link
+                  key={c.slug}
+                  href={`/locations/${c.slug}`}
+                  className={`block rounded-[12px] border p-5 transition-colors duration-200 ${
+                    featured
+                      ? 'border-forge-navy bg-white hover:bg-forge-fog'
+                      : 'border-forge-silver bg-forge-fog hover:border-forge-steel hover:bg-white'
+                  }`}
+                >
+                  <span className="block font-forge-display text-[19px] font-bold text-forge-navy">
+                    {c.name}
+                    {featured ? <span aria-hidden="true"> →</span> : null}
+                  </span>
+                  <span className="mt-1.5 block text-[13px] text-forge-slate">{LOCATIONS[c.slug]?.county}</span>
+                </Link>
+              )
+            })}
+          </ForgeReveal>
+        </div>
+      </section>
+
+      {/* 5 · On a military timeline (navy) */}
+      <section data-forge="" data-tone="dark" className={`bg-forge-navy ${pad} text-white`}>
+        <div className={wrap}>
+          <ForgeReveal className="max-w-[780px]">
+            <SectionHeading
+              tone="dark"
+              eyebrow="On a military timeline"
+              eyebrowTone="militaryDark"
+              line1="Quote to keys,"
+              line2="built around your orders."
+            />
+          </ForgeReveal>
+          <ForgeReveal stagger className="mt-11 grid grid-cols-[repeat(auto-fit,minmax(min(100%,300px),1fr))] gap-4">
+            {TIMELINE_STEPS.map((s, i) => (
+              <div key={s.title} className="rounded-[12px] border border-forge-silver/20 bg-forge-navy-raised p-[26px]">
+                <span className="font-forge-display text-[44px] font-black leading-none text-forge-tan">{i + 1}</span>
+                <h3 className="mt-3.5 font-forge-display text-[20px] font-bold text-white">{s.title}</h3>
+                <p className="mt-2.5 text-[15px] leading-[1.65] text-white/75">{s.body}</p>
+              </div>
             ))}
-          </div>
-        </Container>
+          </ForgeReveal>
+        </div>
       </section>
 
-      {/* ── Bilingual ──────────────────────────────────────────────────── */}
-      <section className="py-16 bg-[color:var(--color-ink-50)]">
-        <Container>
-          <Reveal className="max-w-3xl">
-            <span className="text-xs font-semibold uppercase tracking-[0.18em] text-brand-600">
-              Hablamos español
-            </span>
-            <h2 className="mt-3 font-display font-extrabold uppercase tracking-tight text-[color:var(--color-ink-900)] text-3xl sm:text-4xl leading-[1.1]">
-              Bilingual crew for Fort Cavazos&apos; multilingual community.
-            </h2>
-            <p className="mt-5 text-lg leading-relaxed text-[color:var(--color-ink-700)]">
-              Military spouses and families come from every background. Juan and Freddy run quotes,
-              site visits, and the build itself in Spanish or English — no language barrier between
-              you and the people building your structure.
+      {/* 6 · Hablamos español. The design's testimonial figure waits for a
+          real review (testimonials.md); until then the slot carries the
+          internal links the old page ended on. */}
+      <section data-forge="" data-tone="light" className={`bg-forge-fog ${pad} text-forge-navy`}>
+        <div className={`${split} items-center`}>
+          <ForgeReveal>
+            <SectionHeading
+              eyebrow="Hablamos español"
+              eyebrowTone="military"
+              size="compact"
+              balance
+              line1="A bilingual crew for a multilingual post."
+            />
+            <p className={`mt-4 max-w-[560px] ${lede}`}>
+              Military families come from every background. Juan and Freddy run quotes, site visits and the build
+              itself in Spanish or English — no language barrier between you and the people building your structure.
             </p>
-          </Reveal>
-        </Container>
-      </section>
-
-      {/* ── PCS testimonial ────────────────────────────────────────────── */}
-      <section className="py-20 md:py-24 bg-white">
-        <Container>
-          <Reveal className="max-w-3xl mx-auto text-center">
-            <span className="text-xs font-semibold uppercase tracking-[0.18em] text-brand-600">
-              From a Fort Cavazos family
-            </span>
-            <blockquote className="mt-6 text-2xl md:text-3xl font-display font-bold text-[color:var(--color-ink-900)] leading-snug">
-              &ldquo;PCSed to Fort Cavazos in July. Needed cover for my truck before the heat
-              destroyed the paint. Juan came out himself for the walk-through and had us scheduled
-              the same week.&rdquo;
-            </blockquote>
-            <div className="mt-6 text-sm uppercase tracking-[0.18em] font-semibold text-[color:var(--color-ink-500)]">
-              PCS truck cover · Killeen, TX
-            </div>
-          </Reveal>
-        </Container>
-      </section>
-
-      {/* ── Quote form CTA ─────────────────────────────────────────────── */}
-      <section id="quote" className="py-20 md:py-28 bg-ink-900 text-white scroll-mt-20">
-        <Container>
-          <Reveal className="max-w-3xl mx-auto text-center mb-12">
-            <span className="text-xs font-semibold uppercase tracking-[0.18em] text-[color:var(--color-brand-400)]">
-              Same-day callback
-            </span>
-            <h2 className="mt-3 font-display font-extrabold uppercase tracking-tight text-white text-4xl sm:text-5xl leading-[1.05]">
-              Get your Fort Cavazos quote.
-            </h2>
-            <p className="mt-5 text-lg text-white/75 leading-relaxed">
-              The military discount box is pre-checked below — verify the rest and we&apos;ll be in
-              touch the same day with timeline + pricing.
-            </p>
-          </Reveal>
-          <QuoteForm initialMilitary />
-        </Container>
-      </section>
-
-      {/* ── Related reading ────────────────────────────────────────────── */}
-      <section className="py-16 bg-[color:var(--color-ink-50)] border-t border-[color:var(--color-ink-200)]">
-        <Container>
-          <Reveal className="max-w-3xl">
-            <span className="text-xs font-semibold uppercase tracking-[0.18em] text-brand-600">
-              More for Cavazos families
-            </span>
-            <h3 className="mt-3 font-display font-extrabold uppercase tracking-tight text-[color:var(--color-ink-900)] text-2xl sm:text-3xl">
-              Articles + city pages
-            </h3>
-            <ul className="mt-6 space-y-3 text-[15px] text-[color:var(--color-ink-700)]">
-              <li>
-                <Link
-                  href="/blog/fort-cavazos-pcs-metal-carport"
-                  className="hover:text-[color:var(--color-brand-600)] transition-colors underline underline-offset-4"
-                >
-                  How military families get a metal carport on military timelines
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/locations/killeen"
-                  className="hover:text-[color:var(--color-brand-600)] transition-colors underline underline-offset-4"
-                >
-                  Metal carports in Killeen, TX — Fort Cavazos page
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/locations/harker-heights"
-                  className="hover:text-[color:var(--color-brand-600)] transition-colors underline underline-offset-4"
-                >
-                  Metal carports in Harker Heights, TX — military discount details
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/blog/bell-county-metal-building-permit-guide-2025"
-                  className="hover:text-[color:var(--color-brand-600)] transition-colors underline underline-offset-4"
-                >
-                  Bell County permit guide (Killeen + Harker Heights specifics)
-                </Link>
-              </li>
+          </ForgeReveal>
+          <ForgeReveal className="rounded-[12px] border border-forge-silver bg-white p-[clamp(24px,2.4vw,40px)]">
+            <p className="text-[11px] font-bold uppercase tracking-[.2em] text-forge-olive">More for Cavazos families</p>
+            <ul className="mt-3 flex flex-col">
+              {MORE_FOR_FAMILIES.map((l) => (
+                <li key={l.href} className="border-b border-forge-mist last:border-b-0">
+                  <Link
+                    href={l.href}
+                    className="group flex min-h-11 items-center justify-between gap-4 py-3 text-[15px] font-semibold text-forge-navy"
+                  >
+                    <span className="border-b border-transparent transition-colors group-hover:border-forge-navy">
+                      {l.label}
+                    </span>
+                    <span aria-hidden="true" className="text-forge-steel transition-transform group-hover:translate-x-0.5">
+                      →
+                    </span>
+                  </Link>
+                </li>
+              ))}
             </ul>
-          </Reveal>
-        </Container>
+          </ForgeReveal>
+        </div>
       </section>
+
+      {/* 7 · Quote — discount box arrives pre-checked */}
+      <QuoteSection initialMilitary />
     </div>
   )
 }

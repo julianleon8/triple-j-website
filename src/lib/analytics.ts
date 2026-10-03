@@ -36,6 +36,9 @@ export type AnalyticsEvent =
   | 'quote_form_failed'
   // Partner (B2B) form.
   | 'partner_inquiry_submitted'
+  // Contact page message form (MessageForm.tsx). Its lead also fires the
+  // server-side lead_created, like a quote.
+  | 'contact_message_submitted'
 
 /** Server-side event, sent from /api/leads once the lead row exists. The
  *  canonical conversion: it counts every saved lead, ad blocker or not. */

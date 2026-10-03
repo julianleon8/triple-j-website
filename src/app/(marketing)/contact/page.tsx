@@ -1,13 +1,17 @@
 import { BreadcrumbJsonLd } from '@/components/seo/BreadcrumbJsonLd'
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import { Container } from '@/components/ui/Container'
-import { ButtonLink } from '@/components/ui/Button'
-import { QuoteForm } from '@/components/sections/QuoteForm'
-import { TrackedPhoneLink } from '@/components/site/TrackedPhone'
-import { ALL_CITY_SLUGS } from '@/lib/city-links'
-import { LOCATIONS } from '@/lib/locations'
-import { SITE } from '@/lib/site'
+import type { ReactNode } from 'react'
+
+import { Breadcrumb } from '@/components/forge/Breadcrumb'
+import { Chip } from '@/components/forge/Chip'
+import { Eyebrow } from '@/components/forge/Eyebrow'
+import { MessageForm } from '@/components/forge/MessageForm'
+import { MapBand } from '@/components/forge/misc'
+import { PageHero } from '@/components/forge/PageHero'
+import { ClockIcon, MailIcon, PhoneIcon, PinIcon } from '@/components/ui/icons'
+import { TrackedPhoneLink, TrackedPhoneNumber } from '@/components/site/TrackedPhone'
+import { SERVICE_CITIES, SITE } from '@/lib/site'
 import { getSiteUrl } from '@/lib/site-url'
 
 export const metadata: Metadata = {
@@ -41,176 +45,157 @@ function jsonLd(baseUrl: string) {
   }
 }
 
-export default function ContactPage() {
-  const baseUrl = getSiteUrl()
+function ReachRow({
+  icon,
+  dark = false,
+  label,
+  value,
+  sub,
+}: {
+  icon: ReactNode
+  dark?: boolean
+  label: string
+  value: ReactNode
+  sub?: string
+}) {
   return (
     <>
+      <span
+        className={`inline-flex size-11 flex-none items-center justify-center rounded-[8px] ${
+          dark ? 'bg-forge-navy text-white' : 'bg-forge-mist text-forge-navy'
+        }`}
+      >
+        {icon}
+      </span>
+      <span className="flex min-w-0 flex-col gap-0.5">
+        <span className="text-[11px] font-bold uppercase tracking-[.2em] text-forge-slate">{label}</span>
+        {value}
+        {sub ? <span className="text-[14px] text-forge-slate">{sub}</span> : null}
+      </span>
+    </>
+  )
+}
+
+const rowCls = 'flex items-start gap-4 border-b border-forge-mist py-[22px]'
+const linkRowCls = `${rowCls} transition-colors duration-200 hover:bg-forge-fog`
+
+// Linked chips: the cities with a Forge page. The rest are plain chips.
+const LINKED_CITIES = ['temple', 'belton']
+const MAP_QUERY = encodeURIComponent(SITE.addressOneLine).replace(/%20/g, '+')
+
+export default function ContactPage() {
+  const baseUrl = getSiteUrl()
+  const plainCities = [
+    ...SERVICE_CITIES.filter((c) => !LINKED_CITIES.includes(c.slug)).map((c) => c.name.replace(/, TX$/, '')),
+    'Salado',
+    'Lampasas',
+  ]
+  return (
+    <div data-forge="">
       <BreadcrumbJsonLd items={[{ name: 'Contact', path: '/contact' }]} />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd(baseUrl)).replace(/</g, '\\u003c') }}
       />
 
-      {/* ── Hero ── */}
-      <section className="relative bg-ink-900 text-white py-20 md:py-24 overflow-hidden">
-        <div className="hero-glow absolute inset-0 pointer-events-none" aria-hidden="true" />
-        <Container className="relative">
-          <div className="max-w-2xl">
-            <span className="text-xs font-semibold uppercase tracking-[0.15em] text-brand-400">
-              Contact Us
-            </span>
-            <h1 className="mt-3 text-white">Get in Touch — We Call Back Same Day</h1>
-            <p className="mt-5 text-lg text-white/75 leading-relaxed">
-              Have a question about your project? Ready for a quote? Call us directly or fill out
-              the form below. A real person from our Temple crew picks up or calls you back the same day.
-            </p>
-          </div>
-        </Container>
-      </section>
+      {/* 1 · Header (navy band) */}
+      <PageHero
+        variant="plain"
+        contentMax="max-w-[800px]"
+        breadcrumb={<Breadcrumb trail={[{ name: 'Company' }]} current="Contact" jsonLd={false} />}
+        eyebrow="Contact us"
+        h1a="Get in touch."
+        h1b="We call back same day."
+        lede="A question about your project, or ready for a quote? Call us directly or send a message. A real person from our Temple crew picks up — or calls you back the same day."
+      />
 
-      {/* ── Contact info + map ── */}
-      <section className="py-16 md:py-24 bg-white">
-        <Container>
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
-
-            {/* Left: contact details */}
-            <div>
-              <h2 className="mb-8">Reach Us Directly</h2>
-
-              <div className="space-y-6">
-                {/* Phone */}
-                <div className="flex items-start gap-4">
-                  <div className="w-10 h-10 rounded-lg bg-(--color-brand-600) flex items-center justify-center shrink-0">
-                    <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
-                    </svg>
-                  </div>
-                  <div>
-                    <div className="text-xs font-semibold uppercase tracking-wider text-ink-400 mb-1">Phone</div>
-                    <TrackedPhoneLink
-                      surface="contact_phone_card"
-                      className="text-2xl font-extrabold text-ink-900 hover:text-(--color-brand-600) transition-colors"
-                    />
-                    <p className="text-sm text-ink-500 mt-1">Same-day callback guaranteed</p>
-                  </div>
-                </div>
-
-                {/* Hours */}
-                <div className="flex items-start gap-4">
-                  <div className="w-10 h-10 rounded-lg bg-ink-100 flex items-center justify-center shrink-0">
-                    <svg className="w-5 h-5 text-ink-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                  </div>
-                  <div>
-                    <div className="text-xs font-semibold uppercase tracking-wider text-ink-400 mb-1">Hours</div>
-                    <div className="text-base font-bold text-ink-900">{SITE.hours}</div>
-                    <p className="text-sm text-ink-500 mt-1">Emergency quotes available by phone</p>
-                  </div>
-                </div>
-
-                {/* Address */}
-                <div className="flex items-start gap-4">
-                  <div className="w-10 h-10 rounded-lg bg-ink-100 flex items-center justify-center shrink-0">
-                    <svg className="w-5 h-5 text-ink-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                    </svg>
-                  </div>
-                  <div>
-                    <div className="text-xs font-semibold uppercase tracking-wider text-ink-400 mb-1">Location</div>
-                    <div className="text-base font-bold text-ink-900">
-                      {SITE.address.street}<br />
-                      {SITE.address.city}, {SITE.address.state} {SITE.address.zip}
-                    </div>
-                    <p className="text-sm text-ink-500 mt-1">Temple, TX — serving all of Central Texas</p>
-                  </div>
-                </div>
-
-                {/* Email */}
-                <div className="flex items-start gap-4">
-                  <div className="w-10 h-10 rounded-lg bg-ink-100 flex items-center justify-center shrink-0">
-                    <svg className="w-5 h-5 text-ink-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                    </svg>
-                  </div>
-                  <div>
-                    <div className="text-xs font-semibold uppercase tracking-wider text-ink-400 mb-1">Email</div>
-                    <a
-                      href={`mailto:${SITE.email}`}
-                      className="text-base font-bold text-ink-900 hover:text-(--color-brand-600) transition-colors"
-                    >
-                      {SITE.email}
-                    </a>
-                  </div>
-                </div>
-              </div>
-
-              {/* Service area note */}
-              <div className="mt-10 rounded-xl bg-ink-50 border border-ink-100 p-5">
-                <div className="text-xs font-semibold uppercase tracking-wider text-ink-400 mb-3">
-                  Service Area
-                </div>
-                <div className="flex flex-wrap gap-2">
-                  {ALL_CITY_SLUGS.map((slug) => (
-                    <Link
-                      key={slug}
-                      href={`/locations/${slug}`}
-                      className="text-xs font-medium bg-white border border-ink-200 text-ink-700 px-3 py-1 rounded-full hover:border-(--color-brand-400) hover:text-(--color-brand-700) transition-colors"
-                    >
-                      {LOCATIONS[slug].name}, TX
-                    </Link>
-                  ))}
-                </div>
-                <p className="text-xs text-ink-400 mt-3">
-                  Within ~90 minutes of Temple. Call to confirm your area.
-                </p>
-              </div>
-            </div>
-
-            {/* Right: Google Maps embed */}
-            <div>
-              <h2 className="mb-6">Find Us</h2>
-              <div className="rounded-2xl overflow-hidden border border-ink-200 aspect-[4/3] bg-ink-100">
-                <iframe
-                  title={`${SITE.name} location — ${SITE.addressOneLine}`}
-                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3432.0!2d-97.3428!3d31.0982!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMzHCsDA1JzUzLjUiTiA5N8KwMjAnMzQuMSJX!5e0!3m2!1sen!2sus!4v1700000000000!5m2!1sen!2sus"
-                  width="100%"
-                  height="100%"
-                  style={{ border: 0 }}
-                  allowFullScreen
-                  loading="lazy"
-                  referrerPolicy="no-referrer-when-downgrade"
+      {/* 2 · Reach us */}
+      <section data-forge="" data-tone="light" className="bg-white py-[clamp(56px,6vw,96px)] text-forge-navy">
+        <div className="mx-auto grid w-full max-w-[1360px] grid-cols-[repeat(auto-fit,minmax(min(100%,420px),1fr))] items-start gap-[clamp(32px,4vw,80px)] px-[clamp(20px,3vw,40px)]">
+          <div>
+            <Eyebrow>Reach us directly</Eyebrow>
+            <div className="mt-6 flex flex-col border-t border-forge-mist">
+              <TrackedPhoneLink surface="contact_reach" mode="children-only" className={linkRowCls}>
+                <ReachRow
+                  dark
+                  icon={<PhoneIcon width={20} height={20} aria-hidden="true" />}
+                  label="Phone · English & Español"
+                  value={
+                    <TrackedPhoneNumber className="font-forge-display text-[clamp(26px,1.4vw_+_16px,34px)] font-black tabular-nums text-forge-navy" />
+                  }
+                  sub="Same-day callback"
+                />
+              </TrackedPhoneLink>
+              <div className={rowCls}>
+                {/* "Emergency quotes" subline dropped: nothing in the vault supports it (D18). */}
+                <ReachRow
+                  icon={<ClockIcon width={20} height={20} aria-hidden="true" />}
+                  label="Hours"
+                  value={<span className="text-[17px] font-semibold">{SITE.hours}</span>}
                 />
               </div>
-              <p className="text-xs text-ink-400 mt-3 text-center">
-                {SITE.address.street} · {SITE.address.city}, {SITE.address.state} {SITE.address.zip}
-              </p>
+              <div className={rowCls}>
+                <ReachRow
+                  icon={<PinIcon width={20} height={20} aria-hidden="true" />}
+                  label="Shop"
+                  value={<span className="text-[17px] font-semibold">{SITE.addressOneLine}</span>}
+                  sub="Serving all of Central Texas"
+                />
+              </div>
+              <a href={SITE.emailHref} className={linkRowCls}>
+                <ReachRow
+                  icon={<MailIcon width={20} height={20} aria-hidden="true" />}
+                  label="Email"
+                  value={<span className="text-[17px] font-semibold [overflow-wrap:anywhere]">{SITE.email}</span>}
+                />
+              </a>
+            </div>
+            <div className="mt-7 rounded-[12px] border border-forge-silver bg-forge-fog p-5">
+              <p className="text-[11px] font-bold uppercase tracking-[.2em] text-forge-slate">Service area</p>
+              <div className="mt-3 flex flex-wrap gap-2">
+                {SERVICE_CITIES.filter((c) => LINKED_CITIES.includes(c.slug)).map((c) => (
+                  <Chip key={c.slug} size="sm" href={`/locations/${c.slug}`}>
+                    {c.name.replace(/, TX$/, '')} →
+                  </Chip>
+                ))}
+                {plainCities.map((c) => (
+                  <Chip key={c} size="sm">
+                    {c}
+                  </Chip>
+                ))}
+              </div>
+              <p className="mt-3 text-[13px] text-forge-slate">Within ~90 minutes of Temple. Call to confirm your area.</p>
             </div>
           </div>
-        </Container>
+          <MessageForm />
+        </div>
       </section>
 
-      {/* ── Quick CTA ── */}
-      <section className="py-12 bg-ink-50 border-t border-ink-100">
-        <Container className="text-center">
-          <p className="text-ink-600 text-lg mb-6">
-            Prefer a form? Fill out the quote request below and we&rsquo;ll call you back same day.
-          </p>
-          <ButtonLink href="#quote" variant="primary" size="lg">
-            Start Your Free Quote
-          </ButtonLink>
-          <p className="mt-8 text-sm text-ink-500 leading-relaxed">
-            Still deciding? <Link href="/services" className="font-semibold text-brand-700 underline underline-offset-4 hover:text-brand-800">See what we build</Link> or{' '}
-            <Link href="/gallery" className="font-semibold text-brand-700 underline underline-offset-4 hover:text-brand-800">browse recent projects</Link>. Supplier, dealer, or GC?{' '}
-            <Link href="/partners" className="font-semibold text-brand-700 underline underline-offset-4 hover:text-brand-800">Become an install partner</Link>.{' '}
-            Curious who calls you back? <Link href="/about" className="font-semibold text-brand-700 underline underline-offset-4 hover:text-brand-800">Meet the crew</Link>.
-          </p>
-        </Container>
+      {/* 3 · Map */}
+      <section data-forge="" data-tone="light" className="bg-forge-fog py-[clamp(48px,5vw,80px)] text-forge-navy">
+        <div className="mx-auto w-full max-w-[1360px] px-[clamp(20px,3vw,40px)]">
+          <MapBand
+            src={`https://www.google.com/maps?q=${MAP_QUERY}&output=embed`}
+            title={`${SITE.name} — ${SITE.addressOneLine}`}
+            callout={
+              <>
+                <p className="text-[11px] font-bold uppercase tracking-[.2em] text-forge-steel-light">Triple J shop · HQ</p>
+                <p className="mt-1.5 font-forge-display text-[18px] font-bold">
+                  {SITE.address.street}, {SITE.address.city}
+                </p>
+                <Link
+                  href={`https://www.google.com/maps/dir/?api=1&destination=${MAP_QUERY}`}
+                  target="_blank"
+                  rel="noopener"
+                  className="mt-2 inline-block text-[14px] font-semibold text-forge-silver transition-colors hover:text-white"
+                >
+                  Get directions →
+                </Link>
+              </>
+            }
+          />
+        </div>
       </section>
-
-      {/* ── Quote form ── */}
-      <QuoteForm />
-    </>
+    </div>
   )
 }

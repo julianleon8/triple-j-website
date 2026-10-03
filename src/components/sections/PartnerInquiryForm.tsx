@@ -3,9 +3,11 @@
 import { useRef, useState } from 'react'
 import dynamic from 'next/dynamic'
 import type HCaptcha from '@hcaptcha/react-hcaptcha'
-import { TrackedPhoneLink } from '@/components/site/TrackedPhone'
-import { SITE } from '@/lib/site'
+
+import { ToggleChip } from '@/components/forge/Chip'
+import { FieldLabel, PillGroup, SuccessPanel, TextArea, TextInput } from '@/components/forge/form'
 import { capture } from '@/lib/analytics'
+import { SITE } from '@/lib/site'
 
 // Lazy-load hCaptcha — splits the 20 KB widget into its own chunk that
 // only fetches when this form mounts (i.e. the user is on /partners).
@@ -18,70 +20,89 @@ const HCaptchaWidget = dynamic(
 
 const HCAPTCHA_SITE_KEY = process.env.NEXT_PUBLIC_HCAPTCHA_SITE_KEY
 
-type CompanyType = 'manufacturer' | 'supplier' | 'dealer' | 'gc' | 'developer' | 'architect' | 'other'
-type Volume = '' | 'exploring' | '1-5' | '6-20' | '20-50' | '50+'
+type CompanyType = 'supplier' | 'manufacturer' | 'dealer' | 'gc' | 'other'
 
-type FormState = {
-  company_name: string
+const COMPANY_TYPES: { v: CompanyType; label: string }[] = [
+  { v: 'supplier', label: 'Supplier' },
+  { v: 'manufacturer', label: 'Manufacturer' },
+  { v: 'dealer', label: 'Dealer' },
+  { v: 'gc', label: 'General contractor' },
+  { v: 'other', label: 'Other' },
+]
+
+export const COUNTIES = ['Bell', 'McLennan', 'Coryell', 'Williamson', 'Lampasas', 'Falls', 'Milam', 'Burnet'] as const
+const VOLUMES = ['1–2 jobs / mo', '3–5 jobs / mo', '6+ jobs / mo', 'Project by project'] as const
+
+export type PartnerInput = {
   company_type: CompanyType | ''
+  company_name: string
   contact_name: string
-  contact_role: string
-  email: string
   phone: string
-  message: string
-  estimated_volume: Volume
-  referral_source: string
+  email: string
+  counties: string[]
+  volume: string
+  notes: string
 }
 
-const COMPANY_TYPE_OPTIONS: { value: CompanyType; label: string }[] = [
-  { value: 'manufacturer', label: 'Manufacturer' },
-  { value: 'supplier',     label: 'Supplier' },
-  { value: 'dealer',       label: 'Dealer / sales rep' },
-  { value: 'gc',           label: 'Commercial GC' },
-  { value: 'developer',    label: 'Property developer' },
-  { value: 'architect',    label: 'Architect / designer' },
-  { value: 'other',        label: 'Other' },
-]
+/**
+ * The /api/partner-inquiries body. The schema has no columns for counties or
+ * volume, so both ride in `message` (which must be 10+ characters) — the
+ * owner alert and HQ Partners show it as written.
+ */
+export function buildPartnerPayload(p: PartnerInput, captchaToken: string | null) {
+  const head = [
+    `Counties: ${p.counties.length ? p.counties.join(', ') : 'none picked'}`,
+    p.volume ? `Volume: ${p.volume}` : '',
+  ].filter(Boolean).join(' · ')
+  return {
+    company_name: p.company_name.trim(),
+    company_type: p.company_type || 'other',
+    contact_name: p.contact_name.trim(),
+    email: p.email.trim(),
+    phone: p.phone.trim(),
+    message: [head, p.notes.trim()].filter(Boolean).join('\n\n').slice(0, 2000),
+    captcha_token: captchaToken ?? undefined,
+  }
+}
 
-const VOLUME_OPTIONS: { value: Exclude<Volume, ''>; label: string }[] = [
-  { value: 'exploring', label: 'Just exploring' },
-  { value: '1-5',       label: '1–5 jobs / year' },
-  { value: '6-20',      label: '6–20 jobs / year' },
-  { value: '20-50',     label: '20–50 jobs / year' },
-  { value: '50+',       label: '50+ jobs / year' },
-]
+/** The design allows phone or email; the API requires an email, so email it is. */
+export function canSendPartner(p: PartnerInput): boolean {
+  return p.company_name.trim().length >= 2 && p.contact_name.trim().length >= 2 && /\S+@\S+/.test(p.email)
+}
 
-const EMPTY: FormState = {
-  company_name: '',
+export function countyLine(counties: string[]): string {
+  if (!counties.length) return 'Central Texas'
+  return `${counties.join(', ')} ${counties.length === 1 ? 'County' : 'counties'}`
+}
+
+const EMPTY: PartnerInput = {
   company_type: '',
+  company_name: '',
   contact_name: '',
-  contact_role: '',
-  email: '',
   phone: '',
-  message: '',
-  estimated_volume: '',
-  referral_source: '',
+  email: '',
+  counties: ['Bell'],
+  volume: '',
+  notes: '',
 }
 
 export function PartnerInquiryForm() {
-  const [form, setForm] = useState<FormState>(EMPTY)
+  const [p, setP] = useState<PartnerInput>(EMPTY)
   const [status, setStatus] = useState<'idle' | 'submitting' | 'ok' | 'err'>('idle')
   const [errorMsg, setErrorMsg] = useState<string | null>(null)
   const [captchaToken, setCaptchaToken] = useState<string | null>(null)
   const captchaRef = useRef<HCaptcha | null>(null)
 
-  function update<K extends keyof FormState>(key: K, value: FormState[K]) {
-    setForm((f) => ({ ...f, [key]: value }))
-  }
+  const set = <K extends keyof PartnerInput>(k: K, v: PartnerInput[K]) => setP((cur) => ({ ...cur, [k]: v }))
+  const toggleCounty = (c: string) =>
+    setP((cur) => ({ ...cur, counties: cur.counties.includes(c) ? cur.counties.filter((x) => x !== c) : [...cur.counties, c] }))
 
   async function submit() {
     setErrorMsg(null)
-    if (!form.company_name.trim() || !form.contact_name.trim() || !form.email.trim() || !form.company_type || form.message.trim().length < 10) {
-      setErrorMsg('Please fill in company name, your name, email, company type, and a short message (10+ characters).')
-      return
-    }
+    if (!canSendPartner(p)) return
     if (HCAPTCHA_SITE_KEY && !captchaToken) {
       setErrorMsg('Please complete the captcha check below.')
+      setStatus('err')
       return
     }
     setStatus('submitting')
@@ -89,212 +110,113 @@ export function PartnerInquiryForm() {
       const res = await fetch('/api/partner-inquiries', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...form, captcha_token: captchaToken ?? undefined }),
+        body: JSON.stringify(buildPartnerPayload(p, captchaToken)),
       })
       if (!res.ok) {
         const data = await res.json().catch(() => ({}))
-        const message = typeof data?.error === 'string' ? data.error : `Submission failed. Please try again or call ${SITE.phone}.`
-        setErrorMsg(message)
+        setErrorMsg(typeof data?.error === 'string' ? data.error : `Submission failed. Please try again or call ${SITE.phone}.`)
         setStatus('err')
-        setCaptchaToken(null)
-        captchaRef.current?.resetCaptcha()
-        return
+      } else {
+        capture('partner_inquiry_submitted', { company_type: p.company_type || undefined })
+        setStatus('ok')
       }
-      capture('partner_inquiry_submitted', { company_type: form.company_type || undefined })
-      setStatus('ok')
-      setForm(EMPTY)
-      setCaptchaToken(null)
-      captchaRef.current?.resetCaptcha()
     } catch {
       setErrorMsg(`Network error. Please try again or call ${SITE.phone}.`)
       setStatus('err')
-      setCaptchaToken(null)
-      captchaRef.current?.resetCaptcha()
     }
+    setCaptchaToken(null)
+    captchaRef.current?.resetCaptcha()
   }
 
+  const card =
+    'rounded-[12px] border border-forge-silver bg-white p-[clamp(20px,2vw,32px)] text-forge-navy shadow-[var(--shadow-lifted)]'
+
   if (status === 'ok') {
+    const first = p.contact_name.trim().split(/\s+/)[0] || 'there'
     return (
-      <div className="rounded-2xl border border-emerald-200 bg-emerald-50 p-8 text-center">
-        <div className="text-3xl">🤝</div>
-        <h3 className="mt-3 text-xl font-bold text-emerald-900">We got it.</h3>
-        <p className="mt-2 text-sm text-emerald-800 max-w-md mx-auto">
-          Julian will be in touch within one business day. If it&apos;s urgent, call{' '}
-          <TrackedPhoneLink surface="partners_inquiry_success" className="font-bold underline" /> directly.
-        </p>
-        <button
-          type="button"
-          onClick={() => setStatus('idle')}
-          className="mt-6 text-sm font-semibold text-emerald-800 underline hover:text-emerald-900"
-        >
-          Send another inquiry
-        </button>
+      <div className={card}>
+        <SuccessPanel title="Inquiry received." resetLabel="Edit inquiry" onReset={() => setStatus('idle')}>
+          Thanks, {first}. Julian will reach back within one business day about installs in {countyLine(p.counties)}.
+        </SuccessPanel>
       </div>
     )
   }
 
   return (
-    <div className="rounded-2xl border border-ink-200 bg-white p-6 sm:p-8 shadow-sm">
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <Field label="Company name" required>
-          <input
-            type="text"
-            value={form.company_name}
-            onChange={(e) => update('company_name', e.target.value)}
-            className={inputCls}
-            placeholder="e.g. Capital Metal Buildings"
-            autoComplete="organization"
-          />
-        </Field>
-
-        <Field label="Company type" required>
-          <select
-            value={form.company_type}
-            onChange={(e) => update('company_type', e.target.value as CompanyType | '')}
-            className={inputCls}
-            aria-label="Company type"
-          >
-            <option value="">Select…</option>
-            {COMPANY_TYPE_OPTIONS.map((o) => (
-              <option key={o.value} value={o.value}>{o.label}</option>
+    <div className={card}>
+      <div className="flex flex-col gap-[22px]">
+        <PillGroup
+          label="You are a…"
+          options={COMPANY_TYPES}
+          value={p.company_type}
+          onChange={(v) => set('company_type', v)}
+        />
+        <div>
+          <FieldLabel as="p">Company &amp; contact</FieldLabel>
+          <div className="grid grid-cols-[repeat(auto-fit,minmax(min(100%,200px),1fr))] gap-2.5">
+            <TextInput placeholder="Company" aria-label="Company" autoComplete="organization" value={p.company_name} onChange={(e) => set('company_name', e.target.value)} />
+            <TextInput placeholder="Your name" aria-label="Your name" autoComplete="name" value={p.contact_name} onChange={(e) => set('contact_name', e.target.value)} />
+            <TextInput type="tel" placeholder="Phone" aria-label="Phone" autoComplete="tel" value={p.phone} onChange={(e) => set('phone', e.target.value)} />
+            <TextInput type="email" placeholder="Email" aria-label="Email" autoComplete="email" value={p.email} onChange={(e) => set('email', e.target.value)} />
+          </div>
+        </div>
+        <div>
+          <FieldLabel as="p">Counties you need covered</FieldLabel>
+          <div className="flex flex-wrap gap-2">
+            {COUNTIES.map((c) => (
+              <ToggleChip key={c} selected={p.counties.includes(c)} onToggle={() => toggleCounty(c)}>
+                {c}
+              </ToggleChip>
             ))}
-          </select>
-        </Field>
-
-        <Field label="Your name" required>
-          <input
-            type="text"
-            value={form.contact_name}
-            onChange={(e) => update('contact_name', e.target.value)}
-            className={inputCls}
-            autoComplete="name"
-            aria-label="Your name"
-          />
-        </Field>
-
-        <Field label="Your role / title">
-          <input
-            type="text"
-            value={form.contact_role}
-            onChange={(e) => update('contact_role', e.target.value)}
-            className={inputCls}
-            placeholder="e.g. Sales Manager"
-            autoComplete="organization-title"
-          />
-        </Field>
-
-        <Field label="Email" required>
-          <input
-            type="email"
-            value={form.email}
-            onChange={(e) => update('email', e.target.value)}
-            className={inputCls}
-            autoComplete="email"
-            aria-label="Email"
-          />
-        </Field>
-
-        <Field label="Phone">
-          <input
-            type="tel"
-            value={form.phone}
-            onChange={(e) => update('phone', e.target.value)}
-            className={inputCls}
-            autoComplete="tel"
-            aria-label="Phone"
-          />
-        </Field>
-
-        <Field label="Estimated volume in Central TX" className="sm:col-span-2">
-          <select
-            value={form.estimated_volume}
-            onChange={(e) => update('estimated_volume', e.target.value as Volume)}
-            className={inputCls}
-            aria-label="Estimated volume in Central TX"
-          >
-            <option value="">Select…</option>
-            {VOLUME_OPTIONS.map((o) => (
-              <option key={o.value} value={o.value}>{o.label}</option>
-            ))}
-          </select>
-        </Field>
-
-        <Field label="What kind of partnership are you looking for?" required className="sm:col-span-2">
-          <textarea
-            value={form.message}
-            onChange={(e) => update('message', e.target.value)}
-            className={`${inputCls} min-h-[140px] resize-y`}
-            placeholder="Tell us what your customers usually need installed, what part of Central Texas they're in, and how you'd want a partnership to work."
-          />
-        </Field>
-
-        <Field label="How did you hear about us?" className="sm:col-span-2">
-          <input
-            type="text"
-            value={form.referral_source}
-            onChange={(e) => update('referral_source', e.target.value)}
-            className={inputCls}
-            placeholder="Optional — Google, referral name, trade event, etc."
-          />
-        </Field>
-      </div>
-
-      {HCAPTCHA_SITE_KEY && (
-        <div className="mt-5 flex justify-center">
-          <HCaptchaWidget
-            ref={captchaRef}
-            sitekey={HCAPTCHA_SITE_KEY}
-            onVerify={(token) => setCaptchaToken(token)}
-            onExpire={() => setCaptchaToken(null)}
-            onError={() => setCaptchaToken(null)}
+          </div>
+        </div>
+        <PillGroup
+          label="Typical volume"
+          optional
+          allowDeselect
+          options={VOLUMES.map((v) => ({ v, label: v }))}
+          value={p.volume}
+          onChange={(v) => set('volume', v)}
+        />
+        <div>
+          <FieldLabel htmlFor="partner-notes" optional>
+            Anything else
+          </FieldLabel>
+          <TextArea
+            id="partner-notes"
+            rows={3}
+            maxLength={1500}
+            placeholder="Product lines, typical building sizes, timelines…"
+            value={p.notes}
+            onChange={(e) => set('notes', e.target.value)}
           />
         </div>
-      )}
-
-      {errorMsg && (
-        <div className="mt-5 rounded-lg bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-800">
-          {errorMsg}
-        </div>
-      )}
-
-      <div className="mt-6 flex flex-col sm:flex-row sm:items-center gap-4">
+        {HCAPTCHA_SITE_KEY ? (
+          <div className="flex justify-center">
+            <HCaptchaWidget
+              ref={captchaRef}
+              sitekey={HCAPTCHA_SITE_KEY}
+              theme="light"
+              onVerify={(t) => setCaptchaToken(t)}
+              onExpire={() => setCaptchaToken(null)}
+              onError={() => setCaptchaToken(null)}
+            />
+          </div>
+        ) : null}
+        {errorMsg ? (
+          <div role="alert" className="rounded-[8px] border border-forge-navy bg-forge-fog px-4 py-3 text-[14px] font-semibold">
+            {errorMsg}
+          </div>
+        ) : null}
         <button
           type="button"
           onClick={submit}
-          disabled={status === 'submitting'}
-          className="inline-flex items-center justify-center gap-2 h-12 px-6 rounded-lg bg-brand-600 text-white text-sm font-semibold hover:bg-brand-700 disabled:opacity-50 transition-colors"
+          disabled={status === 'submitting' || !canSendPartner(p)}
+          className="inline-flex w-full cursor-pointer items-center justify-center gap-2 rounded-[6px] bg-forge-navy px-[26px] py-[15px] text-[16px] font-semibold text-white transition-colors duration-200 hover:bg-forge-navy-raised disabled:cursor-not-allowed disabled:opacity-50"
         >
-          {status === 'submitting' ? 'Sending…' : 'Send Partner Inquiry'}
+          {status === 'submitting' ? 'Sending…' : 'Send Partner Inquiry'} <span aria-hidden="true">→</span>
         </button>
-        <p className="text-xs text-ink-500">
-          One business-day response. Direct line:{' '}
-          <TrackedPhoneLink surface="partners_inquiry_form" className="font-semibold text-brand-600 hover:underline" />.
-        </p>
       </div>
-    </div>
-  )
-}
-
-const inputCls =
-  'w-full rounded-lg border border-ink-200 bg-white px-3 py-2.5 text-sm text-ink-900 placeholder-ink-400 focus:outline-none focus:ring-2 focus:ring-brand-400'
-
-function Field({
-  label,
-  required,
-  children,
-  className,
-}: {
-  label: string
-  required?: boolean
-  children: React.ReactNode
-  className?: string
-}) {
-  return (
-    <div className={className}>
-      <label className="block text-xs font-semibold text-ink-700 mb-1.5">
-        {label} {required && <span className="text-red-500">*</span>}
-      </label>
-      {children}
     </div>
   )
 }

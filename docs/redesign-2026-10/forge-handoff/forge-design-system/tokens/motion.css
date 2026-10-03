@@ -1,0 +1,15 @@
+/* Forge — motion. One curve for everything; prefers-reduced-motion disables all of it. */
+:root {
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --dur-chip:     200ms; /* chip border/background */
+  --dur-filter:   250ms; /* gallery filter buttons */
+  --dur-ui:       300ms; /* tabs, card hover, mega chevron */
+  --dur-header:   350ms; /* header hide/show translateY */
+  --dur-progress: 500ms; /* step progress bar (ease-out) */
+  --dur-page:     500ms; /* page-enter: opacity 0→1, translateY 10px→0 */
+  --dur-reveal:   600ms; /* scroll reveal: opacity 0→1, translateY 16px→0 (one-shot) */
+  --dur-stagger:  700ms; /* card stagger: translateY 22px→0, +90ms per card */
+  --dur-hero:     900ms; /* homepage hero entrance, +100ms per element */
+  --dur-section-bg: 800ms; /* homepage main background crossfade between bands */
+  --ticker-speed: 40px;  /* per second; + scroll-velocity boost (×0.5, capped at 520px/s) */
+}

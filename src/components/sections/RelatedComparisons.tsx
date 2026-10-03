@@ -1,7 +1,5 @@
 import Link from 'next/link'
 
-import { Container } from '@/components/ui/Container'
-import { ArrowRightIcon } from '@/components/ui/icons'
 import {
   ALTERNATIVES_CONTENT,
   ALTERNATIVES_SLUGS,
@@ -21,6 +19,9 @@ type Props = {
  * Builds a topical authority cluster — every comparison page links to the
  * other 4, plus the local roundup. Improves dwell time + internal linking
  * signal for the comparison content category.
+ *
+ * Forge: white band (the fog quote band follows it), silver-framed white
+ * tiles; the local roundup tile is the navy one.
  */
 export function RelatedComparisons({ currentSlug }: Props) {
   const otherAlternatives = ALTERNATIVES_SLUGS.filter((s) => s !== currentSlug).map(
@@ -34,56 +35,63 @@ export function RelatedComparisons({ currentSlug }: Props) {
   return (
     <section
       aria-labelledby="related-comparisons-heading"
-      className="py-14 md:py-16 bg-(--color-brand-50) border-y border-(--color-brand-100)"
+      data-forge=""
+      data-tone="light"
+      className="bg-white py-[clamp(48px,5vw,80px)] text-forge-navy"
     >
-      <Container>
-        <div className="flex items-center gap-3 mb-6">
+      <div className="mx-auto w-full max-w-[1360px] px-[clamp(20px,3vw,40px)]">
+        <div className="mb-7 flex items-center gap-4">
           <span
             id="related-comparisons-heading"
-            className="text-xs font-bold uppercase tracking-[0.18em] text-(--color-brand-700)"
+            className="forge-eyebrow m-0 text-forge-slate"
           >
             Other Comparisons
           </span>
-          <span aria-hidden="true" className="h-px flex-1 bg-(--color-brand-200)" />
+          <span aria-hidden="true" className="h-px flex-1 bg-forge-mist" />
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="grid grid-cols-[repeat(auto-fit,minmax(min(100%,300px),1fr))] gap-4">
           {otherAlternatives.map((alt) => (
             <Link
               key={alt.slug}
               href={`/alternatives/${alt.slug}`}
-              className="group block rounded-xl border border-(--color-brand-100) bg-white p-5 hover:shadow-lg hover:-translate-y-0.5 transition-all"
+              className="group flex flex-col rounded-[12px] border border-forge-silver bg-white px-6 pt-6 pb-[22px] transition-colors duration-200 hover:border-forge-navy"
             >
-              <p className="text-[10px] font-bold uppercase tracking-wider text-(--color-brand-700) mb-2">
+              <p className="m-0 text-[11px] font-bold uppercase tracking-[.2em] text-forge-slate">
                 Alternative
               </p>
-              <h3 className="text-base font-extrabold text-ink-900 leading-snug group-hover:text-(--color-brand-700) transition-colors">
+              <h3 className="mt-2.5 font-forge-display text-[19px] font-bold leading-[1.25] text-forge-navy">
                 {alt.h1}
               </h3>
-              <span className="mt-3 inline-flex items-center gap-1.5 text-xs font-bold text-(--color-brand-600) group-hover:gap-2.5 transition-all">
-                Compare
-                <ArrowRightIcon className="h-3.5 w-3.5" />
+              <span className="mt-auto pt-4 text-[14px] font-semibold text-forge-navy">
+                Compare{' '}
+                <span aria-hidden="true" className="inline-block transition-transform duration-200 group-hover:translate-x-1">
+                  →
+                </span>
               </span>
             </Link>
           ))}
           {showRoundupLink && (
             <Link
               href="/best-metal-carport-builders-temple-tx"
-              className="group block rounded-xl border border-(--color-brand-300) bg-(--color-brand-100)/40 p-5 hover:shadow-lg hover:-translate-y-0.5 transition-all"
+              data-tone="dark"
+              className="group flex flex-col rounded-[12px] border border-forge-navy bg-forge-navy px-6 pt-6 pb-[22px] text-white transition-colors duration-200 hover:bg-forge-navy-raised"
             >
-              <p className="text-[10px] font-bold uppercase tracking-wider text-(--color-brand-700) mb-2">
+              <p className="m-0 text-[11px] font-bold uppercase tracking-[.2em] text-forge-silver">
                 Local Roundup
               </p>
-              <h3 className="text-base font-extrabold text-ink-900 leading-snug group-hover:text-(--color-brand-700) transition-colors">
+              <h3 className="mt-2.5 font-forge-display text-[19px] font-bold leading-[1.25] text-white">
                 Best Metal Carport Builders in Temple, TX
               </h3>
-              <span className="mt-3 inline-flex items-center gap-1.5 text-xs font-bold text-(--color-brand-600) group-hover:gap-2.5 transition-all">
-                See the roundup
-                <ArrowRightIcon className="h-3.5 w-3.5" />
+              <span className="mt-auto pt-4 text-[14px] font-semibold text-forge-silver group-hover:text-white">
+                See the roundup{' '}
+                <span aria-hidden="true" className="inline-block transition-transform duration-200 group-hover:translate-x-1">
+                  →
+                </span>
               </span>
             </Link>
           )}
         </div>
-      </Container>
+      </div>
     </section>
   )
 }
