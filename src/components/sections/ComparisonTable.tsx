@@ -1,6 +1,10 @@
 import Link from 'next/link'
 
 import { SectionHeading } from '@/components/forge/SectionHeading'
+import type { Locale } from '@/i18n/config'
+import { SHARED } from '@/i18n/copy/shared'
+import { COMPARISON_SECTIONS } from '@/i18n/pages/comparison-sections'
+import { localizeHref } from '@/i18n/routes'
 import { COMPETITORS, type ComparisonRow, type CompetitorSlug } from '@/lib/competitors'
 
 type Props = {
@@ -18,6 +22,8 @@ type Props = {
   subheading?: string
   /** Band background, so the host page can keep the white/fog rhythm. */
   tone?: 'white' | 'fog'
+  /** Language of the labels around the table (row copy arrives in `rows`). */
+  locale?: Locale
 }
 
 // TODO(hearth): once Hearth Financial Services integrates, the
@@ -26,12 +32,13 @@ type Props = {
 // page so the comparison table renders an "as low as $X/mo" cell.
 
 // Forge status marks. The glyph carries the meaning (✓ ✗ ~ —), so no
-// red/green is needed; Triple J's "yes" is the only filled navy mark.
+// red/green is needed; Triple J's "yes" is the only filled navy mark. The
+// label (the cell's aria-label) is SHARED[locale].table[status].
 const STATUS_STYLES = {
-  yes: { icon: '✓', cls: 'border-forge-slate bg-forge-slate text-white', label: 'Yes' },
-  no: { icon: '✗', cls: 'border-forge-steel bg-white text-forge-slate', label: 'No' },
-  partial: { icon: '~', cls: 'border-forge-steel-light bg-forge-mist text-forge-slate', label: 'Partial' },
-  unknown: { icon: '—', cls: 'border-forge-mist bg-white text-forge-steel', label: 'Unknown' },
+  yes: { icon: '✓', cls: 'border-forge-slate bg-forge-slate text-white' },
+  no: { icon: '✗', cls: 'border-forge-steel bg-white text-forge-slate' },
+  partial: { icon: '~', cls: 'border-forge-steel-light bg-forge-mist text-forge-slate' },
+  unknown: { icon: '—', cls: 'border-forge-mist bg-white text-forge-steel' },
 } as const
 
 const SELF_YES = 'border-forge-navy bg-forge-navy text-white'
@@ -55,7 +62,10 @@ export function ComparisonTable({
   heading,
   subheading,
   tone = 'white',
+  locale = 'en',
 }: Props) {
+  const t = SHARED[locale].table
+  const copy = COMPARISON_SECTIONS[locale].table
   const competitors = competitorSlugs
     .map((slug) => COMPETITORS[slug])
     .filter(Boolean)
@@ -90,7 +100,7 @@ export function ComparisonTable({
                   scope="col"
                   className="min-w-[180px] px-5 py-4 text-left align-bottom text-[11px] font-bold uppercase tracking-[.2em] text-forge-steel-light"
                 >
-                  Feature
+                  {copy.feature}
                 </th>
                 {competitors.map((c) => {
                   const isSelf = c.type === 'self'
@@ -121,7 +131,7 @@ export function ComparisonTable({
                           isSelf ? 'text-forge-silver' : 'text-forge-steel-light'
                         }`}
                       >
-                        {c.type === 'self' ? 'This is us' : c.type === 'national-kit' ? 'National kit' : 'Local builder'}
+                        {c.type === 'self' ? t.self : c.type === 'national-kit' ? t.nationalKit : t.localBuilder}
                       </div>
                     </th>
                   )
@@ -168,7 +178,7 @@ export function ComparisonTable({
                         >
                           <div className="flex items-start gap-2.5">
                             <span
-                              aria-label={style.label}
+                              aria-label={t[status]}
                               className={`inline-flex h-6 w-6 flex-none items-center justify-center rounded-full border text-[13px] font-bold leading-none ${mark}`}
                             >
                               {style.icon}
@@ -190,15 +200,12 @@ export function ComparisonTable({
         </div>
 
         <p className="mt-6 max-w-[760px] text-[12px] leading-[1.6] text-forge-slate">
-          Comparison based on each company&rsquo;s public website information as of the date below.
-          Where a competitor&rsquo;s public materials don&rsquo;t document a feature, the cell shows
-          &ldquo;—&rdquo; (unknown). We update this comparison quarterly or when competitors ship
-          significant changes. Sources cited above link to each company&rsquo;s public site.{' '}
+          {copy.disclaimer}{' '}
           <Link
-            href="/contact"
+            href={localizeHref('/contact', locale)}
             className="border-b border-forge-silver font-semibold text-forge-navy transition-colors hover:border-forge-navy"
           >
-            Spot something inaccurate? Let us know.
+            {copy.report}
           </Link>
         </p>
       </div>

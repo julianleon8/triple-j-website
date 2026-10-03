@@ -4,24 +4,18 @@ import { RoundupPage } from '@/components/pages/RoundupPage'
 import { localeAlternates, ogLocale } from '@/i18n/metadata'
 import { ROUNDUP } from '@/i18n/pages/roundup'
 
-/**
- * /best-metal-carport-builders-temple-tx. The page body is
- * src/components/pages/RoundupPage.tsx (shared with
- * /es/mejores-constructores-de-cocheras-temple-tx); copy is
- * src/i18n/pages/roundup.ts.
- */
-
-const t = ROUNDUP.en.meta
+const t = ROUNDUP.es.meta
 
 export const metadata: Metadata = {
   title: t.title,
   description: t.description,
-  alternates: localeAlternates('/best-metal-carport-builders-temple-tx', 'en'),
+  alternates: localeAlternates('/best-metal-carport-builders-temple-tx', 'es'),
   openGraph: {
     title: t.ogTitle,
     description: t.ogDescription,
+    url: '/es/mejores-constructores-de-cocheras-temple-tx',
     type: 'article',
-    ...ogLocale('en'),
+    ...ogLocale('es'),
   },
   twitter: {
     card: 'summary_large_image',
@@ -31,5 +25,5 @@ export const metadata: Metadata = {
 }
 
 export default function Page() {
-  return <RoundupPage locale="en" />
+  return <RoundupPage locale="es" />
 }

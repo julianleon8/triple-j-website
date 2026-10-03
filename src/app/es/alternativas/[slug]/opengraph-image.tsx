@@ -3,27 +3,22 @@ import { renderAlternativesOgCard } from '@/lib/alternatives-og'
 import { ALTERNATIVES_SLUGS } from '@/lib/competitors'
 import { OG_CONTENT_TYPE, OG_SIZE } from '@/lib/og-card'
 
-/**
- * Per-comparison OG card — each page's own H1 and hero subhead from
- * src/lib/competitors.ts. The pages set both `openGraph` and `twitter` without
- * images, so they shared no image at all before this.
- */
+/** /es/alternativas/[slug] OG card: the Spanish twin of /alternatives/[slug] (src/lib/alternatives-og.ts). */
 
 export const size = OG_SIZE
 export const contentType = OG_CONTENT_TYPE
-export const alt = ALTERNATIVES.en.og.alt
+export const alt = ALTERNATIVES.es.og.alt
 
-// Prerender one card per comparison at build time rather than on first crawl.
+// Competitor slugs are brand names, the same in both languages.
 export function generateStaticParams() {
   return ALTERNATIVES_SLUGS.map((slug) => ({ slug }))
 }
 
-// `params` is a Promise as of Next 16 — awaiting it is required, not optional.
 export default async function AlternativesOpenGraphImage({
   params,
 }: {
   params: Promise<{ slug: string }>
 }) {
   const { slug } = await params
-  return renderAlternativesOgCard(slug, 'en')
+  return renderAlternativesOgCard(slug, 'es')
 }

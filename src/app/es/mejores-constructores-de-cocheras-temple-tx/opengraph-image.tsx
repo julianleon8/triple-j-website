@@ -1,22 +1,19 @@
 import { ROUNDUP } from '@/i18n/pages/roundup'
 import { OG_CONTENT_TYPE, OG_SIZE, renderOgCard } from '@/lib/og-card'
 
-/**
- * Roundup OG card — the page's own H1 and share description. The page sets
- * both `openGraph` and `twitter` without images, so it shared no image at all.
- */
+/** /es/mejores-constructores-de-cocheras-temple-tx OG card: the Spanish twin of the roundup (src/i18n/pages/roundup.ts). */
 
 export const size = OG_SIZE
 export const contentType = OG_CONTENT_TYPE
-export const alt = ROUNDUP.en.og.alt
+export const alt = ROUNDUP.es.og.alt
 
 export default function RoundupOpenGraphImage() {
-  const t = ROUNDUP.en.og
+  const t = ROUNDUP.es.og
   return renderOgCard({
     eyebrow: t.eyebrow,
     headline: t.headline,
     accent: t.accent,
     subhead: t.subhead,
-    path: '/best-metal-carport-builders-temple-tx',
+    path: '/es/mejores-constructores-de-cocheras-temple-tx',
   })
 }

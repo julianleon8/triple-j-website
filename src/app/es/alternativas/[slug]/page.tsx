@@ -2,34 +2,32 @@ import type { Metadata } from 'next'
 
 import { AlternativesPage } from '@/components/pages/AlternativesPage'
 import { localeAlternates, ogLocale } from '@/i18n/metadata'
-import { ALTERNATIVES_SLUGS, getAlternativesContent } from '@/lib/competitors'
+import { localizeHref } from '@/i18n/routes'
+import { ALTERNATIVES_SLUGS } from '@/lib/competitors'
+import { getAlternativesContent } from '@/lib/competitors.es'
 import { SITE } from '@/lib/site'
 
-/**
- * /alternatives/[slug]. The page body is
- * src/components/pages/AlternativesPage.tsx (shared with
- * /es/alternativas/[slug]); the comparison content is src/lib/competitors.ts.
- */
-
+// Competitor slugs are brand names, the same in both languages.
 export async function generateStaticParams() {
   return ALTERNATIVES_SLUGS.map((slug) => ({ slug }))
 }
 
 export async function generateMetadata(
-  { params }: PageProps<'/alternatives/[slug]'>,
+  { params }: PageProps<'/es/alternativas/[slug]'>,
 ): Promise<Metadata> {
   const { slug } = await params
-  const content = getAlternativesContent(slug)
+  const content = getAlternativesContent(slug, 'es')
   if (!content) return {}
   return {
     title: { absolute: `${content.metaTitle} | ${SITE.name}` },
     description: content.metaDescription,
-    alternates: localeAlternates(`/alternatives/${slug}`, 'en'),
+    alternates: localeAlternates(`/alternatives/${slug}`, 'es'),
     openGraph: {
       title: content.metaTitle,
       description: content.metaDescription,
+      url: localizeHref(`/alternatives/${slug}`, 'es'),
       type: 'article',
-      ...ogLocale('en'),
+      ...ogLocale('es'),
     },
     twitter: {
       card: 'summary_large_image',
@@ -39,7 +37,7 @@ export async function generateMetadata(
   }
 }
 
-export default async function Page({ params }: PageProps<'/alternatives/[slug]'>) {
+export default async function Page({ params }: PageProps<'/es/alternativas/[slug]'>) {
   const { slug } = await params
-  return <AlternativesPage locale="en" slug={slug} />
+  return <AlternativesPage locale="es" slug={slug} />
 }

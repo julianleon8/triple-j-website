@@ -1,16 +1,17 @@
 import Link from 'next/link'
 
-import {
-  ALTERNATIVES_CONTENT,
-  ALTERNATIVES_SLUGS,
-  type AlternativesSlug,
-} from '@/lib/competitors'
+import type { Locale } from '@/i18n/config'
+import { SHARED } from '@/i18n/copy/shared'
+import { localizeHref } from '@/i18n/routes'
+import { ALTERNATIVES_SLUGS, type AlternativesSlug } from '@/lib/competitors'
+import { getAlternativesContent } from '@/lib/competitors.es'
 
 type Props = {
   /** Current page's slug — excluded from the rendered list so we don't
    *  link to ourselves. Pass 'roundup' for the local roundup page (it's
    *  not in the AlternativesSlug enum). */
   currentSlug: AlternativesSlug | 'roundup'
+  locale?: Locale
 }
 
 /**
@@ -23,10 +24,12 @@ type Props = {
  * Forge: white band (the fog quote band follows it), silver-framed white
  * tiles; the local roundup tile is the navy one.
  */
-export function RelatedComparisons({ currentSlug }: Props) {
-  const otherAlternatives = ALTERNATIVES_SLUGS.filter((s) => s !== currentSlug).map(
-    (s) => ALTERNATIVES_CONTENT[s],
-  )
+export function RelatedComparisons({ currentSlug, locale = 'en' }: Props) {
+  const t = SHARED[locale].comparisons
+  const otherAlternatives = ALTERNATIVES_SLUGS.filter((s) => s !== currentSlug).flatMap((s) => {
+    const content = getAlternativesContent(s, locale)
+    return content ? [content] : []
+  })
 
   // Local roundup is a separate route, not in the alternatives data — link
   // it explicitly. Hidden when we're already on the roundup page.
@@ -45,7 +48,7 @@ export function RelatedComparisons({ currentSlug }: Props) {
             id="related-comparisons-heading"
             className="forge-eyebrow m-0 text-forge-slate"
           >
-            Other Comparisons
+            {t.other}
           </span>
           <span aria-hidden="true" className="h-px flex-1 bg-forge-mist" />
         </div>
@@ -53,17 +56,17 @@ export function RelatedComparisons({ currentSlug }: Props) {
           {otherAlternatives.map((alt) => (
             <Link
               key={alt.slug}
-              href={`/alternatives/${alt.slug}`}
+              href={localizeHref(`/alternatives/${alt.slug}`, locale)}
               className="group flex flex-col rounded-[12px] border border-forge-silver bg-white px-6 pt-6 pb-[22px] transition-colors duration-200 hover:border-forge-navy"
             >
               <p className="m-0 text-[11px] font-bold uppercase tracking-[.2em] text-forge-slate">
-                Alternative
+                {t.alternative}
               </p>
               <h3 className="mt-2.5 font-forge-display text-[19px] font-bold leading-[1.25] text-forge-navy">
                 {alt.h1}
               </h3>
               <span className="mt-auto pt-4 text-[14px] font-semibold text-forge-navy">
-                Compare{' '}
+                {t.compare}{' '}
                 <span aria-hidden="true" className="inline-block transition-transform duration-200 group-hover:translate-x-1">
                   →
                 </span>
@@ -72,18 +75,18 @@ export function RelatedComparisons({ currentSlug }: Props) {
           ))}
           {showRoundupLink && (
             <Link
-              href="/best-metal-carport-builders-temple-tx"
+              href={localizeHref('/best-metal-carport-builders-temple-tx', locale)}
               data-tone="dark"
               className="group flex flex-col rounded-[12px] border border-forge-navy bg-forge-navy px-6 pt-6 pb-[22px] text-white transition-colors duration-200 hover:bg-forge-navy-raised"
             >
               <p className="m-0 text-[11px] font-bold uppercase tracking-[.2em] text-forge-silver">
-                Local Roundup
+                {t.roundupKicker}
               </p>
               <h3 className="mt-2.5 font-forge-display text-[19px] font-bold leading-[1.25] text-white">
-                Best Metal Carport Builders in Temple, TX
+                {t.roundupTitle}
               </h3>
               <span className="mt-auto pt-4 text-[14px] font-semibold text-forge-silver group-hover:text-white">
-                See the roundup{' '}
+                {t.roundupLink}{' '}
                 <span aria-hidden="true" className="inline-block transition-transform duration-200 group-hover:translate-x-1">
                   →
                 </span>

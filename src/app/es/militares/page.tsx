@@ -4,25 +4,18 @@ import { MilitaryPage } from '@/components/pages/MilitaryPage'
 import { localeAlternates, ogLocale } from '@/i18n/metadata'
 import { MILITARY } from '@/i18n/pages/military'
 
-/**
- * /military — Fort Cavazos PCS-season landing page. The page body is
- * src/components/pages/MilitaryPage.tsx (shared with /es/militares); the copy
- * is src/i18n/pages/military.ts.
- */
-
-const t = MILITARY.en.meta
+const t = MILITARY.es.meta
 
 export const metadata: Metadata = {
-  // The root layout's `%s | Triple J Metal` template adds the brand — never
-  // put it in this string too.
   title: t.title,
   description: t.description,
-  alternates: localeAlternates('/military', 'en'),
+  alternates: localeAlternates('/military', 'es'),
   openGraph: {
     title: t.ogTitle,
     description: t.ogDescription,
+    url: '/es/militares',
     type: 'website',
-    ...ogLocale('en'),
+    ...ogLocale('es'),
   },
   twitter: {
     card: 'summary_large_image',
@@ -32,5 +25,5 @@ export const metadata: Metadata = {
 }
 
 export default function Page() {
-  return <MilitaryPage locale="en" />
+  return <MilitaryPage locale="es" />
 }

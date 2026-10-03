@@ -3,6 +3,7 @@
 import { describe, expect, it } from 'vitest'
 
 import { BLOG_POSTS } from '@/lib/blog'
+import { ALTERNATIVES_CONTENT } from '@/lib/competitors'
 import { LOCATIONS_EN_COPY } from '@/lib/locations.es'
 import { SERVICES_EN_COPY } from '@/lib/services.es'
 
@@ -104,6 +105,7 @@ const DATA_SOURCES: Record<string, { en: Record<string, unknown>; esExport: stri
   // The English copy projected onto the Spanish keys (landmark rows carry image fields Spanish doesn't).
   '../lib/locations.es.ts': { en: LOCATIONS_EN_COPY, esExport: 'LOCATIONS_ES' },
   '../lib/services.es.ts': { en: SERVICES_EN_COPY, esExport: 'SERVICES_ES' },
+  '../lib/competitors.es.ts': { en: ALTERNATIVES_CONTENT, esExport: 'ALTERNATIVES_CONTENT_ES' },
 }
 
 describe('Spanish data files', () => {
