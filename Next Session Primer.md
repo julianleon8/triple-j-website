@@ -2,7 +2,8 @@
 
 The funnel tracking is on `claude/eloquent-hawking-vnaddd` (see `Connectors.md` → PostHog). It does nothing
 until `NEXT_PUBLIC_POSTHOG_KEY` is set. To go live:
-1. A **separate** PostHog project for Triple J — never the existing `Default project` (El Mexicano Grille).
+1. A **separate PostHog organization** for Triple J (owner, PostHog UI: org dropdown → New organization). Not
+   a project in MESA: its free plan allows one project and El Mexicano Grille uses it (403, 2026-10-03).
 2. Its `phc_` key into Vercel → `NEXT_PUBLIC_POSTHOG_KEY` (Production + Preview), then merge the branch.
 3. In that project: session replay on, authorized URL `https://www.triplejmetaltx.com`, internal/test filter
    `internal_traffic` is not `true` (checked by default), then the ad-funnel dashboard.

@@ -203,7 +203,10 @@ quote-link taps are captured site-wide by one click listener, with `cta_location
   paths end in `/`, so `skipTrailingSlashRedirect` is on and Next's `/:path+/ → /:path+` redirect is
   re-created in `redirects()` for everything except `/ingest/`. Verified 2026-10-03: `/about/` still 308s.
 - **Account.** The only existing PostHog project (`Default project`, id 423436, org "MESA") holds El Mexicano
-  Grille's app data. Triple J must not share it: web analytics, replays and person counts would mix.
+  Grille's app data. Triple J must not share it: web analytics, replays and person counts would mix. MESA is
+  on the free plan, which allows one project per organization, so creating "Triple J Metal" there failed
+  (403, 2026-10-03). Organizations are unlimited and each has its own free allowance (1M events, 5K
+  recordings a month): Triple J gets its own organization, created by the owner in the PostHog UI.
 
 ### Stripe does not exist
 Listed in project docs since 2026-04-13 as "phase 4", but there is no dependency, no env var, and no code. The only matches in `src/` are an `accentStripe` CSS variable in `src/emails/BrandLayout.tsx`. **QuickBooks is the money rail.** Descoped 2026-09-06 — see `Locked Decisions.md`.
