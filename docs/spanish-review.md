@@ -45,3 +45,11 @@ Filled in as the pages are built; each row is a judgment call, not a known error
 | `src/i18n/copy/quote-form.ts` | "Phone — we text first" | "Teléfono — primero te mandamos mensaje" | Natural? |
 | `src/lib/site.ts` | "Built right, built fast, built by Triple J." | "Hecho bien, hecho rápido, hecho por Triple J." | The tagline. Keep it, or say it differently? |
 | `src/components/seo/OrganizationJsonLd.tsx` | "…with turnkey concrete…" | "…con concreto llave en mano…" | Search-engine text only. The English itself leans on "turnkey" as a blanket label (2026-09-28 lock) — worth fixing in both. |
+| `src/i18n/pages/about.ts` | "concealed-fastener standing-seam systems for HOA-grade builds" | "sistemas standing-seam (junta alzada) con sujetadores ocultos…" | Do customers say *standing-seam* in English, or *junta alzada*? |
+| `src/i18n/pages/partners.ts` | "named in-house crew" | "equipo propio que da la cara" | "Named" no longer fits (no names on the site). Does this read right? |
+| `src/i18n/pages/partners.ts` | "No subcontractor roulette." | "Sin ruleta de subcontratistas." | A pun. Keep, or say it plainly? |
+| `src/i18n/pages/quote.ts` | "trade discounts" | "descuentos para… gremios" | Does *gremios* read as tradespeople in Texas Spanish? |
+| `src/i18n/pages/thank-you.ts` | "Got it. / We'll be in touch." | "Recibido. / Estaremos en contacto." | Natural, or too formal? |
+| `src/lib/gallery-filters.ts` | "Patios & porches", "Custom builds" | "Patios y porches", "Obras a la medida" | Natural? |
+| `src/i18n/pages/photo-lightbox.ts` | "Cover" (cover-photo badge) | "Portada" | Right word? |
+| Gallery project pages | Panel and trim color names ("Charcoal Gray") | left in English | They are the manufacturer's catalog names customers order by. Keep English? |
