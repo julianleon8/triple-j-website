@@ -59,6 +59,14 @@ Filled in as the pages are built; each row is a judgment call, not a known error
 | `src/lib/locations.es.ts` (Nolanville) | "property survey" | "plano de la propiedad (survey)" | Natural? |
 | `src/lib/locations.es.ts` (Lampasas) | "spring-fed pool" | "alberca alimentada por un manantial" | Natural? |
 | `src/lib/locations.es.ts` (9 small towns) | — | One shared Spanish template | The nine smaller towns' intros read alike in Spanish. Fine, or vary them? |
+| `src/lib/services.es.ts` (HOA) | "Concrete & Site Prep Included" | "Concreto y preparación del terreno en el mismo contrato" | Written to the concrete lock (never "incluido"). OK? |
+| `src/lib/services.es.ts` | "skid-steer" | "minicargadora (skid-steer)" | Do people here say *skid steer* or *bobcat*? |
+| `src/lib/services.es.ts` (RV covers) | "Texas hail season doesn't send a calendar invite" | "La temporada de granizo en Texas no manda invitación" | A pun. Keep? |
+| `src/lib/services.es.ts` (garages) | "isn't a shed from a big-box store" | "no es un cobertizo de tienda de cadena" | Natural? |
+| `src/lib/services.es.ts` (HOA) | "Wealthy buyers don't want to manage two contractors" | "Los compradores adinerados no quieren manejar a dos contratistas" | Reads blunt in Spanish. Soften? |
+| `src/lib/services.es.ts` | "Dutch doors" | "puertas Dutch (de dos hojas)" | Natural? |
+| `src/i18n/pages/hybrid-projects.ts` | "body shop", "loft", "tack rooms", "run-in shelters" | "taller de hojalatería y pintura", "tapanco", "cuarto para monturas", "refugios abiertos" | Natural for ranch customers here? |
+| `src/i18n/pages/colors.ts` | "Best Value" | "Mejor precio" | OK? |
 
 ## English found while translating (owner, not the reviewer)
 
@@ -68,3 +76,4 @@ surface them again. The Spanish versions follow the locks.
 
 - `belton.callouts[0]`: "Bell County permits handled. Included in your contract … we file the paperwork." — permits are advisory only (2026-09-07).
 - `belton.heroCopy`, `belton.whyLocal`, `waco.whyLocal`: name national competitors as having "no local crew", "we know everyone in the permit office", "include concrete" — competitor claims were removed 2026-09-26; concrete is "available".
+- `src/lib/services.ts:346` (turnkey FAQ): "can help coordinate permit pulls where required." — borderline on the advisory-only permit lock (2026-09-07); "pulls" implies we pull them. The Spanish says "podemos ayudar a coordinar los permisos". Suggest "can walk you through the permit steps" in both.
