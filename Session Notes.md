@@ -1,5 +1,41 @@
 # Session Notes
 
+## 2026-10-03 — HQ gallery edits reach the public pages without a deploy
+
+**In plain terms.** Changing the gallery in HQ updated the database but not the site. The project
+pages were pre-built with nothing to tell them to rebuild, so a deleted photo stayed up until someone
+pushed code. The redesign's pages refresh hourly, so a newly published job took up to an hour to reach
+the Latest builds ticker. Now every HQ gallery change marks the affected pages stale, and the next
+visitor gets a fresh copy. The pages are still cached between edits, so they're as fast as before.
+
+**What changed.** New `src/lib/gallery-revalidate.ts` with `GALLERY_PATHS`, the one list of public
+pages that show gallery data, and `revalidateGallery(itemId)`. It's called after each successful write
+in `/api/gallery` (create), `/api/gallery/[id]` (edit, publish, unpublish, delete),
+`/api/gallery/[id]/photos` (add photo), `/api/gallery/photos/[photoId]` (reorder, cover, delete
+photo), and `/api/hq/job-photo` (only when the job is already published). `/gallery/[id]` also gets
+the hourly `revalidate = 3600` its sibling pages have. **That timer was needed because the 2026-10-01
+incident was a delete made straight in Supabase**, which no API route sees.
+
+**Two things worth knowing.** Patterns for dynamic routes have to include the route group:
+`'/(marketing)/services/[slug]'`, not `'/services/[slug]'`. The second form is accepted silently and
+revalidates nothing; I checked this against Next's own tag function. And this work was started before
+the Forge redesign landed, then rebased onto it. The reader-scan test caught the drift (`Gallery.tsx`
+and `RelatedProjects.tsx` gone, `forge-builds.ts` new), which is the job it's there to do.
+
+**Tests:** 21 new, in `src/lib/gallery-revalidate.test.ts` and
+`src/app/api/gallery/revalidation.test.ts`. They pin the path list, check each dynamic pattern against
+a real page file, fail on an unlisted gallery reader or an unlisted `getBuilds()` page, and cover
+success and failure for every write route. Each guard was checked by breaking the code on purpose.
+
+**Also:** `npm run dev` now passes `--webpack`, like `build`. Next 16's default Turbopack refuses the
+webpack config Serwist adds, so the dev server could not start at all. Both this repo and a fresh
+clone of `julianleon8/Mexicno-Grille` (`~/mexicno-grille`) are linked to Vercel with a pulled
+Production `.env.local`. But Vercel withholds every Sensitive value, so 26 and 31 placeholders still
+need filling by hand (`Connectors.md`).
+
+**Not verified:** a production build. There's no usable local `.env`. See the primer for the
+after-deploy check.
+
 ## 2026-10-03 — Forge redesign merged to `main`
 
 Owner: "merge it to main." `main` had the PostHog funnel work; merged it into the Forge branch, kept the Forge

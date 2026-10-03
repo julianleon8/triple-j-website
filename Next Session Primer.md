@@ -1,3 +1,20 @@
+# Gallery revalidation — 2026-10-03 · LIVE, CHECK ON PRODUCTION ONCE
+
+HQ gallery writes now call `revalidateGallery()` (Gallery freshness in `Locked Decisions.md`), so a
+publish reaches the Latest builds ticker, the gallery and Recent builds at the next page view rather
+than within the hour. It passed tests but had no production build: there is no usable local `.env`.
+**Check once:** in `/hq/gallery`, change a published item's title, then load `/gallery/<id>` and `/` in
+a private window. Both should show the new title on the first or second load. If they stay stale,
+check the pattern spelling first: dynamic routes need the `(marketing)` group.
+
+**Edits made straight in Supabase** (MCP, SQL, the dashboard) bypass this and take up to an hour,
+through the `revalidate = 3600` backstop. Edit through HQ when the change must show at once.
+
+**Local env:** both `~/triple-j-website` and `~/mexicno-grille` are linked to Vercel and have a pulled
+Production `.env.local`, but every Sensitive value came back as a `[SENSITIVE]` placeholder (26 and 31
+of them). They need filling or blanking by hand before local dev works; see `Connectors.md`.
+`npm run dev` now passes `--webpack`, like `build`, because Turbopack refuses Serwist's webpack config.
+
 # Forge redesign — 2026-10-03 · MERGED TO `main` (LIVE); HQ STILL TO DO
 
 The whole Forge handoff (`docs/redesign-2026-10/forge-handoff/`) is **on `main` and live** since 2026-10-03:

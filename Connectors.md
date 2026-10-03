@@ -149,6 +149,16 @@ select (encrypted_password = crypt('<pw>', encrypted_password)) as ok from auth.
 
 Recorded so no future session rediscovers them.
 
+### `vercel env pull` cannot produce a working `.env.local` (found 2026-10-03)
+
+The repo is linked (`.vercel/`, git-ignored) and `npx vercel env pull .env.local --environment=production`
+runs, but **26 of the Production variables are marked Sensitive, and Vercel never returns a Sensitive
+value** — the CLI writes `[SENSITIVE]` placeholders instead. Fill those from each service's own
+dashboard (the sources are listed in `.env.example`), or blank them. A placeholder is worse than a
+blank: features that degrade on an empty key (hCaptcha, Maps, Twilio) treat `[SENSITIVE]` as a real
+key and fail. Local dev on Production values reads and writes the live database and can send real
+email and SMS. The Vercel MCP connector cannot list env vars at all (403).
+
 ### Supabase MCP — authorized (verified 2026-09-06)
 `.mcp.json` declares one HTTP server (`mcp.supabase.com/mcp?project_ref=idrbgxlvvnqduvbqtaei`). It **is** authorized and both `execute_sql` and `apply_migration` work. An earlier note here claimed it was unauthenticated — that was wrong, and it caused a session to plan around a capability it actually had.
 
