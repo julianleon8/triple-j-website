@@ -124,6 +124,11 @@ describe('lead_created analytics event', () => {
       expect(serialized).not.toContain(pii);
     }
     expect(mock.insert.mock.calls[0][0]).not.toHaveProperty('posthog_distinct_id');
+    expect(sent.properties.internal_traffic).toBeUndefined();
+  });
+  it('marks a lead sent from the owner\'s browser as internal traffic', async () => {
+    expect((await POST(request({ posthog_internal: true }))).status).toBe(200);
+    expect(mock.track.mock.calls[0][0].properties.internal_traffic).toBe(true);
   });
   it('is not sent when the lead is rejected', async () => {
     mock.captcha.mockResolvedValue({ success: false });

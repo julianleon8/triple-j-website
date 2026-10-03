@@ -18,6 +18,10 @@
   order with UTMs; posthog-js is one lazy 99 KB chunk; `/about/` still 308s. Not yet seen in real PostHog —
   there is no Triple J project or key yet.
 - **Found:** the only PostHog project (org "MESA") is El Mexicano Grille's app. Triple J needs its own.
+- **Same session, PostHog side:** MESA's free plan refused a second project, so the owner made org "Triple J
+  Metal" and put its key in Vercel. Project 643189 configured (Central time, replay only on the live domain,
+  internal filter on by default, error tracking on) and the 15-tile "Ad funnel" dashboard built; every tile
+  ran without errors (empty: no events yet). Owner test leads now also carry `internal_traffic`.
 
 ## 2026-10-01 — SEO action plan (docs/ACTION-PLAN.md) worked through against the live site
 

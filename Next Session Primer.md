@@ -1,15 +1,13 @@
-# PostHog — 2026-10-03 · CODE ON BRANCH, NO PROJECT YET
+# PostHog — 2026-10-03 · PROJECT + DASHBOARD READY, CODE NOT ON `main`
 
-The funnel tracking is on `claude/eloquent-hawking-vnaddd` (see `Connectors.md` → PostHog). It does nothing
-until `NEXT_PUBLIC_POSTHOG_KEY` is set. To go live:
-1. A **separate PostHog organization** for Triple J (owner, PostHog UI: org dropdown → New organization). Not
-   a project in MESA: its free plan allows one project and El Mexicano Grille uses it (403, 2026-10-03).
-2. Its `phc_` key into Vercel → `NEXT_PUBLIC_POSTHOG_KEY` (Production + Preview), then merge the branch.
-3. In that project: session replay on, authorized URL `https://www.triplejmetaltx.com`, internal/test filter
-   `internal_traffic` is not `true` (checked by default), then the ad-funnel dashboard.
-4. Owner's Safari: open the site once with `?tj_internal=1`. Then one real test lead from a phone and confirm
-   the person (search the lead UUID) shows its pageviews, funnel events and recording.
-5. A17 CSP review: watch for `[csp]` lines naming `/ingest` or `blob:` once replay is live.
+The funnel tracking is on `claude/eloquent-hawking-vnaddd`; the PostHog side is done (org "Triple J Metal",
+project 643189, key in Vercel, "Ad funnel" dashboard built; see `Connectors.md` → PostHog). **Nothing records
+until the branch is merged to `main`** and Vercel redeploys with the key. Then:
+1. Owner's Safari: open the site once with `?tj_internal=1`.
+2. One real test lead from a phone; confirm Persons → search the lead UUID shows its pageviews, funnel events
+   and a recording, and that it is hidden with "filter out internal and test users" on.
+3. A17 CSP review: watch for `[csp]` lines naming `/ingest` or `blob:` once replay is live.
+4. Give the dashboard 2–4 weeks of ad traffic before reading conversion rates; at ~$13/day the counts are small.
 
 ---
 

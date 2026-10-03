@@ -68,6 +68,7 @@ const leadSchema = z.object({
   // visitor's funnel and session replay. Never stored on the lead row.
   posthog_distinct_id: z.string().max(200).optional(),
   posthog_session_id:  z.string().max(200).optional(),
+  posthog_internal:    z.boolean().optional(),
 })
 
 export async function GET(request: NextRequest) {
@@ -201,6 +202,8 @@ export async function POST(request: NextRequest) {
       distinctId: data.posthog_distinct_id,
       sessionId: data.posthog_session_id,
       properties: {
+        // The owner's own test leads: hidden by the project's internal filter.
+        internal_traffic: data.posthog_internal || undefined,
         source: data.source,
         service_type: data.service_type,
         structure_type: data.structure_type,

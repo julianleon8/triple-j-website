@@ -223,12 +223,19 @@ export function identifyLead(leadId: string, props: Props): void {
 }
 
 /** IDs sent with the lead so the server's lead_created event lands in the
- *  same person and session as the browser's funnel events. */
-export function posthogIds(): { posthog_distinct_id?: string; posthog_session_id?: string } {
+ *  same person and session as the browser's funnel events, and carries the
+ *  internal flag so the owner's own test leads are filtered out with the
+ *  rest of their traffic. */
+export function posthogIds(): {
+  posthog_distinct_id?: string
+  posthog_session_id?: string
+  posthog_internal?: boolean
+} {
   if (!instance) return {}
   return {
     posthog_distinct_id: instance.get_distinct_id() || undefined,
     posthog_session_id: instance.get_session_id() || undefined,
+    posthog_internal: instance.get_property('internal_traffic') === true || undefined,
   }
 }
 

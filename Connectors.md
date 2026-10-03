@@ -206,7 +206,17 @@ quote-link taps are captured site-wide by one click listener, with `cta_location
   Grille's app data. Triple J must not share it: web analytics, replays and person counts would mix. MESA is
   on the free plan, which allows one project per organization, so creating "Triple J Metal" there failed
   (403, 2026-10-03). Organizations are unlimited and each has its own free allowance (1M events, 5K
-  recordings a month): Triple J gets its own organization, created by the owner in the PostHog UI.
+  recordings a month), so Triple J has its own: **org "Triple J Metal", project "Website" (id 643189)**, created
+  2026-10-03. Its key is in Vercel as `NEXT_PUBLIC_POSTHOG_KEY`. Project settings: timezone America/Chicago;
+  replay and heatmaps only on `triplejmetaltx.com` (`recording_domains`); internal/test filter
+  `internal_traffic` is not `true`, checked by default. The PostHog MCP reaches it after
+  `switch-organization` + `switch-project 643189`; it starts on MESA's project.
+- **Dashboard:** "Ad funnel" (pinned), https://us.posthog.com/project/643189/dashboard/2165121 — headline
+  leads / phone taps / visitors / visit-to-lead rate, the six-step drop-off funnel, failures by reason, the
+  funnel by channel, lead rate by landing page, weekly leads and calls by channel, a utm source × campaign
+  table, taps by button position, homepage form vs `/quote`, and leads by building type and by city.
+- **Owner test leads** carry `internal_traffic` on `lead_created` too: the form sends the browser's flag as
+  `posthog_internal`, so they fall under the same filter.
 
 ### Stripe does not exist
 Listed in project docs since 2026-04-13 as "phase 4", but there is no dependency, no env var, and no code. The only matches in `src/` are an `accentStripe` CSS variable in `src/emails/BrandLayout.tsx`. **QuickBooks is the money rail.** Descoped 2026-09-06 — see `Locked Decisions.md`.
