@@ -1,3 +1,26 @@
+# Spanish site — 2026-10-03 · ON `claude/nifty-cray-dhkhyu`, NOT ON `main`
+
+The whole public site in Spanish under `/es`, plus no owner or crew names anywhere on the site (both owner
+decisions, `Decisions.md` 2026-10-03). Built, tested and link-checked; waiting on three things before merge:
+
+1. **Apply migration `supabase/migrations/034_preferred_language.sql`** to production Supabase *before* merging
+   (additive, default `en`, safe for today's `main`). The Supabase MCP connector was not authorized in the
+   session. Without it, leads still save (the API retries and notes "Language: Español") but Spanish leads get
+   an English confirmation and HQ can't store a language.
+2. **Native-speaker read:** Juan or Freddy works through `docs/spanish-review.md` on the Vercel preview
+   (≈30–45 min; pages in order, then the flagged wording table). Fix wording straight in `src/i18n/` or
+   `src/lib/*.es.ts`; the parity test keeps numbers honest.
+3. **Owner calls:** English lines found while translating that lean on the permit/competitor/concrete locks
+   (bottom of `docs/spanish-review.md`); a new mailbox if the public `julianleon@` address should lose the name.
+
+**Working notes:** English pages render from `src/components/pages/<Name>Page.tsx` with `locale`; copy in
+`src/i18n/pages/<page>.ts` (`bilingual(en, es)`). Write English hrefs and pass them through `localizeHref`.
+A new page needs a pair in `src/i18n/routes.ts`, a Spanish route under `src/app/es/`, an OG twin, and (if it
+reads the gallery) entries in `GALLERY_PATHS`. Client components read the language from the URL (`useLocale`).
+`npm run build` needs placeholder Supabase env vars. After merge: Search Console → submit the sitemap again.
+
+---
+
 # Internal links — 2026-10-03 · ON `claude/youthful-cerf-2m3dfh` (MERGED WITH MAIN), NOT YET ON `main`
 
 Ready for the owner to look at and merge. `node scripts/check-links.mjs --base <url> --strict` passes on it

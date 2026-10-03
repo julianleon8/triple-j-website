@@ -31,6 +31,7 @@ Mark changes straight on this file or text them; each one is a one-line fix.
 | Contact | `/es/contacto` | 1 |
 | Military | `/es/militares` | 3 |
 | One blog post | `/es/blog/guia-de-permisos-edificios-metalicos-condado-de-bell` | 5 |
+| The builders roundup | `/es/mejores-constructores-de-cocheras-temple-tx` | 3 |
 
 Also worth one look: the confirmation email a Spanish lead receives (send one test lead from
 `/es/cotizacion` with your own email once the database migration is applied).
@@ -69,6 +70,10 @@ Filled in as the pages are built; each row is a judgment call, not a known error
 | `src/i18n/pages/colors.ts` | "Best Value" | "Mejor precio" | OK? |
 | Blog posts (`posts/es/`) | "sleeve anchors", "helical piers", "core drill", "setbacks", "permit expediter" | "anclas de manguito", "pilotes helicoidales", "taladro de núcleo", "retiros (setbacks)", "gestor de permisos" | Trade terms: what would a Texas crew say? |
 | `src/i18n/pages/blog.ts` | "not an AI content farm" | "no por una granja de contenido de IA" | A literal calque. Natural? |
+| `src/i18n/pages/military.ts` | "first responders", "Reserve/Guard" | "primeros respondientes", "Reserva/Guardia Nacional" | Or *socorristas* / *personal de emergencias*? |
+| `src/i18n/pages/military.ts` | "truck", "spouse", "household goods" | "camioneta", "tu cónyuge", "tu mudanza" | *Cónyuge* may read formal; *troca* instead of *camioneta*? |
+| `src/i18n/pages/military.ts` | "Same-week for PCS families." | "Misma semana para tu PCS." | Shortened to fit the share card. OK? |
+| `src/i18n/pages/roundup.ts` | "You speak Spanish or want to." | "Hablas español o prefieres que te atiendan en español." | Natural? |
 
 ## English found while translating (owner, not the reviewer)
 

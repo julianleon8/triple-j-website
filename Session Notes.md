@@ -1,5 +1,39 @@
 # Session Notes
 
+## 2026-10-03 — Spanish site at `/es`; owner and crew names off the site
+
+- **Owner asked:** "add Spanish to the website, to everything." Answers in session: tú voice, Spanish words in
+  Spanish URLs, blog translated, customer emails/SMS/quote PDF in Spanish, lead language stored and shown in HQ,
+  legal pages English-only, same phone number, and **no Juan / Freddy / Julian anywhere on the site**. Preview
+  first; Juan or Freddy read it before `main`. Rows in `Decisions.md`; lines in `Locked Decisions.md`.
+- **Shipped on `claude/nifty-cray-dhkhyu`, not `main`:**
+  - Every public page in Spanish: 45 URLs under `/es` (home, 8 services + index/colors/hybrid/PBR, 14 cities +
+    hub, about, contact, quote, thank-you, partners, gallery + projects, military, 4 alternatives, roundup, blog +
+    5 posts). Each English page now renders from one view component in either language; the copy sits in
+    `src/i18n/` and `src/lib/*.es.ts` beside the English it mirrors.
+  - **Root layout split** (Next 16 sets `<html lang>` per root layout): `(marketing)` and `es` share
+    `MarketingShell`; HQ, auth, offline and `quotes/[token]` have their own; `global-not-found.tsx` (flag
+    `experimental.globalNotFound`) for unmatched URLs; `es/[...rest]` keeps mistyped Spanish URLs in Spanish.
+  - `src/i18n/routes.ts` owns every English↔Spanish URL pair; hreflang (en/es/x-default) on every paired page and
+    in the sitemap; header/footer language switch; a "¿Prefieres español?" bar for Spanish-language browsers
+    (never a redirect); Spanish share cards; Spanish business schema; `llms.txt` Spanish section.
+  - **Lead language:** migration `034_preferred_language.sql` on leads, customers, partner_inquiries. Forms send
+    the page's language; the API retries without the column if 034 isn't applied (lead never lost). Spanish
+    leads get a Spanish confirmation; owner alert/push say "Español"; HQ shows and edits it on leads and
+    customers. Quote email, SMS ("STOP" kept), PDF and accept page follow the customer's language.
+  - **Names sweep:** About crew cards by role, byline "Reviewed by the Triple J Metal team", schema `founder`
+    dropped, email signatures, forms, every page. `check-vault.mjs` now rejects the names in customer-facing
+    source, and the Spanish forms of the retired claims.
+- **Checks:** typecheck, lint, 813 tests (new: route map, parity of every English/Spanish pair including
+  numbers, Spanish posts structure/links/locks, sitemap pairs, quote copy), `next build`, English HTML diffed
+  against a pre-change build (identical text; only hreflang/og:locale added and React text-node joins),
+  `check-links.mjs --strict` over both languages (new rule: no cross-language body links), all 45 Spanish pages at
+  390 px with no sideways scroll (two fixes: a city CTA overflowed by 37 px; the roundup linked the English home).
+- **How it was built:** five parallel agents translated the page families from one playbook; the first run hit
+  the account usage limit and was redone on Sonnet in two waves. Every family was reviewed and committed on its own.
+- **Not done:** HQ interface stays English; gallery titles and quote line items show as typed; color names stay
+  the manufacturer's English; the public email `julianleon@…` still carries a name (needs a new mailbox).
+
 ## 2026-10-03 — Internal links, ported onto the Forge redesign
 
 - **Why:** a Liberty Hill visitor spent 26 min on the site (Mac, then iPhone 19 s later), tapping the old hero's

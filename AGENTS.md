@@ -23,6 +23,8 @@ Every fact has exactly one owner. Restating an owned fact anywhere else creates 
 | NAP, nav, services, cities | `src/lib/site.ts` |
 | Service-page data | `src/lib/services.ts` |
 | Location-page data | `src/lib/locations.ts` |
+| Spanish URLs and slugs (the `/es` mirror) | `src/i18n/routes.ts` |
+| Spanish copy | beside the English it mirrors: `src/i18n/`, `src/lib/*.es.ts` |
 | Design tokens | `src/app/globals.css` |
 | Current product + pricing rules | `Locked Decisions.md` |
 | Decision history | `Decisions.md` (append-only) |
