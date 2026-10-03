@@ -1,6 +1,8 @@
-# Internal links — 2026-10-03 · ON `claude/youthful-cerf-2m3dfh` (MERGED WITH MAIN), NOT YET ON `main`
+# Internal links — 2026-10-03 · LIVE ON `main` (2433134), CHECKED ON PRODUCTION
 
-Ready for the owner to look at and merge. `node scripts/check-links.mjs --base <url> --strict` passes on it
+Merged to `main` at the owner's request and serving on triplejmetaltx.com about a minute after the push
+(hero link, city and service sections, post links, Contact chips and footer links all confirmed on production).
+`node scripts/check-links.mjs --base <url> --strict` passes on it
 (Locked Decisions → Internal linking); run it after changing nav, a page template, or `services.ts` /
 `locations.ts`. To see it: `npm run build`, `npx next start -p 3100`, then the script with `--base http://localhost:3100`.
 1. Skim the five posts: links only were added, the wording is main's. Check the sentence each link sits in.

@@ -6,7 +6,7 @@
   dead "Welded or bolted" twice on the phone before finding the post through `/blog`. The owner asked for that
   link and for every under-linked page to be fixed. The Forge redesign landed on `main` mid-session, so the work
   was merged with it and rebuilt on the new components.
-- **Shipped on `claude/youthful-cerf-2m3dfh`, not `main`:** `relatedBlogPosts()` and `nearbyCities()` with tests;
+- **Shipped to `main` (2433134, owner asked for the merge) and live:** `relatedBlogPosts()` and `nearbyCities()` with tests;
   `RelatedGuides` (Forge card row) on city and service pages, which had lost their `relatedPosts` sections in the
   redesign; "Also serving near" chips on every city page; service pages gain panel, specialty and every-city
   links; all 5 posts link a service, a city and `/quote`; the hero lede links the welded-vs-bolted post and
