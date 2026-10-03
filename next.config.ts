@@ -185,6 +185,15 @@ const nextConfig: NextConfig = {
         destination: "/locations",
         permanent: true,
       },
+
+      // The permit guide dropped "2025" from its title and URL, 2026-10-03:
+      // in search results a year-stamped guide reads as out of date. The
+      // fee figures inside stay dated "As of 2025".
+      {
+        source: "/blog/bell-county-metal-building-permit-guide-2025",
+        destination: "/blog/bell-county-metal-building-permit-guide",
+        permanent: true,
+      },
     ];
   },
   async headers() {

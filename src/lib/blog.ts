@@ -36,8 +36,8 @@ export const BLOG_POSTS: BlogPost[] = [
     category: 'Guides',
   },
   {
-    slug: 'bell-county-metal-building-permit-guide-2025',
-    title: 'Bell County Metal Building Permit Guide 2025: Temple, Belton & Killeen Requirements',
+    slug: 'bell-county-metal-building-permit-guide',
+    title: 'Bell County Metal Building Permit Guide: Temple, Belton & Killeen Requirements',
     metaTitle: 'Bell County Metal Building Permit Guide',
     metaDescription:
       'Who pulls the permit, what size triggers one in Temple vs Killeen, what it costs, and how long it takes. A local contractor\'s walkthrough.',

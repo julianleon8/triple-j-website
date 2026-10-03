@@ -105,7 +105,7 @@ export default function HoaCompliantPost() {
         We provide the structure, materials and color details for your application with the quote; the
         plot plan usually comes from your property survey. Many HOA ARC committees
         meet monthly &#8212; factor this into your timeline, and see our{' '}
-        <Link href="/blog/bell-county-metal-building-permit-guide-2025">Bell County permit guide</Link>{' '}for how the city side works. If you&#8217;re targeting a specific build date, work
+        <Link href="/blog/bell-county-metal-building-permit-guide">Bell County permit guide</Link>{' '}for how the city side works. If you&#8217;re targeting a specific build date, work
         backward from the next ARC meeting date and allow 2&#8211;4 weeks for the approval process.
       </p>
 

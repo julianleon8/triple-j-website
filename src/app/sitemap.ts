@@ -52,10 +52,14 @@ const CITY_REVISED: Record<string, Date> = {
 // `gallery_items` has no `updated_at` column. Selecting one made PostgREST
 // reject the whole query, and because the result's `error` went unread, every
 // gallery project page and photo silently dropped out of the sitemap.
+// Photos are usually added after their project is created, so the newest
+// photo date is the honest lastModified.
 type GalleryItemRow = {
   id: string;
   created_at: string | null;
-  gallery_photos: { image_url: string; sort_order: number; is_cover: boolean }[] | null;
+  gallery_photos:
+    | { image_url: string; sort_order: number; is_cover: boolean; created_at?: string | null }[]
+    | null;
 };
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
@@ -123,7 +127,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       .select(
         `
         id, created_at,
-        gallery_photos ( image_url, sort_order, is_cover )
+        gallery_photos ( image_url, sort_order, is_cover, created_at )
         `,
       )
       .eq("is_active", true)
@@ -140,9 +144,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         if (b.is_cover && !a.is_cover) return 1;
         return a.sort_order - b.sort_order;
       });
+      const stamps = [item.created_at, ...photos.map((p) => p.created_at)]
+        .filter((s): s is string => Boolean(s))
+        .map((s) => new Date(s).getTime());
       entries.push({
         url: `${base}/gallery/${item.id}`,
-        lastModified: item.created_at ? new Date(item.created_at) : now,
+        lastModified: stamps.length > 0 ? new Date(Math.max(...stamps)) : now,
         changeFrequency: "monthly",
         priority: 0.6,
         // Sitemap image locations must be absolute; seeded rows store

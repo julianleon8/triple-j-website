@@ -34,6 +34,19 @@ it('lists gallery projects with absolute, cover-first image URLs', async () => {
   expect(entry?.lastModified).toEqual(new Date('2026-04-16T16:23:27Z'));
 });
 
+it('dates a project by its newest photo when photos were added later', async () => {
+  mocks.result = { data: [{
+    id: 'p2', created_at: '2026-04-16T16:23:27Z',
+    gallery_photos: [
+      { image_url: '/images/a.jpg', sort_order: 0, is_cover: true, created_at: '2026-04-16T16:30:00Z' },
+      { image_url: '/images/b.jpg', sort_order: 1, is_cover: false, created_at: '2026-09-02T10:00:00Z' },
+    ],
+  }], error: null };
+  const entry = (await sitemap()).find((e) => e.url === 'https://www.example.com/gallery/p2');
+  expect(mocks.select.mock.calls[0][0]).toMatch(/gallery_photos \( [^)]*created_at/);
+  expect(entry?.lastModified).toEqual(new Date('2026-09-02T10:00:00Z'));
+});
+
 it('still ships the static sitemap when the gallery query errors', async () => {
   vi.spyOn(console, 'warn').mockImplementation(() => {});
   mocks.result = { data: null, error: { message: 'column gallery_items.updated_at does not exist' } };

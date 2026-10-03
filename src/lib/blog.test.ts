@@ -27,7 +27,7 @@ describe('relatedBlogPosts', () => {
   it('puts a same-topic post ahead of an unrelated one', () => {
     // Bell County permits and Blackland soil are both "Local"; PCS shares the
     // Killeen tag. Both outrank the HOA post, which shares nothing.
-    const related = relatedBlogPosts('bell-county-metal-building-permit-guide-2025').map((p) => p.slug)
+    const related = relatedBlogPosts('bell-county-metal-building-permit-guide').map((p) => p.slug)
     expect(related.slice(0, 2)).toEqual([
       'blackland-prairie-soil-metal-building-foundation',
       'fort-cavazos-pcs-metal-carport',

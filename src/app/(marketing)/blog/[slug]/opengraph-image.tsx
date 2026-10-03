@@ -36,7 +36,7 @@ export default async function BlogOpenGraphImage({
     })
   }
 
-  // Titles here run long ("Bell County Metal Building Permit Guide 2025:
+  // Titles here run long ("Bell County Metal Building Permit Guide:
   // Temple, Belton & Killeen Requirements"). Split on the colon so the card
   // leads with the subject and drops the qualifier into the accent line.
   const [lead, ...rest] = post.title.split(':')

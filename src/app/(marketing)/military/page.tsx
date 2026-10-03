@@ -88,7 +88,7 @@ const MORE_FOR_FAMILIES = [
   { href: '/blog/fort-cavazos-pcs-metal-carport', label: 'How military families get a metal carport on military timelines' },
   { href: '/locations/killeen', label: 'Metal carports in Killeen, TX' },
   { href: '/locations/harker-heights', label: 'Metal carports in Harker Heights, TX' },
-  { href: '/blog/bell-county-metal-building-permit-guide-2025', label: 'Bell County permit guide (Killeen + Harker Heights)' },
+  { href: '/blog/bell-county-metal-building-permit-guide', label: 'Bell County permit guide (Killeen + Harker Heights)' },
 ] as const
 
 const pad = 'py-[clamp(64px,7vw,104px)]'
