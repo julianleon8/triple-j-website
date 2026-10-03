@@ -147,6 +147,21 @@ export default async function PartnersPage() {
                 </a>
               </div>
             </div>
+            <p className="mt-5 max-w-[520px] text-[14px] leading-[1.6] text-forge-slate">
+              New to Triple J? See{' '}
+              <Link href="/services" className="border-b border-forge-silver font-semibold text-forge-navy transition-colors hover:border-forge-navy">
+                what we install
+              </Link>
+              ,{' '}
+              <Link href="/locations" className="border-b border-forge-silver font-semibold text-forge-navy transition-colors hover:border-forge-navy">
+                where we work
+              </Link>
+              , or{' '}
+              <Link href="/about" className="border-b border-forge-silver font-semibold text-forge-navy transition-colors hover:border-forge-navy">
+                meet the crew
+              </Link>
+              .
+            </p>
           </ForgeReveal>
           <PartnerInquiryForm />
         </div>

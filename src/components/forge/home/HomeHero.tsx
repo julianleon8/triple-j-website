@@ -1,10 +1,15 @@
 import Image from "next/image";
+import Link from "next/link";
 
 import { ForgeButtonLink } from "@/components/forge/ForgeButton";
 import type { BuildItem } from "@/lib/forge-builds";
 
 import { HeroMotion } from "./HeroMotion";
 import { LatestBuildsTicker } from "./LatestBuildsTicker";
+
+/** Inline links in the hero lede: underlined so they read as links on the photo. */
+const HERO_LINK =
+  "underline decoration-white/50 underline-offset-4 transition-colors duration-200 hover:decoration-white";
 
 /** The Rogers 23×35 carport (Locked Decisions, hero photo). */
 const HERO_PHOTO =
@@ -50,7 +55,15 @@ export function HomeHero({ builds }: { builds: readonly BuildItem[] }) {
           </span>
         </h1>
         <p className="mx-auto mt-[22px] max-w-[560px] text-[clamp(16px,.4vw_+_14px,18px)] leading-[1.55] text-white/86">
-          Carports, garages, barns and patios, welded or bolted on your property by our own Central Texas crew.
+          Carports, garages, barns and patios,{" "}
+          <Link href="/blog/welded-vs-bolted-metal-buildings-central-texas" className={HERO_LINK}>
+            welded or bolted
+          </Link>{" "}
+          on your property by{" "}
+          <Link href="/about" className={HERO_LINK}>
+            our own Central Texas crew
+          </Link>
+          .
         </p>
         <div className="mt-8 flex flex-wrap justify-center gap-3">
           <ForgeButtonLink href="#quote" variant="white" size="lg" arrow>

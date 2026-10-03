@@ -11,7 +11,9 @@ import { MapBand } from '@/components/forge/misc'
 import { PageHero } from '@/components/forge/PageHero'
 import { ClockIcon, MailIcon, PhoneIcon, PinIcon } from '@/components/ui/icons'
 import { TrackedPhoneLink, TrackedPhoneNumber } from '@/components/site/TrackedPhone'
-import { SERVICE_CITIES, SITE } from '@/lib/site'
+import { ALL_CITY_SLUGS } from '@/lib/city-links'
+import { LOCATIONS } from '@/lib/locations'
+import { SITE } from '@/lib/site'
 import { getSiteUrl } from '@/lib/site-url'
 
 export const metadata: Metadata = {
@@ -79,17 +81,10 @@ function ReachRow({
 const rowCls = 'flex items-start gap-4 border-b border-forge-mist py-[22px]'
 const linkRowCls = `${rowCls} transition-colors duration-200 hover:bg-forge-fog`
 
-// Linked chips: the cities with a Forge page. The rest are plain chips.
-const LINKED_CITIES = ['temple', 'belton']
 const MAP_QUERY = encodeURIComponent(SITE.addressOneLine).replace(/%20/g, '+')
 
 export default function ContactPage() {
   const baseUrl = getSiteUrl()
-  const plainCities = [
-    ...SERVICE_CITIES.filter((c) => !LINKED_CITIES.includes(c.slug)).map((c) => c.name.replace(/, TX$/, '')),
-    'Salado',
-    'Lampasas',
-  ]
   return (
     <div data-forge="">
       <BreadcrumbJsonLd items={[{ name: 'Contact', path: '/contact' }]} />
@@ -153,18 +148,20 @@ export default function ContactPage() {
             <div className="mt-7 rounded-[12px] border border-forge-silver bg-forge-fog p-5">
               <p className="text-[11px] font-bold uppercase tracking-[.2em] text-forge-slate">Service area</p>
               <div className="mt-3 flex flex-wrap gap-2">
-                {SERVICE_CITIES.filter((c) => LINKED_CITIES.includes(c.slug)).map((c) => (
-                  <Chip key={c.slug} size="sm" href={`/locations/${c.slug}`}>
-                    {c.name.replace(/, TX$/, '')} →
-                  </Chip>
-                ))}
-                {plainCities.map((c) => (
-                  <Chip key={c} size="sm">
-                    {c}
+                {ALL_CITY_SLUGS.map((slug) => (
+                  <Chip key={slug} size="sm" href={`/locations/${slug}`}>
+                    {LOCATIONS[slug].name} →
                   </Chip>
                 ))}
               </div>
               <p className="mt-3 text-[13px] text-forge-slate">Within ~90 minutes of Temple. Call to confirm your area.</p>
+              <p className="mt-3 text-[13px] text-forge-slate">
+                Supplier, dealer or GC?{' '}
+                <Link href="/partners" className="border-b border-forge-silver font-semibold text-forge-navy transition-colors hover:border-forge-navy">
+                  Become an install partner
+                </Link>
+                .
+              </p>
             </div>
           </div>
           <MessageForm />

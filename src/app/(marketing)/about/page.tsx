@@ -3,6 +3,7 @@ import type { Metadata } from 'next'
 
 import { Breadcrumb } from '@/components/forge/Breadcrumb'
 import { FeatureCard, NumberedRow, RuleList } from '@/components/forge/cards'
+import { ForgeButtonLink } from '@/components/forge/ForgeButton'
 import { ForgeReveal } from '@/components/forge/ForgeReveal'
 import { PageHero } from '@/components/forge/PageHero'
 import { QuoteSection } from '@/components/forge/QuoteSection'
@@ -86,6 +87,15 @@ const APART = [
     title: 'Permit planning',
     body: 'We give permit guidance and discuss approvals before scheduling. Filing responsibilities are confirmed in your written scope.',
   },
+]
+
+/** Where an About reader goes next. */
+const NEXT_LINKS = [
+  { href: '/gallery', label: 'See recent builds' },
+  { href: '/services', label: 'What we build' },
+  { href: '/locations', label: 'Where we work' },
+  { href: '/blog', label: 'Guides from the crew' },
+  { href: '/partners', label: 'Install partners' },
 ]
 
 const HOW = [
@@ -257,7 +267,21 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* 6 · Quote */}
+      {/* 6 · Where to next */}
+      <section data-forge="" data-tone="light" className="border-t border-forge-mist bg-forge-fog py-8 text-forge-navy">
+        <div className="mx-auto flex w-full max-w-[1360px] flex-wrap items-center gap-x-6 gap-y-3.5 px-[clamp(20px,3vw,40px)]">
+          <p className="text-[11px] font-bold uppercase tracking-[.2em] text-forge-slate">Keep looking</p>
+          <div className="flex flex-wrap gap-2.5">
+            {NEXT_LINKS.map((r) => (
+              <ForgeButtonLink key={r.href} href={r.href} variant="linkAccent" size="tap">
+                {r.label} →
+              </ForgeButtonLink>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* 7 · Quote */}
       <QuoteSection />
     </div>
   )
