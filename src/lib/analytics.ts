@@ -19,6 +19,8 @@
 
 import type { PostHog } from 'posthog-js'
 
+import { spanishPath } from '@/i18n/routes'
+
 export type AnalyticsEvent =
   // Fired by the delegated click listener in instrumentation-client.ts, so
   // every link on the site is covered without wiring each button.
@@ -82,6 +84,9 @@ export const LINK_EVENT: Record<LinkKind, AnalyticsEvent> = {
   directions: 'directions_clicked',
 }
 
+/** The quote page in both languages; the Spanish URL is owned by src/i18n/routes.ts. */
+const QUOTE_PATHS = new Set(['/quote', spanishPath('/quote')])
+
 const MAP_HOSTS = /(^|\.)(google\.[a-z.]+|goo\.gl|maps\.apple\.com)$/
 
 /** Pure: which conversion-relevant link, if any, an href points at. */
@@ -98,7 +103,7 @@ export function classifyLink(href: string, origin: string): LinkKind | null {
     return null
   }
   if (url.origin === origin) {
-    if (url.pathname === '/quote' || url.hash === '#quote') return 'quote'
+    if (QUOTE_PATHS.has(url.pathname) || url.hash === '#quote') return 'quote'
     return null
   }
   if (MAP_HOSTS.test(url.hostname) && (url.pathname.startsWith('/maps') || url.hostname.startsWith('maps.'))) {
@@ -182,7 +187,10 @@ export function loadPostHog(): Promise<PostHog | null> {
           recordHeaders: false,
         },
         // Runs before the first pageview, so even that one carries the flag.
-        loaded: (ph) => ph.register({ internal_traffic: isInternal() }),
+        // `locale` is the page's <html lang> ('en' | 'es'). The English and
+        // Spanish sites have separate root layouts, so changing language is a
+        // full page load and this runs again.
+        loaded: (ph) => ph.register({ internal_traffic: isInternal(), locale: document.documentElement.lang || 'en' }),
         before_send: (event) => {
           if (!event) return null
           const url = event.properties?.$current_url as string | undefined

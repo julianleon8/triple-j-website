@@ -8,20 +8,20 @@ import type { ProjectReference } from '@/lib/project-reference'
 import { parseQuotePrefill } from '@/lib/quote-prefill'
 import { getAdminClient } from '@/lib/supabase/admin'
 
-const t = QUOTE.en.meta
+const t = QUOTE.es.meta
 
 export const metadata: Metadata = {
   title: t.title,
   description: t.description,
-  // Bare canonical on purpose: this page is the target of every ad variant, and
-  // they all arrive with a different query string (?src=fb, ?service=, ?city=).
-  // Without this each one would look like a separate URL.
-  alternates: localeAlternates('/quote', 'en'),
+  // Bare canonical on purpose (see /quote): every ad variant arrives with its
+  // own query string, and each would otherwise look like a separate URL.
+  alternates: localeAlternates('/quote', 'es'),
   openGraph: {
     title: t.ogTitle,
     description: t.ogDescription,
+    url: '/es/cotizacion',
     type: 'website',
-    ...ogLocale('en'),
+    ...ogLocale('es'),
   },
 }
 
@@ -67,11 +67,11 @@ async function loadReference(id: string): Promise<ProjectReference | undefined> 
   }
 }
 
-export default async function Page({ searchParams }: PageProps<'/quote'>) {
+export default async function Page({ searchParams }: PageProps<'/es/cotizacion'>) {
   const prefill = parseQuotePrefill(await searchParams)
   const isFencing = prefill.service === 'fencing' && !prefill.projectId
   const reference = prefill.projectId ? await loadReference(prefill.projectId) : undefined
   const builds = isFencing ? [] : await getBuilds({ order: 'featured', limit: 6 })
 
-  return <QuotePage locale="en" prefill={prefill} reference={reference} builds={builds} />
+  return <QuotePage locale="es" prefill={prefill} reference={reference} builds={builds} />
 }

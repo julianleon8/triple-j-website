@@ -30,6 +30,9 @@ export const GALLERY_PATHS: ReadonlyArray<readonly [path: string, type?: 'page' 
   ['/sitemap.xml'],
   // The Spanish mirror (2026-10-03).
   ['/es'],
+  ['/es/galeria'],
+  ['/es/cotizacion'],
+  ['/es/socios'],
 ]
 
 /**

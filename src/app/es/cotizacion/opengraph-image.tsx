@@ -1,23 +1,19 @@
 import { QUOTE } from '@/i18n/pages/quote'
 import { OG_CONTENT_TYPE, OG_SIZE, renderOgCard } from '@/lib/og-card'
 
-/**
- * /quote is the link pasted into Facebook Marketplace posts and texted to
- * customers, so its preview card does more work than most. It takes no params
- * and prerenders at build.
- */
+/** /es/cotizacion OG card: the Spanish twin of /quote, with the same response promise. */
 
 export const size = OG_SIZE
 export const contentType = OG_CONTENT_TYPE
-export const alt = QUOTE.en.og.alt
+export const alt = QUOTE.es.og.alt
 
 export default function QuoteOpenGraphImage() {
-  const t = QUOTE.en.og
+  const t = QUOTE.es.og
   return renderOgCard({
     eyebrow: t.eyebrow,
     headline: t.headline,
     accent: t.accent,
     subhead: t.subhead,
-    path: '/quote',
+    path: '/es/cotizacion',
   })
 }

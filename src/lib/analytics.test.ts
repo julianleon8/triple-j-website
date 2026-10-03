@@ -6,7 +6,7 @@ const origin = 'https://www.triplejmetaltx.com'
 
 describe('isTrackedPath', () => {
   it('tracks the marketing site', () => {
-    for (const path of ['/', '/quote', '/thank-you', '/services/metal-carports', '/locations/temple', '/blog/x', '/hqx']) {
+    for (const path of ['/', '/quote', '/thank-you', '/services/metal-carports', '/locations/temple', '/blog/x', '/hqx', '/es', '/es/cotizacion']) {
       expect(isTrackedPath(path)).toBe(true)
     }
   })
@@ -33,6 +33,13 @@ describe('classifyLink', () => {
     expect(classifyLink('#quote', origin)).toBe('quote')
     expect(classifyLink('/#quote', origin)).toBe('quote')
     expect(classifyLink(`${origin}/quote`, origin)).toBe('quote')
+  })
+  it('finds the Spanish routes to the quote form the same way', () => {
+    expect(classifyLink('/es/cotizacion', origin)).toBe('quote')
+    expect(classifyLink('/es/cotizacion?service=carport', origin)).toBe('quote')
+    expect(classifyLink('/es#quote', origin)).toBe('quote')
+    expect(classifyLink(`${origin}/es/cotizacion`, origin)).toBe('quote')
+    expect(classifyLink('/es/gracias', origin)).toBe(null)
   })
   it('reads contact links by scheme', () => {
     expect(classifyLink('tel:+12545550100', origin)).toBe('phone')

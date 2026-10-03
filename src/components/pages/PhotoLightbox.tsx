@@ -3,6 +3,9 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import Image from 'next/image'
 
+import { PHOTO_LIGHTBOX } from '@/i18n/pages/photo-lightbox'
+import { useLocale } from '@/i18n/use-locale'
+
 export type LightboxPhoto = {
   id: string
   src: string
@@ -14,7 +17,8 @@ type Props = {
 }
 
 /**
- * Public photo lightbox for /gallery/[id].
+ * Public photo lightbox for /gallery/[id] and /es/galeria/[id]; its words
+ * follow the page's language (read from the URL).
  *
  * iOS-style modal with prev/next + swipe + keyboard arrows + counter.
  * Renders a thumbnail grid; clicking any thumb opens the slideshow at
@@ -30,6 +34,7 @@ export type PhotoLightboxHandle = {
 }
 
 export function PhotoLightbox({ photos }: Props) {
+  const t = PHOTO_LIGHTBOX[useLocale()]
   const dialogRef = useRef<HTMLDialogElement>(null)
   const [index, setIndex] = useState(0)
   const [isOpen, setIsOpen] = useState(false)
@@ -87,7 +92,7 @@ export function PhotoLightbox({ photos }: Props) {
             type="button"
             onClick={() => open(i)}
             className="group relative aspect-4/3 overflow-hidden rounded-[12px] border border-forge-silver bg-forge-slate transition-[border-color,box-shadow] duration-300 hover:border-forge-steel hover:shadow-[var(--shadow-card-hover)]"
-            aria-label={`Open photo ${i + 1} of ${photos.length}: ${p.alt}`}
+            aria-label={t.open(i + 1, photos.length, p.alt)}
           >
             <Image
               src={p.src}
@@ -99,7 +104,7 @@ export function PhotoLightbox({ photos }: Props) {
             />
             {i === 0 && (
               <span className="absolute top-2 left-2 rounded-full bg-forge-navy px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-white shadow">
-                Cover
+                {t.cover}
               </span>
             )}
           </button>
@@ -123,7 +128,7 @@ export function PhotoLightbox({ photos }: Props) {
               onClick={close}
               className="absolute right-4 z-10 h-10 w-10 rounded-full bg-white/15 text-white text-xl backdrop-blur-sm hover:bg-white/30 flex items-center justify-center"
               style={{ top: 'max(env(safe-area-inset-top), 1rem)' }}
-              aria-label="Close gallery"
+              aria-label={t.close}
             >
               ×
             </button>
@@ -143,7 +148,7 @@ export function PhotoLightbox({ photos }: Props) {
                   type="button"
                   onClick={(e) => { e.stopPropagation(); prev() }}
                   className="absolute left-3 z-10 hidden h-12 w-12 items-center justify-center rounded-full bg-white/15 text-white text-2xl backdrop-blur-sm hover:bg-white/30 sm:flex"
-                  aria-label="Previous photo"
+                  aria-label={t.prev}
                 >
                   ‹
                 </button>
@@ -151,7 +156,7 @@ export function PhotoLightbox({ photos }: Props) {
                   type="button"
                   onClick={(e) => { e.stopPropagation(); next() }}
                   className="absolute right-3 z-10 hidden h-12 w-12 items-center justify-center rounded-full bg-white/15 text-white text-2xl backdrop-blur-sm hover:bg-white/30 sm:flex"
-                  aria-label="Next photo"
+                  aria-label={t.next}
                 >
                   ›
                 </button>
@@ -172,7 +177,7 @@ export function PhotoLightbox({ photos }: Props) {
 
             {photos.length > 1 && (
               <p className="absolute bottom-6 left-1/2 -translate-x-1/2 text-[11px] text-white/60 sm:hidden uppercase tracking-wider">
-                Swipe to browse
+                {t.swipe}
               </p>
             )}
           </div>

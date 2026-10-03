@@ -1,21 +1,18 @@
 import { PARTNERS } from '@/i18n/pages/partners'
 import { OG_CONTENT_TYPE, OG_SIZE, renderOgCard } from '@/lib/og-card'
 
-/**
- * /partners OG card — the page's own H1 and share description. The page is
- * force-dynamic; this image route is not, and prerenders at build.
- */
+/** /es/socios OG card: the Spanish twin of /partners. */
 
 export const size = OG_SIZE
 export const contentType = OG_CONTENT_TYPE
-export const alt = PARTNERS.en.og.alt
+export const alt = PARTNERS.es.og.alt
 
 export default function PartnersOpenGraphImage() {
-  const t = PARTNERS.en.og
+  const t = PARTNERS.es.og
   return renderOgCard({
     eyebrow: t.eyebrow,
     headline: t.headline,
     subhead: t.subhead,
-    path: '/partners',
+    path: '/es/socios',
   })
 }
