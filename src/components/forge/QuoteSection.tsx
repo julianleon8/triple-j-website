@@ -1,10 +1,14 @@
-import { QuoteForm, QUOTE_LEDE_DEFAULT, type QuoteFormProps } from "@/components/sections/QuoteForm";
+import { QuoteForm, type QuoteFormProps } from "@/components/sections/QuoteForm";
+import type { Locale } from "@/i18n/config";
+import { QUOTE_FORM } from "@/i18n/copy/quote-form";
 
 type Props = Pick<QuoteFormProps, "initialService" | "initialZip" | "initialMilitary" | "projectReference"> & {
   /** Service page: the service's name, e.g. "Carports". */
   serviceName?: string;
   /** Location page: the city name, e.g. "Temple". */
   city?: string;
+  /** The page's language. */
+  locale?: Locale;
 };
 
 /**
@@ -12,10 +16,10 @@ type Props = Pick<QuoteFormProps, "initialService" | "initialZip" | "initialMili
  * Forge page except /contact and /partners closes with it. The lede says what
  * the page already filled in: the service, the city's ZIP, or the military box.
  */
-export function QuoteSection({ serviceName, city, initialService, initialZip, initialMilitary, projectReference }: Props) {
+export function QuoteSection({ serviceName, city, initialService, initialZip, initialMilitary, projectReference, locale = "en" }: Props) {
   return (
     <QuoteForm
-      lede={quoteLede({ serviceName, city, military: initialMilitary })}
+      lede={quoteLede({ serviceName, city, military: initialMilitary }, locale)}
       initialService={initialService}
       initialZip={initialZip}
       initialMilitary={initialMilitary}
@@ -24,17 +28,15 @@ export function QuoteSection({ serviceName, city, initialService, initialZip, in
   );
 }
 
-export function quoteLede({ serviceName, city, military }: { serviceName?: string; city?: string; military?: boolean }): string {
+export function quoteLede(
+  { serviceName, city, military }: { serviceName?: string; city?: string; military?: boolean },
+  locale: Locale = "en",
+): string {
+  const t = QUOTE_FORM[locale];
   // "within 24 hours", not the design's "the same day": the same-day promise
   // belongs to /quote alone (Locked Decisions, response promise).
-  if (military) {
-    return "The military discount box is pre-checked on step two — verify the rest and we’ll be in touch within 24 hours with timeline and pricing.";
-  }
-  if (serviceName) {
-    return `Two quick steps — ${serviceName.toLowerCase()} is already picked. A real Texas crew on the other end, not a form into a black hole.`;
-  }
-  if (city) {
-    return `Two quick steps — your ${city} ZIP is already filled in. A real Texas crew on the other end, not a form into a black hole.`;
-  }
-  return QUOTE_LEDE_DEFAULT;
+  if (military) return t.ledeMilitary;
+  if (serviceName) return t.ledeService(serviceName);
+  if (city) return t.ledeCity(city);
+  return t.ledeDefault;
 }

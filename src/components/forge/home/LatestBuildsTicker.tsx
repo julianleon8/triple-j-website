@@ -2,6 +2,9 @@
 
 import { useEffect, useRef } from "react";
 
+import { UI, buildWord } from "@/i18n/copy/ui";
+import { useLocale } from "@/i18n/use-locale";
+
 type TickerItem = { id: string; title: string; city: string };
 
 /**
@@ -12,6 +15,7 @@ type TickerItem = { id: string; title: string; city: string };
  * one rAF loop.
  */
 export function LatestBuildsTicker({ items }: { items: readonly TickerItem[] }) {
+  const locale = useLocale();
   const barRef = useRef<HTMLDivElement>(null);
   const trackRef = useRef<HTMLDivElement>(null);
 
@@ -61,13 +65,13 @@ export function LatestBuildsTicker({ items }: { items: readonly TickerItem[] }) 
       className="relative flex items-center overflow-hidden border-t border-forge-silver/[.22] bg-[rgba(0,24,42,.72)] text-[14px] text-white/88 backdrop-blur-[6px]"
     >
       <b className="relative z-[1] flex-none border-r border-forge-slate bg-forge-navy py-3.5 pr-[22px] pl-[clamp(20px,3vw,40px)] text-[12px] font-bold uppercase tracking-[.2em] text-forge-silver">
-        Latest builds
+        {UI[locale].latestBuilds}
       </b>
       <div ref={trackRef} className="flex gap-11 whitespace-nowrap pl-7 will-change-transform">
         {loop.map((t, i) => (
           <span key={`${t.id}-${i}`} aria-hidden={i >= items.length ? true : undefined} className="flex-none">
             {t.title}
-            <em className="ml-1.5 not-italic text-forge-steel">{t.city}</em>
+            <em className="ml-1.5 not-italic text-forge-steel">{buildWord(t.city, locale)}</em>
           </span>
         ))}
       </div>

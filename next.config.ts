@@ -67,6 +67,12 @@ const POSTHOG_INGEST = "https://us.i.posthog.com";
 const POSTHOG_ASSETS = "https://us-assets.i.posthog.com";
 
 const nextConfig: NextConfig = {
+  experimental: {
+    // The app has several root layouts since 2026-10-03 (English and Spanish
+    // public sites, HQ, login, quotes), so the 404 for an unmatched URL is
+    // src/app/global-not-found.tsx, which renders its own document.
+    globalNotFound: true,
+  },
   // PostHog's API paths end in a slash (/e/, /flags/) and Next's built-in
   // trailing-slash redirect would bounce every one of them. It is switched off
   // here and re-created in redirects() below for every path except /ingest,

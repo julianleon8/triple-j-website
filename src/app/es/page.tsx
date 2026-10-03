@@ -6,18 +6,18 @@ import { HOME } from "@/i18n/pages/home";
 import { getBuilds } from "@/lib/forge-builds";
 import { fullTitle } from "@/lib/root-metadata";
 
-const t = HOME.en.meta;
+const t = HOME.es.meta;
 
 export const metadata: Metadata = {
   title: fullTitle(t.title),
   description: t.description,
-  alternates: localeAlternates("/", "en"),
+  alternates: localeAlternates("/", "es"),
   openGraph: {
     title: t.ogTitle,
     description: t.ogDescription,
-    url: "/",
+    url: "/es",
     type: "website",
-    ...ogLocale("en"),
+    ...ogLocale("es"),
   },
 };
 
@@ -27,5 +27,5 @@ export const revalidate = 3600;
 
 export default async function Page() {
   const builds = await getBuilds({ order: "newest" });
-  return <HomePage locale="en" builds={builds} />;
+  return <HomePage locale="es" builds={builds} />;
 }

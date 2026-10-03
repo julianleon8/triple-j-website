@@ -2,6 +2,8 @@
 
 import { forwardRef, useId, type ComponentProps, type ReactNode } from "react";
 
+import { useLocale } from "@/i18n/use-locale";
+
 import { pillClass, type PillTone } from "./styles";
 
 /** 11px/700/.18em slate uppercase label; "(optional)" in steel, no tracking. */
@@ -20,6 +22,7 @@ export function FieldLabel({
   as?: "label" | "p";
 }) {
   const Tag = as;
+  const locale = useLocale();
   return (
     <Tag
       id={id}
@@ -28,7 +31,7 @@ export function FieldLabel({
     >
       {children}
       {optional ? (
-        <span className="font-medium normal-case tracking-normal text-forge-steel"> (optional)</span>
+        <span className="font-medium normal-case tracking-normal text-forge-steel"> {locale === "es" ? "(opcional)" : "(optional)"}</span>
       ) : null}
     </Tag>
   );
@@ -172,17 +175,21 @@ export function PillGroup<V extends string>({
 /** "Step N of 2 · label" + a 3px progress bar. */
 export function StepProgress({ step, total = 2, label }: { step: number; total?: number; label: string }) {
   const pct = Math.round((step / total) * 100);
+  const [stepWord, ofWord] = useLocale() === "es" ? ["Paso", "de"] : ["Step", "of"];
   return (
     <div className="mb-6">
       <div className="mb-2 flex items-center justify-between text-[11px] font-bold uppercase tracking-[.18em] text-forge-steel">
         <span className="whitespace-nowrap">
-          <span className="text-forge-navy">Step {step}</span> of {total}
+          <span className="text-forge-navy">
+            {stepWord} {step}
+          </span>{" "}
+          {ofWord} {total}
         </span>
         <span className="whitespace-nowrap">{label}</span>
       </div>
       <div
         role="progressbar"
-        aria-label={`Step ${step} of ${total}`}
+        aria-label={`${stepWord} ${step} ${ofWord} ${total}`}
         aria-valuemin={0}
         aria-valuemax={100}
         aria-valuenow={pct}

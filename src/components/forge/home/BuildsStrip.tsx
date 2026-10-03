@@ -6,6 +6,9 @@ import { useEffect, useRef, type ReactNode } from "react";
 
 import { ForgeIconButton } from "@/components/forge/misc";
 import { ArrowLeftIcon, ArrowRightIcon } from "@/components/ui/icons";
+import { UI, buildWord } from "@/i18n/copy/ui";
+import { localizeHref } from "@/i18n/routes";
+import { useLocale } from "@/i18n/use-locale";
 import type { BuildItem } from "@/lib/forge-builds";
 
 /**
@@ -15,6 +18,8 @@ import type { BuildItem } from "@/lib/forge-builds";
  * prefers-reduced-motion.
  */
 export function BuildsStrip({ items, header }: { items: readonly BuildItem[]; header: ReactNode }) {
+  const locale = useLocale();
+  const t = UI[locale];
   const sectionRef = useRef<HTMLElement>(null);
   const stripRef = useRef<HTMLDivElement>(null);
   const trackRef = useRef<HTMLUListElement>(null);
@@ -73,16 +78,16 @@ export function BuildsStrip({ items, header }: { items: readonly BuildItem[]; he
           {header}
           <div className="flex items-center gap-[18px]">
             <Link
-              href="/gallery"
+              href={localizeHref("/gallery", locale)}
               className="border-b border-forge-silver pb-0.5 text-[15px] font-semibold text-forge-navy transition-colors hover:border-forge-navy"
             >
-              See the full gallery →
+              {t.seeFullGallery}
             </Link>
             <div className="hidden gap-2 min-[900px]:flex">
-              <ForgeIconButton tone="onLight" aria-label="Previous builds" onClick={() => by(-1)}>
+              <ForgeIconButton tone="onLight" aria-label={t.prevBuilds} onClick={() => by(-1)}>
                 <ArrowLeftIcon width={18} height={18} />
               </ForgeIconButton>
-              <ForgeIconButton tone="onLight" aria-label="Next builds" onClick={() => by(1)}>
+              <ForgeIconButton tone="onLight" aria-label={t.nextBuilds} onClick={() => by(1)}>
                 <ArrowRightIcon width={18} height={18} />
               </ForgeIconButton>
             </div>
@@ -96,7 +101,7 @@ export function BuildsStrip({ items, header }: { items: readonly BuildItem[]; he
             {items.map((b) => (
               <li key={b.id} className="flex-[0_0_min(380px,80vw)] snap-start">
                 <Link
-                  href={`/gallery/${b.id}`}
+                  href={localizeHref(`/gallery/${b.id}`, locale)}
                   className="flex h-full flex-col overflow-hidden rounded-[12px] border border-forge-silver bg-forge-mist transition-[border-color,box-shadow] duration-300 ease-forge hover:border-forge-steel hover:shadow-[var(--shadow-card-hover)]"
                 >
                   <span className="relative block aspect-[4/3] overflow-hidden bg-forge-slate">
@@ -110,7 +115,7 @@ export function BuildsStrip({ items, header }: { items: readonly BuildItem[]; he
                     />
                   </span>
                   <span className="block flex-1 bg-white px-[18px] pt-4 pb-[18px]">
-                    <span className="block text-[11px] font-semibold uppercase tracking-[.2em] text-forge-steel">{b.city}</span>
+                    <span className="block text-[11px] font-semibold uppercase tracking-[.2em] text-forge-steel">{buildWord(b.city, locale)}</span>
                     <span className="mt-1.5 block font-forge-display text-[18px] font-bold leading-[1.2] tracking-[.01em] text-forge-navy">
                       {b.title}
                     </span>

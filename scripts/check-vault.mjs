@@ -56,6 +56,8 @@ const rootMd = readdirSync(ROOT).filter((f) => f.endsWith('.md')).sort()
     'src/lib/use-reveal.ts', // Forge step 13a, 2026-10-02
     'src/components/ui/Button.tsx', // Forge step 13a, 2026-10-02
     'src/components/ui/Button.test.ts', // Forge step 13a, 2026-10-02
+    'src/app/not-found.tsx', // Spanish site root-layout split, 2026-10-03
+    'src/app/layout.tsx', // Spanish site root-layout split, 2026-10-03
   ])
   for (const f of ['Decisions.md', 'Locked Decisions.md', 'AGENTS.md']) {
     if (!has(f)) continue

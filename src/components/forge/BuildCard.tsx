@@ -4,6 +4,9 @@ import Image from "next/image";
 import Link from "next/link";
 import type { MouseEvent } from "react";
 
+import { UI, buildWord } from "@/i18n/copy/ui";
+import { localizeHref } from "@/i18n/routes";
+import { useLocale } from "@/i18n/use-locale";
 import type { BuildItem } from "@/lib/forge-builds";
 
 /**
@@ -22,6 +25,7 @@ export function BuildCard({
   onOpen?: (trigger: HTMLElement) => void;
   sizes?: string;
 }) {
+  const locale = useLocale();
   const onClick = (e: MouseEvent<HTMLAnchorElement>) => {
     if (!onOpen || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
     e.preventDefault();
@@ -30,7 +34,7 @@ export function BuildCard({
   const gallery = variant === "gallery";
   return (
     <Link
-      href={`/gallery/${item.id}`}
+      href={localizeHref(`/gallery/${item.id}`, locale)}
       onClick={onClick}
       className="group flex flex-col overflow-hidden rounded-[12px] border border-forge-silver bg-white text-forge-navy transition-[border-color,box-shadow] duration-300 ease-forge hover:border-forge-steel hover:shadow-[var(--shadow-card-hover)]"
     >
@@ -47,7 +51,7 @@ export function BuildCard({
       <span className={`flex w-full items-end justify-between gap-3 ${gallery ? "px-[18px] pt-4 pb-[18px]" : "px-4 pt-3.5 pb-4"}`}>
         <span className="block min-w-0">
           <span className="block text-[11px] font-semibold uppercase tracking-[.2em] text-forge-slate">
-            {item.type} · {item.city}
+            {buildWord(item.type, locale)} · {buildWord(item.city, locale)}
           </span>
           <span
             className={`mt-1.5 block font-forge-display font-bold leading-[1.25] ${gallery ? "text-[19px]" : "text-[17px]"}`}
@@ -57,7 +61,7 @@ export function BuildCard({
         </span>
         {gallery ? (
           <span className="flex-none text-[13px] font-semibold text-forge-slate">
-            View <span aria-hidden="true">→</span>
+            {UI[locale].view} <span aria-hidden="true">→</span>
           </span>
         ) : null}
       </span>

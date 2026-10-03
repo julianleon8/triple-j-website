@@ -1,3 +1,11 @@
+import { RootDocument } from '@/components/site/RootDocument'
+import { rootMetadata, rootViewport } from '@/lib/root-metadata'
+
+// A root layout since 2026-10-03 (the public site split into English and
+// Spanish roots), so it restates the shared document metadata.
+export const metadata = rootMetadata('en')
+export const viewport = rootViewport
+
 /**
  * Shell for the auth pages (/login, /setup). A route group, so the URLs are
  * unchanged.
@@ -15,10 +23,12 @@
  */
 export default function AuthLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="font-(family-name:--font-ios) min-h-dvh flex-1 bg-(--surface-1) text-(--text-primary) flex items-center justify-center px-4 py-10">
-      <div className="w-full max-w-sm rounded-2xl border border-(--border-subtle) bg-(--surface-2) p-8 shadow-xl">
-        {children}
+    <RootDocument locale="en">
+      <div className="font-(family-name:--font-ios) min-h-dvh flex-1 bg-(--surface-1) text-(--text-primary) flex items-center justify-center px-4 py-10">
+        <div className="w-full max-w-sm rounded-2xl border border-(--border-subtle) bg-(--surface-2) p-8 shadow-xl">
+          {children}
+        </div>
       </div>
-    </div>
+    </RootDocument>
   )
 }

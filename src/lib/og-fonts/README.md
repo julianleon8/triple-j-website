@@ -10,7 +10,7 @@ these every `fontWeight` in a card silently renders at 400.
 | `inter-latin-{500,600,700}-normal.woff` | Inter | body text, pills, footer |
 
 The same two families the site loads through `next/font/google` in
-`src/app/layout.tsx` (Forge, 2026-10-02 — Barlow Condensed left the cards
+`src/components/site/RootDocument.tsx` (Forge, 2026-10-02 — Barlow Condensed left the cards
 then). Latin subsets from `@fontsource/cinzel` and `@fontsource/inter` 5.3.0.
 WOFF, not WOFF2 — satori cannot parse WOFF2.
 

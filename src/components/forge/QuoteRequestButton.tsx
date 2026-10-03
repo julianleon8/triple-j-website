@@ -2,6 +2,8 @@
 
 import type { ReactNode } from "react";
 
+import { localizeHref } from "@/i18n/routes";
+import { useLocale } from "@/i18n/use-locale";
 import { requestQuote, type QuoteRequest } from "@/lib/forge-quote";
 
 import { buttonClass, type ForgeButtonSize, type ForgeButtonVariant } from "./styles";
@@ -28,6 +30,7 @@ export function QuoteRequestButton({
   className?: string;
   children: ReactNode;
 }) {
+  const locale = useLocale();
   return (
     <a
       href="#quote"
@@ -35,7 +38,7 @@ export function QuoteRequestButton({
         e.preventDefault();
         if (!requestQuote(request)) {
           const q = request.service ? `?service=${request.service}` : "";
-          window.location.href = `/quote${q}`;
+          window.location.href = localizeHref(`/quote${q}`, locale);
         }
       }}
       className={buttonClass(variant, size, fullWidth, className)}

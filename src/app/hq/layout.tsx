@@ -1,4 +1,6 @@
 import type { Viewport } from 'next'
+import { RootDocument } from '@/components/site/RootDocument'
+import { rootMetadata, rootViewport } from '@/lib/root-metadata'
 import HqChrome from './components/HqChrome'
 
 /**
@@ -14,14 +16,22 @@ import HqChrome from './components/HqChrome'
  * inherited Inter from body for the life of that class.
  */
 export const viewport: Viewport = {
-  // Overrides the root layout's light/dark pair — HQ is dark on both.
+  ...rootViewport,
+  // Overrides the public site's navy — HQ is dark on both schemes.
   themeColor: '#0b0d0f',
 }
 
+// HQ is a root layout of its own (2026-10-03, when the public site split
+// into English and Spanish roots), so it restates the document metadata the
+// shared root used to give it: metadataBase, the title template, appleWebApp.
+export const metadata = rootMetadata('en')
+
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="hq-ui font-(family-name:--font-ios)">
-      <HqChrome>{children}</HqChrome>
-    </div>
+    <RootDocument locale="en">
+      <div className="hq-ui font-(family-name:--font-ios)">
+        <HqChrome>{children}</HqChrome>
+      </div>
+    </RootDocument>
   )
 }

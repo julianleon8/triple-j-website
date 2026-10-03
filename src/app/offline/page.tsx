@@ -1,7 +1,11 @@
+import { fullTitle } from '@/lib/root-metadata'
+
 export const dynamic = 'force-static'
 
 export const metadata = {
-  title: 'Offline — Triple J HQ',
+  // fullTitle: this page shares a segment with its root layout, so the
+  // layout's title template doesn't reach it.
+  title: fullTitle('Offline — Triple J HQ'),
   // Service-worker fallback shell, not a real destination. It sits outside the
   // robots.ts disallow list (which covers /hq, /api, /login, /setup, /quotes),
   // so without this it is crawlable and can be indexed as a junk result.

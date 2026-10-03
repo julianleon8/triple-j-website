@@ -12,7 +12,8 @@ import { revalidatePath } from 'next/cache'
  *
  * Dynamic routes must be given as the route-file pattern *including* the
  * (marketing) group. Next derives the cache tag from the file path, so
- * '/services/[slug]' matches nothing and fails silently.
+ * '/services/[slug]' matches nothing and fails silently. Spanish pages
+ * (2026-10-03) live under `src/app/es/` with no group: '/es/servicios/[slug]'.
  *
  * Rendering gallery data on another page (a new getBuilds() caller, a ticker
  * in a shared layout)? Add that page here — gallery-revalidate.test.ts fails
@@ -27,6 +28,8 @@ export const GALLERY_PATHS: ReadonlyArray<readonly [path: string, type?: 'page' 
   ['/(marketing)/services/[slug]', 'page'], // Recent builds
   ['/(marketing)/locations/[slug]', 'page'], // Recent builds
   ['/sitemap.xml'],
+  // The Spanish mirror (2026-10-03).
+  ['/es'],
 ]
 
 /**
@@ -41,7 +44,10 @@ export function revalidateGallery(itemIds: string | readonly string[] = []): voi
   const ids = typeof itemIds === 'string' ? [itemIds] : itemIds
   try {
     for (const [path, type] of GALLERY_PATHS) revalidatePath(path, type)
-    for (const id of ids) revalidatePath(`/gallery/${id}`)
+    for (const id of ids) {
+      revalidatePath(`/gallery/${id}`)
+      revalidatePath(`/es/galeria/${id}`)
+    }
   } catch (error) {
     console.error('[gallery] revalidation failed', { ids, error })
   }

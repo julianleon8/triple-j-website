@@ -4,6 +4,8 @@ import { useCallback, useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
 
 import { ArrowLeftIcon, ArrowRightIcon, CloseIcon } from "@/components/ui/icons";
+import { UI, buildWord } from "@/i18n/copy/ui";
+import { useLocale } from "@/i18n/use-locale";
 import type { BuildItem } from "@/lib/forge-builds";
 
 /**
@@ -26,6 +28,8 @@ export function ForgeLightbox({
   onQuote?: (item: BuildItem) => void;
   returnFocusTo?: HTMLElement | null;
 }) {
+  const locale = useLocale();
+  const t = UI[locale];
   const dialogRef = useRef<HTMLDivElement>(null);
   const closeRef = useRef<HTMLButtonElement>(null);
   const item = items[index];
@@ -103,7 +107,7 @@ export function ForgeLightbox({
         <button
           ref={closeRef}
           type="button"
-          aria-label="Close"
+          aria-label={t.close}
           onClick={onClose}
           className="inline-flex size-11 cursor-pointer items-center justify-center rounded-[8px] border border-white/30 text-white transition-colors hover:border-white"
         >
@@ -113,7 +117,7 @@ export function ForgeLightbox({
       <div className="flex min-h-0 flex-1 items-center justify-center gap-3 px-3">
         <button
           type="button"
-          aria-label="Previous photo"
+          aria-label={t.prevPhoto}
           onClick={(e) => {
             e.stopPropagation();
             step(-1);
@@ -132,7 +136,7 @@ export function ForgeLightbox({
         />
         <button
           type="button"
-          aria-label="Next photo"
+          aria-label={t.nextPhoto}
           onClick={(e) => {
             e.stopPropagation();
             step(1);
@@ -148,7 +152,7 @@ export function ForgeLightbox({
       >
         <div>
           <p className="text-[11px] font-semibold uppercase tracking-[.2em] text-forge-steel-light">
-            {item.type} · {item.city}
+            {buildWord(item.type, locale)} · {buildWord(item.city, locale)}
           </p>
           <h2 className="mt-1.5 font-forge-display text-[clamp(20px,2.4vw,28px)] font-bold leading-[1.2]">{item.title}</h2>
         </div>
@@ -158,7 +162,7 @@ export function ForgeLightbox({
             onClick={() => onQuote(item)}
             className="inline-flex cursor-pointer items-center gap-2 rounded-[6px] bg-white px-[22px] py-3.5 text-[15px] font-semibold text-forge-navy transition-colors hover:bg-forge-silver"
           >
-            Quote a build like this <span aria-hidden="true" className="text-forge-slate">→</span>
+            {t.quoteLikeThis} <span aria-hidden="true" className="text-forge-slate">→</span>
           </button>
         ) : null}
       </div>

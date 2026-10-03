@@ -112,3 +112,51 @@ export function summarizeBuild(input: BuildSummaryInput): string | null {
 
   return city ? `${article} ${phrase} in ${city}` : `${article} ${phrase}`;
 }
+
+/**
+ * Spanish nouns carry their gender: the article and the adjective agree with
+ * it ("Una cochera soldada", "Un garaje metálico soldado").
+ */
+const SERVICE_NOUNS_ES: Record<string, { noun: string; feminine: boolean }> = {
+  carport: { noun: 'cochera', feminine: true },
+  garage: { noun: 'garaje metálico', feminine: false },
+  barn: { noun: 'granero metálico', feminine: false },
+  rv_cover: { noun: 'cubierta para RV o lancha', feminine: true },
+  lean_to: { noun: 'patio lean-to', feminine: false },
+  other: { noun: 'obra a la medida', feminine: true },
+};
+
+const STRUCTURE_ADJECTIVES_ES: Record<string, [masculine: string, feminine: string]> = {
+  welded: ['soldado', 'soldada'],
+  bolted: ['atornillado', 'atornillada'],
+};
+
+/**
+ * The Spanish summary sentence: "Una cochera soldada de 20×30×12 en Killeen".
+ * Same rules as `summarizeBuild` — every part optional, null without a known
+ * service, never a raw ZIP, never a price.
+ */
+export function summarizeBuildEs(input: BuildSummaryInput): string | null {
+  const entry = SERVICE_NOUNS_ES[input.service_type?.trim() ?? ''];
+  if (!entry) return null;
+
+  const width = dimension(input.width);
+  const length = dimension(input.length);
+  const height = dimension(input.height);
+  let size = '';
+  if (width && length) {
+    size = height ? `${width}×${length}×${height}` : `${width}×${length}`;
+  }
+
+  const forms = STRUCTURE_ADJECTIVES_ES[input.structure_type?.trim() ?? ''];
+  const adjective = forms ? forms[entry.feminine ? 1 : 0] : '';
+  const city = cityFromZip(input.zip);
+
+  return [
+    entry.feminine ? 'Una' : 'Un',
+    entry.noun,
+    adjective,
+    size ? `de ${size}` : '',
+    city ? `en ${city}` : '',
+  ].filter(Boolean).join(' ');
+}

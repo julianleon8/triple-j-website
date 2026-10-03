@@ -6,7 +6,8 @@ import { renderToStaticMarkup } from 'react-dom/server';
 // QuoteForm is a client component. Only the initial render is exercised here —
 // enough to guard the chrome split, which is the one change in this component
 // that touches all fourteen pages embedding it.
-vi.mock('next/navigation', () => ({ useRouter: () => ({ push: vi.fn() }) }));
+const pathname = vi.hoisted(() => ({ current: '/' }));
+vi.mock('next/navigation', () => ({ useRouter: () => ({ push: vi.fn() }), usePathname: () => pathname.current }));
 vi.mock('next/dynamic', () => ({ default: () => () => null }));
 vi.mock('next/image', async () => {
   const { createElement: h } = await import('react');
@@ -17,6 +18,7 @@ vi.mock('next/image', async () => {
 
 import { buildLeadPayload, QUOTE_FORM_INITIAL, QuoteForm, type QuoteFormProps } from './QuoteForm';
 import { quoteLede } from '../forge/QuoteSection';
+import { QUOTE_FORM } from '../../i18n/copy/quote-form';
 
 // Every prop is optional, so createElement's inference needs the component
 // type spelled out.
@@ -63,12 +65,16 @@ it('keeps the aria reference and its target together', () => {
 // The reassurance line sits on step 2, so these assert on the source strings
 // the component renders there.
 it('promises the same thing on /quote as the page headline does', () => {
-  // Step 2 is not rendered on first paint; the copy lives in the component.
+  // Step 2 is not rendered on first paint; the copy lives in the form's copy
+  // file (both languages) and the component picks the line by source.
   const src = readFileSync(new URL('./QuoteForm.tsx', import.meta.url), 'utf8');
-  expect(src).toContain('same day, guaranteed within 24 hours.');
-  expect(src).toContain('reply within 24 hours.');
+  expect(src).toContain('isQuotePage ? t.sameDay : t.within24');
+  expect(QUOTE_FORM.en.sameDay).toBe('same day, guaranteed within 24 hours.');
+  expect(QUOTE_FORM.en.within24).toBe('reply within 24 hours.');
+  expect(QUOTE_FORM.es.sameDay).toBe('el mismo día, garantizado en menos de 24 horas.');
   // Locked Decisions: nothing may say "most replies".
-  expect(src.toLowerCase()).not.toContain('most replies');
+  const copy = readFileSync(new URL('../../i18n/copy/quote-form.ts', import.meta.url), 'utf8');
+  expect((src + copy).toLowerCase()).not.toContain('most replies');
 });
 
 it('preselects the service chip from ?service=', () => {
@@ -124,7 +130,7 @@ it('keeps the lead payload identical, plus permits in the notes', () => {
     best_time_to_call: 'morning', source: 'website_form',
     estimated_budget_min: 5000, estimated_budget_max: 10000, is_military: true,
     message: 'Gate code 1234\n\nPermits: Not sure',
-    captcha_token: 'tok', reference_project_id: undefined,
+    captcha_token: 'tok', reference_project_id: undefined, language: 'en',
   });
 });
 
@@ -151,4 +157,14 @@ it('still files fencing and lean-to as other with their scope in the notes', () 
   const lean = buildLeadPayload({ ...filled, service_type: 'lean_to', message: '' }, { source: 'website_form', captchaToken: null });
   expect(lean.service_type).toBe('other');
   expect(lean.message).toBe('Requested build: Lean-To / Patio');
+});
+
+it('renders in Spanish when the page is Spanish', () => {
+  pathname.current = '/es/cotizacion';
+  const html = render();
+  pathname.current = '/';
+  expect(html).toContain('Pide una cotización');
+  expect(html).toContain('Cochera / Cubierta RV');
+  expect(html).toContain('Paso');
+  expect(html).not.toContain('Get a quote');
 });

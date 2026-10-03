@@ -40,7 +40,8 @@ describe('GALLERY_PATHS', () => {
     expect(patterns.length).toBeGreaterThan(0)
     for (const [path, type] of patterns) {
       expect(type).toBe('page')
-      expect(path).toMatch(/^\/\(\w+\)\//)
+      // English routes carry their group; the Spanish tree (src/app/es) has none.
+      expect(path).toMatch(/^\/(\(\w+\)|es)\//)
       expect(existsSync(join('src/app', path, 'page.tsx')), path).toBe(true)
     }
   })

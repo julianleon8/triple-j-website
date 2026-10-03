@@ -126,7 +126,7 @@ Figma design overrides them.
 **Found while specifying (not built):**
 - **HQ is in scope**, so `brand-*` / `--brand-fg` (44 marketing + 61 HQ files) and `--font-display` (35
   files) can be rewritten globally. HQ headings use `uppercase` Barlow; with Cinzel, drop `uppercase`.
-- **`#1e6bd6` is hard-coded** in `src/app/layout.tsx` (theme colour), `src/emails/BrandLayout.tsx`,
+- **`#1e6bd6` is hard-coded** in `src/lib/root-metadata.ts` (theme colour; was `src/app/layout.tsx`), `src/emails/BrandLayout.tsx`,
   `src/emails/PartnerInquiryConfirmation.tsx`, `src/lib/quote-pdf.tsx` and HQ charts. Emails need a serif
   fallback (Gmail ignores web fonts). The PDF must register a Cinzel font file. OG cards (`src/lib/og-fonts`)
   need Cinzel.

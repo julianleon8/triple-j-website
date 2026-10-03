@@ -13,7 +13,11 @@ import { CheckboxRow, FieldHelper, FieldLabel, PillGroup, StepProgress, TextArea
 import { QUOTE_EVENT, scrollToId, type QuoteRequest } from "@/lib/forge-quote";
 import { cityFromZip } from "@/lib/locations";
 import { projectService, type ProjectReference } from "@/lib/project-reference";
-import { summarizeBuild } from "@/lib/quote-summary";
+import { summarizeBuild, summarizeBuildEs } from "@/lib/quote-summary";
+import type { Locale } from "@/i18n/config";
+import { QUOTE_FORM } from "@/i18n/copy/quote-form";
+import { localizeHref } from "@/i18n/routes";
+import { useLocale } from "@/i18n/use-locale";
 import { captureAttribution } from "@/lib/marketing-attribution";
 import { capture, identifyLead, posthogIds, type AnalyticsEvent } from "@/lib/analytics";
 
@@ -57,7 +61,11 @@ export const BUDGET_BANDS: Array<{ v: BudgetBand; label: string; min?: number; m
   { v: "not_sure", label: "Not sure yet" },
 ];
 
-const PERMIT_LABELS: Record<Permits, string> = { yes: "Yes", no: "No", not_sure: "Not sure" };
+// English on purpose: these land in the lead notes the owner reads. The form
+// shows them through QUOTE_FORM[locale].yesNoUnsure.
+const PERMIT_LABELS: Record<Permits, "Yes" | "No" | "Not sure"> = { yes: "Yes", no: "No", not_sure: "Not sure" };
+
+type Copy = (typeof QUOTE_FORM)[Locale];
 
 type FormState = {
   // Step 1 — project
@@ -99,17 +107,17 @@ const INITIAL: FormState = {
 
 /* ─── Service chips (step 1 opener) ─────────────────────────────────────── */
 
-type ServiceChip = { value: ServiceType; label: string; sublabel: string; image: string; also?: ServiceType[] };
+type ServiceChip = { value: ServiceType; image: string; also?: ServiceType[] };
 
 // One "Carport / RV Cover" chip: an `rv_cover` prefill (?service=rv) still
-// lights it and still submits as rv_cover.
+// lights it and still submits as rv_cover. Labels: QUOTE_FORM[locale].chips.
 const SERVICE_CHIPS: readonly ServiceChip[] = [
-  { value: "carport", label: "Carport / RV Cover", sublabel: "Welded or bolted", image: "/images/carport-gable-residential.jpg", also: ["rv_cover"] },
-  { value: "fencing", label: "Fencing & Gates", sublabel: "Privacy, ranch, ornamental", image: "/images/metal-fence-ranch-wire.webp" },
-  { value: "garage", label: "Metal Garage", sublabel: "Fully enclosed", image: "/images/metal-garage-green.jpg" },
-  { value: "barn", label: "Metal Barn", sublabel: "Ranch & ag", image: "/images/carport-concrete-rural.jpg" },
-  { value: "lean_to", label: "Lean-To / Patio", sublabel: "Attached or freestanding", image: "/images/porch-cover-lean-to.jpg" },
-  { value: "other", label: "Other / Custom", sublabel: "Tell us what you need", image: "/images/red-iron-frame-hero.jpg" },
+  { value: "carport", image: "/images/carport-gable-residential.jpg", also: ["rv_cover"] },
+  { value: "fencing", image: "/images/metal-fence-ranch-wire.webp" },
+  { value: "garage", image: "/images/metal-garage-green.jpg" },
+  { value: "barn", image: "/images/carport-concrete-rural.jpg" },
+  { value: "lean_to", image: "/images/porch-cover-lean-to.jpg" },
+  { value: "other", image: "/images/red-iron-frame-hero.jpg" },
 ];
 
 const KNOWN_SERVICES: readonly string[] = ["fencing", "carport", "garage", "barn", "rv_cover", "lean_to", "other"];
@@ -118,7 +126,8 @@ function chipSelected(chip: ServiceChip, value: string): boolean {
   return chip.value === value || Boolean(chip.also?.includes(value as ServiceType));
 }
 
-function ServiceChipCard({ chip, selected, onClick }: { chip: ServiceChip; selected: boolean; onClick: () => void }) {
+function ServiceChipCard({ chip, selected, onClick, t }: { chip: ServiceChip; selected: boolean; onClick: () => void; t: Copy }) {
+  const { label, sublabel } = t.chips[chip.value];
   return (
     <button
       type="button"
@@ -142,8 +151,8 @@ function ServiceChipCard({ chip, selected, onClick }: { chip: ServiceChip; selec
         ) : null}
       </span>
       <span className="block px-3 pt-2.5 pb-3">
-        <span className="block font-forge-display text-[15px] font-bold leading-[1.15] tracking-[.01em]">{chip.label}</span>
-        <span className="mt-[3px] block text-[11px] uppercase leading-[1.25] tracking-[.04em] text-forge-steel">{chip.sublabel}</span>
+        <span className="block font-forge-display text-[15px] font-bold leading-[1.15] tracking-[.01em]">{label}</span>
+        <span className="mt-[3px] block text-[11px] uppercase leading-[1.25] tracking-[.04em] text-forge-steel">{sublabel}</span>
       </span>
     </button>
   );
@@ -153,34 +162,35 @@ type Update = <K extends keyof FormState>(k: K, v: FormState[K]) => void;
 
 /* ─── Step 1 — Project ─────────────────────────────────────────────────── */
 
-function FenceFields({ form, update }: { form: FormState; update: Update }) {
+function FenceFields({ form, update, t }: { form: FormState; update: Update; t: Copy }) {
+  const f = t.fence;
   return (
     <>
       <PillGroup
-        label="Fence Style"
-        options={["Metal privacy", "Pipe / ranch", "Ornamental metal", "Gates only", "Not sure yet"].map((v) => ({ v, label: v }))}
+        label={f.style}
+        options={(Object.keys(f.styles) as (keyof typeof f.styles)[]).map((v) => ({ v, label: f.styles[v] }))}
         value={form.fence_style}
         onChange={(v) => update("fence_style", v || "Not sure yet")}
       />
       <div>
         <FieldLabel as="p" optional>
-          Approximate Fence Size
+          {f.size}
         </FieldLabel>
         <div className="grid grid-cols-2 gap-2.5">
-          <TextInput type="number" min={0} step="any" aria-label="Total fence length in linear feet" placeholder="Length (linear ft)" value={form.fence_length} onChange={(e) => update("fence_length", e.target.value)} />
-          <TextInput type="number" min={0} step="any" aria-label="Fence height in feet" placeholder="Height (ft)" value={form.fence_height} onChange={(e) => update("fence_height", e.target.value)} />
+          <TextInput type="number" min={0} step="any" aria-label={f.lengthAria} placeholder={f.lengthPlaceholder} value={form.fence_length} onChange={(e) => update("fence_length", e.target.value)} />
+          <TextInput type="number" min={0} step="any" aria-label={f.heightAria} placeholder={f.heightPlaceholder} value={form.fence_height} onChange={(e) => update("fence_height", e.target.value)} />
         </div>
-        <FieldHelper>Rough measurements are fine. Leave blank if you’re not sure.</FieldHelper>
+        <FieldHelper>{f.sizeHelper}</FieldHelper>
       </div>
       <div>
         <FieldLabel htmlFor="fence-gates" optional>
-          Gates
+          {f.gates}
         </FieldLabel>
-        <TextInput id="fence-gates" maxLength={300} placeholder="e.g. 1 walk gate + 12 ft driveway gate" value={form.fence_gates} onChange={(e) => update("fence_gates", e.target.value)} />
+        <TextInput id="fence-gates" maxLength={300} placeholder={f.gatesPlaceholder} value={form.fence_gates} onChange={(e) => update("fence_gates", e.target.value)} />
       </div>
       <PillGroup
-        label="Old Fence Removal Needed?"
-        options={["Yes", "No", "Not sure"].map((v) => ({ v, label: v }))}
+        label={f.removal}
+        options={(["Yes", "No", "Not sure"] as const).map((v) => ({ v, label: t.yesNoUnsure[v] }))}
         value={form.fence_removal}
         onChange={(v) => update("fence_removal", v || "Not sure")}
       />
@@ -188,12 +198,13 @@ function FenceFields({ form, update }: { form: FormState; update: Update }) {
   );
 }
 
-function StepProject({ form, update }: { form: FormState; update: Update }) {
+function StepProject({ form, update, t }: { form: FormState; update: Update; t: Copy }) {
   const zipCity = form.zip.trim().length >= 5 ? cityFromZip(form.zip) : null;
+  const p = t.project;
   return (
     <div className="flex flex-col gap-6">
       <div>
-        <FieldLabel as="p">The build</FieldLabel>
+        <FieldLabel as="p">{p.build}</FieldLabel>
         <div className="grid grid-cols-2 gap-3">
           {SERVICE_CHIPS.map((c) => (
             <ServiceChipCard
@@ -201,37 +212,38 @@ function StepProject({ form, update }: { form: FormState; update: Update }) {
               chip={c}
               selected={chipSelected(c, form.service_type)}
               onClick={() => update("service_type", c.value)}
+              t={t}
             />
           ))}
         </div>
       </div>
 
       {form.service_type === "fencing" ? (
-        <FenceFields form={form} update={update} />
+        <FenceFields form={form} update={update} t={t} />
       ) : (
         <>
           <div>
             <PillGroup
-              label="Construction"
+              label={p.construction}
               options={[
-                { v: "welded" as StructureType, label: "Welded" },
-                { v: "bolted" as StructureType, label: "Bolted" },
-                { v: "unsure" as StructureType, label: "Not sure" },
+                { v: "welded" as StructureType, label: p.welded },
+                { v: "bolted" as StructureType, label: p.bolted },
+                { v: "unsure" as StructureType, label: p.unsure },
               ]}
               value={form.structure_type}
               onChange={(v) => update("structure_type", v || "unsure")}
             />
-            <FieldHelper>Welded is permanent; bolted can be moved later.</FieldHelper>
+            <FieldHelper>{p.constructionHelper}</FieldHelper>
           </div>
           <div>
             <FieldLabel as="p" optional>
-              Approximate size
+              {p.size}
             </FieldLabel>
             <div className="grid grid-cols-3 gap-2.5">
               {[
-                { key: "width" as const, placeholder: "Width" },
-                { key: "length" as const, placeholder: "Length" },
-                { key: "height" as const, placeholder: "Height" },
+                { key: "width" as const, placeholder: p.width },
+                { key: "length" as const, placeholder: p.length },
+                { key: "height" as const, placeholder: p.height },
               ].map(({ key, placeholder }) => (
                 <TextInput
                   key={key}
@@ -242,17 +254,17 @@ function StepProject({ form, update }: { form: FormState; update: Update }) {
                   value={form[key]}
                   onChange={(e) => update(key, e.target.value)}
                   placeholder={placeholder}
-                  aria-label={`${placeholder} in feet`}
+                  aria-label={p.inFeet(placeholder)}
                 />
               ))}
             </div>
-            <FieldHelper>W × L × H in feet. Rough is fine — we measure on-site.</FieldHelper>
+            <FieldHelper>{p.sizeHelper}</FieldHelper>
           </div>
         </>
       )}
 
       <div>
-        <FieldLabel htmlFor="zip">ZIP code</FieldLabel>
+        <FieldLabel htmlFor="zip">{p.zip}</FieldLabel>
         <div className="relative">
           <TextInput
             id="zip"
@@ -263,7 +275,7 @@ function StepProject({ form, update }: { form: FormState; update: Update }) {
             required
             value={form.zip}
             onChange={(e) => update("zip", e.target.value)}
-            placeholder="ZIP code"
+            placeholder={p.zip}
             className="pr-[130px]"
           />
           {zipCity ? (
@@ -279,26 +291,27 @@ function StepProject({ form, update }: { form: FormState; update: Update }) {
 
 /* ─── Step 2 — Contact + Details ───────────────────────────────────────── */
 
-function StepContact({ form, update, militarySub }: { form: FormState; update: Update; militarySub: string }) {
+function StepContact({ form, update, t }: { form: FormState; update: Update; t: Copy }) {
   const fencing = form.service_type === "fencing";
+  const c = t.contact;
   return (
     <div className="flex flex-col gap-6">
       <div>
-        <FieldLabel as="p">Who to call back</FieldLabel>
+        <FieldLabel as="p">{c.who}</FieldLabel>
         <div className="flex flex-col gap-2.5">
-          <TextInput id="name" type="text" required autoComplete="name" value={form.name} onChange={(e) => update("name", e.target.value)} placeholder="Full name" aria-label="Your name" />
-          <TextInput id="phone" type="tel" required autoComplete="tel" value={form.phone} onChange={(e) => update("phone", e.target.value)} placeholder="Phone — we text first" aria-label="Your phone number" />
-          <TextInput id="email" type="email" autoComplete="email" value={form.email} onChange={(e) => update("email", e.target.value)} placeholder="Email (optional)" aria-label="Your email" />
+          <TextInput id="name" type="text" required autoComplete="name" value={form.name} onChange={(e) => update("name", e.target.value)} placeholder={c.name} aria-label={c.nameAria} />
+          <TextInput id="phone" type="tel" required autoComplete="tel" value={form.phone} onChange={(e) => update("phone", e.target.value)} placeholder={c.phone} aria-label={c.phoneAria} />
+          <TextInput id="email" type="email" autoComplete="email" value={form.email} onChange={(e) => update("email", e.target.value)} placeholder={c.email} aria-label={c.emailAria} />
         </div>
       </div>
 
       {!fencing ? (
         <PillGroup
-          label="Concrete pad"
+          label={c.concrete}
           options={[
-            { v: "yes" as NeedsConcrete, label: "Include it" },
-            { v: "already_have" as NeedsConcrete, label: "Have a slab" },
-            { v: "unsure" as NeedsConcrete, label: "Not sure" },
+            { v: "yes" as NeedsConcrete, label: c.concreteYes },
+            { v: "already_have" as NeedsConcrete, label: c.concreteHave },
+            { v: "unsure" as NeedsConcrete, label: c.concreteUnsure },
           ]}
           value={form.needs_concrete}
           onChange={(v) => update("needs_concrete", v)}
@@ -307,13 +320,8 @@ function StepContact({ form, update, militarySub }: { form: FormState; update: U
 
       {!fencing && form.needs_concrete === "already_have" ? (
         <PillGroup
-          label="Current surface"
-          options={[
-            { v: "dirt" as Surface, label: "Dirt / bare ground" },
-            { v: "gravel" as Surface, label: "Gravel" },
-            { v: "asphalt" as Surface, label: "Asphalt" },
-            { v: "concrete" as Surface, label: "Existing concrete" },
-          ]}
+          label={c.surface}
+          options={(["dirt", "gravel", "asphalt", "concrete"] as const).map((v) => ({ v, label: c.surfaces[v] }))}
           value={form.current_surface}
           onChange={(v) => update("current_surface", v)}
         />
@@ -321,21 +329,17 @@ function StepContact({ form, update, militarySub }: { form: FormState; update: U
 
       <div>
         <PillGroup
-          label="Do you need permits?"
-          options={(Object.keys(PERMIT_LABELS) as Permits[]).map((v) => ({ v, label: PERMIT_LABELS[v] }))}
+          label={c.permits}
+          options={(Object.keys(PERMIT_LABELS) as Permits[]).map((v) => ({ v, label: t.yesNoUnsure[PERMIT_LABELS[v]] }))}
           value={form.permits}
           onChange={(v) => update("permits", v)}
         />
-        <FieldHelper>We talk through city, county and HOA requirements before anything gets scheduled.</FieldHelper>
+        <FieldHelper>{c.permitsHelper}</FieldHelper>
       </div>
 
       <PillGroup
-        label="Timeline"
-        options={[
-          { v: "asap" as Timeline, label: "ASAP" },
-          { v: "this_month" as Timeline, label: "This month" },
-          { v: "planning" as Timeline, label: "Just planning" },
-        ]}
+        label={c.timeline}
+        options={(["asap", "this_month", "planning"] as const).map((v) => ({ v, label: c.timelines[v] }))}
         value={form.timeline}
         onChange={(v) => update("timeline", v)}
       />
@@ -343,85 +347,95 @@ function StepContact({ form, update, militarySub }: { form: FormState; update: U
       {/* Best time to call pairs with Timeline but answers a different
           question: when the job needs doing vs. when they can pick up. */}
       <PillGroup
-        label="Best time to call"
+        label={c.bestTime}
         optional
         allowDeselect
-        options={[
-          { v: "morning" as BestTime, label: "Morning (before noon)" },
-          { v: "afternoon" as BestTime, label: "Afternoon (12–5)" },
-          { v: "evening" as BestTime, label: "Evening (after 5)" },
-        ]}
+        options={(["morning", "afternoon", "evening"] as const).map((v) => ({ v, label: c.bestTimes[v] }))}
         value={form.best_time_to_call}
         onChange={(v) => update("best_time_to_call", v)}
       />
 
       <div>
         <PillGroup
-          label="Budget range"
+          label={c.budget}
           optional
           allowDeselect
           tabular
-          options={BUDGET_BANDS.map((b) => ({ v: b.v, label: b.label }))}
+          options={BUDGET_BANDS.map((b) => ({ v: b.v, label: b.v === "not_sure" ? t.budget.not_sure : b.label }))}
           value={form.budget}
           onChange={(v) => update("budget", v)}
         />
-        <FieldHelper>Honest pricing, no surprises. We scope the build to what you want to spend — not the other way around.</FieldHelper>
+        <FieldHelper>{c.budgetHelper}</FieldHelper>
       </div>
 
       {/* Military / first responder discount. /military, the service pages and
           the PCS copy all tell visitors to check this box. */}
       <div>
         <FieldLabel as="p" optional>
-          Discount
+          {c.discount}
         </FieldLabel>
         <CheckboxRow
           checked={form.is_military}
-          onChange={(c) => update("is_military", c)}
-          label="Military, veteran or first responder"
-          sub={militarySub}
+          onChange={(checked) => update("is_military", checked)}
+          label={c.military}
+          sub={c.militarySub}
         />
       </div>
 
       <div>
         <FieldLabel htmlFor="message" optional>
-          Anything else
+          {c.notes}
         </FieldLabel>
         <TextArea
           id="message"
           rows={3}
           value={form.message}
           onChange={(e) => update("message", e.target.value)}
-          placeholder="HOA requirements, site access, existing anchors…"
+          placeholder={c.notesPlaceholder}
         />
       </div>
     </div>
   );
 }
 
+/** The Spanish build echo for a fence (the English one reuses the lead notes). */
+function fencingSummaryEs(form: FormState, t: Copy): string {
+  const f = t.fence;
+  const style = f.styles[form.fence_style as keyof typeof f.styles] ?? form.fence_style;
+  return [
+    `${t.chips.fencing.label}: ${style}`,
+    form.fence_length ? `${form.fence_length} pies lineales` : "",
+    form.fence_height ? `${form.fence_height} pies de alto` : "",
+    form.fence_gates.trim() ? `${f.gates}: ${form.fence_gates.trim()}` : "",
+  ]
+    .filter(Boolean)
+    .join(" · ");
+}
+
 /* ─── Section chrome ───────────────────────────────────────────────────── */
 
-export const QUOTE_LEDE_DEFAULT = "Two quick steps. A real Texas crew on the other end — not a form into a black hole.";
+export const QUOTE_LEDE_DEFAULT = QUOTE_FORM.en.ledeDefault;
 
-function QuoteIntro({ lede }: { lede: string }) {
+function QuoteIntro({ lede, t }: { lede: string; t: Copy }) {
   return (
     <div className="flex max-w-[720px] flex-col items-center text-center">
-      <Eyebrow align="center">Get a quote</Eyebrow>
+      <Eyebrow align="center">{t.eyebrow}</Eyebrow>
       <h2
         id="quote-heading"
         className="mt-4 font-forge-display text-[clamp(30px,3vw_+_12px,56px)] font-black leading-[1.05] tracking-[.01em] text-forge-navy"
       >
-        Tell us about
+        {t.heading[0]}
         <br />
-        <span className="text-forge-slate">your build.</span>
+        <span className="text-forge-slate">{t.heading[1]}</span>
       </h2>
       <p className="mt-4 max-w-[520px] text-[clamp(16px,.3vw_+_14px,18px)] leading-[1.55] text-forge-slate [text-wrap:pretty]">
         {lede}
       </p>
       <ul className="m-0 mt-6 flex list-none flex-wrap justify-center gap-x-6 gap-y-2.5 p-0 text-[15px] text-forge-navy">
-        {["Free quote, no obligation", "Reply within 24 hours", "Military, first-responder & trade discounts honored"].map((t) => (
-          <li key={t} className="flex items-center gap-3">
+        {t.assurances.map((line) => (
+          <li key={line} className="flex items-center gap-3">
             <span aria-hidden="true" className="h-[2px] w-7 flex-none bg-forge-steel" />
-            {t}
+            {line}
           </li>
         ))}
       </ul>
@@ -464,11 +478,15 @@ export function QuoteForm({
   initialMilitary = false,
   projectReference,
   chrome = true,
-  lede = QUOTE_LEDE_DEFAULT,
+  lede,
   initialService,
   initialZip,
   source = "website_form",
 }: QuoteFormProps = {}) {
+  // The page's language comes from its URL (anything under /es is Spanish), the
+  // same way every client component in the form reads it.
+  const locale = useLocale();
+  const t = QUOTE_FORM[locale];
   const router = useRouter();
   const [reference, setReference] = useState(projectReference);
   const [step, setStep] = useState<1 | 2>(1);
@@ -598,7 +616,7 @@ export function QuoteForm({
     if (HCAPTCHA_SITE_KEY && !captchaToken) {
       track("quote_form_failed", { reason: "captcha_missing" });
       setStatus("err");
-      setErrMsg("Please complete the captcha check below.");
+      setErrMsg(t.errors.captcha);
       return;
     }
     track("quote_form_submitted", {
@@ -611,7 +629,7 @@ export function QuoteForm({
     setStatus("submitting");
     setErrMsg("");
 
-    const payload = buildLeadPayload(form, { source, captchaToken, referenceId: reference?.id });
+    const payload = buildLeadPayload(form, { source, captchaToken, referenceId: reference?.id, language: locale });
 
     let httpFailed = false;
     try {
@@ -624,10 +642,18 @@ export function QuoteForm({
         const body = await res.json().catch(() => ({}));
         httpFailed = true;
         track("quote_form_failed", { reason: `http_${res.status}` });
+        // The API's own messages are English; the Spanish form says the same
+        // thing in Spanish, keyed on the status.
         throw new Error(
-          typeof body?.error === "string"
-            ? body.error
-            : "Something went wrong. Please call us directly.",
+          locale === "es"
+            ? res.status === 429
+              ? t.errors.rateLimited
+              : res.status === 400
+                ? t.errors.invalid
+                : t.errors.generic
+            : typeof body?.error === "string"
+              ? body.error
+              : t.errors.generic,
         );
       }
       const created = await res.json().catch(() => ({}));
@@ -667,19 +693,27 @@ export function QuoteForm({
       // history so back-button still works for the user.
       // ?from=quote lets /thank-you acknowledge the ad funnel. Deliberately
       // carries no PII — name, phone and ZIP never go in a URL.
-      router.push(isQuotePage ? "/thank-you?from=quote" : "/thank-you");
+      router.push(localizeHref(isQuotePage ? "/thank-you?from=quote" : "/thank-you", locale));
     } catch (err) {
       // An HTTP error was already tracked above, with its status.
       if (!httpFailed) track("quote_form_failed", { reason: "network" });
       setStatus("err");
-      setErrMsg(err instanceof Error ? err.message : "Unknown error");
+      setErrMsg(err instanceof Error && (httpFailed || locale === "en") ? err.message : t.errors.network);
       setCaptchaToken(null);
       captchaRef.current?.resetCaptcha();
     }
   }
 
   const buildSummary =
-    step === 2 ? (form.service_type === "fencing" ? fencingNotes(form).replaceAll("\n", " · ") : summarizeBuild(form)) : null;
+    step === 2
+      ? form.service_type === "fencing"
+        ? locale === "es"
+          ? fencingSummaryEs(form, t)
+          : fencingNotes(form).replaceAll("\n", " · ")
+        : locale === "es"
+          ? summarizeBuildEs(form)
+          : summarizeBuild(form)
+      : null;
 
   const card: ReactNode = (
     <div
@@ -693,17 +727,17 @@ export function QuoteForm({
             <Image src={reference.image} alt="" fill sizes="80px" className="object-cover" />
           </div>
           <div className="min-w-0 flex-1">
-            <p className="text-[11px] font-bold uppercase tracking-[.18em] text-forge-slate">Inspired by this project</p>
+            <p className="text-[11px] font-bold uppercase tracking-[.18em] text-forge-slate">{t.reference.kicker}</p>
             <p className="mt-1 font-forge-display text-[17px] font-bold">{reference.title}</p>
             <p className="text-[14px] text-forge-slate">{reference.city}</p>
             <button type="button" onClick={() => setReference(undefined)} className="mt-1 min-h-11 cursor-pointer text-[14px] font-semibold text-forge-navy underline underline-offset-4">
-              Remove reference
+              {t.reference.remove}
             </button>
           </div>
         </div>
       ) : null}
 
-      <StepProgress step={step} label={step === 1 ? "Your build" : "Who to call back"} />
+      <StepProgress step={step} label={t.stepLabels[step - 1]} />
 
       {/* Not a <form>: Enter advances step 1 (locked anti-implicit-submit pattern). */}
       <div
@@ -717,13 +751,9 @@ export function QuoteForm({
         {/* Re-key the wrapper so React re-mounts → animation re-fires */}
         <div key={step} className="step-slide-in">
           {step === 1 ? (
-            <StepProject form={form} update={update} />
+            <StepProject form={form} update={update} t={t} />
           ) : (
-            <StepContact
-              form={form}
-              update={update}
-              militarySub="7% off your install. ID checked at the estimate."
-            />
+            <StepContact form={form} update={update} t={t} />
           )}
         </div>
 
@@ -735,7 +765,7 @@ export function QuoteForm({
               disabled={!canAdvance()}
               className="inline-flex w-full cursor-pointer items-center justify-center gap-2 rounded-[6px] bg-forge-navy px-[26px] py-[15px] text-[16px] font-semibold text-white shadow-[var(--shadow-cta)] transition-colors duration-200 hover:bg-forge-navy-raised disabled:cursor-not-allowed disabled:opacity-50"
             >
-              Continue <span aria-hidden="true">→</span>
+              {t.continue} <span aria-hidden="true">→</span>
             </button>
           </div>
         ) : (
@@ -743,7 +773,7 @@ export function QuoteForm({
             {/* Build echo — a confirmation, never an estimate. */}
             {buildSummary ? (
               <div className="mt-6 rounded-[10px] border border-forge-silver bg-forge-fog px-4 py-3">
-                <p className="text-[11px] font-bold uppercase tracking-[.18em] text-forge-slate">Your build</p>
+                <p className="text-[11px] font-bold uppercase tracking-[.18em] text-forge-slate">{t.yourBuild}</p>
                 <p className="mt-1 text-[14px] text-forge-navy">{buildSummary}</p>
               </div>
             ) : null}
@@ -754,6 +784,7 @@ export function QuoteForm({
                   ref={captchaRef}
                   sitekey={HCAPTCHA_SITE_KEY}
                   theme="light"
+                  languageOverride={locale}
                   onVerify={(token) => setCaptchaToken(token)}
                   onExpire={() => setCaptchaToken(null)}
                   onError={() => setCaptchaToken(null)}
@@ -773,7 +804,7 @@ export function QuoteForm({
                 onClick={back}
                 className="h-[50px] cursor-pointer rounded-[6px] border border-forge-silver bg-white px-[18px] text-[14px] font-semibold text-forge-slate transition-colors hover:border-forge-navy"
               >
-                ← Back
+                {t.back}
               </button>
               <button
                 type="button"
@@ -781,15 +812,16 @@ export function QuoteForm({
                 disabled={status === "submitting" || !canAdvance()}
                 className="inline-flex flex-1 cursor-pointer items-center justify-center gap-2 rounded-[6px] bg-forge-navy px-[26px] py-[15px] text-[16px] font-semibold text-white transition-colors duration-200 hover:bg-forge-navy-raised disabled:cursor-not-allowed disabled:opacity-50"
               >
-                {status === "submitting" ? "Sending…" : "Send to Triple J"} <span aria-hidden="true">→</span>
+                {status === "submitting" ? t.sending : t.send} <span aria-hidden="true">→</span>
               </button>
             </div>
 
             <p className="mt-[18px] text-center text-[12px] leading-[1.5] text-forge-slate">
-              Free · no obligation · {isQuotePage ? "same day, guaranteed within 24 hours." : "reply within 24 hours."}
+              {t.freeLine}
+              {isQuotePage ? t.sameDay : t.within24}
             </p>
             <p className="mt-1.5 text-center text-[11px] text-forge-steel">
-              By submitting you consent to be contacted by phone, text, or email.
+              {t.consent}
             </p>
           </>
         )}
@@ -810,7 +842,7 @@ export function QuoteForm({
       className="scroll-mt-24 border-t border-forge-mist bg-forge-fog py-[clamp(64px,7vw,104px)] text-forge-navy"
     >
       <div className="mx-auto flex w-full max-w-[1360px] flex-col items-center gap-[clamp(32px,3vw,48px)] px-[clamp(20px,3vw,40px)]">
-        <QuoteIntro lede={lede} />
+        <QuoteIntro lede={lede ?? t.ledeDefault} t={t} />
         {card}
       </div>
     </section>
@@ -824,7 +856,12 @@ export function QuoteForm({
  */
 export function buildLeadPayload(
   form: FormState,
-  { source, captchaToken, referenceId }: { source: "website_form" | "quote_page"; captchaToken: string | null; referenceId?: string },
+  {
+    source,
+    captchaToken,
+    referenceId,
+    language = "en",
+  }: { source: "website_form" | "quote_page"; captchaToken: string | null; referenceId?: string; language?: Locale },
 ) {
   const budgetBand = BUDGET_BANDS.find((b) => b.v === form.budget);
   const fencing = form.service_type === "fencing";
@@ -855,6 +892,9 @@ export function buildLeadPayload(
     ].filter(Boolean).join("\n\n") || undefined,
     captcha_token:   captchaToken ?? undefined,
     reference_project_id: referenceId,
+    // The page's language (2026-10-03): stored as leads.preferred_language,
+    // it picks the customer email and flags the lead for a Spanish callback.
+    language,
   };
 }
 

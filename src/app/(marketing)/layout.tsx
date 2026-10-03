@@ -1,47 +1,21 @@
 import type { ReactNode } from "react";
 
-import { Footer } from "@/components/site/Footer";
-import { Header } from "@/components/site/Header";
-import { MobileCallBar } from "@/components/site/MobileCallBar";
-import { GoogleAdsTag } from "@/components/seo/GoogleAdsTag";
-import { OrganizationJsonLd } from "@/components/seo/OrganizationJsonLd";
-import { MarketingAttribution } from "@/components/site/MarketingAttribution";
+import { MarketingShell } from "@/components/site/MarketingShell";
+import { RootDocument } from "@/components/site/RootDocument";
+import { rootMetadata, rootViewport } from "@/lib/root-metadata";
+
+export const metadata = rootMetadata("en");
+export const viewport = rootViewport;
 
 /**
- * Layout for the public marketing site.
- * Wraps the homepage, services, gallery, locations, about, contact.
- * Dashboard / login / setup / customer-facing quotes DO NOT use this layout.
- *
- * Scoped to LIGHT mode only (colorScheme + explicit bg/text) so the
- * iOS-PWA dark-mode-aware tokens used by /hq don't flip marketing
- * pages into white-on-white. Dark-mode-aware public site is a Phase C
- * rework gated on inspiration screenshots.
- *
- * The `marketing` class scopes the Barlow Condensed h1/h2/h3 rule in
- * globals.css to this tree ONLY, so HQ (iPhone PWA) headings inherit
- * the iOS stack instead of the magazine display face. Forge surfaces
- * (data-forge) step out of that rule.
- *
- * No PreFooterCta here: Forge pages end with their own quote section, and
- * the routes without one render PreFooterCta themselves (2026-10-02).
+ * Root layout for the English public site: homepage, services, gallery,
+ * locations, about, contact. Its Spanish twin is src/app/es/layout.tsx; HQ,
+ * login and customer quote pages have root layouts of their own.
  */
-export default function MarketingLayout({
-  children,
-}: {
-  children: ReactNode;
-}) {
+export default function MarketingLayout({ children }: { children: ReactNode }) {
   return (
-    <div
-      className="marketing flex flex-1 flex-col bg-white text-forge-navy"
-      style={{ colorScheme: "light" }}
-    >
-      <OrganizationJsonLd />
-      <MarketingAttribution />
-      <GoogleAdsTag />
-      <Header />
-      <main className="flex-1">{children}</main>
-      <Footer />
-      <MobileCallBar />
-    </div>
+    <RootDocument locale="en">
+      <MarketingShell locale="en">{children}</MarketingShell>
+    </RootDocument>
   );
 }

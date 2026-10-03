@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 
+import { localizeHref } from "@/i18n/routes";
+import { useLocale } from "@/i18n/use-locale";
 import type { BuildItem } from "@/lib/forge-builds";
 import { quoteServiceForGalleryType, requestQuote } from "@/lib/forge-quote";
 
@@ -24,6 +26,7 @@ export function BuildGrid({
   className?: string;
   sizes?: string;
 }) {
+  const locale = useLocale();
   const [open, setOpen] = useState<number | null>(null);
   const [trigger, setTrigger] = useState<HTMLElement | null>(null);
 
@@ -55,7 +58,7 @@ export function BuildGrid({
             setOpen(null);
             // Wait a frame so the scroll lock is released before scrolling.
             requestAnimationFrame(() => {
-              if (!requestQuote({ service })) window.location.href = `/quote?service=${service}`;
+              if (!requestQuote({ service })) window.location.href = localizeHref(`/quote?service=${service}`, locale);
             });
           }}
         />

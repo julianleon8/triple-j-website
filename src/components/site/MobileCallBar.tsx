@@ -5,6 +5,8 @@ import { usePathname } from "next/navigation";
 import { PhoneIcon } from "@/components/ui/icons";
 import { TrackedPhoneLink } from "@/components/site/TrackedPhone";
 import { headerCta, onCtaClick } from "@/components/site/Header";
+import { localeFromPath } from "@/i18n/config";
+import { CHROME } from "@/i18n/copy/chrome";
 
 /**
  * Sticky bottom call bar under 900px: white "Call Now" (with the
@@ -12,7 +14,9 @@ import { headerCta, onCtaClick } from "@/components/site/Header";
  * CTA — "Free Quote", "Message" on /contact, "Inquire" on /partners.
  */
 export function MobileCallBar() {
-  const cta = headerCta(usePathname());
+  const pathname = usePathname();
+  const cta = headerCta(pathname);
+  const t = CHROME[localeFromPath(pathname)];
   return (
     <div
       data-forge=""
@@ -28,9 +32,9 @@ export function MobileCallBar() {
         >
           <span className="flex items-center gap-2 leading-none">
             <PhoneIcon width={18} height={18} aria-hidden="true" />
-            <span>Call Now</span>
+            <span>{t.callNow}</span>
           </span>
-          <span className="mt-0.5 text-[10px] font-medium tracking-[.03em] text-forge-slate">English · Español</span>
+          <span className="mt-0.5 text-[10px] font-medium tracking-[.03em] text-forge-slate">{t.bilingualLine}</span>
         </TrackedPhoneLink>
         <a
           href={cta.href}

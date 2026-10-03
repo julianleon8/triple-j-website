@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { summarizeBuild, indefiniteArticle } from './quote-summary';
+import { summarizeBuild, summarizeBuildEs, indefiniteArticle } from './quote-summary';
 
 const full = {
   service_type: 'carport',
@@ -95,5 +95,23 @@ describe('indefiniteArticle', () => {
     expect(summarizeBuild({ service_type: 'carport', width: '8', length: '10' })).toBe(
       'An 8×10 carport',
     );
+  });
+});
+
+describe('summarizeBuildEs', () => {
+  const full = { service_type: 'carport', structure_type: 'welded', width: '20', length: '30', height: '12', zip: '76541' };
+
+  it('agrees the article and adjective with the noun', () => {
+    expect(summarizeBuildEs(full)).toBe('Una cochera soldada de 20×30×12 en Killeen');
+    expect(summarizeBuildEs({ ...full, service_type: 'garage', structure_type: 'bolted' })).toBe(
+      'Un garaje metálico atornillado de 20×30×12 en Killeen',
+    );
+  });
+
+  it('degrades like the English sentence', () => {
+    expect(summarizeBuildEs({ ...full, height: '' })).toBe('Una cochera soldada de 20×30 en Killeen');
+    expect(summarizeBuildEs({ ...full, length: '', structure_type: 'unsure' })).toBe('Una cochera en Killeen');
+    expect(summarizeBuildEs({ ...full, zip: '79101' })).toBe('Una cochera soldada de 20×30×12');
+    expect(summarizeBuildEs({ service_type: 'barndominium' })).toBeNull();
   });
 });
