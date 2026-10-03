@@ -64,6 +64,7 @@ describe('GALLERY_PATHS', () => {
       '/es/galeria',
       '/es/cotizacion',
       '/es/socios',
+      '/es/ciudades/[slug]',
     ],
     'src/app/(marketing)/gallery/[id]/page.tsx': [], // per item: revalidateGallery(id)
     'src/app/es/galeria/[id]/page.tsx': [], // per item: revalidateGallery(id) covers /es/galeria/<id>

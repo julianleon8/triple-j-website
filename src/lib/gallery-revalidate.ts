@@ -33,6 +33,7 @@ export const GALLERY_PATHS: ReadonlyArray<readonly [path: string, type?: 'page' 
   ['/es/galeria'],
   ['/es/cotizacion'],
   ['/es/socios'],
+  ['/es/ciudades/[slug]', 'page'], // Recent builds
 ]
 
 /**

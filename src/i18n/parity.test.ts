@@ -3,6 +3,7 @@
 import { describe, expect, it } from 'vitest'
 
 import { BLOG_POSTS } from '@/lib/blog'
+import { LOCATIONS_EN_COPY } from '@/lib/locations.es'
 
 /**
  * English and Spanish copy must stay twins (Locked Decisions → Spanish site).
@@ -99,6 +100,8 @@ const dataModules = import.meta.glob<Record<string, unknown>>(['../lib/*.es.ts']
 
 const DATA_SOURCES: Record<string, { en: Record<string, unknown>; esExport: string }> = {
   '../lib/blog.es.ts': { en: Object.fromEntries(BLOG_POSTS.map((p) => [p.slug, p])), esExport: 'BLOG_POSTS_ES' },
+  // The English copy projected onto the Spanish keys (landmark rows carry image fields Spanish doesn't).
+  '../lib/locations.es.ts': { en: LOCATIONS_EN_COPY, esExport: 'LOCATIONS_ES' },
 }
 
 describe('Spanish data files', () => {
