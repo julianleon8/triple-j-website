@@ -1,3 +1,4 @@
+import { CONTACT, contactHours } from '@/i18n/pages/contact'
 import { OG_CONTENT_TYPE, OG_SIZE, renderOgCard } from '@/lib/og-card'
 import { SITE } from '@/lib/site'
 
@@ -10,14 +11,15 @@ import { SITE } from '@/lib/site'
 
 export const size = OG_SIZE
 export const contentType = OG_CONTENT_TYPE
-export const alt = `Contact Triple J Metal — call ${SITE.phone}`
+export const alt = CONTACT.en.og.alt
 
 export default function ContactOpenGraphImage() {
+  const t = CONTACT.en.og
   return renderOgCard({
-    eyebrow: 'Contact',
-    headline: 'Get in Touch',
+    eyebrow: t.eyebrow,
+    headline: t.headline,
     accent: SITE.phone,
-    subhead: `${SITE.addressOneLine} · ${SITE.hours}`,
+    subhead: t.subhead(SITE.addressOneLine, contactHours('en')),
     path: '/contact',
   })
 }

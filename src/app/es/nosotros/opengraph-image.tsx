@@ -2,23 +2,19 @@ import { ABOUT } from '@/i18n/pages/about'
 import { OG_CONTENT_TYPE, OG_SIZE, renderOgCard } from '@/lib/og-card'
 import { SITE } from '@/lib/site'
 
-/**
- * /about OG card. The page sets its own `openGraph` without `images`, so until
- * this file existed it shared no og:image at all. Text is the page's own H1
- * and share description — see src/lib/og-card.tsx.
- */
+/** /es/nosotros OG card: the Spanish twin of /about (src/i18n/pages/about.ts). */
 
 export const size = OG_SIZE
 export const contentType = OG_CONTENT_TYPE
-export const alt = ABOUT.en.og.alt
+export const alt = ABOUT.es.og.alt
 
 export default function AboutOpenGraphImage() {
-  const t = ABOUT.en.og
+  const t = ABOUT.es.og
   return renderOgCard({
     eyebrow: t.eyebrow,
     headline: t.headline,
     accent: t.accent,
     subhead: t.subhead(SITE.stats.projects),
-    path: '/about',
+    path: '/es/nosotros',
   })
 }

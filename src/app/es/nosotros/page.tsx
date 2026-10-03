@@ -1,23 +1,24 @@
 import type { Metadata } from 'next'
 
-import { ContactPage } from '@/components/pages/ContactPage'
+import { AboutPage } from '@/components/pages/AboutPage'
 import { localeAlternates, ogLocale } from '@/i18n/metadata'
-import { CONTACT } from '@/i18n/pages/contact'
+import { ABOUT } from '@/i18n/pages/about'
 
-const t = CONTACT.en.meta
+const t = ABOUT.es.meta
 
 export const metadata: Metadata = {
   title: t.title,
   description: t.description,
-  alternates: localeAlternates('/contact', 'en'),
+  alternates: localeAlternates('/about', 'es'),
   openGraph: {
     title: t.ogTitle,
     description: t.ogDescription,
+    url: '/es/nosotros',
     type: 'website',
-    ...ogLocale('en'),
+    ...ogLocale('es'),
   },
 }
 
 export default function Page() {
-  return <ContactPage locale="en" />
+  return <AboutPage locale="es" />
 }

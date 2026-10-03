@@ -4,20 +4,21 @@ import { ContactPage } from '@/components/pages/ContactPage'
 import { localeAlternates, ogLocale } from '@/i18n/metadata'
 import { CONTACT } from '@/i18n/pages/contact'
 
-const t = CONTACT.en.meta
+const t = CONTACT.es.meta
 
 export const metadata: Metadata = {
   title: t.title,
   description: t.description,
-  alternates: localeAlternates('/contact', 'en'),
+  alternates: localeAlternates('/contact', 'es'),
   openGraph: {
     title: t.ogTitle,
     description: t.ogDescription,
+    url: '/es/contacto',
     type: 'website',
-    ...ogLocale('en'),
+    ...ogLocale('es'),
   },
 }
 
 export default function Page() {
-  return <ContactPage locale="en" />
+  return <ContactPage locale="es" />
 }
