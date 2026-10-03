@@ -1,13 +1,14 @@
-# PostHog — 2026-10-03 · PROJECT + DASHBOARD READY, CODE NOT ON `main`
+# PostHog — 2026-10-03 · LIVE ON `main` (6970c79), VERIFIED
 
-The funnel tracking is on `claude/eloquent-hawking-vnaddd`; the PostHog side is done (org "Triple J Metal",
-project 643189, key in Vercel, "Ad funnel" dashboard built; see `Connectors.md` → PostHog). **Nothing records
-until the branch is merged to `main`** and Vercel redeploys with the key. Then:
+Funnel tracking is in production; dashboard "Ad funnel":
+https://us.posthog.com/project/643189/dashboard/2165121 (see `Connectors.md` → PostHog). Verified on the live
+site: the bundle carries project 643189's key, `/ingest` proxies with 200s, replay records, and two
+`?tj_internal=1` test visits landed tagged internal and are hidden by the dashboard's filter. Still to do:
 1. Owner's Safari: open the site once with `?tj_internal=1`.
 2. One real test lead from a phone; confirm Persons → search the lead UUID shows its pageviews, funnel events
    and a recording, and that it is hidden with "filter out internal and test users" on.
-3. A17 CSP review: watch for `[csp]` lines naming `/ingest` or `blob:` once replay is live.
-4. Give the dashboard 2–4 weeks of ad traffic before reading conversion rates; at ~$13/day the counts are small.
+3. A17 CSP review: watch for `[csp]` lines naming `/ingest` or `blob:` now that replay is live.
+4. Give the dashboard 2–4 weeks of ad traffic before reading conversion rates; at ~$13/day counts are small.
 
 ---
 

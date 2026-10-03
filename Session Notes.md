@@ -22,6 +22,11 @@
   Metal" and put its key in Vercel. Project 643189 configured (Central time, replay only on the live domain,
   internal filter on by default, error tracking on) and the 15-tile "Ad funnel" dashboard built; every tile
   ran without errors (empty: no events yet). Owner test leads now also carry `internal_traffic`.
+- **Live:** owner approved; `main` fast-forwarded to 6970c79 and deployed in ~80s. Checked on production: the
+  bundle's key is project 643189's, `/about/` still 308s, a headless visit with `?tj_internal=1` sent
+  `$pageview`, `quote_form_viewed` and replay snapshots (all 200), and both test visits are excluded by the
+  internal filter (2 visitors with it off, 0 with it on). On a phone the quote card is 1,485 px tall, which
+  is why `quote_form_viewed` fires on any visible part rather than a 40% threshold.
 
 ## 2026-10-01 — SEO action plan (docs/ACTION-PLAN.md) worked through against the live site
 
