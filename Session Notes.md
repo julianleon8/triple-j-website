@@ -27,6 +27,13 @@
   `$pageview`, `quote_form_viewed` and replay snapshots (all 200), and both test visits are excluded by the
   internal filter (2 visitors with it off, 0 with it on). On a phone the quote card is 1,485 px tall, which
   is why `quote_form_viewed` fires on any visible part rather than a 40% threshold.
+- **Alert:** "Quote submission failed", hourly, on "Failed quote submissions per hour" (captcha reminder
+  excluded), emails the owner.
+- **Push instead of email (owner request):** `/api/webhooks/posthog` (re-reads the alert from PostHog before
+  pushing; no shared secret) and cron `weekly-ads` (Monday push of last week's numbers). PostHog destination
+  created, test-delivered to production (reached the route, got the expected 503 "key not set"), enabled.
+  Both wait on `POSTHOG_PERSONAL_API_KEY`: the agent's Vercel access is 403 on env vars. 3 HQ push devices
+  registered. 557 tests, build clean.
 - **Monday email:** subscription 159678 sends the dashboard (10 charts + AI summary) every Monday 12:00 UTC to
   the owner, the Triple J inbox and Julian's Yahoo; first delivery 2026-10-05. Test send requested on create.
 

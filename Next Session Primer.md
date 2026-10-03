@@ -1,14 +1,16 @@
-# PostHog — 2026-10-03 · LIVE ON `main` (6970c79), VERIFIED
+# PostHog — 2026-10-03 · LIVE; PUSH WIRING WAITS ON ONE OWNER KEY
 
-Funnel tracking is in production; dashboard "Ad funnel":
-https://us.posthog.com/project/643189/dashboard/2165121 (see `Connectors.md` → PostHog). Verified on the live
-site: the bundle carries project 643189's key, `/ingest` proxies with 200s, replay records, and two
-`?tj_internal=1` test visits landed tagged internal and are hidden by the dashboard's filter. Still to do:
-1. Owner's Safari: open the site once with `?tj_internal=1`.
-2. One real test lead from a phone; confirm Persons → search the lead UUID shows its pageviews, funnel events
-   and a recording, and that it is hidden with "filter out internal and test users" on.
-3. A17 CSP review: watch for `[csp]` lines naming `/ingest` or `blob:` now that replay is live.
-4. Give the dashboard 2–4 weeks of ad traffic before reading conversion rates; at ~$13/day counts are small.
+Funnel tracking is live on `main`; dashboard "Ad funnel":
+https://us.posthog.com/project/643189/dashboard/2165121 (`Connectors.md` → PostHog). Notifications go to HQ push
+(owner, 2026-10-03), wired and deployed but **inert until `POSTHOG_PERSONAL_API_KEY` is in Vercel**:
+1. Owner: PostHog → Settings → Personal API keys → new key, scopes `alert:read` + `query:read`, project Website
+   only → Vercel → `POSTHOG_PERSONAL_API_KEY` (Production) → Redeploy the latest deployment.
+2. Then check: `POST /api/webhooks/posthog` with the alert id answers 202 ("not firing"), not 503; trigger
+   `weekly-ads` by hand from HQ or with `CRON_SECRET` and confirm the push lands on a phone.
+3. Once the Monday push has arrived, turn off PostHog subscription 159678 (the dashboard email) if the owner
+   still wants email gone. The alert's own email cannot be removed (PostHog needs one subscriber).
+4. Owner's Safari: open the site once with `?tj_internal=1`. One real test lead from a phone.
+5. A17 CSP review: watch for `[csp]` lines naming `/ingest` or `blob:` now that replay is live.
 
 ---
 

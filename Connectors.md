@@ -220,7 +220,8 @@ quote-link taps are captured site-wide by one click listener, with `cta_location
   (7 AM CDT / 6 AM CST) to `juanleon1905@gmail.com`, `julianleon@triplejmetaltx.com`, `julianleon0724@yahoo.com`:
   10 of the dashboard's charts plus an AI-written summary steered to leads, calls, source and the biggest
   funnel drop. Change recipients in PostHog → the dashboard → Subscriptions.
-- **To HQ as push, not email:** alert firings go to PostHog destination "HQ push" → `POST /api/webhooks/posthog`
+- **To HQ as push, not email:** alert firings go to PostHog destination "HQ push: Quote submission failed"
+  (function `01a10003-0dbe-0000-d529-39e0579baa25`, enabled, filtered to that alert's id) → `POST /api/webhooks/posthog`
   with `{ alert_id }`. The route trusts nothing in the request: it re-reads the alert with
   `POSTHOG_PERSONAL_API_KEY` and pushes only if PostHog says it is firing and notified in the last 15 minutes
   (`src/lib/jobs/posthog-alert.ts`), so there is no shared secret to keep in sync. Pushes linking to
