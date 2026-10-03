@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import { ComparisonTable } from '@/components/ui/ComparisonTable'
 
 export default function BlacklandPrairiePost() {
@@ -6,7 +7,7 @@ export default function BlacklandPrairiePost() {
       <p>
         Central Texas sits on one of the most problematic soil types in North America for construction
         foundations. <strong>Blackland Prairie clay</strong> &#8212; the dark, expansive soil that runs through Bell County,
-        Temple, Killeen, and Belton &#8212; swells dramatically when wet and shrinks and cracks when dry. The
+        <Link href="/locations/temple">Temple</Link>, <Link href="/locations/killeen">Killeen</Link>, and <Link href="/locations/belton">Belton</Link> &#8212; swells dramatically when wet and shrinks and cracks when dry. The
         same soil that makes this region excellent farmland will heave, tilt, and crack a concrete slab
         that wasn&#8217;t designed for it.
       </p>
@@ -106,7 +107,7 @@ export default function BlacklandPrairiePost() {
         <li>2% grade toward drainage direction across slab surface</li>
       </ul>
       <p>
-        This is what &#8220;turnkey&#8221; means in practice &#8212; the foundation is engineered for where you actually
+        This is what &#8220;<Link href="/services/turnkey-carports-with-concrete">turnkey</Link>&#8221; means in practice &#8212; the foundation is engineered for where you actually
         live, not just poured to minimum standards to keep the quote competitive.
       </p>
 
@@ -126,7 +127,7 @@ export default function BlacklandPrairiePost() {
         conditions before &#8212; or whether they&#8217;re applying a generic quote from somewhere else.
       </p>
       <p>
-        Call us or fill out the quote form below. Site address is helpful &#8212; we can review county soil
+        Call us or fill out the <Link href="/quote">quote form</Link>. Site address is helpful &#8212; we can review county soil
         maps for your specific parcel before we quote the foundation.
       </p>
     </>

@@ -59,21 +59,15 @@ export const NAV_LINKS = [
   { href: "/contact", label: "Contact" },
 ] as const;
 
-/** Footer service links — `href` must match a real route (or `/contact` until a dedicated page exists). */
+/** Footer service links — `href` must match a real route. Lean-to patios and house additions have no page of their own (they 301 to `/quote`), so they go straight to the quote page with the chip preselected. */
 export const SERVICES = [
   { title: "Metal Fencing & Gates", href: "/services/metal-fencing" },
   { title: "Carports", href: "/services/carports" },
   { title: "Metal Garages", href: "/services/metal-garages" },
   { title: "Metal Barns", href: "/services/barns" },
   { title: "RV & Boat Covers", href: "/services/rv-covers" },
-  {
-    title: "Lean-To Patios",
-    href: "/contact",
-  },
-  {
-    title: "House Additions",
-    href: "/contact",
-  },
+  { title: "Lean-To Patios", href: "/quote?service=lean-to" },
+  { title: "House Additions", href: "/quote?service=other" },
 ] as const;
 
 export const SERVICE_CITIES = [

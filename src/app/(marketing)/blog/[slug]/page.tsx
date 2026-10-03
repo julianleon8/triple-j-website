@@ -5,7 +5,7 @@ import { Container } from '@/components/ui/Container'
 import { ButtonLink } from '@/components/ui/Button'
 import { QuoteForm } from '@/components/sections/QuoteForm'
 import { BreadcrumbJsonLd } from '@/components/seo/BreadcrumbJsonLd'
-import { BLOG_POSTS } from '@/lib/blog'
+import { BLOG_POSTS, relatedBlogPosts } from '@/lib/blog'
 import { SITE } from '@/lib/site'
 import { getSiteUrl } from '@/lib/site-url'
 
@@ -86,7 +86,7 @@ export default async function BlogPostPage({ params }: Props) {
     inLanguage: 'en-US',
   }
 
-  const relatedPosts = BLOG_POSTS.filter((p) => p.slug !== post.slug).slice(0, 3)
+  const relatedPosts = relatedBlogPosts(post.slug)
 
   return (
     <>
@@ -156,7 +156,11 @@ export default async function BlogPostPage({ params }: Props) {
               <span className="text-white font-extrabold text-sm">JJJ</span>
             </div>
             <div>
-              <p className="font-bold text-ink-900 text-sm">Triple J Metal — Temple, TX</p>
+              <p className="font-bold text-ink-900 text-sm">
+                <Link href="/about" className="underline-offset-4 hover:text-brand-700 hover:underline">
+                  Triple J Metal — Temple, TX
+                </Link>
+              </p>
               <p className="text-xs text-ink-500 mt-0.5 leading-relaxed">
                 Local metal building contractor serving Central Texas since {SITE.established}. Welded or bolted red iron,
                 concrete available, same-week scheduling. This guide was written by our crew from first-hand experience

@@ -230,6 +230,10 @@ export default async function PartnersPage() {
               <p className="mt-1 text-sm text-white/70">
                 Call or email Julian directly — same person who reads the form responses.
               </p>
+              <p className="mt-3 text-sm text-white/70">
+                See <Link href="/services" className="font-semibold text-white underline underline-offset-4 hover:text-white/80">what we install</Link>{' '}
+                and <Link href="/locations" className="font-semibold text-white underline underline-offset-4 hover:text-white/80">where we work</Link>.
+              </p>
             </div>
             <div className="flex flex-wrap gap-3">
               <TrackedPhoneLink

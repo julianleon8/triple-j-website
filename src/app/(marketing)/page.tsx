@@ -4,6 +4,7 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { Gallery } from "@/components/sections/Gallery";
 import { HowItWorks } from "@/components/sections/HowItWorks";
+import { RelatedReading } from "@/components/sections/RelatedReading";
 import { QuoteForm } from "@/components/sections/QuoteForm";
 import { ServiceAreas } from "@/components/sections/ServiceAreas";
 import { Services } from "@/components/sections/Services";
@@ -23,6 +24,12 @@ export const metadata: Metadata = {
     type: "website",
   },
 };
+
+// Each item in the hero strip that has a page to go to. The vertical padding is
+// cancelled by the negative margin, so the tap target is 44px tall and the
+// strip does not grow.
+const STRIP_LINK =
+  "-my-3 py-3 underline decoration-white/40 underline-offset-4 transition-colors hover:text-white hover:decoration-white focus-visible:text-white focus-visible:decoration-white";
 
 export default function HomePage() {
   return (
@@ -51,19 +58,27 @@ export default function HomePage() {
             </div>
           </div>
           <div className="mt-12 flex flex-wrap gap-x-8 gap-y-3 border-t border-white/20 pt-5 text-sm text-white/80">
-            <Link
-              href="/blog/welded-vs-bolted-metal-buildings-central-texas"
-              className="-my-3 py-3 underline decoration-white/40 underline-offset-4 transition-colors hover:text-white hover:decoration-white focus-visible:text-white focus-visible:decoration-white"
-            >
+            <Link href="/blog/welded-vs-bolted-metal-buildings-central-texas" className={STRIP_LINK}>
               Welded or bolted
             </Link>
-            <span>Our own crew</span><span>Same-week scheduling</span>
+            <Link href="/about" className={STRIP_LINK}>
+              Our own crew
+            </Link>
+            <span>Same-week scheduling</span>
           </div>
         </Container>
       </section>
       <Gallery />
       <Services />
       <HowItWorks />
+      <RelatedReading
+        eyebrow="Buying guides"
+        postSlugs={[
+          "welded-vs-bolted-metal-buildings-central-texas",
+          "bell-county-metal-building-permit-guide-2025",
+          "blackland-prairie-soil-metal-building-foundation",
+        ]}
+      />
       <ServiceAreas />
       <QuoteForm />
     </>

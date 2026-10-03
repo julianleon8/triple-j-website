@@ -88,3 +88,34 @@ export const BLOG_POSTS: BlogPost[] = [
     category: 'HOA',
   },
 ]
+
+const norm = (s: string) => s.trim().toLowerCase()
+
+/**
+ * The posts to suggest at the foot of `slug`: same-category and shared-tag
+ * posts first, then the rest in a ring that starts right after this post.
+ *
+ * The ring is what keeps every post reachable. The old rule — the first three
+ * others in array order — never showed the last post on any other post, and
+ * showed the first post on all of them. Posts here rarely share tags, so most
+ * scores tie, and the ring spreads those ties evenly instead of by position.
+ */
+export function relatedBlogPosts(slug: string, limit = 3, posts: BlogPost[] = BLOG_POSTS): BlogPost[] {
+  const at = posts.findIndex((p) => p.slug === slug)
+  if (at === -1) return []
+  const me = posts[at]
+  const myTags = new Set(me.tags.map(norm))
+  return posts
+    .map((post, i) => ({
+      post,
+      i,
+      score:
+        (post.category === me.category ? 3 : 0) +
+        2 * post.tags.filter((t) => myTags.has(norm(t))).length,
+      ring: (i - at + posts.length) % posts.length,
+    }))
+    .filter((x) => x.i !== at)
+    .sort((a, b) => b.score - a.score || a.ring - b.ring)
+    .slice(0, limit)
+    .map((x) => x.post)
+}

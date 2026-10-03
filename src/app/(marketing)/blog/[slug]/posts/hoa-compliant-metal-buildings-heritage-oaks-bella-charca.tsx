@@ -1,10 +1,11 @@
+import Link from 'next/link'
 import { ComparisonTable } from '@/components/ui/ComparisonTable'
 
 export default function HoaCompliantPost() {
   return (
     <>
       <p>
-        Heritage Oaks in Killeen and Bella Charca in Nolanville are two of the fastest-growing luxury
+        Heritage Oaks in <Link href="/locations/killeen">Killeen</Link> and Bella Charca in <Link href="/locations/nolanville">Nolanville</Link> are two of the fastest-growing luxury
         communities in Central Texas. Homes in these neighborhoods run $500,000 to $900,000. The HOA
         architectural guidelines in both communities were written to protect those property values &#8212;
         which means a standard utility-grade metal shed or kit carport will get rejected by the
@@ -27,7 +28,7 @@ export default function HoaCompliantPost() {
         <li><strong>Non-compliant setbacks:</strong> Structures that don&#8217;t maintain minimum distances from property lines, the main dwelling, and drainage easements</li>
       </ul>
       <p>
-        A standard PBR panel with exposed screws &#8212; which is the correct choice for an agricultural barn
+        A standard <Link href="/services/pbr-vs-pbu-panels">PBR panel</Link> with exposed screws &#8212; which is the correct choice for an agricultural barn
         or a rural carport &#8212; will typically fail HOA review in these communities because of the visible
         fastener requirement. This isn&#8217;t a flaw in the panel system; it&#8217;s a mismatch between product
         intent and HOA standard.
@@ -54,7 +55,8 @@ export default function HoaCompliantPost() {
         Standing seam panels &#8212; including snap-lock, mechanical-lock, and concealed-clip systems &#8212;
         have no exposed fasteners on the roof or wall surface. The panels interlock at raised seams, and the
         fastener is hidden inside the seam. The result looks architectural rather than industrial &#8212;
-        similar to what you&#8217;d see on a $400/sq ft custom home.
+        similar to what you&#8217;d see on a $400/sq ft custom home. See our{' '}
+        <Link href="/services/hoa-compliant-structures">HOA-compliant structures</Link> for examples.
       </p>
       <p>
         Most HOA architectural guidelines that specify &#8220;no visible fasteners&#8221; or &#8220;architectural metal
@@ -83,7 +85,8 @@ export default function HoaCompliantPost() {
       </ul>
       <p>
         If your HOA requires a specific color match, we can request physical samples from our panel
-        suppliers before finalizing the color selection. Don&#8217;t rely on monitor swatches for a HOA
+        suppliers before finalizing the color selection. The full range is on our{' '}
+        <Link href="/services/colors">panel colors page</Link>. Don&#8217;t rely on monitor swatches for a HOA
         color-match requirement &#8212; the physical sample is the only reliable way to compare.
       </p>
 
@@ -100,7 +103,8 @@ export default function HoaCompliantPost() {
       </ol>
       <p>
         We can provide all of these materials as part of the quoting process. Many HOA ARC committees
-        meet monthly &#8212; factor this into your timeline. If you&#8217;re targeting a specific build date, work
+        meet monthly &#8212; factor this into your timeline, and see our{' '}
+        <Link href="/blog/bell-county-metal-building-permit-guide-2025">Bell County permit guide</Link> for how the city side works. If you&#8217;re targeting a specific build date, work
         backward from the next ARC meeting date and allow 2&#8211;4 weeks for the approval process.
       </p>
 
@@ -118,7 +122,7 @@ export default function HoaCompliantPost() {
         requires a stamped drawing, we coordinate the engineer. One phone call, one contract, one crew.
       </p>
       <p>
-        Fill out the quote form below or call our Temple, TX office. Mention your HOA community and
+        Fill out the <Link href="/quote">quote form</Link> or call our Temple, TX office. Mention your HOA community and
         your approximate structure size &#8212; we&#8217;ll tell you exactly what panel system makes sense and
         what the ARC submission will need to include.
       </p>

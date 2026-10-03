@@ -10,6 +10,7 @@ import { ButtonLink } from "@/components/ui/Button";
 import { RelatedReading } from "@/components/sections/RelatedReading";
 import { BreadcrumbJsonLd } from "@/components/seo/BreadcrumbJsonLd";
 import { TrackedPhoneLink, TrackedPhoneNumber } from "@/components/site/TrackedPhone";
+import { nearbyCities } from "@/lib/city-links";
 import { LOCATIONS, LOCATION_SLUGS } from "@/lib/locations";
 import { SERVICES } from "@/lib/services";
 import { SITE } from "@/lib/site";
@@ -175,6 +176,7 @@ export default async function LocationPage(
   // Pick top services for the mini-grid (top 3 if topServices is set,
   // else fall back to first 3 from the SERVICES catalog).
   const topServiceSlugs = loc.topServices ?? ["carports", "metal-garages", "rv-covers"];
+  const nearby = nearbyCities(loc.slug);
   const topServices = topServiceSlugs
     .map((s) => SERVICES[s])
     .filter(Boolean)
@@ -643,6 +645,51 @@ export default async function LocationPage(
                 {loc.military.copy}
               </p>
             </Reveal>
+          </Container>
+        </section>
+      ) : null}
+
+      {/* ─── Nearby city pages (derived from lat/lng in src/lib/city-links.ts) ── */}
+      {nearby.length > 0 ? (
+        <section
+          aria-labelledby="nearby-heading"
+          className="relative py-16 md:py-20 bg-[color:var(--color-ink-50)]"
+        >
+          <Container size="wide">
+            <Reveal className="max-w-3xl">
+              <span className="text-xs font-bold uppercase tracking-[0.18em] text-[color:var(--color-brand-700)]">
+                Nearby
+              </span>
+              <h2
+                id="nearby-heading"
+                className="mt-3 font-display font-extrabold uppercase tracking-tight leading-none text-[color:var(--color-ink-900)] text-3xl sm:text-4xl"
+              >
+                Also serving near {loc.name}.
+              </h2>
+            </Reveal>
+            <ul className="mt-8 flex flex-wrap gap-3">
+              {nearby.map((city) => (
+                <li key={city.slug}>
+                  <Link
+                    href={`/locations/${city.slug}`}
+                    className="group inline-flex items-center gap-2 rounded-full border border-[color:var(--color-ink-200)] bg-white px-5 py-3 text-sm font-bold text-[color:var(--color-ink-900)] shadow-sm transition-all hover:border-[color:var(--color-brand-400)] hover:text-[color:var(--color-brand-700)] hover:shadow-md"
+                  >
+                    <PinIcon className="h-4 w-4 text-[color:var(--color-brand-600)]" />
+                    {city.name}, TX
+                    <span className="text-xs font-semibold text-[color:var(--color-ink-500)]">{city.county}</span>
+                  </Link>
+                </li>
+              ))}
+              <li>
+                <Link
+                  href="/locations"
+                  className="inline-flex items-center gap-2 rounded-full px-5 py-3 text-sm font-bold uppercase tracking-wider text-[color:var(--color-brand-700)] transition-colors hover:text-[color:var(--color-brand-800)]"
+                >
+                  All service areas
+                  <ArrowRightIcon className="h-4 w-4" />
+                </Link>
+              </li>
+            </ul>
           </Container>
         </section>
       ) : null}

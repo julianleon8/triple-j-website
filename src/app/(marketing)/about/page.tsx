@@ -1,6 +1,7 @@
 import { BreadcrumbJsonLd } from '@/components/seo/BreadcrumbJsonLd'
 import { Crew } from "@/components/sections/Crew"
 import type { Metadata } from 'next'
+import Link from 'next/link'
 import { Container } from '@/components/ui/Container'
 import { ButtonLink } from '@/components/ui/Button'
 import { QuoteForm } from '@/components/sections/QuoteForm'
@@ -38,6 +39,8 @@ function jsonLd(baseUrl: string) {
     inLanguage: 'en-US',
   }
 }
+
+const ABOUT_LINK = 'font-semibold text-brand-700 underline underline-offset-4 hover:text-brand-800'
 
 export default function AboutPage() {
   const baseUrl = getSiteUrl()
@@ -201,6 +204,12 @@ export default function AboutPage() {
               Call&nbsp;
             </TrackedPhoneLink>
           </div>
+          <p className="mt-8 text-sm text-ink-500 leading-relaxed">
+            Not ready yet? <Link href="/gallery" className={ABOUT_LINK}>See recent builds</Link>,{' '}
+            <Link href="/services" className={ABOUT_LINK}>browse what we build</Link>, or check{' '}
+            <Link href="/locations" className={ABOUT_LINK}>where we work</Link>. Supplier, dealer, or GC?{' '}
+            See our <Link href="/partners" className={ABOUT_LINK}>install partner page</Link>.
+          </p>
         </Container>
       </section>
 

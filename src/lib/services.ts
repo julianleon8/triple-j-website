@@ -361,6 +361,10 @@ export const SERVICES: Record<string, ServiceData> = {
   // ─── GAP 3: Speed + Military ─────────────────────────────────────────────
   'rv-covers': {
     slug: 'rv-covers',
+    relatedPosts: [
+      'welded-vs-bolted-metal-buildings-central-texas',
+      'blackland-prairie-soil-metal-building-foundation',
+    ],
     title: 'RV & Boat Covers',
     shortTitle: 'RV & Boat Covers',
     keywordGap: 3,

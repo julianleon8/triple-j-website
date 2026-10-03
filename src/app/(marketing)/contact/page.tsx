@@ -1,9 +1,12 @@
 import { BreadcrumbJsonLd } from '@/components/seo/BreadcrumbJsonLd'
 import type { Metadata } from 'next'
+import Link from 'next/link'
 import { Container } from '@/components/ui/Container'
 import { ButtonLink } from '@/components/ui/Button'
 import { QuoteForm } from '@/components/sections/QuoteForm'
 import { TrackedPhoneLink } from '@/components/site/TrackedPhone'
+import { ALL_CITY_SLUGS } from '@/lib/city-links'
+import { LOCATIONS } from '@/lib/locations'
 import { SITE } from '@/lib/site'
 import { getSiteUrl } from '@/lib/site-url'
 
@@ -149,10 +152,14 @@ export default function ContactPage() {
                   Service Area
                 </div>
                 <div className="flex flex-wrap gap-2">
-                  {['Temple', 'Belton', 'Killeen', 'Harker Heights', 'Copperas Cove', 'Salado', 'Waco', 'Georgetown', 'Round Rock', 'Lampasas'].map((city) => (
-                    <span key={city} className="text-xs font-medium bg-white border border-ink-200 text-ink-700 px-3 py-1 rounded-full">
-                      {city}, TX
-                    </span>
+                  {ALL_CITY_SLUGS.map((slug) => (
+                    <Link
+                      key={slug}
+                      href={`/locations/${slug}`}
+                      className="text-xs font-medium bg-white border border-ink-200 text-ink-700 px-3 py-1 rounded-full hover:border-(--color-brand-400) hover:text-(--color-brand-700) transition-colors"
+                    >
+                      {LOCATIONS[slug].name}, TX
+                    </Link>
                   ))}
                 </div>
                 <p className="text-xs text-ink-400 mt-3">
@@ -193,6 +200,12 @@ export default function ContactPage() {
           <ButtonLink href="#quote" variant="primary" size="lg">
             Start Your Free Quote
           </ButtonLink>
+          <p className="mt-8 text-sm text-ink-500 leading-relaxed">
+            Still deciding? <Link href="/services" className="font-semibold text-brand-700 underline underline-offset-4 hover:text-brand-800">See what we build</Link> or{' '}
+            <Link href="/gallery" className="font-semibold text-brand-700 underline underline-offset-4 hover:text-brand-800">browse recent projects</Link>. Supplier, dealer, or GC?{' '}
+            <Link href="/partners" className="font-semibold text-brand-700 underline underline-offset-4 hover:text-brand-800">Become an install partner</Link>.{' '}
+            Curious who calls you back? <Link href="/about" className="font-semibold text-brand-700 underline underline-offset-4 hover:text-brand-800">Meet the crew</Link>.
+          </p>
         </Container>
       </section>
 

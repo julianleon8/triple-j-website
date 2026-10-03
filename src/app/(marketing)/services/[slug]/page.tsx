@@ -1,5 +1,6 @@
 import { RelatedProjects } from "@/components/sections/RelatedProjects"
 import type { Metadata } from 'next'
+import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { ButtonLink } from '@/components/ui/Button'
 import { Container } from '@/components/ui/Container'
@@ -7,6 +8,8 @@ import { QuoteForm } from '@/components/sections/QuoteForm'
 import { RelatedReading } from '@/components/sections/RelatedReading'
 import { BreadcrumbJsonLd } from '@/components/seo/BreadcrumbJsonLd'
 import { TrackedPhoneLink } from '@/components/site/TrackedPhone'
+import { ALL_CITY_SLUGS } from '@/lib/city-links'
+import { LOCATIONS } from '@/lib/locations'
 import { SERVICES, SERVICE_SLUGS } from '@/lib/services'
 import { SITE } from '@/lib/site'
 import { getSiteUrl } from '@/lib/site-url'
@@ -33,6 +36,15 @@ export async function generateMetadata(
     },
   }
 }
+
+/** Panel and finish pages apply to every building, not to fencing. */
+const PANEL_LINKS = [
+  { href: '/services/colors', label: 'Panel colors' },
+  { href: '/services/pbr-vs-pbu-panels', label: 'PBR vs PBU panels' },
+]
+/** Stalls, decks and one-offs sit next to barns and garages. */
+const HYBRID_LINK = { href: '/services/hybrid-projects', label: 'Hybrid projects' }
+const HYBRID_FROM = new Set(['barns', 'metal-garages'])
 
 const GAP_BADGES: Record<number, { label: string; color: string }> = {
   1: { label: 'Turnkey + Concrete',    color: 'bg-amber-100 text-amber-800' },
@@ -228,7 +240,10 @@ export default async function ServicePage(
                 </p>
                 <p className="text-white/60 text-sm">
                   Mention your service when you call, or check the Military / First Responder box
-                  on the quote form below.
+                  on the quote form below.{' '}
+                  <Link href="/military" className="font-semibold text-white underline underline-offset-4 hover:text-white/80">
+                    More for military families
+                  </Link>
                 </p>
               </div>
             </div>
@@ -258,27 +273,59 @@ export default async function ServicePage(
         </section>
       )}
 
-      {/* ── Related services ── */}
-      {svc.relatedSlugs.length > 0 && (
-        <section className="py-12 bg-white border-t border-[color:var(--color-ink-100)]">
-          <Container>
-            <p className="text-sm font-semibold uppercase tracking-widest text-[color:var(--color-ink-400)] mb-6">
-              Related Services
-            </p>
-            <div className="flex flex-wrap gap-3">
-              {svc.relatedSlugs.map((s) => {
-                const rel = SERVICES[s]
-                if (!rel) return null
-                return (
-                  <ButtonLink key={s} href={`/services/${s}`} variant="secondary" size="sm">
-                    {rel.shortTitle}
+      {/* ── Related services, panels, and where we build ── */}
+      <section className="py-12 bg-white border-t border-[color:var(--color-ink-100)]">
+        <Container>
+          <div className="space-y-10">
+            {svc.relatedSlugs.length > 0 && (
+              <div>
+                <p className="text-sm font-semibold uppercase tracking-widest text-[color:var(--color-ink-400)] mb-6">
+                  Related Services
+                </p>
+                <div className="flex flex-wrap gap-3">
+                  {svc.relatedSlugs.map((s) => {
+                    const rel = SERVICES[s]
+                    if (!rel) return null
+                    return (
+                      <ButtonLink key={s} href={`/services/${s}`} variant="secondary" size="sm">
+                        {rel.shortTitle}
+                      </ButtonLink>
+                    )
+                  })}
+                </div>
+              </div>
+            )}
+
+            {slug !== 'metal-fencing' && (
+              <div>
+                <p className="text-sm font-semibold uppercase tracking-widest text-[color:var(--color-ink-400)] mb-6">
+                  Panels &amp; Specialty Builds
+                </p>
+                <div className="flex flex-wrap gap-3">
+                  {[...PANEL_LINKS, ...(HYBRID_FROM.has(slug) ? [HYBRID_LINK] : [])].map((l) => (
+                    <ButtonLink key={l.href} href={l.href} variant="secondary" size="sm">
+                      {l.label}
+                    </ButtonLink>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            <div>
+              <p className="text-sm font-semibold uppercase tracking-widest text-[color:var(--color-ink-400)] mb-6">
+                Cities We Serve
+              </p>
+              <div className="flex flex-wrap gap-3">
+                {ALL_CITY_SLUGS.map((s) => (
+                  <ButtonLink key={s} href={`/locations/${s}`} variant="secondary" size="sm">
+                    {LOCATIONS[s].name}
                   </ButtonLink>
-                )
-              })}
+                ))}
+              </div>
             </div>
-          </Container>
-        </section>
-      )}
+          </div>
+        </Container>
+      </section>
 
       {/* ── Quote form ── */}
       <QuoteForm initialService={svc.initialService} />

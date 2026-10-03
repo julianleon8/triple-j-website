@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import { ComparisonTable } from '@/components/ui/ComparisonTable'
 
 export default function FortCavazosPost() {
@@ -10,8 +11,8 @@ export default function FortCavazosPost() {
       </p>
       <p>
         Triple J Metal is located in <strong>Temple, TX &#8212; 10 minutes from Fort Cavazos.</strong> We&#8217;ve built
-        carports and covered structures for military families throughout the Killeen-Harker Heights
-        corridor. This is what we&#8217;ve learned about how to make the process work around a PCS timeline.
+        <Link href="/services/carports">carports</Link> and covered structures for military families throughout the{' '}
+        <Link href="/locations/killeen">Killeen</Link>-<Link href="/locations/harker-heights">Harker Heights</Link> corridor. This is what we&#8217;ve learned about how to make the process work around a PCS timeline.
       </p>
 
       <h2>Why PCS Season Creates an Urgent Carport Window</h2>
@@ -36,7 +37,8 @@ export default function FortCavazosPost() {
         <li>
           <strong>Day 1:</strong> Quote call or form submission. We confirm property address, size, and any permit
           requirements for your jurisdiction (city of Killeen, Harker Heights, or unincorporated Bell County
-          depending on your address).
+          depending on your address; see our{' '}
+          <Link href="/blog/bell-county-metal-building-permit-guide-2025">Bell County permit guide</Link>).
         </li>
         <li>
           <strong>Day 2–3:</strong> Quote delivered. If you&#8217;re in a non-HOA area and the structure doesn&#8217;t require
@@ -79,8 +81,8 @@ export default function FortCavazosPost() {
 
       <h2>Off-Post Housing Considerations</h2>
       <p>
-        If you&#8217;re living off-post in Heritage Oaks, Bella Charca, Nolanville, or subdivisions near
-        Harker Heights, check your lease or HOA covenants before committing to a specific structure type.
+        If you&#8217;re living off-post in Heritage Oaks, Bella Charca, <Link href="/locations/nolanville">Nolanville</Link>, or subdivisions near
+        Harker Heights, check your lease or <Link href="/blog/hoa-compliant-metal-buildings-heritage-oaks-bella-charca">HOA covenants</Link> before committing to a specific structure type.
         Some HOA communities require architectural review before a structure can be erected. We can
         work within those requirements &#8212; concealed-fastener standing seam panels, Board &amp; Batten profiles,
         and specific color palettes are all available through our regional Texas panel suppliers.
@@ -93,13 +95,17 @@ export default function FortCavazosPost() {
 
       <h2>Military Discount and How to Claim It</h2>
       <p>
-        Triple J offers a discount to active duty military members, veterans, and first responders.
+        Triple J offers a <Link href="/military">discount to active duty military members, veterans, and first responders</Link>.
         Just mention your service on the quote call or form &#8212; we&#8217;ll apply it to the final quote.
         No DD-214 required on the call; we ask for verification at contract signing.
       </p>
       <p>
         If you&#8217;re inbound PCSing to Fort Cavazos, <strong>call us from your current station.</strong> We can have
         the quote ready before you arrive so you can sign and schedule the same week you move in.
+        You can also <Link href="/quote">request a quote online</Link>.
+      </p>
+      <p>
+        Boat or RV coming with you? See our <Link href="/services/rv-covers">RV and boat covers</Link>.
       </p>
     </>
   )

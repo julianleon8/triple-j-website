@@ -567,6 +567,11 @@ export const LOCATIONS: Record<string, LocationData> = {
 
   salado: {
     slug: 'salado',
+    relatedPosts: [
+      'bell-county-metal-building-permit-guide-2025',
+      'blackland-prairie-soil-metal-building-foundation',
+      'welded-vs-bolted-metal-buildings-central-texas',
+    ],
     heroImageAlt: "Triple J Metal steel construction project in Central Texas",
     name: 'Salado',
     county: 'Bell County',
@@ -738,6 +743,9 @@ export const LOCATIONS: Record<string, LocationData> = {
 
   georgetown: {
     slug: 'georgetown',
+    relatedPosts: [
+      'welded-vs-bolted-metal-buildings-central-texas',
+    ],
     name: 'Georgetown',
     county: 'Williamson County',
     zip: '78626',
@@ -837,6 +845,10 @@ export const LOCATIONS: Record<string, LocationData> = {
 
   'round-rock': {
     slug: 'round-rock',
+    relatedPosts: [
+      'welded-vs-bolted-metal-buildings-central-texas',
+      'blackland-prairie-soil-metal-building-foundation',
+    ],
     name: 'Round Rock',
     county: 'Williamson County',
     zip: '78664',
@@ -934,6 +946,9 @@ export const LOCATIONS: Record<string, LocationData> = {
 
   lampasas: {
     slug: 'lampasas',
+    relatedPosts: [
+      'welded-vs-bolted-metal-buildings-central-texas',
+    ],
     heroImageAlt: "Triple J Metal steel construction project in Central Texas",
     name: 'Lampasas',
     county: 'Lampasas County',
@@ -999,6 +1014,11 @@ export const LOCATIONS: Record<string, LocationData> = {
 
   holland: {
     slug: 'holland',
+    relatedPosts: [
+      'bell-county-metal-building-permit-guide-2025',
+      'blackland-prairie-soil-metal-building-foundation',
+      'welded-vs-bolted-metal-buildings-central-texas',
+    ],
     heroImageAlt: "Triple J Metal steel construction project in Central Texas",
     name: 'Holland',
     county: 'Bell County',
@@ -1064,6 +1084,10 @@ export const LOCATIONS: Record<string, LocationData> = {
 
   taylor: {
     slug: 'taylor',
+    relatedPosts: [
+      'welded-vs-bolted-metal-buildings-central-texas',
+      'blackland-prairie-soil-metal-building-foundation',
+    ],
     heroImageAlt: "Triple J Metal steel construction project in Central Texas",
     name: 'Taylor',
     county: 'Williamson County',
@@ -1129,6 +1153,11 @@ export const LOCATIONS: Record<string, LocationData> = {
 
   troy: {
     slug: 'troy',
+    relatedPosts: [
+      'bell-county-metal-building-permit-guide-2025',
+      'blackland-prairie-soil-metal-building-foundation',
+      'welded-vs-bolted-metal-buildings-central-texas',
+    ],
     heroImageAlt: "Triple J Metal steel construction project in Central Texas",
     name: 'Troy',
     county: 'Bell County',
@@ -1194,6 +1223,11 @@ export const LOCATIONS: Record<string, LocationData> = {
 
   nolanville: {
     slug: 'nolanville',
+    relatedPosts: [
+      'fort-cavazos-pcs-metal-carport',
+      'hoa-compliant-metal-buildings-heritage-oaks-bella-charca',
+      'bell-county-metal-building-permit-guide-2025',
+    ],
     heroImageAlt: "Triple J Metal steel construction project in Central Texas",
     name: 'Nolanville',
     county: 'Bell County',

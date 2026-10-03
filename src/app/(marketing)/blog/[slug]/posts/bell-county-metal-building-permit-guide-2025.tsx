@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import { ComparisonTable } from '@/components/ui/ComparisonTable'
 
 export default function BellCountyPermitPost() {
@@ -125,6 +126,9 @@ export default function BellCountyPermitPost() {
         If your property is in a subdivision with a Homeowners Association &#8212; Heritage Oaks in Killeen,
         Bella Charca in Nolanville, and dozens of other Central Texas communities &#8212; your HOA architectural
         review committee must approve your structure separately from the city building permit.
+        Our guide to{' '}
+        <Link href="/blog/hoa-compliant-metal-buildings-heritage-oaks-bella-charca">HOA-compliant metal buildings</Link> covers what
+        those reviews look for.
       </p>
       <p>
         A city permit does not override an HOA covenant. A structure that passes city permitting but
@@ -136,9 +140,14 @@ export default function BellCountyPermitPost() {
       <h2>Start with the Quote Call</h2>
       <p>
         The fastest way to understand what your specific project requires is to describe it to us.
-        When you call or fill out the quote form, tell us the address, the structure size, and your
+        When you call or fill out the <Link href="/quote">quote form</Link>, tell us the address, the structure size, and your
         intended use. We&#8217;ll check the jurisdiction, verify setbacks, and include the permit cost
         in your quote. One contract, one crew, no surprises.
+      </p>
+      <p>
+        Building in Bell County? See our <Link href="/locations/temple">Temple</Link>,{' '}
+        <Link href="/locations/belton">Belton</Link>, and <Link href="/locations/killeen">Killeen</Link> pages, or browse{' '}
+        <Link href="/services/carports">carports</Link> and <Link href="/services/metal-garages">garages</Link>.
       </p>
     </>
   )
