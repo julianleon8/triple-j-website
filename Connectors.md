@@ -215,6 +215,10 @@ quote-link taps are captured site-wide by one click listener, with `cta_location
   leads / phone taps / visitors / visit-to-lead rate, the six-step drop-off funnel, failures by reason, the
   funnel by channel, lead rate by landing page, weekly leads and calls by channel, a utm source × campaign
   table, taps by button position, homepage form vs `/quote`, and leads by building type and by city.
+- **Monday email:** PostHog subscription 159678, "Ad funnel — Monday report", weekly on Monday at 12:00 UTC
+  (7 AM CDT / 6 AM CST) to `juanleon1905@gmail.com`, `julianleon@triplejmetaltx.com`, `julianleon0724@yahoo.com`:
+  10 of the dashboard's charts plus an AI-written summary steered to leads, calls, source and the biggest
+  funnel drop. Change recipients in PostHog → the dashboard → Subscriptions.
 - **Owner test leads** carry `internal_traffic` on `lead_created` too: the form sends the browser's flag as
   `posthog_internal`, so they fall under the same filter.
 

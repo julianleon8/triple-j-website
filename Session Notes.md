@@ -27,6 +27,8 @@
   `$pageview`, `quote_form_viewed` and replay snapshots (all 200), and both test visits are excluded by the
   internal filter (2 visitors with it off, 0 with it on). On a phone the quote card is 1,485 px tall, which
   is why `quote_form_viewed` fires on any visible part rather than a 40% threshold.
+- **Monday email:** subscription 159678 sends the dashboard (10 charts + AI summary) every Monday 12:00 UTC to
+  the owner, the Triple J inbox and Julian's Yahoo; first delivery 2026-10-05. Test send requested on create.
 
 ## 2026-10-01 — SEO action plan (docs/ACTION-PLAN.md) worked through against the live site
 
