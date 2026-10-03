@@ -2,20 +2,21 @@ import { PBR_PAGE } from '@/i18n/pages/pbr-vs-pbu'
 import { OG_CONTENT_TYPE, OG_SIZE, renderOgCard } from '@/lib/og-card'
 
 /**
- * /services/pbr-vs-pbu-panels OG card — the page's own H1 and hero copy.
+ * /es/servicios/paneles-pbr-vs-pbu OG card — the Spanish twin of
+ * /services/pbr-vs-pbu-panels: the page's own H1 and hero copy.
  */
 
 export const size = OG_SIZE
 export const contentType = OG_CONTENT_TYPE
-export const alt = PBR_PAGE.en.og.alt
+export const alt = PBR_PAGE.es.og.alt
 
 export default function PanelGuideOpenGraphImage() {
-  const t = PBR_PAGE.en.og
+  const t = PBR_PAGE.es.og
   return renderOgCard({
     eyebrow: t.eyebrow,
     headline: t.headline,
     accent: t.accent,
     subhead: t.subhead,
-    path: '/services/pbr-vs-pbu-panels',
+    path: '/es/servicios/paneles-pbr-vs-pbu',
   })
 }

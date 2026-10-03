@@ -65,12 +65,14 @@ describe('GALLERY_PATHS', () => {
       '/es/cotizacion',
       '/es/socios',
       '/es/ciudades/[slug]',
+      '/es/servicios/[slug]',
     ],
     'src/app/(marketing)/gallery/[id]/page.tsx': [], // per item: revalidateGallery(id)
     'src/app/es/galeria/[id]/page.tsx': [], // per item: revalidateGallery(id) covers /es/galeria/<id>
     'src/app/(marketing)/quote/page.tsx': ['/quote'], // ?project= reference card
     'src/app/es/cotizacion/page.tsx': ['/es/cotizacion'],
     'src/app/(marketing)/services/hybrid-projects/page.tsx': ['/services/hybrid-projects'],
+    'src/app/es/servicios/proyectos-hibridos/page.tsx': ['/es/servicios/proyectos-hibridos'],
     'src/app/sitemap.ts': ['/sitemap.xml'],
   }
 

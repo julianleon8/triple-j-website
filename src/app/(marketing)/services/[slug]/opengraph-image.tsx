@@ -1,3 +1,4 @@
+import { SERVICE_PAGE } from '@/i18n/pages/service'
 import { OG_CONTENT_TYPE, OG_SIZE, renderOgCard } from '@/lib/og-card'
 import { SERVICES, SERVICE_SLUGS } from '@/lib/services'
 
@@ -8,7 +9,7 @@ import { SERVICES, SERVICE_SLUGS } from '@/lib/services'
 
 export const size = OG_SIZE
 export const contentType = OG_CONTENT_TYPE
-export const alt = 'Triple J Metal — metal buildings in Central Texas'
+export const alt = SERVICE_PAGE.en.ogAlt
 
 // Prerender one card per service at build time rather than on first crawl.
 export function generateStaticParams() {
@@ -32,7 +33,7 @@ export default async function ServiceOpenGraphImage({
   const [, ...qualifier] = svc.heroHeadline.split(/\s+—\s+/)
 
   return renderOgCard({
-    eyebrow: 'Central Texas',
+    eyebrow: SERVICE_PAGE.en.ogEyebrow,
     headline: svc.title,
     accent: qualifier.length > 0 ? `${qualifier.join(' — ')}.` : undefined,
     subhead: svc.metaDescription,

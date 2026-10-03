@@ -7,17 +7,17 @@ import { getAdminClient } from '@/lib/supabase/admin'
 
 export const dynamic = 'force-dynamic'
 
-const t = HYBRID_PAGE.en.meta
+const t = HYBRID_PAGE.es.meta
 
 export const metadata: Metadata = {
   title: t.title,
   description: t.description,
-  alternates: localeAlternates('/services/hybrid-projects', 'en'),
+  alternates: localeAlternates('/services/hybrid-projects', 'es'),
   openGraph: {
     title: t.ogTitle,
     description: t.ogDescription,
     type: 'website',
-    ...ogLocale('en'),
+    ...ogLocale('es'),
   },
 }
 
@@ -35,5 +35,5 @@ export default async function Page() {
     .order('is_featured', { ascending: false })
     .order('sort_order', { ascending: true })
 
-  return <HybridProjectsPage locale="en" projects={projects ?? []} />
+  return <HybridProjectsPage locale="es" projects={projects ?? []} />
 }

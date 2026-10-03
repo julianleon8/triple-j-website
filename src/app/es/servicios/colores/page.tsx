@@ -1,23 +1,23 @@
 import type { Metadata } from 'next'
 
-import { PbrVsPbuPage } from '@/components/pages/PbrVsPbuPage'
+import { ColorsPage } from '@/components/pages/ColorsPage'
 import { localeAlternates, ogLocale } from '@/i18n/metadata'
-import { PBR_PAGE } from '@/i18n/pages/pbr-vs-pbu'
+import { COLORS_PAGE } from '@/i18n/pages/colors'
 
-const t = PBR_PAGE.en.meta
+const t = COLORS_PAGE.es.meta
 
 export const metadata: Metadata = {
   title: t.title,
   description: t.description,
-  alternates: localeAlternates('/services/pbr-vs-pbu-panels', 'en'),
+  alternates: localeAlternates('/services/colors', 'es'),
   openGraph: {
     title: t.ogTitle,
     description: t.ogDescription,
-    type: 'article',
-    ...ogLocale('en'),
+    type: 'website',
+    ...ogLocale('es'),
   },
 }
 
 export default function Page() {
-  return <PbrVsPbuPage locale="en" />
+  return <ColorsPage locale="es" />
 }
