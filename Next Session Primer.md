@@ -1,3 +1,16 @@
+# Internal links — 2026-10-03 · ON `claude/youthful-cerf-2m3dfh` (MERGED WITH MAIN), NOT YET ON `main`
+
+Ready for the owner to look at and merge. `node scripts/check-links.mjs --base <url> --strict` passes on it
+(Locked Decisions → Internal linking); run it after changing nav, a page template, or `services.ts` /
+`locations.ts`. To see it: `npm run build`, `npx next start -p 3100`, then the script with `--base http://localhost:3100`.
+1. Skim the five posts: links only were added, the wording is main's. Check the sentence each link sits in.
+2. `RelatedGuides` is a new Forge component (`src/components/forge/`); look at it on a city page and a service page.
+3. Optional, not done: a guides band on the homepage. The redesign fixes the homepage order, so it is the
+   owner's call. A fencing guide would give `/services/metal-fencing` and `/services/gates` a post to link.
+4. `/gallery/[id]` project pages read Supabase and are not in the audit; check their inbound links on production.
+
+---
+
 # Gallery revalidation — 2026-10-03 · LIVE, CHECK ON PRODUCTION ONCE
 
 HQ gallery writes now call `revalidateGallery()` (Gallery freshness in `Locked Decisions.md`), so a

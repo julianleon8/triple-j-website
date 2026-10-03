@@ -1,5 +1,27 @@
 # Session Notes
 
+## 2026-10-03 — Internal links, ported onto the Forge redesign
+
+- **Why:** a Liberty Hill visitor spent 26 min on the site (Mac, then iPhone 19 s later), tapping the old hero's
+  dead "Welded or bolted" twice on the phone before finding the post through `/blog`. The owner asked for that
+  link and for every under-linked page to be fixed. The Forge redesign landed on `main` mid-session, so the work
+  was merged with it and rebuilt on the new components.
+- **Shipped on `claude/youthful-cerf-2m3dfh`, not `main`:** `relatedBlogPosts()` and `nearbyCities()` with tests;
+  `RelatedGuides` (Forge card row) on city and service pages, which had lost their `relatedPosts` sections in the
+  redesign; "Also serving near" chips on every city page; service pages gain panel, specialty and every-city
+  links; all 5 posts link a service, a city and `/quote`; the hero lede links the welded-vs-bolted post and
+  `/about`; About "Keep looking" row; Contact's service area links all 14 cities; Partners links onward; the
+  blog author strip links `/about`; footer Lean-To / House Additions → `/quote`; `scripts/check-links.mjs`.
+- **Audit on the redesign (before):** 24 flagged. All 5 posts had no service, city or quote link; Holland, Salado,
+  Taylor, Troy, Waco, the HOA post, `/services/colors`, `/services/hybrid-projects` had one body link in;
+  `/partners` had none. **After:** `check-links.mjs --base <url> --strict` is clean (47 pages, no broken links).
+  Holland, Salado, Troy now 12–13 links in; Taylor, Waco similar; `/partners` 2.
+- **Checks:** typecheck, lint, 609 tests (new ones for related posts and city links), `next build`, strict link
+  audit, link spacing in all 5 rendered posts, screenshots on a 390 px phone and 1280 px desktop. One `next build`
+  died once with an uncaught `TypeError` during compile and passed on both reruns; the cause was not found.
+- **Not done, on purpose:** no new band on the homepage (the redesign fixes its order); fencing and gates have no
+  relevant post to link; `/privacy` and `/terms` keep one body link.
+
 ## 2026-10-03 — HQ gallery edits reach the public pages without a deploy
 
 **In plain terms.** Changing the gallery in HQ updated the database but not the site. The project
