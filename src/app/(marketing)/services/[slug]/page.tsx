@@ -4,6 +4,7 @@ import { notFound } from 'next/navigation'
 
 import { Breadcrumb } from '@/components/forge/Breadcrumb'
 import { BuildGrid } from '@/components/forge/BuildGrid'
+import { Chip } from '@/components/forge/Chip'
 import { FaqAccordion } from '@/components/forge/FaqAccordion'
 import { FeatureCard, RuleList, SpecSheet } from '@/components/forge/cards'
 import { ForgeButtonLink } from '@/components/forge/ForgeButton'
@@ -11,10 +12,13 @@ import { ForgeReveal } from '@/components/forge/ForgeReveal'
 import { OptionTabs } from '@/components/forge/OptionTabs'
 import { PageHero } from '@/components/forge/PageHero'
 import { QuoteSection } from '@/components/forge/QuoteSection'
+import { RelatedGuides } from '@/components/forge/RelatedGuides'
 import { SectionHeading } from '@/components/forge/SectionHeading'
 import { buttonClass } from '@/components/forge/styles'
 import { TrackedPhoneLink, TrackedPhoneNumber } from '@/components/site/TrackedPhone'
+import { ALL_CITY_SLUGS } from '@/lib/city-links'
 import { filterByTypes, getBuilds } from '@/lib/forge-builds'
+import { LOCATIONS } from '@/lib/locations'
 import { SERVICE_PHOTOS, SERVICES, SERVICE_SLUGS, type ServiceData } from '@/lib/services'
 import { SITE } from '@/lib/site'
 import { getSiteUrl } from '@/lib/site-url'
@@ -54,6 +58,20 @@ const GAP_EYEBROWS: Record<number, string> = {
 }
 
 const menuName = (svc: ServiceData) => svc.forge?.menu ?? svc.shortTitle
+
+/** Panel and finish pages apply to every building, not to fencing or gates. */
+const PANEL_LINKS = [
+  { href: '/services/colors', label: 'Panel colors' },
+  { href: '/services/pbr-vs-pbu-panels', label: 'PBR vs PBU panels' },
+]
+/** Stalls, decks and one-offs sit next to barns and garages. */
+const HYBRID_LINK = { href: '/services/hybrid-projects', label: 'Hybrid projects' }
+const HYBRID_FROM = new Set(['barns', 'metal-garages'])
+
+function panelLinks(svc: ServiceData): { href: string; label: string }[] {
+  if (svc.slug === 'metal-fencing' || svc.slug === 'gates') return []
+  return [...PANEL_LINKS, ...(HYBRID_FROM.has(svc.slug) ? [HYBRID_LINK] : [])]
+}
 
 /** Order is the design's: two related services, then the fixed links. */
 function relatedLinks(svc: ServiceData): { href: string; label: string }[] {
@@ -272,21 +290,48 @@ export default async function ServicePage(
         </section>
       ) : null}
 
-      {/* 7 · Related */}
+      {/* 7 · Guides (only when relatedPosts is populated) */}
+      {svc.relatedPosts?.length ? <RelatedGuides postSlugs={svc.relatedPosts} /> : null}
+
+      {/* 8 · Related, panels, and the cities we serve */}
       <section data-forge="" data-tone="light" className="border-t border-forge-mist bg-forge-fog py-8 text-forge-navy">
-        <div className="mx-auto flex w-full max-w-[1360px] flex-wrap items-center gap-x-6 gap-y-3.5 px-[clamp(20px,3vw,40px)]">
-          <p className="text-[11px] font-bold uppercase tracking-[.2em] text-forge-slate">Related</p>
-          <div className="flex flex-wrap gap-2.5">
-            {relatedLinks(svc).map((r) => (
-              <ForgeButtonLink key={r.href} href={r.href} variant="linkAccent" size="tap">
-                {r.label} →
-              </ForgeButtonLink>
-            ))}
+        <div className="mx-auto flex w-full max-w-[1360px] flex-col gap-6 px-[clamp(20px,3vw,40px)]">
+          <div className="flex flex-wrap items-center gap-x-6 gap-y-3.5">
+            <p className="text-[11px] font-bold uppercase tracking-[.2em] text-forge-slate min-[900px]:w-[150px]">Related</p>
+            <div className="flex flex-wrap gap-2.5">
+              {relatedLinks(svc).map((r) => (
+                <ForgeButtonLink key={r.href} href={r.href} variant="linkAccent" size="tap">
+                  {r.label} →
+                </ForgeButtonLink>
+              ))}
+            </div>
+          </div>
+          {panelLinks(svc).length ? (
+            <div className="flex flex-wrap items-center gap-x-6 gap-y-3.5">
+              <p className="text-[11px] font-bold uppercase tracking-[.2em] text-forge-slate min-[900px]:w-[150px]">Panels &amp; specialty</p>
+              <div className="flex flex-wrap gap-2.5">
+                {panelLinks(svc).map((r) => (
+                  <ForgeButtonLink key={r.href} href={r.href} variant="linkAccent" size="tap">
+                    {r.label} →
+                  </ForgeButtonLink>
+                ))}
+              </div>
+            </div>
+          ) : null}
+          <div className="flex flex-wrap items-center gap-x-6 gap-y-3.5">
+            <p className="text-[11px] font-bold uppercase tracking-[.2em] text-forge-slate min-[900px]:w-[150px]">Cities we serve</p>
+            <div className="flex flex-wrap gap-2">
+              {ALL_CITY_SLUGS.map((slug) => (
+                <Chip key={slug} href={`/locations/${slug}`} size="sm">
+                  {LOCATIONS[slug].name}
+                </Chip>
+              ))}
+            </div>
           </div>
         </div>
       </section>
 
-      {/* 8 · Quote */}
+      {/* 9 · Quote */}
       <QuoteSection initialService={svc.quoteService} serviceName={svc.quoteService ? menu : undefined} />
     </div>
   )

@@ -7,7 +7,7 @@ import { ForgeButtonLink } from '@/components/forge/ForgeButton'
 import { ForgeReveal } from '@/components/forge/ForgeReveal'
 import { QuoteSection } from '@/components/forge/QuoteSection'
 import { BreadcrumbJsonLd } from '@/components/seo/BreadcrumbJsonLd'
-import { BLOG_POSTS } from '@/lib/blog'
+import { BLOG_POSTS, relatedBlogPosts } from '@/lib/blog'
 import { SITE } from '@/lib/site'
 import { getSiteUrl } from '@/lib/site-url'
 
@@ -91,7 +91,7 @@ export default async function BlogPostPage({ params }: Props) {
     inLanguage: 'en-US',
   }
 
-  const relatedPosts = BLOG_POSTS.filter((p) => p.slug !== post.slug).slice(0, 3)
+  const relatedPosts = relatedBlogPosts(post.slug)
 
   return (
     <div data-forge="">
@@ -181,7 +181,11 @@ export default async function BlogPostPage({ params }: Props) {
               className="size-12 shrink-0 object-contain"
             />
             <div>
-              <p className="text-[15px] font-semibold text-forge-navy">Triple J Metal — Temple, TX</p>
+              <p className="text-[15px] font-semibold text-forge-navy">
+                <Link href="/about" className="underline decoration-forge-silver underline-offset-4 transition-colors hover:decoration-forge-navy">
+                  Triple J Metal — Temple, TX
+                </Link>
+              </p>
               <p className="mt-1 text-[14px] leading-[1.6] text-forge-slate">
                 Local metal building contractor serving Central Texas since {SITE.established}. Welded or bolted red iron,
                 concrete available, same-week scheduling. This guide was written by our crew from first-hand experience

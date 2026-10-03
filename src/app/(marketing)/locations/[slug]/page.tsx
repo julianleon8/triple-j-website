@@ -11,6 +11,7 @@ import { ForgeButtonLink } from "@/components/forge/ForgeButton";
 import type { Fact } from "@/components/forge/FactStrip";
 import { ForgeReveal } from "@/components/forge/ForgeReveal";
 import { PageHero } from "@/components/forge/PageHero";
+import { RelatedGuides } from "@/components/forge/RelatedGuides";
 import { QuoteRequestButton } from "@/components/forge/QuoteRequestButton";
 import { QuoteSection } from "@/components/forge/QuoteSection";
 import { SectionHeading } from "@/components/forge/SectionHeading";
@@ -18,6 +19,7 @@ import { buttonClass } from "@/components/forge/styles";
 import { PinIcon } from "@/components/ui/icons";
 import { BreadcrumbJsonLd } from "@/components/seo/BreadcrumbJsonLd";
 import { TrackedPhoneLink, TrackedPhoneNumber } from "@/components/site/TrackedPhone";
+import { nearbyCities } from "@/lib/city-links";
 import { filterByCities, getBuilds } from "@/lib/forge-builds";
 import { LOCATIONS, LOCATION_SLUGS, type LocationData } from "@/lib/locations";
 import { SERVICES } from "@/lib/services";
@@ -174,6 +176,7 @@ export default async function LocationPage(
   const builds = filterByCities(await getBuilds({ order: "featured" }), loc.galleryCities ?? [loc.name]).slice(0, 8);
 
   const callouts = cityCallouts(loc);
+  const nearby = nearbyCities(loc.slug);
   const intro = loc.localIntro ?? loc.areaContext;
   const whyRows = loc.why?.length
     ? loc.why.map((w) => ({ t: w.t, b: w.b }))
@@ -381,7 +384,39 @@ export default async function LocationPage(
         </section>
       ) : null}
 
-      {/* 7 · Quote, with this city's ZIP filled in */}
+      {/* 7 · Guides (only when relatedPosts is populated) */}
+      {loc.relatedPosts?.length ? <RelatedGuides postSlugs={loc.relatedPosts} /> : null}
+
+      {/* 8 · Nearby cities (nearest by lat/lng, src/lib/city-links.ts) */}
+      {nearby.length > 0 ? (
+        <section
+          data-forge=""
+          data-tone="light"
+          aria-labelledby="nearby-heading"
+          className="border-t border-forge-mist bg-forge-fog py-[clamp(48px,5vw,80px)] text-forge-navy"
+        >
+          <div className="mx-auto w-full max-w-[1360px] px-[clamp(20px,3vw,40px)]">
+            <ForgeReveal className="max-w-[720px]">
+              <SectionHeading headingId="nearby-heading" eyebrow="Nearby" line1={`Also serving near ${loc.name}.`} />
+            </ForgeReveal>
+            <ForgeReveal className="mt-7 flex flex-wrap items-center gap-2.5">
+              {nearby.map((city) => (
+                <Chip key={city.slug} href={`/locations/${city.slug}`}>
+                  {city.name}, TX
+                </Chip>
+              ))}
+              <Link
+                href="/locations"
+                className="ml-1 border-b border-forge-silver pb-0.5 text-[15px] font-semibold transition-colors hover:border-forge-navy"
+              >
+                All service areas →
+              </Link>
+            </ForgeReveal>
+          </div>
+        </section>
+      ) : null}
+
+      {/* 9 · Quote, with this city's ZIP filled in */}
       <QuoteSection initialZip={loc.zip} city={loc.name} />
     </div>
   );
