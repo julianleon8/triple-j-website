@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import { ComparisonTable } from '@/components/ui/ComparisonTable'
 
 export default function FortCavazosPost() {
@@ -9,9 +10,9 @@ export default function FortCavazosPost() {
         trailer are covered before the first Central Texas hail storm hits.
       </p>
       <p>
-        Triple J Metal is located in <strong>Temple, TX &#8212; about 30 minutes from Killeen.</strong>{' '}We build
-        carports and covered structures for military families across the Killeen&#8211;Harker Heights
-        corridor. This is what we&#8217;ve learned about how to make the process work around a PCS timeline.
+        Triple J Metal is located in <strong>Temple, TX &#8212; about 30 minutes from Killeen.</strong>{' '}We build{' '}
+        <Link href="/services/carports">carports</Link>{' '}and covered structures for military families across the{' '}
+        <Link href="/locations/killeen">Killeen</Link>&#8211;<Link href="/locations/harker-heights">Harker Heights</Link>{' '}corridor. This is what we&#8217;ve learned about how to make the process work around a PCS timeline.
       </p>
 
       <h2>Why PCS Season Creates an Urgent Carport Window</h2>
@@ -81,8 +82,8 @@ export default function FortCavazosPost() {
 
       <h2>Off-Post Housing Considerations</h2>
       <p>
-        If you&#8217;re living off-post in Heritage Oaks, Bella Charca, Nolanville, or subdivisions near
-        Harker Heights, check your lease or HOA covenants before committing to a specific structure type.
+        If you&#8217;re living off-post in Heritage Oaks, Bella Charca, <Link href="/locations/nolanville">Nolanville</Link>, or subdivisions near
+        Harker Heights, check your lease or <Link href="/blog/hoa-compliant-metal-buildings-heritage-oaks-bella-charca">HOA covenants</Link>{' '}before committing to a specific structure type.
         Some HOA communities require architectural review before a structure can be erected. We can
         work within those requirements &#8212; concealed-fastener standing seam panels, Board &amp; Batten profiles,
         and specific color palettes are all available through our regional Texas panel suppliers.
@@ -95,14 +96,17 @@ export default function FortCavazosPost() {
 
       <h2>Military Discount and How to Claim It</h2>
       <p>
-        Triple J takes 7% off every install for active-duty, retired, Reserve/Guard and first responders.
-        Check the military box on the quote form (or mention your service on the call) and we&#8217;ll apply
+        Triple J takes <Link href="/military">7% off every install</Link>{' '}for active-duty, retired, Reserve/Guard and first responders.
+        Check the military box on the <Link href="/quote">quote form</Link>{' '}(or mention your service on the call) and we&#8217;ll apply
         it to your quote. Nothing to prove on the call &#8212; we verify by service ID, military email or
         DD-214 at the estimate.
       </p>
       <p>
         If you&#8217;re inbound PCSing to Fort Cavazos, <strong>call us from your current station.</strong>{' '}We can have
         the quote ready before you arrive so you can sign and schedule the same week you move in.
+      </p>
+      <p>
+        Boat or RV coming with you? See our <Link href="/services/rv-covers">RV and boat covers</Link>.
       </p>
     </>
   )

@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import { ComparisonTable } from '@/components/ui/ComparisonTable'
 
 export default function WeldedVsBoltedPost() {
@@ -102,7 +103,7 @@ export default function WeldedVsBoltedPost() {
         </li>
       </ul>
       <p>
-        When Triple J pours your slab and erects the steel on the same contract, we set the anchor
+        When Triple J <Link href="/services/turnkey-carports-with-concrete">pours your slab</Link>{' '}and erects the steel on the same contract, we set the anchor
         bolts in the wet concrete at the correct spec before it cures. The result is a structurally
         correct anchor system &#8212; not a retrofit.
       </p>
@@ -137,7 +138,12 @@ export default function WeldedVsBoltedPost() {
         of managing three separate contractors and hoping they coordinate correctly.
       </p>
       <p>
-        Fill out the quote form below or call our Temple, TX office. We&#8217;ll walk you through the right
+        Browse our welded or bolted <Link href="/services/carports">carports</Link>,{' '}
+        <Link href="/services/metal-garages">garages</Link>, and <Link href="/services/barns">barns</Link>, or see how we work in{' '}
+        <Link href="/locations/temple">Temple</Link>, <Link href="/locations/belton">Belton</Link>, and <Link href="/locations/killeen">Killeen</Link>.
+      </p>
+      <p>
+        Fill out the <Link href="/quote">quote form</Link>{' '}or call our Temple, TX office. We&#8217;ll walk you through the right
         gauge, panel, anchor system, and timeline for your specific property.
       </p>
     </>
