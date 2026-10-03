@@ -33,7 +33,8 @@
   pushing; no shared secret) and cron `weekly-ads` (Monday push of last week's numbers). PostHog destination
   created, test-delivered to production (reached the route, got the expected 503 "key not set"), enabled.
   Both wait on `POSTHOG_PERSONAL_API_KEY`: the agent's Vercel access is 403 on env vars. 3 HQ push devices
-  registered. 557 tests, build clean.
+  registered. 557 tests, build clean. Owner then added the key and redeployed: webhook verified (202 "not
+  firing" for the real alert, i.e. the alert read works). Monday push not yet exercised.
 - **Monday email:** subscription 159678 sends the dashboard (10 charts + AI summary) every Monday 12:00 UTC to
   the owner, the Triple J inbox and Julian's Yahoo; first delivery 2026-10-05. Test send requested on create.
 

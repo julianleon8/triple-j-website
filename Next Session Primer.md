@@ -1,16 +1,16 @@
-# PostHog — 2026-10-03 · LIVE; PUSH WIRING WAITS ON ONE OWNER KEY
+# PostHog — 2026-10-03 · LIVE; ALERT PUSH VERIFIED, MONDAY PUSH UNTESTED
 
 Funnel tracking is live on `main`; dashboard "Ad funnel":
 https://us.posthog.com/project/643189/dashboard/2165121 (`Connectors.md` → PostHog). Notifications go to HQ push
-(owner, 2026-10-03), wired and deployed but **inert until `POSTHOG_PERSONAL_API_KEY` is in Vercel**:
-1. Owner: PostHog → Settings → Personal API keys → new key, scopes `alert:read` + `query:read`, project Website
-   only → Vercel → `POSTHOG_PERSONAL_API_KEY` (Production) → Redeploy the latest deployment.
-2. Then check: `POST /api/webhooks/posthog` with the alert id answers 202 ("not firing"), not 503; trigger
-   `weekly-ads` by hand from HQ or with `CRON_SECRET` and confirm the push lands on a phone.
-3. Once the Monday push has arrived, turn off PostHog subscription 159678 (the dashboard email) if the owner
+(owner, 2026-10-03). `POSTHOG_PERSONAL_API_KEY` is in Vercel and live: the webhook now answers 202 "alert not
+firing" for the real alert id (it read the alert from PostHog), so `alert:read` works. Still to do:
+1. Prove `query:read` and the Monday push: owner opens `/api/cron/weekly-ads` in a browser signed in to HQ (or a
+   cron call with `CRON_SECRET`); expect `ok: true` and a "📈 Website last week" push. If it says 403, the key
+   lacks `query:read`. Otherwise the first run is Mon 2026-10-05 12:00 UTC; check `cron_runs` for `weekly-ads`.
+2. Once a Monday push has arrived, turn off PostHog subscription 159678 (the dashboard email) if the owner
    still wants email gone. The alert's own email cannot be removed (PostHog needs one subscriber).
-4. Owner's Safari: open the site once with `?tj_internal=1`. One real test lead from a phone.
-5. A17 CSP review: watch for `[csp]` lines naming `/ingest` or `blob:` now that replay is live.
+3. Owner's Safari: open the site once with `?tj_internal=1`. One real test lead from a phone.
+4. A17 CSP review: watch for `[csp]` lines naming `/ingest` or `blob:` now that replay is live.
 
 ---
 
