@@ -188,7 +188,7 @@ export const LOCATIONS_ES: Record<string, LocationCopyEs> = {
         headline: 'Retirados de Cavazos que se mudan a Round Rock.',
         blurb:
           'La mitad de los retirados de Killeen con los que trabajamos terminan en segundos empleos en Dell, Apple o Tesla en Round Rock — y necesitan una cochera en la casa nueva antes de mudarse. Construimos en los dos extremos del tramo I-14/I-35 con el mismo equipo. Lo mismo aplica para los jubilados de Sun City, en Georgetown, que salen de Cavazos con su pensión.',
-        ctaLabel: 'Ver construcciones en Round Rock',
+        ctaLabel: 'Ver obras en Round Rock',
       },
     ],
   },
@@ -331,14 +331,14 @@ export const LOCATIONS_ES: Record<string, LocationCopyEs> = {
         headline: 'Hecho para los vecindarios con estándares de HOA de Temple.',
         blurb:
           'Techo standing seam con sujetadores ocultos, revestimiento Board & Batten a juego con el color de tu casa — para las subdivisiones de Western Hills, Heritage Acres y Lake Belton donde las normas arquitectónicas son estrictas y las construcciones tienen que verse residenciales, no utilitarias.',
-        ctaLabel: 'Ver construcciones que cumplen con HOA',
+        ctaLabel: 'Ver obras para HOA',
       },
       {
         eyebrow: 'Rumbo al norte',
         headline: '35 millas por la I-35 hasta el condado de McLennan.',
         blurb:
           'Waco, Hewitt, Woodway, Robinson y China Spring son nuestros viajes más cercanos entre condados — y es donde viven en realidad nuestros proveedores regionales de acero de Texas. El mismo equipo, la misma semana, el mismo concreto llave en mano. El condado de Williamson, al sur (Georgetown, Round Rock), también es un viaje de rutina.',
-        ctaLabel: 'Ver construcciones en Waco',
+        ctaLabel: 'Ver obras en Waco',
       },
     ],
     heroEyebrow: 'Zona de servicio · Nuestra sede',
@@ -372,7 +372,7 @@ export const LOCATIONS_ES: Record<string, LocationCopyEs> = {
       headline: 'Hecho para los vecindarios con estándares de HOA de Temple.',
       blurb:
         'Techo standing seam con sujetadores ocultos, revestimiento Board & Batten a juego con el color de tu casa — para las subdivisiones de Western Hills, Heritage Acres y Lake Belton donde las construcciones tienen que verse residenciales, no utilitarias.',
-      ctaLabel: 'Pregunta por las especificaciones de HOA',
+      ctaLabel: 'Pregunta por tu HOA',
     },
   },
 
@@ -445,21 +445,21 @@ export const LOCATIONS_ES: Record<string, LocationCopyEs> = {
         headline: 'Te orientamos con los permisos del condado de Bell.',
         blurb:
           'Conocemos el proceso y los tiempos, y te explicamos paso a paso lo que pide la oficina del condado para que no te pierdas en 4 semanas de ir y venir.',
-        ctaLabel: 'Habla con nosotros sobre tu permiso',
+        ctaLabel: 'Platícanos de tu permiso',
       },
       {
         eyebrow: 'Rancho y agricultura',
         headline: 'Hecho para el campo ranchero del condado de Bell.',
         blurb:
           'Graneros de viga roja soldada, cobertizos para equipo y lean-tos diseñados para Pendleton, Sparta y las propiedades rurales del condado de Bell más allá del límite de la ciudad — donde el suelo es más duro y las estructuras tienen que durar más que el ganado.',
-        ctaLabel: 'Ver graneros de rancho construidos',
+        ctaLabel: 'Ver graneros de rancho',
       },
       {
         eyebrow: 'Al sur, hacia el condado de Williamson',
         headline: 'Georgetown, Round Rock y el corredor de los lagos.',
         blurb:
           'La zona de lagos de Belton desemboca en el mismo corredor de crecimiento que atrae compradores hacia Sun City, en Georgetown, y hacia las subdivisiones con estándares de HOA de Round Rock. Hacemos el viaje desde nuestro taller en Temple con el mismo equipo, la misma viga roja soldada y el mismo concreto llave en mano.',
-        ctaLabel: 'Ver construcciones en Georgetown',
+        ctaLabel: 'Ver obras en Georgetown',
       },
     ],
     heroEyebrow: 'Zona de servicio · Sede del condado de Bell',
@@ -545,7 +545,7 @@ export const LOCATIONS_ES: Record<string, LocationCopyEs> = {
         headline: 'Junta la casa y la cerca en un mismo plan.',
         blurb:
           'Comparte los colores exteriores, las líneas del techo y cualquier lineamiento arquitectónico antes de elegir paneles o materiales de cerca. Podemos hablar de cercas de privacidad, cercas ornamentales y aberturas de portones junto con una cochera o un garaje.',
-        ctaLabel: 'Conoce las cercas y portones metálicos',
+        ctaLabel: 'Ver cercas y portones',
       },
     ],
     localSource: {
@@ -621,14 +621,14 @@ export const LOCATIONS_ES: Record<string, LocationCopyEs> = {
         headline: 'Hecho para el terreno de trabajo del condado de McLennan.',
         blurb:
           'Graneros de viga roja soldada para heno, cubiertas para equipo y lean-tos para los productores rurales entre Hewitt, China Spring, Robinson y Crawford. Dimensionados para tractores e implementos, no para cocheras residenciales — y hechos para durar más que el ganado.',
-        ctaLabel: 'Ver graneros de rancho construidos',
+        ctaLabel: 'Ver graneros de rancho',
       },
       {
         eyebrow: 'Residencial con estética Magnolia',
         headline: 'Board & Batten, a juego con el color, hecho como lo quiere Waco.',
         blurb:
           'Standing seam con sujetadores ocultos, revestimiento Board & Batten, contraste de molduras negras, pendiente farmhouse. El estilo Magnolia cambió cómo se ve el metal residencial en Waco — y construimos con ese estándar tanto para solicitudes de HOA como para pedidos directos de propietarios.',
-        ctaLabel: 'Ver construcciones que cumplen con HOA',
+        ctaLabel: 'Ver obras para HOA',
       },
     ],
   },
@@ -770,14 +770,14 @@ export const LOCATIONS_ES: Record<string, LocationCopyEs> = {
         headline: 'Hecho para los comités de revisión arquitectónica de Round Rock.',
         blurb:
           'Standing seam con sujetadores ocultos, revestimiento Board & Batten y colores de techo a juego con tu casa — para propietarios de Brushy Creek, Forest Creek, Teravista y Stone Canyon cuyo ARC exige que la construcción se vea residencial, no utilitaria.',
-        ctaLabel: 'Ver construcciones que cumplen con HOA',
+        ctaLabel: 'Ver obras para HOA',
       },
       {
         eyebrow: 'Alcance en el condado de Williamson',
         headline: 'Cedar Park, Pflugerville y el corredor SH-45.',
         blurb:
           'Round Rock es el ancla del recorrido — Cedar Park, Pflugerville, Hutto y Leander quedan a la misma distancia de nuestro equipo. La misma viga roja soldada, el mismo concreto en un solo contrato, el mismo viaje de 60 millas desde Temple.',
-        ctaLabel: 'Ver construcciones en Georgetown',
+        ctaLabel: 'Ver obras en Georgetown',
       },
     ],
   },
@@ -886,7 +886,7 @@ export const LOCATIONS_ES: Record<string, LocationCopyEs> = {
         headline: 'Planea el portón antes de la línea de la cerca.',
         blurb:
           'Comparte el equipo o los vehículos que necesitan acceso, el largo aproximado de la cerca y el ancho de las aberturas que necesitas. Las cercas de tubo/rancho, de privacidad metálica y ornamentales se pueden platicar en la misma solicitud.',
-        ctaLabel: 'Conoce las cercas y portones metálicos',
+        ctaLabel: 'Ver cercas y portones',
       },
     ],
     localSource: {
@@ -1054,7 +1054,7 @@ export const LOCATIONS_ES: Record<string, LocationCopyEs> = {
         headline: 'Privacidad donde la quieres. Acceso donde lo necesitas.',
         blurb:
           'Dinos si necesitas una cerca metálica de privacidad, un diseño ornamental abierto o una cerca de tubo/rancho. Incluye en tu solicitud de cotización los pies lineales aproximados, la altura y los portones peatonales o de entrada de vehículos.',
-        ctaLabel: 'Conoce las cercas y portones metálicos',
+        ctaLabel: 'Ver cercas y portones',
       },
     ],
     localSource: {

@@ -192,7 +192,8 @@ export function RoundupPage({ locale }: { locale: Locale }) {
                       <p className={`mt-3 text-[13px] ${isSelf ? 'text-forge-steel-light' : 'text-forge-slate'}`}>
                         {t.profiles.coverage} {c.coverage} ·{' '}
                         <a
-                          href={c.homeUrl}
+                          // Our own profile links our homepage in the page's language.
+                          href={isSelf ? new URL(localizeHref('/', locale), c.homeUrl).toString() : c.homeUrl}
                           target="_blank"
                           rel="nofollow noopener"
                           className={`border-b font-semibold transition-colors ${
