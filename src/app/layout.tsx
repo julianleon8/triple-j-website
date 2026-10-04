@@ -89,7 +89,9 @@ export const metadata: Metadata = {
     statusBarStyle: "black-translucent",
     title: "Triple J",
   },
-  applicationName: "Triple J Metal HQ",
+  // The public site's name. The owner app's own name, "Triple J Metal HQ",
+  // is set in src/app/hq/layout.tsx and the PWA manifest.
+  applicationName: SITE.name,
   formatDetection: {
     telephone: true,
   },

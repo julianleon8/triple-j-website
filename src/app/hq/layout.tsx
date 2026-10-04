@@ -1,4 +1,4 @@
-import type { Viewport } from 'next'
+import type { Metadata, Viewport } from 'next'
 import HqChrome from './components/HqChrome'
 
 /**
@@ -13,6 +13,13 @@ import HqChrome from './components/HqChrome'
  * `font-weight: -apple-system, …`, which is invalid and dropped, so HQ silently
  * inherited Inter from body for the life of that class.
  */
+// Merges over the root layout's metadata: only this key changes for HQ.
+// Public pages must not carry it. Found 2026-10-03: every public page declared
+// <meta name="application-name" content="Triple J Metal HQ">.
+export const metadata: Metadata = {
+  applicationName: 'Triple J Metal HQ',
+}
+
 export const viewport: Viewport = {
   // Overrides the root layout's light/dark pair — HQ is dark on both.
   themeColor: '#0b0d0f',
