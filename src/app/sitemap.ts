@@ -38,15 +38,18 @@ export const dynamic = "force-dynamic";
 // trusting the signal site-wide — including for the gallery rows, where it is
 // real. Bump this when the corresponding page copy actually changes; the
 // gallery rows below keep their true per-row timestamps from Supabase.
-const CONTENT_REVISED = new Date("2026-09-07T00:00:00.000Z");
+// 2026-10-03: the Forge redesign and the internal links went live on every
+// public page. Both constants moved to that day; the old 2026-09-07 / 2026-09-26
+// dates told Google nothing had changed.
+const CONTENT_REVISED = new Date("2026-10-03T00:00:00.000Z");
 
-const COPY_REVISED = new Date("2026-09-26T00:00:00.000Z");
+const COPY_REVISED = new Date("2026-10-03T00:00:00.000Z");
 const CITY_REVISED: Record<string, Date> = {
   ...Object.fromEntries(
     ["salado", "lampasas", "holland", "taylor", "troy", "nolanville", "georgetown", "belton", "killeen"].map((slug) => [slug, COPY_REVISED]),
   ),
-  "harker-heights": new Date("2026-10-01T00:00:00.000Z"),
-  "copperas-cove": new Date("2026-10-01T00:00:00.000Z"),
+  "harker-heights": COPY_REVISED,
+  "copperas-cove": COPY_REVISED,
 };
 
 // `gallery_items` has no `updated_at` column. Selecting one made PostgREST
@@ -111,7 +114,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   for (const post of BLOG_POSTS) {
     entries.push({
       url: `${base}/blog/${post.slug}`,
-      lastModified: new Date(post.date),
+      // Posts were restyled and relinked on COPY_REVISED; a post published
+      // after that keeps its own, newer date.
+      lastModified: new Date(Math.max(new Date(post.date).getTime(), COPY_REVISED.getTime())),
       changeFrequency: "monthly",
       priority: 0.65,
     });

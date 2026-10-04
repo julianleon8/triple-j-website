@@ -47,6 +47,16 @@ it('dates a project by its newest photo when photos were added later', async () 
   expect(entry?.lastModified).toEqual(new Date('2026-09-02T10:00:00Z'));
 });
 
+it('dates a blog post no earlier than its publication or the 2026-10-03 revision', async () => {
+  const { BLOG_POSTS } = await import('@/lib/blog');
+  const entries = await sitemap();
+  for (const post of BLOG_POSTS) {
+    const entry = entries.find((e) => e.url === `https://www.example.com/blog/${post.slug}`);
+    expect(new Date(entry?.lastModified as Date).getTime()).toBeGreaterThanOrEqual(new Date(post.date).getTime());
+    expect(new Date(entry?.lastModified as Date).getTime()).toBeGreaterThanOrEqual(new Date('2026-10-03T00:00:00Z').getTime());
+  }
+});
+
 it('still ships the static sitemap when the gallery query errors', async () => {
   vi.spyOn(console, 'warn').mockImplementation(() => {});
   mocks.result = { data: null, error: { message: 'column gallery_items.updated_at does not exist' } };
