@@ -1,5 +1,13 @@
 # Session Notes
 
+## 2026-10-04 — Vercel Web Analytics was on all along
+
+- The owner's dashboard shows a week of data (89 visitors, 389 page views) and a week before it. The MCP's
+  query tools answer "Web Analytics not found" for this project regardless, which the 2026-09-29 finding and
+  this morning's re-check read as "off". Corrected in `Connectors.md`, the lead plan and the Primer.
+- From the dashboard: `/hq`, `/hq/leads` and `/hq/more` appear among the top pages, so owner use of HQ is
+  counted as site traffic. Excluding `/hq` from `<Analytics />` was offered to the owner, not built.
+
 ## 2026-10-04 — Comparison pages merged into one
 
 - `/alternatives/eagle-carports`, `/get-carports` and `/carport-central` 301 to

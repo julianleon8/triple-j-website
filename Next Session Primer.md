@@ -289,7 +289,7 @@ the **weekday morning brief** (`morning-brief` cron, 7 AM Central, email only). 
 then ask the owner whether both inboxes got it.
 
 **Waiting on the owner:** paste `marketing/google-ads-daily-report.js` into Google Ads (steps at the top of
-the file); turn on Vercel Web Analytics; create the "Phone call clicks" conversion and set its label; add a
+the file); ~~turn on Vercel Web Analytics~~ (it was on; `Connectors.md`, 2026-10-04); create the "Phone call clicks" conversion and set its label; add a
 call asset; confirm the Meta app is subscribed to the Page's `messages` and `leadgen` fields; the reason
 Google gave for removing the profile; call the 4 leads still `new` since May–June; share the Claude Doc
 with Juan and Freddy.

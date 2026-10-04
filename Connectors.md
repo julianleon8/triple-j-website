@@ -213,12 +213,15 @@ Not in CI: GitHub Actions has no database access. Run it after any schema change
 ### NotebookLM is manual — no skill installed
 Notebook `f4aaf762-3ede-45b9-a1ad-b9d8a6319207`. `~/.claude/skills/` does not exist on this machine; the skill referenced by older docs was pinned to a `/Users/julianleon/…` path that no longer resolves. **Status: MANUAL.** When a source-grounded answer would genuinely help, say so and let the user run the query on their authenticated machine and paste the result back. Never attempt to authenticate from here.
 
-### Vercel Web Analytics is not enabled (found 2026-09-29)
-`src/app/layout.tsx` mounts `<Analytics />`, and `TrackedPhone` sends `phone_displayed` / `phone_clicked`, but the Vercel API answers **"Web Analytics not found"** for `triple-j-website`: it was never turned on, so none of it is recorded. Owner fix: Vercel → project → Analytics → Enable. It cannot be switched on through the Vercel MCP (`update_project` has no such field).
-Re-checked 2026-10-04 on owner request: still "not found". The other route is the CLI on a logged-in machine,
-`vercel project web-analytics triple-j-website`. Vercel adds the collection routes at the next deployment, so
-push or redeploy once after enabling. Confirm with the MCP's `count_pageviews` (it needs `since` and `until`):
-a count instead of "not found".
+### Vercel Web Analytics is on; the MCP cannot read it (corrected 2026-10-04)
+`src/app/layout.tsx` mounts `<Analytics />` and `TrackedPhone` sends `phone_displayed` / `phone_clicked`. The
+owner's dashboard (Vercel → `triple-j-website` → Analytics) shows it collecting: 89 visitors and 389 page views
+for the week to 2026-10-04, with the week before to compare against. The MCP's Web Analytics query tools
+(`count_pageviews`, `aggregate_pageviews`, by project ID or by name) still answer **"Web Analytics not found"**
+for this project. That error is what the 2026-09-29 "never turned on" finding and its 2026-10-04 re-check
+misread; it means the agent cannot read the data, not that collection is off. For numbers, ask the owner for a
+dashboard paste. HQ routes (`/hq/*`) are counted with the public site, because `<Analytics />` sits in the root
+layout.
 
 ### Google Search Console (added 2026-10-03)
 **Domain property `triplejmetaltx.com`**, verified 2026-10-03 by a DNS TXT record on the apex in **Vercel DNS**
