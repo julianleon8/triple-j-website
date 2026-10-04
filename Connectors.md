@@ -215,6 +215,10 @@ Notebook `f4aaf762-3ede-45b9-a1ad-b9d8a6319207`. `~/.claude/skills/` does not ex
 
 ### Vercel Web Analytics is not enabled (found 2026-09-29)
 `src/app/layout.tsx` mounts `<Analytics />`, and `TrackedPhone` sends `phone_displayed` / `phone_clicked`, but the Vercel API answers **"Web Analytics not found"** for `triple-j-website`: it was never turned on, so none of it is recorded. Owner fix: Vercel → project → Analytics → Enable. It cannot be switched on through the Vercel MCP (`update_project` has no such field).
+Re-checked 2026-10-04 on owner request: still "not found". The other route is the CLI on a logged-in machine,
+`vercel project web-analytics triple-j-website`. Vercel adds the collection routes at the next deployment, so
+push or redeploy once after enabling. Confirm with the MCP's `count_pageviews` (it needs `since` and `until`):
+a count instead of "not found".
 
 ### Google Search Console (added 2026-10-03)
 **Domain property `triplejmetaltx.com`**, verified 2026-10-03 by a DNS TXT record on the apex in **Vercel DNS**
