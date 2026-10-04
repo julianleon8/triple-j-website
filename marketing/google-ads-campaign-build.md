@@ -19,7 +19,7 @@ reasoning: `marketing/lead-plan-2026-09-29.md`. Leave the old paused "Campaign #
 | EU political ads | No |
 | Audience segments | None |
 | Start date | **October 1, 2026** · no end date |
-| Ad schedule | Mon–Sat 7:00 AM–7:00 PM (placeholder until the owner confirms answering hours) |
+| Ad schedule | Mon–Fri 8:00 AM–7:00 PM, Sat 8:00 AM–3:00 PM, Sunday off (owner-confirmed 2026-10-03; the live campaign's schedule is set in Google Ads and must match) |
 | AI Max | **Off** (no text customization, no final URL expansion) |
 | Keyword suggestions box | Leave blank |
 | Budget | Average daily, custom **$13.00** |

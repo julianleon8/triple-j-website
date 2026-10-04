@@ -35,7 +35,7 @@ export const SITE = {
    * different formats.
    */
   addressOneLine: "3319 Tem-Bel Ln, Temple, TX 76502",
-  hours: "Mon–Sat · 8am–6pm",
+  hours: "Mon–Fri 8am–7pm · Sat 8am–3pm",
   established: 2025,
   stats: {
     projects: "150+",
