@@ -1,3 +1,24 @@
+# Menus and copy pass — 2026-10-03 · PUSHED TO `main`
+
+Header menus, footer, and the service / About / Contact copy are on `main` (pushed together, one commit,
+rebased over the internal-linking and /login work). `Session Notes.md` has the file list; `Decisions.md`
+2026-10-03 has every removal and why. To preview locally, use the override in `Connectors.md` →
+"Previewing the public pages anyway".
+
+**Waiting on the owner:**
+1. Read the rewritten pages on production. Look first at `/services`, `/services/hoa-compliant-structures`,
+   `/services/turnkey-carports-with-concrete` and `/about`.
+2. About still promises "No rescheduling after you've cleared the site"; Operational Notes warn against
+   overpromising timelines after the BBB understaffing complaints. Keep it, soften it, or cut it.
+3. Turnkey FAQ: confirm the 7-day cure and the 8–10 day total with Freddy.
+4. HOA: if Triple J really has helped Heritage Oaks or Bella Charca homeowners through review, say so and
+   the sentence can return. Same open question as the Killeen "cleared HOA review boards" claim.
+5. Still open from before: `/contact` "We call back same day"; the barns page's barndominium lines.
+
+**Not touched, not picked:** Colors, PBR vs PBU and Hybrid Projects page copy.
+
+---
+
 # /login freeze — 2026-10-03 · MERGED TO `main` (LIVE)
 
 The sign-in button no longer freezes on "Signing in…" when the proxy bounces a signed-in account

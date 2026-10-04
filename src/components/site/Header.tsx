@@ -8,7 +8,7 @@ import { useEffect, useRef, useState, type MouseEvent } from "react";
 import { ChevronDownIcon, CloseIcon, MenuIcon, PhoneIcon } from "@/components/ui/icons";
 import { TrackedPhoneLink, TrackedPhoneNumber } from "@/components/site/TrackedPhone";
 import { scrollToId } from "@/lib/forge-quote";
-import { MEGA_AREAS, MEGA_SERVICES, NAV_LINKS, SITE } from "@/lib/site";
+import { AREAS_HREF, MEGA_AREAS, MEGA_GUIDES, MEGA_MORE_SERVICES, MEGA_SERVICES, NAV_LINKS, SITE } from "@/lib/site";
 
 /**
  * The page-specific call to action. Contact and Partners have their own
@@ -309,30 +309,74 @@ export function Header() {
                 </Link>
               ))}
             </div>
-          </div>
-          <div>
-            <p className="mb-3.5 text-[11px] font-bold uppercase tracking-[.2em] text-forge-steel-light">Where we build</p>
-            <div className="flex flex-col border-t border-forge-silver/[.14]">
-              {MEGA_AREAS.map((m) => (
-                <Link
-                  key={m.href}
-                  href={m.href}
-                  onClick={closeMega}
-                  className="flex items-center justify-between gap-3 border-b border-forge-silver/[.14] py-3.5 transition-colors duration-200 hover:text-forge-silver"
-                >
-                  <span className="flex flex-col gap-0.5">
-                    <span className="font-forge-display text-[17px] font-bold">{m.label}</span>
-                    <span className="text-[13px] text-forge-steel-light">{m.sub}</span>
-                  </span>
-                  <span aria-hidden="true" className="text-forge-steel">
-                    →
-                  </span>
-                </Link>
+            <ul className="m-0 mt-4 grid list-none grid-cols-2 gap-x-4 border-t border-forge-silver/[.14] p-0 pt-2.5">
+              {MEGA_MORE_SERVICES.map((m) => (
+                <li key={m.href}>
+                  <Link href={m.href} onClick={closeMega} className={megaTextLink}>
+                    {m.label}
+                  </Link>
+                </li>
               ))}
+            </ul>
+            <Link
+              href="/services"
+              onClick={closeMega}
+              className="mt-1.5 inline-flex items-center gap-1.5 py-1 text-[14px] font-semibold text-forge-silver transition-colors duration-200 hover:text-white"
+            >
+              All services <span aria-hidden="true">→</span>
+            </Link>
+          </div>
+          <div className="flex flex-col gap-7">
+            <div>
+              <p className="mb-3.5 text-[11px] font-bold uppercase tracking-[.2em] text-forge-steel-light">
+                Colors &amp; panels
+              </p>
+              <div className="flex flex-col border-t border-forge-silver/[.14]">
+                {MEGA_GUIDES.map((m) => (
+                  <Link key={m.href} href={m.href} onClick={closeMega} className={megaRow}>
+                    <span className="flex flex-col gap-0.5">
+                      <span className="font-forge-display text-[17px] font-bold">{m.label}</span>
+                      <span className="text-[13px] text-forge-steel-light">{m.sub}</span>
+                    </span>
+                    <span aria-hidden="true" className="text-forge-steel">
+                      →
+                    </span>
+                  </Link>
+                ))}
+              </div>
             </div>
-            <p className="mt-3.5 text-[13px] leading-[1.5] text-forge-steel-light">
-              Plus Killeen, Harker Heights, Waco and more — within ~90 minutes of Temple.
-            </p>
+            <div>
+              <Link
+                href={AREAS_HREF}
+                onClick={closeMega}
+                className="mb-3.5 inline-flex items-center gap-2 text-[11px] font-bold uppercase tracking-[.2em] text-forge-silver transition-colors duration-200 hover:text-white"
+              >
+                Service areas <span aria-hidden="true">→</span>
+              </Link>
+              <div className="flex flex-col border-t border-forge-silver/[.14]">
+                {MEGA_AREAS.map((m) => (
+                  <Link key={m.href} href={m.href} onClick={closeMega} className={megaRow}>
+                    <span className="flex flex-col gap-0.5">
+                      <span className="font-forge-display text-[17px] font-bold">{m.label}</span>
+                      <span className="text-[13px] text-forge-steel-light">{m.sub}</span>
+                    </span>
+                    <span aria-hidden="true" className="text-forge-steel">
+                      →
+                    </span>
+                  </Link>
+                ))}
+              </div>
+              <p className="mt-3.5 text-[13px] leading-[1.5] text-forge-steel-light">
+                Plus Killeen, Harker Heights, Waco and more — within ~90 minutes of Temple.
+              </p>
+              <Link
+                href={AREAS_HREF}
+                onClick={closeMega}
+                className="mt-1.5 inline-flex items-center gap-1.5 py-1 text-[14px] font-semibold text-forge-silver transition-colors duration-200 hover:text-white"
+              >
+                All service areas <span aria-hidden="true">→</span>
+              </Link>
+            </div>
           </div>
           <Link
             href="/military"
@@ -359,15 +403,34 @@ export function Header() {
         hidden={!menuOpen}
         className="absolute inset-x-0 top-full z-[1] h-[calc(100dvh_-_72px)] overflow-y-auto overscroll-contain bg-forge-navy px-5 pt-2 pb-8 text-white min-[900px]:!hidden"
       >
-        <p className="mt-[18px] mb-1.5 text-[11px] font-bold uppercase tracking-[.2em] text-forge-steel-light">Services</p>
+        <Link href="/services" onClick={closeMenu} className={`${mobileGroupLink} mt-2`}>
+          Services <span aria-hidden="true">→</span>
+        </Link>
         <nav aria-label="Mobile services" className="flex flex-col">
           {MEGA_SERVICES.map((m) => (
             <Link key={m.href} href={m.href} onClick={closeMenu} className={mobileRow}>
               {m.label}
             </Link>
           ))}
+          <div className="grid grid-cols-2 gap-x-4">
+            {MEGA_MORE_SERVICES.map((m) => (
+              <Link key={m.href} href={m.href} onClick={closeMenu} className={mobileSubRow}>
+                {m.label}
+              </Link>
+            ))}
+          </div>
         </nav>
-        <p className="mt-6 mb-1.5 text-[11px] font-bold uppercase tracking-[.2em] text-forge-steel-light">Service areas</p>
+        <p className="mt-6 mb-1.5 text-[11px] font-bold uppercase tracking-[.2em] text-forge-steel-light">Colors &amp; panels</p>
+        <nav aria-label="Mobile colors and panels" className="flex flex-col">
+          {MEGA_GUIDES.map((m) => (
+            <Link key={m.href} href={m.href} onClick={closeMenu} className={mobileRow}>
+              {m.label}
+            </Link>
+          ))}
+        </nav>
+        <Link href={AREAS_HREF} onClick={closeMenu} className={`${mobileGroupLink} mt-6`}>
+          Service areas <span aria-hidden="true">→</span>
+        </Link>
         <nav aria-label="Mobile service areas" className="flex flex-col">
           {MEGA_AREAS.map((m) => (
             <Link key={m.href} href={m.href} onClick={closeMenu} className={mobileRow}>
@@ -413,3 +476,19 @@ export function Header() {
 }
 
 const mobileRow = "border-b border-forge-silver/[.16] py-3.5 font-forge-display text-[22px] font-bold";
+
+/** Mobile sheet: the quieter rows for the rest of the services, under the three main ones. */
+const mobileSubRow =
+  "border-b border-forge-silver/[.16] py-3.5 text-[15px] font-medium leading-tight text-forge-silver transition-colors duration-200 hover:text-white";
+
+/** Mega menu: a text row with an arrow (Colors & panels, Service areas). */
+const megaRow =
+  "flex items-center justify-between gap-3 border-b border-forge-silver/[.14] py-3.5 transition-colors duration-200 hover:text-forge-silver";
+
+/** Mega menu: a small text link in the "more services" grid. */
+const megaTextLink =
+  "inline-flex py-1.5 text-[14px] text-forge-steel-light transition-colors duration-200 hover:text-white";
+
+/** Mobile sheet group heading that is itself a link (44px tap target). */
+const mobileGroupLink =
+  "mb-1.5 flex min-h-11 items-center justify-between text-[11px] font-bold uppercase tracking-[.2em] text-forge-silver transition-colors duration-200 hover:text-white";

@@ -104,7 +104,34 @@ export const MEGA_SERVICES = [
   },
 ] as const;
 
-/** "Where we build" rows in the mega and mobile menus. */
+/**
+ * The rest of the services, as text links under the three photo rows in the
+ * mega menu. These pages were reachable only from the footer and the /services
+ * hub; labels match the footer's.
+ */
+export const MEGA_MORE_SERVICES = [
+  { label: "Metal Garages", href: "/services/metal-garages" },
+  { label: "Metal Barns", href: "/services/barns" },
+  { label: "RV & Boat Covers", href: "/services/rv-covers" },
+  { label: "Turnkey + Concrete", href: "/services/turnkey-carports-with-concrete" },
+  { label: "HOA-Compliant", href: "/services/hoa-compliant-structures" },
+  { label: "Custom Hybrid Builds", href: "/services/hybrid-projects" },
+] as const;
+
+/**
+ * "Colors & panels" rows in the mega and mobile menus: the two pages a
+ * customer reaches for once they know what they want built. Colors leads.
+ * The count matches /services/colors (39).
+ */
+export const MEGA_GUIDES = [
+  { slug: "colors", label: "Panel Colors", href: "/services/colors", sub: "39 colors · standard & premium lines" },
+  { slug: "pbr-vs-pbu", label: "PBR vs PBU Panels", href: "/services/pbr-vs-pbu-panels", sub: "Which roof panel fits your build" },
+] as const;
+
+/** Where the "Service areas" headings in the header menus go. */
+export const AREAS_HREF = "/locations";
+
+/** "Service areas" rows in the mega and mobile menus. */
 export const MEGA_AREAS = [
   { slug: "temple", label: "Temple, TX", href: "/locations/temple", sub: "Home base · 0 mi" },
   { slug: "belton", label: "Belton, TX", href: "/locations/belton", sub: "10 mi south · 15 min from HQ" },
@@ -120,6 +147,8 @@ export const SERVICES = [
   { title: "RV & Boat Covers", href: "/services/rv-covers" },
   { title: "Lean-To Patios", href: "/quote?service=lean-to" },
   { title: "House Additions", href: "/quote?service=other" },
+  { title: "Panel Colors", href: "/services/colors" },
+  { title: "PBR vs PBU Panels", href: "/services/pbr-vs-pbu-panels" },
 ] as const;
 
 export const SERVICE_CITIES = [

@@ -80,9 +80,9 @@ export default function ServicesPage() {
           position: "50% 40%",
         }}
         eyebrow="What We Build"
-        h1a="Six things we build."
+        h1a="Everything we build."
         h1b="Built whole, by us."
-        lede="Every structure is sold welded, bolted, or turnkey — with turnkey, site prep, concrete and installation sit on one contract. No kits, no subcontractors. Same-week scheduling across Bell, Coryell, and McLennan counties."
+        lede="Every structure is sold welded, bolted or turnkey. Turnkey puts site prep, concrete and installation on one contract. No kits, no subcontractors. Same-week scheduling on buildings across Bell, Coryell and McLennan counties."
         ledeMax="max-w-[640px]"
       />
 
@@ -185,7 +185,7 @@ export default function ServicesPage() {
                 Specs &amp; guides
               </h3>
               <p className="mt-2 mb-5 text-[14px] leading-[1.55] text-white/72">
-                Pick a finish, compare panel systems, or see where we build.
+                Pick a finish, compare panels, see where we build.
               </p>
 
               <ul className="m-0 mt-auto flex list-none flex-col border-t border-forge-silver/[.18] p-0 pt-2">

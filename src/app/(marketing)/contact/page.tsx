@@ -101,7 +101,7 @@ export default function ContactPage() {
         eyebrow="Contact us"
         h1a="Get in touch."
         h1b="We call back same day."
-        lede="A question about your project, or ready for a quote? Call us directly or send a message. A real person from our Temple crew picks up — or calls you back the same day."
+        lede="Questions about a project, or ready for a quote? Call or send a message. A real person from our Temple crew picks up, or calls you back the same day."
       />
 
       {/* 2 · Reach us */}

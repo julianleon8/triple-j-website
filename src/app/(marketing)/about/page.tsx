@@ -48,44 +48,44 @@ const CREW = [
   {
     name: 'Juan',
     role: 'Co-owner · Relationships',
-    body: 'The family connection behind Triple J. Juan builds relationships with customers across Central Texas.',
+    body: 'The family behind Triple J. Juan keeps customer relationships strong across Central Texas.',
   },
   {
     name: 'Julian',
     role: 'Sales · Operations',
-    body: 'Your point of contact for planning the build, talking through options and keeping the details moving.',
+    body: 'Your point of contact. Julian plans the build with you, talks through options and keeps the details moving.',
   },
   {
     name: 'Freddy',
     role: 'Foreman · Fabrication',
-    body: 'Jose Alfredo “Freddy” leads the crew — the measurements, cuts and welds that bring your plans to life.',
+    body: 'Jose Alfredo “Freddy” runs the crew: the measurements, cuts and welds that turn your plans into steel.',
   },
 ]
 
 const APART = [
   {
     title: 'Local crew — not a dealer',
-    body: 'We don’t sell kits. We build structures. Every job is handled by our own Temple-based crew from start to finish.',
+    body: 'We don’t sell kits. We build structures. Our own Temple-based crew handles every job from start to finish.',
   },
   {
     title: 'Welded or bolted',
-    body: 'Both options, built by us. Framing, anchoring and any engineering requirements are confirmed for your design and site.',
+    body: 'Both, built by us. Framing, anchoring and any engineering are confirmed for your design and site.',
   },
   {
     title: 'Concrete on the same contract',
-    body: 'Site prep, concrete and the structure quoted together. Concrete is priced separately so you see exactly what’s included.',
+    body: 'Site prep, concrete and the structure quoted together, with concrete priced as its own line.',
   },
   {
     title: 'Same-week scheduling',
-    body: 'Your install date is confirmed after we review scope, materials, site readiness and any required approvals.',
+    body: 'We confirm your install date after reviewing scope, materials, site readiness and any approvals.',
   },
   {
     title: 'Custom dimensions',
-    body: 'Not catalog sizes. You tell us the width, length and height — we build exactly that, any configuration, any roof style.',
+    body: 'Not catalog sizes. Give us the width, length and height. We build exactly that, any configuration, any roof style.',
   },
   {
     title: 'Permit planning',
-    body: 'We give permit guidance and discuss approvals before scheduling. Filing responsibilities are confirmed in your written scope.',
+    body: 'We give permit guidance and talk through approvals before scheduling. Who files what is confirmed in your written scope.',
   },
 ]
 
@@ -105,19 +105,19 @@ const HOW = [
   },
   {
     title: 'One company, start to finish',
-    body: 'Site prep, concrete, steel structure, cleanup — the same crew under one contract.',
+    body: 'Site prep, concrete, steel structure, cleanup. Same crew, one contract.',
   },
   {
     title: 'Built to outlast the contract',
-    body: 'Welded red iron and permanent bolts on Galvalume® substrate — real estate improvements your kids inherit in working condition.',
+    body: 'Welded red iron and permanent bolts on Galvalume® substrate. An improvement to your property that lasts.',
   },
   {
-    title: 'Permanent, not portable',
-    body: 'No kits that rattle loose in the first Texas thunderstorm. Every weld and anchor is built for the wind our county actually sees.',
+    title: 'Built for Texas wind',
+    body: 'No kit hardware rattling loose in the first thunderstorm. Every weld and anchor is built for the wind our county actually sees.',
   },
   {
     title: 'Honest pricing, no surprises',
-    body: 'We quote the full job upfront — including concrete if you need it. No add-ons after the fact.',
+    body: 'We quote the full job upfront, concrete too if you need it. No add-ons after the fact.',
   },
 ]
 
@@ -143,7 +143,7 @@ export default function AboutPage() {
         eyebrow="About Triple J"
         h1a="Temple’s metal building family."
         h1b="Not a national chain."
-        lede="Founded by a Temple family and run out of Temple, TX. We build every structure ourselves — no subcontractors, no kit drops, no hand-offs. One crew. One contract. Done right."
+        lede="A Temple family, run out of Temple, TX. We build every structure ourselves. No subcontractors, no kit drops, no hand-offs. One crew. One contract. Done right."
         facts={[
           { k: 'Projects', v: `${SITE.stats.projects} completed` },
           { k: 'On-site', v: 'Mon–Sat' },
@@ -225,9 +225,9 @@ export default function AboutPage() {
           <ForgeReveal>
             <SectionHeading eyebrow="Materials" line1="Texas steel." line2="Texas suppliers." />
             <p className="mt-[18px] max-w-[580px] text-[clamp(16px,.3vw_+_14px,18px)] leading-[1.65] text-forge-slate">
-              PBR and PBU panels, Galvalume® roofing, and concealed-fastener standing-seam systems for HOA-grade builds —
-              sourced from leading regional Texas suppliers. Multi-source by design, so we’re never bottlenecked when one
-              supplier runs short on a color or gauge.
+              PBR and PBU panels, Galvalume® roofing and concealed-fastener standing seam for HOA-grade builds, from
+              leading regional Texas suppliers. We buy from more than one, so a shortage on one color or gauge doesn’t
+              hold up your job.
             </p>
             <RuleList
               className="mt-[26px]"

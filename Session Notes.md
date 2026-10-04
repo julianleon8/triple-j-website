@@ -1,5 +1,30 @@
 # Session Notes
 
+## 2026-10-03 — Header menus reach Colors, PBR vs PBU and every service; service copy cut shorter
+
+**In plain terms.** The owner asked for easier access to Colors and PBR vs PBU, for "service areas" in
+the header to open `/locations`, and for a shorter, punchier copy pass. Colors, PBR vs PBU and Hybrid
+Projects were linked only from the `/services` hub and gallery pages, and two service pages and
+`/locations` were nearly as buried. The Services menu now carries all of them, on desktop and phone.
+Nothing is committed or pushed.
+
+**Navigation.** `src/lib/site.ts` gains `MEGA_MORE_SERVICES`, `MEGA_GUIDES` and `AREAS_HREF`; the footer's
+Services column adds Panel Colors and PBR vs PBU. `Header.tsx` keeps three columns: *What we build* (three
+photo rows, six text links, "All services"), *Colors & panels* (Panel Colors first) over *Service areas*
+(heading and an "All service areas" link go to `/locations`), and the Fort Cavazos card. The mobile sheet
+carries the same groups; its six secondary services sit in a two-column grid so Colors is on the first
+screen at 375px, and its group headings are 44px links. New `src/lib/site.test.ts` (50 tests) fails if a
+nav link stops reaching a real route or Colors / PBR vs PBU leave the menus or footer.
+
+**Copy.** Services hub, all eight service pages, About and Contact, shorter. What was removed rather than
+reworded, and what was fixed, is in the 2026-10-03 row of `Decisions.md`. Metadata, prices, the barns
+barndominium lines and `/contact`'s same-day promise were left alone.
+
+**Checked:** dev preview at 1280, 900 and 375px; typecheck, lint, vault check and all 650 tests pass.
+
+**Local preview.** The pulled `.env.local` cannot boot the site; a safe override is now in `Connectors.md`
+(process env beats the file, dead Supabase host, blank analytics keys).
+
 ## 2026-10-03 — /login stuck on "Signing in…" after a bounce
 
 - **Report (owner):** in the installed app, a sign-in that didn't work the first time left the button on

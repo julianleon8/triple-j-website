@@ -168,6 +168,20 @@ blank: features that degrade on an empty key (hCaptcha, Maps, Twilio) treat `[SE
 key and fail. Local dev on Production values reads and writes the live database and can send real
 email and SMS. The Vercel MCP connector cannot list env vars at all (403).
 
+**Previewing the public pages anyway (works, 2026-10-03):** process env wins over `.env.local`, so override
+only what the marketing pages read, with throwaway values and a dead Supabase host, and leave the file alone:
+
+```
+env NEXT_PUBLIC_SITE_URL=http://localhost:3100 NEXT_PUBLIC_SUPABASE_URL=http://127.0.0.1:9 \
+  NEXT_PUBLIC_SUPABASE_ANON_KEY=local-dummy SUPABASE_SERVICE_ROLE_KEY=local-dummy \
+  NEXT_PUBLIC_POSTHOG_KEY= NEXT_PUBLIC_GOOGLE_ADS_ID= NEXT_PUBLIC_HCAPTCHA_SITE_KEY= \
+  npm run dev -- -p 3100
+```
+
+Without `NEXT_PUBLIC_SITE_URL` every page 500s (`new URL('[SENSITIVE]')` in `src/app/layout.tsx`). The blank
+PostHog and Ads keys keep a localhost visit out of the live analytics project. Gallery sections render empty
+(the dead host), which is fine for header, footer and copy work. HQ and forms need real keys.
+
 ### Supabase MCP — authorized (verified 2026-09-06)
 `.mcp.json` declares one HTTP server (`mcp.supabase.com/mcp?project_ref=idrbgxlvvnqduvbqtaei`). It **is** authorized and both `execute_sql` and `apply_migration` work. An earlier note here claimed it was unauthenticated — that was wrong, and it caused a session to plan around a capability it actually had.
 
@@ -201,6 +215,18 @@ Notebook `f4aaf762-3ede-45b9-a1ad-b9d8a6319207`. `~/.claude/skills/` does not ex
 
 ### Vercel Web Analytics is not enabled (found 2026-09-29)
 `src/app/layout.tsx` mounts `<Analytics />`, and `TrackedPhone` sends `phone_displayed` / `phone_clicked`, but the Vercel API answers **"Web Analytics not found"** for `triple-j-website`: it was never turned on, so none of it is recorded. Owner fix: Vercel → project → Analytics → Enable. It cannot be switched on through the Vercel MCP (`update_project` has no such field).
+
+### Google Search Console (added 2026-10-03)
+**Domain property `triplejmetaltx.com`**, verified 2026-10-03 by a DNS TXT record on the apex in **Vercel DNS**
+(the nameservers are Vercel's; a record added at the Squarespace registrar is ignored, which is why the first attempt
+failed). The record starts `google-site-verification=ZVrd…`. **Never delete it**: removing it unverifies the
+property. It sits beside the SPF record; two TXT records on the apex is normal. No env var and no code reads it.
+Sitemap `https://www.triplejmetaltx.com/sitemap.xml` was submitted the same day (Search Console reported 52
+discovered pages; the sitemap itself lists 60). **Baseline** (page-indexing export, data to 2026-09-20): **5 pages
+indexed, 7 known but not indexed** of 60 in the sitemap; 17–64 impressions a day, peaking 64 on 2026-09-07 and
+falling to 17 by 09-20. Open issues then: 3 "Page with redirect" (expected, retired URLs), 2 "Blocked due to other
+4xx" (URLs not yet identified), 2 "Crawled - currently not indexed" (URLs not yet identified). Bing Webmaster Tools
+is not set up (import from Search Console). The Page indexing chart is a 90-day window.
 
 ### PostHog — product analytics (added 2026-10-03)
 Funnels, drop-off, heatmaps and session replay for the public site, for the ad budget. **Event names are
