@@ -14,11 +14,8 @@ type Props = {
 }
 
 /**
- * Bottom-of-page cluster linking to the other comparison pages.
- *
- * Builds a topical authority cluster — every comparison page links to the
- * other 4, plus the local roundup. Improves dwell time + internal linking
- * signal for the comparison content category.
+ * Bottom-of-page cluster linking to the other comparison pages: the
+ * national-dealer comparison and the local roundup link to each other.
  *
  * Forge: white band (the fog quote band follows it), silver-framed white
  * tiles; the local roundup tile is the navy one.

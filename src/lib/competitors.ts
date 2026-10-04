@@ -321,13 +321,15 @@ export const LOCAL_ROUNDUP_COMPARISON_ROWS: ComparisonRow[] = [
   },
 ]
 
-/** All alternatives slugs (drives generateStaticParams on the dynamic route). */
-export const ALTERNATIVES_SLUGS = [
-  'eagle-carports',
-  'get-carports',
-  'carport-central',
-  'national-kit-dealers',
-] as const
+/**
+ * All alternatives slugs (drives generateStaticParams on the dynamic route).
+ *
+ * One page since 2026-10-04. Eagle Carports, Get Carports and Carport Central
+ * each had their own page, 97% identical to the others and fully covered by
+ * this one's five-dealer table; they 301 here (next.config.ts). A new page
+ * earns a slot only with content no other page has.
+ */
+export const ALTERNATIVES_SLUGS = ['national-kit-dealers'] as const
 
 export type AlternativesSlug = (typeof ALTERNATIVES_SLUGS)[number]
 
@@ -338,8 +340,7 @@ export type AlternativesSlug = (typeof ALTERNATIVES_SLUGS)[number]
  */
 export type AlternativesPageContent = {
   slug: AlternativesSlug
-  /** Competitor slugs to compare against in the table. For the consolidated
-   *  national-kit-dealers page, this is all 5 national-kit competitors. */
+  /** Competitor slugs to compare against in the table. */
   competitorSlugs: CompetitorSlug[]
   /** SEO title (template appends " | Triple J Metal"). */
   metaTitle: string
@@ -357,131 +358,11 @@ export type AlternativesPageContent = {
   whenCompetitorWins: string
   /** "When Triple J is the better fit" — 4-5 bullets. */
   whenTripleJWins: string[]
-  /** Written breakdown sections — each becomes an h2 + 1-2 paragraphs.
-   *  Use {COMP} as a placeholder for the competitor name (gets replaced
-   *  at render time so the consolidated page can substitute "national kit
-   *  dealers" while individual pages substitute the real brand). */
+  /** Written breakdown sections — each becomes an h2 + 1-2 paragraphs. */
   breakdownSections: Array<{ heading: string; body: string }>
 }
 
 export const ALTERNATIVES_CONTENT: Record<AlternativesSlug, AlternativesPageContent> = {
-  "eagle-carports": {
-    "slug": "eagle-carports",
-    "competitorSlugs": [
-      "eagle-carports",
-      "triple-j-metal"
-    ],
-    "metaTitle": "Eagle Carports Alternatives in Central TX",
-    "metaDescription": "Compare Eagle Carports with Triple J Metal in Central Texas. Review installation, concrete, design options and scheduling in a written quote.",
-    "h1": "Eagle Carports Alternatives in Central Texas",
-    "heroSubhead": "Compare complete project scopes. Triple J Metal offers welded or bolted structures installed by our Temple-based crew, with site preparation and concrete available in the same contract.",
-    "tldr": "Compare the design, installation, foundation, and total scope before choosing a builder. Triple J Metal offers a direct relationship with a local crew. Ask each provider to confirm what is included for your address and project.",
-    "whyCompare": "A building price is only useful when the scope is clear. Check dimensions, framing, roof and wall panels, doors, anchoring, delivery, installation, concrete, taxes, and any required approvals. Different quotes may cover different work.",
-    "whenCompetitorWins": "Consider Eagle Carports when its service area, available designs, and written proposal fit your project. Confirm current installation arrangements, exclusions, warranty terms, and scheduling directly with the provider.",
-    "whenTripleJWins": [
-      "You want a Temple-based crew serving Central Texas.",
-      "You want to compare welded and bolted red iron options.",
-      "You want site prep and a separately priced concrete pad available in the same contract.",
-      "You want to discuss your preferred timeline directly with the team.",
-      "You prefer to discuss your project in English or Spanish."
-    ],
-    "breakdownSections": [
-      {
-        "heading": "Compare installation scope",
-        "body": "Ask who delivers and installs the structure, who prepares the site, and who handles follow-up. Some providers include installation; others offer different arrangements. Triple J installs the structures it quotes with its own crew."
-      },
-      {
-        "heading": "Compare the complete design",
-        "body": "Welded or bolted connections alone do not establish wind performance. Compare the specified framing, anchoring, foundation, and engineering for your site. Triple J offers both welded and bolted options."
-      },
-      {
-        "heading": "Price the concrete separately",
-        "body": "Triple J can include site prep, concrete, and installation in one contract. Our advertised steel-and-install starting prices exclude concrete. Request an itemized quote from each provider so the totals cover equivalent work."
-      },
-      {
-        "heading": "Confirm scheduling",
-        "body": "Lead times change with location, design, material availability, and site readiness. Ask each provider for a current project-specific schedule. Triple J offers same-week scheduling when the scope and availability allow; your installation date is confirmed during quoting."
-      }
-    ]
-  },
-  "get-carports": {
-    "slug": "get-carports",
-    "competitorSlugs": [
-      "get-carports",
-      "triple-j-metal"
-    ],
-    "metaTitle": "Get Carports Alternatives in Central Texas",
-    "metaDescription": "Compare Get Carports with Triple J Metal in Central Texas. Review installation, concrete, design options and scheduling in a written quote.",
-    "h1": "Get Carports Alternatives in Central Texas",
-    "heroSubhead": "Compare complete project scopes. Triple J Metal offers welded or bolted structures installed by our Temple-based crew, with site preparation and concrete available in the same contract.",
-    "tldr": "Compare the design, installation, foundation, and total scope before choosing a builder. Triple J Metal offers a direct relationship with a local crew. Ask each provider to confirm what is included for your address and project.",
-    "whyCompare": "A building price is only useful when the scope is clear. Check dimensions, framing, roof and wall panels, doors, anchoring, delivery, installation, concrete, taxes, and any required approvals. Different quotes may cover different work.",
-    "whenCompetitorWins": "Consider Get Carports when its service area, available designs, and written proposal fit your project. Confirm current installation arrangements, exclusions, warranty terms, and scheduling directly with the provider.",
-    "whenTripleJWins": [
-      "You want a Temple-based crew serving Central Texas.",
-      "You want to compare welded and bolted red iron options.",
-      "You want site prep and a separately priced concrete pad available in the same contract.",
-      "You want to discuss your preferred timeline directly with the team.",
-      "You prefer to discuss your project in English or Spanish."
-    ],
-    "breakdownSections": [
-      {
-        "heading": "Compare installation scope",
-        "body": "Ask who delivers and installs the structure, who prepares the site, and who handles follow-up. Some providers include installation; others offer different arrangements. Triple J installs the structures it quotes with its own crew."
-      },
-      {
-        "heading": "Compare the complete design",
-        "body": "Welded or bolted connections alone do not establish wind performance. Compare the specified framing, anchoring, foundation, and engineering for your site. Triple J offers both welded and bolted options."
-      },
-      {
-        "heading": "Price the concrete separately",
-        "body": "Triple J can include site prep, concrete, and installation in one contract. Our advertised steel-and-install starting prices exclude concrete. Request an itemized quote from each provider so the totals cover equivalent work."
-      },
-      {
-        "heading": "Confirm scheduling",
-        "body": "Lead times change with location, design, material availability, and site readiness. Ask each provider for a current project-specific schedule. Triple J offers same-week scheduling when the scope and availability allow; your installation date is confirmed during quoting."
-      }
-    ]
-  },
-  "carport-central": {
-    "slug": "carport-central",
-    "competitorSlugs": [
-      "carport-central",
-      "triple-j-metal"
-    ],
-    "metaTitle": "Carport Central Alternatives in Central TX",
-    "metaDescription": "Compare Carport Central with Triple J Metal in Central Texas. Review installation, concrete, design options and scheduling in a written quote.",
-    "h1": "Carport Central Alternatives in Central Texas",
-    "heroSubhead": "Compare complete project scopes. Triple J Metal offers welded or bolted structures installed by our Temple-based crew, with site preparation and concrete available in the same contract.",
-    "tldr": "Compare the design, installation, foundation, and total scope before choosing a builder. Triple J Metal offers a direct relationship with a local crew. Ask each provider to confirm what is included for your address and project.",
-    "whyCompare": "A building price is only useful when the scope is clear. Check dimensions, framing, roof and wall panels, doors, anchoring, delivery, installation, concrete, taxes, and any required approvals. Different quotes may cover different work.",
-    "whenCompetitorWins": "Consider Carport Central when its service area, available designs, and written proposal fit your project. Confirm current installation arrangements, exclusions, warranty terms, and scheduling directly with the provider.",
-    "whenTripleJWins": [
-      "You want a Temple-based crew serving Central Texas.",
-      "You want to compare welded and bolted red iron options.",
-      "You want site prep and a separately priced concrete pad available in the same contract.",
-      "You want to discuss your preferred timeline directly with the team.",
-      "You prefer to discuss your project in English or Spanish."
-    ],
-    "breakdownSections": [
-      {
-        "heading": "Compare installation scope",
-        "body": "Ask who delivers and installs the structure, who prepares the site, and who handles follow-up. Some providers include installation; others offer different arrangements. Triple J installs the structures it quotes with its own crew."
-      },
-      {
-        "heading": "Compare the complete design",
-        "body": "Welded or bolted connections alone do not establish wind performance. Compare the specified framing, anchoring, foundation, and engineering for your site. Triple J offers both welded and bolted options."
-      },
-      {
-        "heading": "Price the concrete separately",
-        "body": "Triple J can include site prep, concrete, and installation in one contract. Our advertised steel-and-install starting prices exclude concrete. Request an itemized quote from each provider so the totals cover equivalent work."
-      },
-      {
-        "heading": "Confirm scheduling",
-        "body": "Lead times change with location, design, material availability, and site readiness. Ask each provider for a current project-specific schedule. Triple J offers same-week scheduling when the scope and availability allow; your installation date is confirmed during quoting."
-      }
-    ]
-  },
   "national-kit-dealers": {
     "slug": "national-kit-dealers",
     "competitorSlugs": [
@@ -493,12 +374,12 @@ export const ALTERNATIVES_CONTENT: Record<AlternativesSlug, AlternativesPageCont
       "triple-j-metal"
     ],
     "metaTitle": "Carport Kit Dealer Alternatives, Central TX",
-    "metaDescription": "Compare national metal building providers with Triple J Metal in Central Texas. Review installation, concrete, design and scheduling in a written quote.",
+    "metaDescription": "Eagle Carports, Get Carports, Carport Central and other national carport dealers compared with Triple J Metal on installation, concrete and scheduling.",
     "h1": "National Metal Carport Kit Alternatives in Central Texas",
     "heroSubhead": "Compare complete project scopes. Triple J Metal offers welded or bolted structures installed by our Temple-based crew, with site preparation and concrete available in the same contract.",
     "tldr": "Compare the design, installation, foundation, and total scope before choosing a builder. Triple J Metal offers a direct relationship with a local crew. Ask each provider to confirm what is included for your address and project.",
     "whyCompare": "A building price is only useful when the scope is clear. Check dimensions, framing, roof and wall panels, doors, anchoring, delivery, installation, concrete, taxes, and any required approvals. Different quotes may cover different work.",
-    "whenCompetitorWins": "Consider national metal building providers when its service area, available designs, and written proposal fit your project. Confirm current installation arrangements, exclusions, warranty terms, and scheduling directly with the provider.",
+    "whenCompetitorWins": "Consider national metal building providers when their service area, available designs, and written proposal fit your project. Confirm current installation arrangements, exclusions, warranty terms, and scheduling directly with the provider.",
     "whenTripleJWins": [
       "You want a Temple-based crew serving Central Texas.",
       "You want to compare welded and bolted red iron options.",

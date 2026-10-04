@@ -194,6 +194,27 @@ const nextConfig: NextConfig = {
         destination: "/blog/bell-county-metal-building-permit-guide",
         permanent: true,
       },
+
+      // ── Per-brand comparison pages folded into one, 2026-10-04 ──────────
+      // Eagle Carports, Get Carports and Carport Central each had a page 97%
+      // identical to the others (only the name differed) — near-duplicates
+      // Google folds together or treats as doorways. The national-dealer
+      // page already compares all three, plus Viking and Infinity.
+      {
+        source: "/alternatives/eagle-carports",
+        destination: "/alternatives/national-kit-dealers",
+        permanent: true,
+      },
+      {
+        source: "/alternatives/get-carports",
+        destination: "/alternatives/national-kit-dealers",
+        permanent: true,
+      },
+      {
+        source: "/alternatives/carport-central",
+        destination: "/alternatives/national-kit-dealers",
+        permanent: true,
+      },
     ];
   },
   async headers() {

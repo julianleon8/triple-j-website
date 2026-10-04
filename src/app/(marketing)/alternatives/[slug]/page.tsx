@@ -20,7 +20,6 @@ import {
   NATIONAL_KIT_COMPARISON_ROWS,
   getAlternativesContent,
   type AlternativesSlug,
-  type CompetitorSlug,
 } from '@/lib/competitors'
 import { SITE } from '@/lib/site'
 import { getSiteUrl } from '@/lib/site-url'
@@ -62,17 +61,9 @@ export default async function AlternativesPage(
   const baseUrl = getSiteUrl()
   const pageUrl = `${baseUrl}/alternatives/${slug}`
 
-  // Per-page comparison rows differ by which page you're on. The
-  // consolidated 'national-kit-dealers' page uses a wider row set built
-  // dynamically for all 5 national kits; individual brand pages use the
-  // standard 8-row template that hard-codes Triple J vs that one brand.
-  const isConsolidated = slug === 'national-kit-dealers'
-  // After isConsolidated narrows out 'national-kit-dealers', the remaining
-  // slugs (eagle-carports, get-carports, carport-central) are all valid
-  // CompetitorSlug values — cast through to satisfy the row builder.
-  const comparisonRows = isConsolidated
-    ? consolidatedRows()
-    : NATIONAL_KIT_COMPARISON_ROWS(slug as CompetitorSlug)
+  // One table, Triple J against all five national kit dealers. The
+  // per-brand pages that compared one dealer each were folded in here.
+  const comparisonRows = consolidatedRows()
 
   // Per-page @graph: WebPage + ItemList (the comparison) + each compared
   // entity as a Product. Triple J marked as the recommended provider
@@ -256,12 +247,10 @@ export default async function AlternativesPage(
 }
 
 /**
- * The consolidated `/alternatives/national-kit-dealers` page compares
- * Triple J vs. all 5 national kits in a single matrix. Build the rows
+ * Triple J vs. all 5 national kit dealers in a single matrix. Build the rows
  * dynamically so the same row label maps across every kit competitor.
  */
 function consolidatedRows() {
-  const allKits: AlternativesSlug[] = ['eagle-carports', 'get-carports', 'carport-central']
   // Use the eagle-carports row template since the kit-dealer business model
   // is functionally identical across all 5 — same yes/no answers per row.
   // For each row, fan the eagle "competitor" cell out across all 5 kits.
@@ -281,5 +270,4 @@ function consolidatedRows() {
       },
     }
   })
-  void allKits
 }

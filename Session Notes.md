@@ -1,5 +1,13 @@
 # Session Notes
 
+## 2026-10-04 — Comparison pages merged into one
+
+- `/alternatives/eagle-carports`, `/get-carports` and `/carport-central` 301 to
+  `/alternatives/national-kit-dealers`, which already compared all five national dealers in one table. Their
+  entries left `ALTERNATIVES_CONTENT`; the template lost its single-brand table path and dead code.
+- The merged page's description names the three brands it absorbed; its "Other Comparisons" band now shows
+  only the Temple roundup, and the roundup's shows only this page.
+
 ## 2026-10-03 — Only Julian is named on the public site
 
 **In plain terms.** The owner asked to take Juan and Freddy off the website, leaving only Julian wherever
