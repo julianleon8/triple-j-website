@@ -33,7 +33,7 @@ function nextSteps(fromQuotePage: boolean) {
       title: "We call you back",
       blurb: `${
         fromQuotePage ? "Same day, guaranteed within 24 hours." : "Within 24 hours."
-      } A real person (Julian or Juan) on the other end, no offshore call center.`,
+      } A real person (Julian) on the other end, no offshore call center.`,
     },
     {
       title: "On-site walk-through",

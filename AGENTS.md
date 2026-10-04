@@ -33,7 +33,7 @@ Every fact has exactly one owner. Restating an owned fact anywhere else creates 
 
 - **Triple J Metal** is the public brand. **Triple J Metal LLC** is the legal name — use it only in the footer ©, schema.org `legalName`, terms, privacy, and contractual copy.
 - Retired, never use in new copy: "Triple JJJ Metal Buildings", "Triple J Metal Buildings LLC".
-- Triple J = **Juan** (father, investor) + **Julian** (son, tech/ops, sales) + **Jose Alfredo "Freddy"** (foreman — cuts, welds, math, runs the crew).
+- Triple J = **Juan** (father, investor) + **Julian** (son, tech/ops, sales) + **Jose Alfredo "Freddy"** (foreman — cuts, welds, math, runs the crew). **Public copy names only Julian** — see `Locked Decisions.md` → Positioning; `check-vault.mjs` enforces it.
 - Never name a specific steel supplier in the vault, in customer copy, or in AI-facing files.
 
 ## Rules

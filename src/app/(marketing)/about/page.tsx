@@ -46,19 +46,9 @@ function jsonLd(baseUrl: string) {
 
 const CREW = [
   {
-    name: 'Juan',
-    role: 'Co-owner · Relationships',
-    body: 'The family behind Triple J. Juan keeps customer relationships strong across Central Texas.',
-  },
-  {
     name: 'Julian',
     role: 'Sales · Operations',
     body: 'Your point of contact. Julian plans the build with you, talks through options and keeps the details moving.',
-  },
-  {
-    name: 'Freddy',
-    role: 'Foreman · Fabrication',
-    body: 'Jose Alfredo “Freddy” runs the crew: the measurements, cuts and welds that turn your plans into steel.',
   },
 ]
 
@@ -173,9 +163,9 @@ export default function AboutPage() {
           <ForgeReveal>
             <SectionHeading
               eyebrow="Meet Triple J"
-              line1="Three names."
+              line1="One name to call."
               line2="One family business."
-              lede="Juan, Julian and Jose Alfredo. The people behind the name, based right here in Temple."
+              lede="Julian handles sales and support. The crew behind him is based right here in Temple."
               ledeMax="max-w-[540px]"
             />
             <div className="mt-7 border-t border-forge-mist">

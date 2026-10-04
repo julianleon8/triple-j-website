@@ -1,3 +1,18 @@
+# Public names — 2026-10-03 · BUILT AND CHECKED LOCALLY, NOT PUSHED
+
+Only Julian is named on the public site now (`Locked Decisions.md` → Positioning; `Session Notes.md` has the
+file list). **Until this is pushed, the live site still names Juan and Freddy.**
+
+**Owner's call:** the Spanish claims stayed ("English & Español", "Se habla español", "We'll reach you in
+Spanish", `availableLanguage` in the schema), but Julian is English-only and now the only named contact, so a
+Spanish caller reaches him first. Keep them, route Spanish calls to Juan or Freddy off-site, or cut them.
+
+**Outside this change:** the Facebook / Marketplace copy in `dev/sales-pack-2026-04-30.md` and
+`marketing/lead-plan-2026-09-29.md` still routes Spanish to Juan and Freddy. That is how the owner posts and
+answers, not website copy, so it was left.
+
+---
+
 # Menus and copy pass — 2026-10-03 · PUSHED TO `main`
 
 Header menus, footer, and the service / About / Contact copy are on `main` (pushed together, one commit,

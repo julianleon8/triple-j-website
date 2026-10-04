@@ -35,7 +35,7 @@ export default function LeadCustomerConfirmation(props: LeadCustomerConfirmation
       <Section style={promiseCard}>
         <Text style={promiseLabel}>WHAT HAPPENS NEXT</Text>
         <Text style={promiseText}>
-          A real person — usually <strong>Julian or Juan</strong> — will call you back at{' '}
+          A real person — usually <strong>Julian</strong> — will call you back at{' '}
           <strong style={{ color: INK_900 }}>{phone}</strong>{' '}
           {isHot ? 'today' : 'within 24 hours'} with an honest quote. No pressure, no offshore call center, no automated form replies.
         </Text>
@@ -69,7 +69,7 @@ export default function LeadCustomerConfirmation(props: LeadCustomerConfirmation
 
       {/* ── Family signature ─────────────────────────────────────── */}
       <Text style={signature}>
-        — Juan, Julian &amp; Freddy
+        — Julian
         <br />
         <span style={signatureSub}>The Triple J crew · Temple, TX</span>
       </Text>
@@ -87,7 +87,7 @@ export function leadCustomerConfirmationText(props: LeadCustomerConfirmationProp
     `We got your ${props.serviceType.replace(/_/g, ' ')} request for ${props.city}.`,
     ``,
     `WHAT HAPPENS NEXT`,
-    `A real person — usually Julian or Juan — will call you back at ${props.phone} ${isHot ? 'today' : 'within 24 hours'} with an honest quote. No pressure, no offshore call center, no automated form replies.`,
+    `A real person — usually Julian — will call you back at ${props.phone} ${isHot ? 'today' : 'within 24 hours'} with an honest quote. No pressure, no offshore call center, no automated form replies.`,
   ]
   if (props.isMilitary) {
     lines.push(``)
@@ -100,7 +100,7 @@ export function leadCustomerConfirmationText(props: LeadCustomerConfirmationProp
   lines.push(``)
   lines.push(`Can't wait? Call us directly: ${SITE.phone}`)
   lines.push(``)
-  lines.push(`— Juan, Julian & Freddy`)
+  lines.push(`— Julian`)
   lines.push(`The Triple J crew · Temple, TX`)
   lines.push(``)
   lines.push(`—`)

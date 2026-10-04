@@ -2,8 +2,8 @@
  * Panel color catalog.
  *
  * Single canonical name per color — uses the supplier's technical names
- * (MetalMax / Sheffield / Turnium standard catalog). Customers, Julian, and
- * Freddy all see the same names. No marketing aliases, no Lone-Star renames.
+ * (MetalMax / Sheffield / Turnium standard catalog). Customers and the crew
+ * all see the same names. No marketing aliases, no Lone-Star renames.
  *
  * `PanelLine` values stay 'Turnium' / 'Sheffield' as **internal identifiers
  * only** — they map to existing rows in `gallery_items.panel_color_line`

@@ -158,10 +158,21 @@ const rootMd = readdirSync(ROOT).filter((f) => f.endsWith('.md')).sort()
   // day -- all 22 occurrences rewritten to "3,000 PSI standard, 4,000 on
   // request" -- so this rule now enforces with no exceptions. Keep it that way:
   // a standing exception list is how the drift survived four months.
+  // Only Julian is named on the public site (owner, 2026-10-03): Juan, Freddy and
+  // Jose Alfredo do not appear in customer-facing copy, emails, structured data or
+  // llms.txt. The HQ tools are owner-only and keep their crew lists.
+  const PUBLIC_NAMES = /\b(?:Juan|Freddy|Jose Alfredo)\b/
+  const PRIVATE_SRC = /^src\/(?:app\/hq|components\/hq|lib\/hq)\//
   for (const rel of srcFiles) {
     if (!has(rel)) continue
     if (FIX) autofix(rel)
     scanText(rel, read(rel), fail)
+    if (PRIVATE_SRC.test(rel)) continue
+    read(rel).split('\n').forEach((line, i) => {
+      if (PUBLIC_NAMES.test(line)) {
+        fail(rel, i + 1, 'only Julian is named on the public site: no Juan, Freddy or Jose Alfredo (2026-10-03)')
+      }
+    })
   }
 }
 

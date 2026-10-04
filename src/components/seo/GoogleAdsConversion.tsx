@@ -74,7 +74,7 @@ function normalizePhone(raw: string): string | undefined {
 }
 
 /**
- * Split "Juan Leon" into first/last. Single-token names go to first_name
+ * Split "Julian Leon" into first/last. Single-token names go to first_name
  * only; everything after the first whitespace becomes last_name.
  */
 function splitName(full: string): { first_name?: string; last_name?: string } {

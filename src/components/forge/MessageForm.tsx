@@ -127,7 +127,7 @@ export function MessageForm() {
 
   if (status === "sent") {
     const first = m.name.trim().split(/\s+/)[0] || "neighbor";
-    const who = m.lang === "Español" ? "Juan or Freddy will reach you in Spanish" : "Julian or Juan will reach you";
+    const who = m.lang === "Español" ? "We’ll reach you in Spanish" : "Julian will reach you";
     const via = m.reach === "Call" ? "by phone" : m.reach === "Text" ? "by text" : "by email";
     const at = m.reach === "Email" ? m.email.trim() : m.phone.trim();
     return (

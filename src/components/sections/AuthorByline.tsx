@@ -15,9 +15,9 @@ type Props = {
  *   - JSON-LD Person schema (machine-readable authorship)
  *
  * Renders inline in the page hero section, below the H1+subhead.
- * Per Decisions.md / locked answers — Juan Luis Leon fronts the brand
- * for SEO authorship purposes; he's the LLC's registered owner. Freddy is
- * the foreman (AGENTS.md), so Juan's title is Owner, never Foreman.
+ * Per Decisions.md / locked answers — Julian is the only person named on the
+ * public site (2026-10-03), so he is the reviewer. His title is the one About
+ * gives him: Sales & Operations.
  */
 export function AuthorByline({ asOf }: Props) {
   const baseUrl = getSiteUrl()
@@ -30,8 +30,8 @@ export function AuthorByline({ asOf }: Props) {
   const personLd = {
     '@context': 'https://schema.org',
     '@type': 'Person',
-    name: 'Juan Luis Leon',
-    jobTitle: 'Owner',
+    name: 'Julian Leon',
+    jobTitle: 'Sales & Operations',
     worksFor: { '@id': `${baseUrl}/#organization`, name: SITE.name },
     address: {
       '@type': 'PostalAddress',
@@ -57,10 +57,10 @@ export function AuthorByline({ asOf }: Props) {
           </div>
           <div className="leading-tight">
             <div className="font-semibold text-white">
-              Reviewed by Juan Luis Leon
+              Reviewed by Julian Leon
             </div>
             <div className="mt-0.5 text-[12px] text-forge-steel-light">
-              Owner · {SITE.name} · Temple, TX
+              Sales & Operations · {SITE.name} · Temple, TX
             </div>
           </div>
         </div>

@@ -72,7 +72,7 @@ const PCS_SCENARIOS = [
 const TIMELINE_STEPS = [
   {
     title: 'Callback within 24 hours',
-    body: `Call ${SITE.phone} or send a quote request. Juan or Julian gets back to you within 24 hours.`,
+    body: `Call ${SITE.phone} or send a quote request. Julian gets back to you within 24 hours.`,
   },
   {
     title: 'Site visit or video walk-through',
@@ -222,7 +222,7 @@ export default function MilitaryPage() {
         h1a="Fort Cavazos carports."
         h1b="Same-week for PCS families."
         ledeMax="max-w-[640px]"
-        lede="Welded or bolted carports, RV covers and garages built around your orders, with same-week scheduling. Local Temple crew, 30 min from Killeen. Hablamos español con Juan y Freddy."
+        lede="Welded or bolted carports, RV covers and garages built around your orders, with same-week scheduling. Local Temple crew, 30 min from Killeen. Hablamos español."
         actions={
           <>
             <ForgeButtonLink href="#quote" variant="white" size="lg" arrow>
@@ -394,7 +394,7 @@ export default function MilitaryPage() {
               line1="A bilingual crew for a multilingual post."
             />
             <p className={`mt-4 max-w-[560px] ${lede}`}>
-              Military families come from every background. Juan and Freddy run quotes, site visits and the build
+              Military families come from every background. We run quotes, site visits and the build
               itself in Spanish or English — no language barrier between you and the people building your structure.
             </p>
           </ForgeReveal>

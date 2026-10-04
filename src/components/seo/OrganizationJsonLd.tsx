@@ -60,11 +60,6 @@ export function OrganizationJsonLd() {
         },
         image: `${url}/og-default.jpg`,
         foundingDate: String(SITE.established),
-        founder: {
-          '@type': 'Person',
-          name: 'Juan Leon',
-          jobTitle: 'Founder',
-        },
         address: {
           '@type': 'PostalAddress',
           streetAddress: SITE.address.street,

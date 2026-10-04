@@ -308,7 +308,7 @@ export default function BestBuildersRoundupPage() {
               </li>
               <li className="flex items-start gap-3">
                 <span aria-hidden="true" className="mt-px shrink-0 font-bold text-forge-steel-light">✓</span>
-                You speak Spanish or want to. Hablamos español con Juan y Freddy.
+                You speak Spanish or want to. Hablamos español.
               </li>
               <li className="flex items-start gap-3">
                 <span aria-hidden="true" className="mt-px shrink-0 font-bold text-forge-steel-light">✓</span>

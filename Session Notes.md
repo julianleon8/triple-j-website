@@ -1,5 +1,26 @@
 # Session Notes
 
+## 2026-10-03 — Only Julian is named on the public site
+
+**In plain terms.** The owner asked to take Juan and Freddy off the website, leaving only Julian wherever
+a person to contact for sales or support is mentioned. About's three-person crew section is now one
+card; every "Julian or Juan" call-back line, the "Juan, Julian & Freddy" email sign-off, the Spanish
+"ask for Juan or Freddy" lines, the byline and the structured data now name Julian or nobody.
+
+**What changed.** About, quote, thank-you, military, partners, hybrid-projects, builders comparison,
+location data (`locations.ts`, 8 spots), the contact-form success message, `BrandLayout` and
+`LeadCustomerConfirmation` emails, `AuthorByline` (now Julian Leon, Sales & Operations), `llms.ts`
+("Contact: Julian Leon, for sales and support") and `OrganizationJsonLd` (the `founder` entry is deleted,
+not reassigned). `scripts/check-vault.mjs` gained a rule that fails on `Juan`, `Freddy` or `Jose Alfredo`
+in any public source file; HQ paths are exempt. Checked by planting a name and watching it fail.
+
+**Checked:** typecheck, lint, vault check, 664 tests; 19 public pages plus `llms.txt` and `llms-full.txt`
+fetched from the dev server with zero mentions (after a first sweep reported "clean" only because
+`ugrep` rejected the pattern; the second run used a plain pattern and a known-good control).
+
+**Not touched.** HQ's time-entry crew list, the vault's internal notes on who the business is, and the
+sales pack / lead plan, which tell the owner how to route Spanish callers.
+
 ## 2026-10-03 — Header menus reach Colors, PBR vs PBU and every service; service copy cut shorter
 
 **In plain terms.** The owner asked for easier access to Colors and PBR vs PBU, for "service areas" in

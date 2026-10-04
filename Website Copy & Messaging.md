@@ -24,7 +24,7 @@ _Last updated: 2026-04-15_
 
 - **Response promise on `/quote` and `/thank-you?from=quote`:** "Same day, guaranteed within 24 hours." Both figures in one line, deliberately — the confirmation email arrives minutes later, and a bare "same day" would read as a downgrade against it. Every other surface keeps "within 24 hours". Nothing may say "most replies".
 - **Permits:** advisory only — "Building permits? We'll talk you through it." Never "we handle permits", "we pull permits", or any guarantee. Permit handling is an opportunity in `Operational Notes.md`, not a shipped service.
-- **Spanish:** "Se habla español — pregunta por Juan o Freddy." Name those two; Julian is English-only.
+- **Spanish:** "Se habla español." Name nobody. Only Julian is named on the public site; any "who will call you" line says Julian (reversed 2026-10-03, owner).
 - **No prices, no deposit or payment terms, no stars or review counts** on `/quote`.
 
 ## Things to REMOVE / Avoid

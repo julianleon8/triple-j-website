@@ -41,11 +41,11 @@ const OFFER = [
   },
   {
     title: 'No subcontractors',
-    body: 'Every weld, bolt and panel goes up under one of three named owners — Juan, Julian or Freddy. When something needs answering on-site, the person who can answer is on-site.',
+    body: 'Every weld, bolt and panel goes up under our own crew, never a subcontractor. When something needs answering on-site, the person who can answer is on-site.',
   },
   {
     title: 'Bilingual on every job',
-    body: 'English and Spanish on every site — Julian on the English side, Juan and Freddy on Spanish. Critical when your customers include Hispanic landowners, ranchers or commercial buyers.',
+    body: 'English and Spanish on every site. Critical when your customers include Hispanic landowners, ranchers or commercial buyers.',
   },
 ]
 
@@ -78,7 +78,7 @@ export default async function PartnersPage() {
           </>
         }
         facts={[
-          // The design's "2 in-house welders · Julian + Freddy" is not supported
+          // The design's "2 in-house welders" fact is not supported
           // by the vault (D18); the locked zero-subcontractors fact stands in.
           { k: 'Crew', v: 'In-house', s: 'Zero subcontractors' },
           { k: 'Track record', v: `${SITE.stats.projects} projects`, s: 'Across Central Texas' },

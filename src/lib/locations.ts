@@ -241,7 +241,7 @@ export const LOCATIONS: Record<string, LocationData> = {
     distanceFromTemple: '25 mi southwest · 30 min from HQ',
     habla: true,
     localIntro:
-      "Killeen runs on Fort Cavazos. PCS season hits, hail season hits, and military families need vehicles and equipment under cover before household goods arrive. Triple J Metal is 25 minutes up the road in Temple — a real local crew with welded red-iron carports, RV covers, and garages built same-week. We honor a 7% Fort Cavazos military and first-responder discount on every install. Hablamos español con Juan y Freddy.",
+      "Killeen runs on Fort Cavazos. PCS season hits, hail season hits, and military families need vehicles and equipment under cover before household goods arrive. Triple J Metal is 25 minutes up the road in Temple — a real local crew with welded red-iron carports, RV covers, and garages built same-week. We honor a 7% Fort Cavazos military and first-responder discount on every install. Hablamos español.",
     landmarks: [
       {
         name: 'Bella Charca & Heritage Oaks',
@@ -276,7 +276,7 @@ export const LOCATIONS: Record<string, LocationData> = {
         eyebrow: 'Fort Cavazos PCS',
         headline: 'Same-week installs on PCS timelines.',
         blurb:
-          "Active-duty, retired, Reserve/Guard, and first responders get a 7% discount on every install — welded, bolted, or turnkey. PCS calendars, deployment dates, and TDY blocks all factored into the build week. Hablamos español con Juan y Freddy.",
+          "Active-duty, retired, Reserve/Guard, and first responders get a 7% discount on every install — welded, bolted, or turnkey. PCS calendars, deployment dates, and TDY blocks all factored into the build week. Hablamos español.",
         ctaLabel: 'See Fort Cavazos page',
         ctaHref: '/military',
       },
@@ -471,7 +471,7 @@ export const LOCATIONS: Record<string, LocationData> = {
       { k: "From HQ", v: "0 mi", s: "Where we live" },
       { k: "County", v: "Bell County", s: "Our home county" },
       { k: "Shop", v: "3319 Tem-Bel Ln", s: "Temple, TX 76502" },
-      { k: "Language", v: "English & Español", s: "Hablamos español con Juan y Freddy" },
+      { k: "Language", v: "English & Español", s: "Hablamos español" },
     ],
     introEyebrow: "Where we live",
     introHeading: "Not a service area. Home.",
@@ -592,7 +592,7 @@ export const LOCATIONS: Record<string, LocationData> = {
       { k: "From HQ", v: "10 mi south", s: "15 min from our Temple shop" },
       { k: "County", v: "Bell County seat", s: "Where permits get pulled" },
       { k: "Coverage", v: "US-190 · FM 2271", s: "Lake Belton to ranch country" },
-      { k: "Language", v: "English & Español", s: "Hablamos español con Juan y Freddy" },
+      { k: "Language", v: "English & Español", s: "Hablamos español" },
     ],
     introEyebrow: "Where we build",
     introHeading: "Lake houses to ranch land.",
@@ -730,7 +730,7 @@ export const LOCATIONS: Record<string, LocationData> = {
     distanceFromTemple: '35 mi north · 40 min from HQ',
     habla: true,
     localIntro:
-      "Waco is our closest county neighbor — 35 miles up I-35 and the home of the regional Texas steel suppliers our shop draws from. McLennan County splits between rural ag operators who need hay barns and equipment covers, and Magnolia-influenced residential where the build has to look the part. We bring a real welding crew and concrete in the same contract for both. Hablamos español con Juan y Freddy.",
+      "Waco is our closest county neighbor — 35 miles up I-35 and the home of the regional Texas steel suppliers our shop draws from. McLennan County splits between rural ag operators who need hay barns and equipment covers, and Magnolia-influenced residential where the build has to look the part. We bring a real welding crew and concrete in the same contract for both. Hablamos español.",
     landmarks: [
       {
         name: 'Magnolia Market & Silos',
@@ -766,7 +766,7 @@ export const LOCATIONS: Record<string, LocationData> = {
       '35 miles up I-35 — McLennan County is the closest county to our Temple shop, and our supplier relationships are rooted right here in Waco.',
       'Ranch and ag work for rural McLennan — hay barns, equipment covers, and run-in sheds for the operators between Hewitt, China Spring, Robinson, and Crawford.',
       'Magnolia-influenced residential — Board & Batten, color-matched panels, and the farmhouse pitch the Waco market actually wants.',
-      "Bilingual install crew — Juan and Freddy run the build in Spanish or English for Waco's strong Hispanic homeowner base.",
+      "Bilingual install crew — we run the build in Spanish or English for Waco's strong Hispanic homeowner base.",
     ],
     callouts: [
       {
@@ -940,7 +940,7 @@ export const LOCATIONS: Record<string, LocationData> = {
     distanceFromTemple: '60 mi south · 1 hr from HQ',
     habla: true,
     localIntro:
-      "Round Rock has doubled in a generation — Dell, Apple, and Tesla pulled tech families in from across the country, and Fort Cavazos retirees PCS here for second careers. The subdivisions are HOA-strict, the soil flips between Edwards Plateau caliche and Blackland Prairie clay, and most national kit-shippers can't meet the architectural review board's standards. We can. Welded or bolted red-iron, color-matched to your home, concrete poured for the soil under it. Hablamos español con Juan y Freddy.",
+      "Round Rock has doubled in a generation — Dell, Apple, and Tesla pulled tech families in from across the country, and Fort Cavazos retirees PCS here for second careers. The subdivisions are HOA-strict, the soil flips between Edwards Plateau caliche and Blackland Prairie clay, and most national kit-shippers can't meet the architectural review board's standards. We can. Welded or bolted red-iron, color-matched to your home, concrete poured for the soil under it. Hablamos español.",
     landmarks: [
       {
         name: 'Old Settlers Park',
@@ -969,7 +969,7 @@ export const LOCATIONS: Record<string, LocationData> = {
     whyLocalBullets: [
       'HOA-compliant red-iron — concealed-fastener standing-seam, color-matched siding, builds that read residential for Brushy Creek, Forest Creek, and Teravista architectural review boards.',
       "Edwards Plateau caliche or Blackland Prairie clay — we engineer the concrete spec and anchor depth for the soil actually under your slab, not a national average.",
-      "Bilingual install crew — Juan and Freddy run the build in Spanish or English for Round Rock's growing Hispanic homeowner market.",
+      "Bilingual install crew — we run the build in Spanish or English for Round Rock's growing Hispanic homeowner market.",
       'Same-week scheduling for Fort Cavazos PCS retirees taking Dell, Apple, and Tesla jobs — vehicles under cover before the moving truck unloads.',
     ],
     callouts: [
