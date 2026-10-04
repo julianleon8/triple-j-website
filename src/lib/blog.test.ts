@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { BLOG_POSTS, relatedBlogPosts } from './blog'
+import { BLOG_POSTS, BLOG_REVISED, postModified, relatedBlogPosts, type BlogPost } from './blog'
 
 describe('relatedBlogPosts', () => {
   it('never suggests a post on itself, and never repeats one', () => {
@@ -36,5 +36,23 @@ describe('relatedBlogPosts', () => {
 
   it('returns nothing for an unknown slug', () => {
     expect(relatedBlogPosts('no-such-post')).toEqual([])
+  })
+})
+
+describe('postModified', () => {
+  const post = (date: string): BlogPost => ({ ...BLOG_POSTS[0], date })
+
+  it('dates an older post by the shared revision, not by its publish date', () => {
+    expect(postModified(post('2026-04-15'))).toBe(BLOG_REVISED)
+  })
+
+  it('keeps the publish date of a post written after the revision', () => {
+    expect(postModified(post('2026-11-20'))).toBe('2026-11-20')
+  })
+
+  it('never dates a real post before it was published', () => {
+    for (const p of BLOG_POSTS) {
+      expect(new Date(postModified(p)).getTime(), p.slug).toBeGreaterThanOrEqual(new Date(p.date).getTime())
+    }
   })
 })

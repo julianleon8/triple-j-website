@@ -1,6 +1,6 @@
 import type { MetadataRoute } from "next";
 
-import { BLOG_POSTS } from "@/lib/blog";
+import { BLOG_POSTS, postModified } from "@/lib/blog";
 import { ALTERNATIVES_SLUGS } from "@/lib/competitors";
 import { LOCATIONS } from "@/lib/locations";
 import { SERVICE_SLUGS } from "@/lib/services";
@@ -114,9 +114,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   for (const post of BLOG_POSTS) {
     entries.push({
       url: `${base}/blog/${post.slug}`,
-      // Posts were restyled and relinked on COPY_REVISED; a post published
-      // after that keeps its own, newer date.
-      lastModified: new Date(Math.max(new Date(post.date).getTime(), COPY_REVISED.getTime())),
+      lastModified: new Date(postModified(post)),
       changeFrequency: "monthly",
       priority: 0.65,
     });

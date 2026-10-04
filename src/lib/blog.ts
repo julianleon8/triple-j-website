@@ -21,6 +21,22 @@ export type BlogPost = {
   category: BlogCategory
 }
 
+/**
+ * The day every post last changed: the Forge restyle, the claims brought to
+ * the locks and the internal links all landed on 2026-10-03. Bump it when a
+ * post's copy changes.
+ */
+export const BLOG_REVISED = '2026-10-03'
+
+/**
+ * The ISO date a post last changed: its own publish date, or `BLOG_REVISED`
+ * if that is later. The one owner of both the sitemap `lastmod` and the
+ * BlogPosting `dateModified`, so the two cannot disagree.
+ */
+export function postModified(post: BlogPost): string {
+  return new Date(post.date) > new Date(BLOG_REVISED) ? post.date : BLOG_REVISED
+}
+
 export const BLOG_POSTS: BlogPost[] = [
   {
     slug: 'welded-vs-bolted-metal-buildings-central-texas',

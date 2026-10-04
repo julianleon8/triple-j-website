@@ -7,7 +7,7 @@ import { ForgeButtonLink } from '@/components/forge/ForgeButton'
 import { ForgeReveal } from '@/components/forge/ForgeReveal'
 import { QuoteSection } from '@/components/forge/QuoteSection'
 import { BreadcrumbJsonLd } from '@/components/seo/BreadcrumbJsonLd'
-import { BLOG_POSTS, relatedBlogPosts } from '@/lib/blog'
+import { BLOG_POSTS, postModified, relatedBlogPosts } from '@/lib/blog'
 import { SITE } from '@/lib/site'
 import { getSiteUrl } from '@/lib/site-url'
 
@@ -74,7 +74,7 @@ export default async function BlogPostPage({ params }: Props) {
     headline: post.title,
     description: post.excerpt,
     datePublished: post.date,
-    dateModified: post.date,
+    dateModified: postModified(post),
     author: { '@id': `${baseUrl}/#organization` },
     publisher: { '@id': `${baseUrl}/#organization` },
     url: postUrl,
