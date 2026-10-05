@@ -4,7 +4,7 @@
 - **Canonical brand:** Triple J Metal (used everywhere public-facing)
 - **Legal / registered name:** Triple J Metal LLC (used only in footer ©, schema.org `legalName`, terms of service, privacy policy, and contractual/legal copy)
 - **Retired aliases:** "Triple JJJ Metal Buildings", "Triple J Metal Buildings LLC" — do not use in new copy
-- **Address:** 3319 Tem-Bel Ln, Temple, TX 76502
+- **Address:** 3319 Tem-Bel Ln, Temple, TX 76502 — this is **Juan's ranch**, not a shop or storefront. Customers are served at their own sites; nobody is served at this address (owner, 2026-10-05).
 - **Phone:** 254-346-7764
 - **Founded:** 2025
 - **Completed projects:** 150+
@@ -52,3 +52,5 @@
 ## Google Business Profile status — 2026-09-26
 
 Owner reports repeated profile removals and still needs to complete verification. The cause has not been established.
+
+**2026-10-05:** the profile was created at Juan's ranch (3319 Tem-Bel Ln), not a shop. A home or ranch address where customers are not served must be set up as a service-area business with the address hidden. Owner: after the **first** removal he switched the profile to a service-area business, and it was removed again after that. So the first profile most likely showed the ranch publicly; the later removals had another cause, not yet known. Google's removal message (suspended / disabled / removed / duplicate) has not been seen yet.
