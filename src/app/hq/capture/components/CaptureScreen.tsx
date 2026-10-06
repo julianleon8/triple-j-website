@@ -7,9 +7,11 @@ import { ArrowRight, Check, ChevronDown, TriangleAlert, X } from 'lucide-react'
 import { useHaptics } from '@/lib/hq/haptics'
 import {
   FIELD_KEYS,
+  acknowledge,
   completedCount,
   clearDraft,
   emptyDraft,
+  hasUnsavedWork,
   loadDraft,
   mergeServerDraft,
   cityOrZipPayload,
@@ -17,6 +19,7 @@ import {
   saveDraft,
   type CaptureDraft,
   type FieldKey,
+  type SentSnapshot,
 } from '@/lib/hq/capture-draft'
 import { ChecklistRow, type RowSpec } from './ChecklistRow'
 import type { DuplicateMatch } from '@/app/api/hq/leads/lookup/route'
@@ -83,6 +86,17 @@ function fullPayload(fields: Partial<Record<FieldKey, string>>, notes: string): 
   }
 }
 
+function sendPatch(id: string, sent: SentSnapshot, keepalive: boolean): Promise<Response> {
+  return fetch(`/api/leads/${id}`, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(fullPayload(sent.fields, sent.notes)),
+    // Lets the request outlive the page: leaving the screen, or iOS
+    // backgrounding the PWA for an incoming call.
+    keepalive,
+  })
+}
+
 export function CaptureScreen({
   initialLeadId,
   initialFields,
@@ -98,74 +112,93 @@ export function CaptureScreen({
   const [draft, setDraft] = useState<CaptureDraft>(() => ({
     ...emptyDraft(initialLeadId),
     fields: initialFields,
+    notes: initialNotes,
   }))
-  const [notes, setNotes] = useState(initialNotes)
   const [notesOpen, setNotesOpen] = useState(false)
   const [editing, setEditing] = useState<FieldKey | null>(null)
   const [restoredCaret, setRestoredCaret] = useState<number | null>(null)
+  const [restored, setRestored] = useState(false)
   const [savedAt, setSavedAt] = useState<number | null>(null)
   const [offline, setOffline] = useState(false)
   const [dupes, setDupes] = useState<DuplicateMatch[] | null>(null)
   const [dupAck, setDupAck] = useState(false)
   const [tick, setTick] = useState(0)
 
+  // The draft as of the last edit, readable from timers, listeners and the
+  // unmount cleanup without waiting for a render.
+  const draftRef = useRef(draft)
   const leadIdRef = useRef<string | null>(initialLeadId)
-  const stateRef = useRef({ fields: initialFields, notes: initialNotes })
   const timers = useRef<Map<string, ReturnType<typeof setTimeout>>>(new Map())
   const creating = useRef(false)
   const firstSaveDone = useRef(initialLeadId != null)
+  const inflight = useRef<Promise<boolean> | null>(null)
+  const rerun = useRef(false)
 
-  // ── Reopen: the local mirror is newer than the server for anything still
-  // queued, because the server never acknowledged those. Everything else
-  // defers to the row, which may have been edited from the lead detail screen.
-  useEffect(() => {
-    const local = loadDraft(initialLeadId, window.localStorage)
-    if (!local) return
-    const merged = mergeServerDraft(local, initialFields)
-    setDraft(merged)
-    setSavedAt(merged.savedAt)
-    if (merged.focused) {
-      setEditing(merged.focused)
-      setRestoredCaret(merged.caret)
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
-
-  // "Saved 3s ago" has to keep counting while nothing else happens.
-  useEffect(() => {
-    const t = setInterval(() => setTick((n) => n + 1), 1000)
-    return () => clearInterval(t)
-  }, [])
-
-  /** Synchronous, and deliberately not inside the debounce. */
-  const mirror = useCallback((next: CaptureDraft) => {
+  /**
+   * The only way the draft changes. The phone copy is written synchronously,
+   * before any network request, on every keystroke — that write is what
+   * survives an incoming call killing the PWA.
+   */
+  const commit = useCallback((fn: (d: CaptureDraft) => CaptureDraft) => {
+    const next = fn(draftRef.current)
+    draftRef.current = next
     saveDraft(next, window.localStorage)
+    setDraft(next)
   }, [])
 
-  const patch = useCallback(async (id: string, payload: Record<string, unknown>) => {
-    try {
-      const res = await fetch(`/api/leads/${id}`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
-      })
-      if (!res.ok) throw new Error(String(res.status))
-      setOffline(false)
+  const markSaved = useCallback(
+    (sent: SentSnapshot) => {
       const now = Date.now()
+      setOffline(false)
       setSavedAt(now)
-      setDraft((d) => {
-        // The whole set went, so nothing is outstanding any more.
-        const next = { ...d, savedAt: now, pending: [] }
-        mirror(next)
-        return next
-      })
-    } catch {
-      // The service worker sends every non-GET through NetworkOnly, so this is
-      // the normal offline path. The value is already on the phone; say so
-      // honestly rather than claiming a save that did not happen.
-      setOffline(true)
-    }
-  }, [mirror])
+      commit((d) => acknowledge(d, sent, now))
+    },
+    [commit],
+  )
+
+  /**
+   * One PATCH at a time. A save asked for while one is in flight runs once
+   * more when it lands, with whatever is current then — so an older request
+   * can never land after a newer one and put stale values back on the server.
+   */
+  const patch = useCallback(
+    (id: string): Promise<boolean> => {
+      if (inflight.current) {
+        rerun.current = true
+        return inflight.current
+      }
+      const once = async (): Promise<boolean> => {
+        const d = draftRef.current
+        const sent: SentSnapshot = { fields: d.fields, notes: d.notes }
+        try {
+          const res = await sendPatch(id, sent, false)
+          if (!res.ok) throw new Error(String(res.status))
+          markSaved(sent)
+          return true
+        } catch {
+          // The service worker sends every non-GET through NetworkOnly, so
+          // this is the normal offline path. The value is already on the
+          // phone; say so honestly rather than claiming a save that did not
+          // happen.
+          setOffline(true)
+          return false
+        }
+      }
+      const run = (async () => {
+        let ok = await once()
+        while (ok && rerun.current) {
+          rerun.current = false
+          ok = await once()
+        }
+        rerun.current = false
+        inflight.current = null
+        return ok
+      })()
+      inflight.current = run
+      return run
+    },
+    [markSaved],
+  )
 
   /** Ten digits buys the row. Everything after that is a PATCH. */
   const ensureLead = useCallback(async (phone: string): Promise<string | null> => {
@@ -181,14 +214,10 @@ export function CaptureScreen({
       if (!res.ok) throw new Error(String(res.status))
       const body = (await res.json()) as { id: string }
       leadIdRef.current = body.id
-      setDraft((d) => {
-        const next = { ...d, leadId: body.id }
-        // Re-key the mirror, and drop the "new" copy so a later capture does
-        // not reopen this one.
-        mirror(next)
-        clearDraft(null, window.localStorage)
-        return next
-      })
+      // Re-key the phone copy, and drop the "new" one so a later capture does
+      // not reopen this one.
+      commit((d) => ({ ...d, leadId: body.id }))
+      clearDraft(null, window.localStorage)
       if (!firstSaveDone.current) {
         firstSaveDone.current = true
         haptics.success()
@@ -205,11 +234,98 @@ export function CaptureScreen({
     } finally {
       creating.current = false
     }
-  }, [haptics, mirror, router])
+  }, [commit, haptics, router])
+
+  /**
+   * Push everything the server has not acknowledged. Safe to call any time:
+   * with nothing outstanding it does nothing, and before there is a phone
+   * number it leaves the draft on the phone, where it is already saved.
+   */
+  const sync = useCallback(async (): Promise<boolean> => {
+    if (!hasUnsavedWork(draftRef.current)) return true
+    let id = leadIdRef.current
+    if (!id) {
+      const phone = draftRef.current.fields.phone ?? ''
+      if (!normalizeTenDigits(phone)) return false
+      id = await ensureLead(phone)
+      if (!id) return false
+    }
+    return patch(id)
+  }, [ensureLead, patch])
+
+  /**
+   * Leaving the screen — a tab, a notification, iOS backgrounding the app for
+   * a call. A queued debounce would die with the page, so cancel it and send
+   * now with keepalive. The phone copy keeps everything either way; this is
+   * what gets it to the server without waiting for the screen to be reopened.
+   */
+  const flushOnLeave = useCallback(() => {
+    timers.current.forEach((t) => clearTimeout(t))
+    timers.current.clear()
+    const id = leadIdRef.current
+    const d = draftRef.current
+    if (!id || !hasUnsavedWork(d)) return
+    const sent: SentSnapshot = { fields: d.fields, notes: d.notes }
+    void sendPatch(id, sent, true)
+      .then((res) => {
+        if (res.ok) markSaved(sent)
+      })
+      .catch(() => {
+        /* still on the phone; the Today list and the next open will retry */
+      })
+  }, [markSaved])
+
+  // ── Reopen: the local mirror is newer than the server for anything still
+  // queued, because the server never acknowledged those. Everything else
+  // defers to the row, which may have been edited from the lead detail screen.
+  useEffect(() => {
+    const local = loadDraft(initialLeadId, window.localStorage)
+    if (!local) return
+    const merged = mergeServerDraft(local, initialFields, initialNotes)
+    commit(() => merged)
+    setSavedAt(merged.savedAt)
+    if (!initialLeadId && (completedCount(merged.fields) > 0 || merged.notes.trim() !== '')) {
+      setRestored(true)
+    }
+    if (merged.notes.trim() !== '' && merged.notesPending) setNotesOpen(true)
+    if (merged.focused) {
+      setEditing(merged.focused)
+      setRestoredCaret(merged.caret)
+    }
+    // What the last session could not send goes now, not on the next keystroke.
+    void sync()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  useEffect(() => {
+    const onOnline = () => void sync()
+    const onHidden = () => {
+      if (document.visibilityState === 'hidden') flushOnLeave()
+    }
+    window.addEventListener('online', onOnline)
+    window.addEventListener('pagehide', flushOnLeave)
+    document.addEventListener('visibilitychange', onHidden)
+    return () => {
+      window.removeEventListener('online', onOnline)
+      window.removeEventListener('pagehide', flushOnLeave)
+      document.removeEventListener('visibilitychange', onHidden)
+    }
+  }, [flushOnLeave, sync])
+
+  // Leaving by navigation (Save for later, close, a tab) unmounts the screen.
+  useEffect(() => () => flushOnLeave(), [flushOnLeave])
+
+  // "Saved 3s ago" has to keep counting while nothing else happens.
+  useEffect(() => {
+    const t = setInterval(() => setTick((n) => n + 1), 1000)
+    return () => clearInterval(t)
+  }, [])
 
   const lookupDupes = useCallback(async (phone: string) => {
     try {
-      const res = await fetch(`/api/hq/leads/lookup?phone=${encodeURIComponent(phone)}`)
+      // The capture's own row has this number too; it is not a duplicate.
+      const self = leadIdRef.current ? `&exclude=${encodeURIComponent(leadIdRef.current)}` : ''
+      const res = await fetch(`/api/hq/leads/lookup?phone=${encodeURIComponent(phone)}${self}`)
       if (!res.ok) return
       const body = (await res.json()) as { matches: DuplicateMatch[] }
       if (body.matches.length > 0) {
@@ -223,75 +339,57 @@ export function CaptureScreen({
     }
   }, [haptics])
 
-  const setField = useCallback(
-    (key: FieldKey, value: string) => {
-      setDraft((d) => {
-        const next: CaptureDraft = {
-          ...d,
-          fields: { ...d.fields, [key]: value },
-          pending: d.pending.includes(key) ? d.pending : [...d.pending, key],
-          focused: key,
-        }
-        mirror(next) // ← before the network, every keystroke
-        return next
-      })
-
+  const schedule = useCallback(
+    (key: string, after?: () => void) => {
       const existing = timers.current.get(key)
       if (existing) clearTimeout(existing)
       timers.current.set(
         key,
         setTimeout(async () => {
-          if (key === 'phone') {
-            const digits = normalizeTenDigits(value)
-            if (!digits) return
-            const id = await ensureLead(value)
-            if (id) void patch(id, fullPayload(stateRef.current.fields, stateRef.current.notes))
-            void lookupDupes(value)
-            return
-          }
-          const id = leadIdRef.current
-          if (!id) return // no row yet — the mirror is holding it
-          void patch(id, fullPayload(stateRef.current.fields, stateRef.current.notes))
+          timers.current.delete(key)
+          await sync()
+          after?.()
         }, AUTOSAVE_MS),
       )
     },
-    [ensureLead, lookupDupes, mirror, patch],
+    [sync],
   )
 
-  const saveNotes = useCallback(
+  const setField = useCallback(
+    (key: FieldKey, value: string) => {
+      commit((d) => ({
+        ...d,
+        fields: { ...d.fields, [key]: value },
+        pending: d.pending.includes(key) ? d.pending : [...d.pending, key],
+        focused: key,
+        editedAt: Date.now(),
+      }))
+      schedule(key, key === 'phone' && normalizeTenDigits(value) ? () => void lookupDupes(value) : undefined)
+    },
+    [commit, lookupDupes, schedule],
+  )
+
+  const setNotes = useCallback(
     (value: string) => {
-      setNotes(value)
-      const existing = timers.current.get('__notes')
-      if (existing) clearTimeout(existing)
-      timers.current.set(
-        '__notes',
-        setTimeout(() => {
-          const id = leadIdRef.current
-          if (id) void patch(id, fullPayload(stateRef.current.fields, stateRef.current.notes))
-        }, AUTOSAVE_MS),
-      )
+      commit((d) => ({ ...d, notes: value, notesPending: true, editedAt: Date.now() }))
+      schedule('__notes')
     },
-    [patch],
+    [commit, schedule],
   )
-
-  // Kept current so a flush always sends the latest values, not the ones
-  // captured when its timer was set.
-  useEffect(() => {
-    stateRef.current = { fields: draft.fields, notes }
-  }, [draft.fields, notes])
-
-  useEffect(() => () => timers.current.forEach((t) => clearTimeout(t)), [])
 
   const done = completedCount(draft.fields)
+  const notes = draft.notes
+  const unsavedHere = hasUnsavedWork(draft)
   const savedLabel = useMemo(() => {
     void tick
     if (offline) return 'Saved on this phone'
+    if (!draft.leadId) return unsavedHere ? 'Saved on this phone' : 'Nothing to lose'
     if (!savedAt) return 'Nothing to lose'
     const s = Math.max(0, Math.round((Date.now() - savedAt) / 1000))
     if (s < 3) return 'Saved just now'
     if (s < 60) return `Saved ${s}s ago`
     return `Saved ${Math.round(s / 60)}m ago`
-  }, [savedAt, offline, tick])
+  }, [savedAt, offline, tick, draft.leadId, unsavedHere])
 
   return (
     <div className="mx-auto max-w-2xl">
@@ -307,6 +405,14 @@ export function CaptureScreen({
           <X size={19} strokeWidth={2.2} />
         </Link>
       </div>
+
+      {restored ? (
+        // Without this, an older unsaved caller looks like a blank form that
+        // somehow has someone else's details in it.
+        <p className="mt-1.5 font-mono text-[11px] uppercase tracking-[0.04em] text-(--text-tertiary)">
+          Picked up where you left off
+        </p>
+      ) : null}
 
       {/* Progress — how much of the call you have actually written down. */}
       <div className="mt-3 flex items-baseline justify-between gap-3">
@@ -364,7 +470,15 @@ export function CaptureScreen({
             onClick={() => {
               setDupAck(true)
               const id = leadIdRef.current
-              if (id) void patch(id, { dup_ack: true })
+              if (id) {
+                void fetch(`/api/leads/${id}`, {
+                  method: 'PATCH',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({ dup_ack: true }),
+                }).catch(() => {
+                  /* only stops the prompt reappearing; nothing typed rides on it */
+                })
+              }
             }}
             className="tap-solid mt-2.5 ml-2 rounded-sm border border-(--border-strong) px-3 py-1.5 font-display text-[15px] font-semibold uppercase tracking-[0.04em] text-(--text-primary)"
           >
@@ -393,7 +507,7 @@ export function CaptureScreen({
         {notesOpen ? (
           <textarea
             value={notes}
-            onChange={(e) => saveNotes(e.target.value)}
+            onChange={(e) => setNotes(e.target.value)}
             rows={6}
             placeholder="Anything they said — you can sort it out after."
             className="w-full resize-none border-t border-(--border-subtle) bg-transparent px-4 py-3 text-[15px] leading-relaxed text-(--text-primary) outline-none placeholder:text-(--text-tertiary)"
@@ -420,20 +534,10 @@ export function CaptureScreen({
               setRestoredCaret(null)
             }}
             onChange={(v) => setField(spec.key, v)}
-            onCaret={(pos) =>
-              setDraft((d) => {
-                const next = { ...d, caret: pos }
-                mirror(next)
-                return next
-              })
-            }
+            onCaret={(pos) => commit((d) => ({ ...d, caret: pos }))}
             onCommit={() => {
               setEditing(null)
-              setDraft((d) => {
-                const next = { ...d, focused: null, caret: null }
-                mirror(next)
-                return next
-              })
+              commit((d) => ({ ...d, focused: null, caret: null }))
             }}
           />
         ))}
@@ -442,11 +546,15 @@ export function CaptureScreen({
       <div className="mt-4 space-y-2.5 pb-4">
         <button
           type="button"
-          disabled={!leadIdRef.current}
-          onClick={() => {
+          disabled={!draft.leadId}
+          onClick={async () => {
             const id = leadIdRef.current
             if (!id) return
-            clearDraft(id, window.localStorage)
+            timers.current.forEach((t) => clearTimeout(t))
+            timers.current.clear()
+            // The phone copy is dropped only once the server holds everything
+            // in it. Offline, it stays, and Today lists it until it lands.
+            if (await sync()) clearDraft(id, window.localStorage)
             router.push(`/hq/leads/${id}`)
           }}
           className="tap-solid flex h-14 w-full items-center justify-center gap-2 rounded-md bg-(--brand-fg) font-display text-[20px] font-bold uppercase tracking-[0.04em] text-(--text-on-brand) disabled:opacity-40"
@@ -461,7 +569,7 @@ export function CaptureScreen({
             Save for later
           </Link>
           <span className="font-mono text-[11px] text-(--text-tertiary)">
-            {leadIdRef.current ? 'autosaved' : 'phone number saves it'}
+            {draft.leadId ? 'autosaved' : 'saved on this phone · number saves the lead'}
           </span>
         </div>
       </div>

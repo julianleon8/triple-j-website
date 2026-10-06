@@ -175,10 +175,27 @@ export default async function LeadDetailPage({ params }: { params: Promise<{ id:
         <MissingFromCapture leadId={lead.id} lead={lead} />
       )}
 
+      {/* What was typed on the call. Capture writes owner_notes, not message,
+          and nothing on this screen used to render it — a captured lead's
+          notes were saved but could not be seen anywhere outside capture. */}
+      {lead.owner_notes?.trim() && (
+        <section className="rounded-2xl border border-(--border-subtle) bg-(--surface-2) p-5">
+          <div className="flex items-center justify-between gap-3">
+            <h2 className="text-[13px] font-semibold uppercase tracking-wider text-(--text-tertiary)">Notes from the call</h2>
+            <Link href={`/hq/capture?id=${lead.id}`} className="text-[13px] font-semibold text-(--brand-fg)">
+              Edit
+            </Link>
+          </div>
+          <p className="mt-2 whitespace-pre-wrap text-[15px] text-(--text-primary)">{lead.owner_notes}</p>
+        </section>
+      )}
+
       {/* What they said, before the field dump. */}
       {lead.message && (
         <section className="rounded-2xl border border-(--border-subtle) bg-(--surface-2) p-5">
-          <h2 className="text-[13px] font-semibold uppercase tracking-wider text-(--text-tertiary)">Notes from the call</h2>
+          <h2 className="text-[13px] font-semibold uppercase tracking-wider text-(--text-tertiary)">
+            {lead.owner_notes?.trim() ? 'Message' : 'Notes from the call'}
+          </h2>
           <p className="mt-2 whitespace-pre-wrap text-[15px] text-(--text-primary)">{lead.message}</p>
         </section>
       )}
@@ -190,6 +207,7 @@ export default async function LeadDetailPage({ params }: { params: Promise<{ id:
           <Field label="Phone" value={messenger ? 'None (Messenger DM)' : lead.phone} />
           <Field label="Email" value={lead.email} />
           <Field label="Service" value={readable(lead.service_type)} />
+          <Field label="Size" value={lead.size_raw} />
           <Field label="Structure" value={readable(lead.structure_type)} />
           <Field label="Timeline" value={readable(lead.timeline)} />
           <Field label="Best time to call" value={readable(lead.best_time_to_call)} />

@@ -31,6 +31,9 @@ export async function GET(request: NextRequest) {
   if (denied) return denied
 
   const raw = request.nextUrl.searchParams.get('phone') ?? ''
+  // The capture asking: its own row carries this number, and reporting it
+  // back as "already in HQ" would warn on every single capture.
+  const exclude = request.nextUrl.searchParams.get('exclude')
   const digits = normalizeTenDigits(raw)
   if (!digits) return NextResponse.json({ matches: [] })
 
@@ -49,7 +52,7 @@ export async function GET(request: NextRequest) {
   const matches: DuplicateMatch[] = []
 
   for (const l of (leadsRes.data ?? []) as { id: string; name: string | null; phone: string | null; status: string | null; created_at: string }[]) {
-    if (l.phone && normalizeTenDigits(l.phone) === digits) {
+    if (l.id !== exclude && l.phone && normalizeTenDigits(l.phone) === digits) {
       matches.push({
         kind: 'lead',
         id: l.id,

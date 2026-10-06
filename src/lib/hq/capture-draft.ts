@@ -43,14 +43,37 @@ export type CaptureDraft = {
   /** Restored on reopen so the caret lands back where the call interrupted. */
   focused: FieldKey | null
   caret: number | null
+  /**
+   * "Notes from the call". Mirrored like the checklist rows because it is the
+   * first thing typed on a call, usually before there is a phone number and so
+   * before there is a server row to hold it.
+   */
+  notes: string
+  /** Notes written locally but not yet acknowledged by a 2xx PATCH. */
+  notesPending: boolean
+  /** Epoch ms of the last local edit; orders the "saved on this phone" list. */
+  editedAt: number | null
 }
 
 /** Minimal slice of Storage this module needs — a Map-backed fake satisfies it. */
 export type DraftStore = Pick<Storage, 'getItem' | 'setItem' | 'removeItem'>
 
 export function emptyDraft(leadId: string | null = null): CaptureDraft {
-  return { v: DRAFT_VERSION, leadId, fields: {}, pending: [], savedAt: null, focused: null, caret: null }
+  return {
+    v: DRAFT_VERSION,
+    leadId,
+    fields: {},
+    pending: [],
+    savedAt: null,
+    focused: null,
+    caret: null,
+    notes: '',
+    notesPending: false,
+    editedAt: null,
+  }
 }
+
+const KEY_PREFIX = 'hq_capture_draft:'
 
 /**
  * Per-draft key. A capture that has not reached ten digits has no server row,
@@ -58,7 +81,7 @@ export function emptyDraft(leadId: string | null = null): CaptureDraft {
  * at a time, because starting a second means leaving the screen.
  */
 export function draftKey(leadId: string | null): string {
-  return `hq_capture_draft:${leadId ?? 'new'}`
+  return `${KEY_PREFIX}${leadId ?? 'new'}`
 }
 
 export function serializeDraft(d: CaptureDraft): string {
@@ -103,6 +126,11 @@ export function parseDraft(raw: string | null): CaptureDraft | null {
         ? (d.focused as FieldKey)
         : null,
     caret: typeof d.caret === 'number' ? d.caret : null,
+    // Absent on drafts written before notes were mirrored; an empty string is
+    // the honest reading of those, not a reason to discard the draft.
+    notes: typeof d.notes === 'string' ? d.notes : '',
+    notesPending: d.notesPending === true,
+    editedAt: typeof d.editedAt === 'number' ? d.editedAt : null,
   }
 }
 
@@ -146,14 +174,81 @@ export function clearDraft(leadId: string | null, store: DraftStore): void {
 export function mergeServerDraft(
   local: CaptureDraft | null,
   server: Partial<Record<FieldKey, string>>,
+  serverNotes = '',
 ): CaptureDraft {
-  if (!local) return { ...emptyDraft(), fields: { ...server } }
+  if (!local) return { ...emptyDraft(), fields: { ...server }, notes: serverNotes }
   const fields: Partial<Record<FieldKey, string>> = { ...server }
   for (const k of local.pending) {
     const v = local.fields[k]
     if (v !== undefined) fields[k] = v
   }
-  return { ...local, fields }
+  return { ...local, fields, notes: local.notesPending ? local.notes : serverNotes }
+}
+
+/** What one PATCH carried — compared against the draft when its 2xx lands. */
+export type SentSnapshot = {
+  fields: Partial<Record<FieldKey, string>>
+  notes: string
+}
+
+/**
+ * Apply a 2xx. Only what the server now holds stops being pending: a row typed
+ * into while the request was in flight still differs from what was sent, so it
+ * stays queued. Clearing everything on any 2xx would mark those last keystrokes
+ * as saved, and a reopen would then let the older server copy overwrite them.
+ */
+export function acknowledge(d: CaptureDraft, sent: SentSnapshot, now: number): CaptureDraft {
+  return {
+    ...d,
+    pending: d.pending.filter((k) => (d.fields[k] ?? '') !== (sent.fields[k] ?? '')),
+    notesPending: d.notesPending && d.notes !== sent.notes,
+    savedAt: now,
+  }
+}
+
+/** Anything on this phone the server has not acknowledged. */
+export function hasUnsavedWork(d: CaptureDraft): boolean {
+  return d.pending.length > 0 || d.notesPending
+}
+
+/** How a draft is named in the "saved on this phone" list. */
+export function draftTitle(d: CaptureDraft): string {
+  const name = (d.fields.name ?? '').trim()
+  if (name) return name
+  const phone = (d.fields.phone ?? '').trim()
+  if (phone) return phone
+  const firstLine = d.notes.trim().split('\n')[0]?.trim() ?? ''
+  if (firstLine) return firstLine.length > 40 ? `${firstLine.slice(0, 40)}…` : firstLine
+  return 'Unnamed call'
+}
+
+/** Where tapping a saved draft goes: the screen that finishes and syncs it. */
+export function draftHref(d: CaptureDraft): string {
+  return d.leadId ? `/hq/capture?id=${d.leadId}` : '/hq/capture'
+}
+
+/**
+ * Every draft on this phone that still holds work the server has not
+ * acknowledged, newest edit first.
+ *
+ * The server's is_draft list cannot see these: a capture with no phone number
+ * has no row, and a row whose last edits never landed looks finished from the
+ * server's side. Without this list the only way back to either is to remember
+ * it exists. Never throws, for the same reason loadDraft does not.
+ */
+export function listUnsavedDrafts(store: Pick<Storage, 'getItem' | 'key' | 'length'>): CaptureDraft[] {
+  const out: CaptureDraft[] = []
+  try {
+    for (let i = 0; i < store.length; i++) {
+      const key = store.key(i)
+      if (!key || !key.startsWith(KEY_PREFIX)) continue
+      const d = parseDraft(store.getItem(key))
+      if (d && hasUnsavedWork(d)) out.push(d)
+    }
+  } catch {
+    return out
+  }
+  return out.sort((a, b) => (b.editedAt ?? 0) - (a.editedAt ?? 0))
 }
 
 /** Drives "4 OF 7 DETAILS" and the seven-cell progress bar. */

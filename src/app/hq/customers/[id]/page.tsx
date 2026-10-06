@@ -97,6 +97,12 @@ export default async function CustomerDetailPage({ params }: { params: Promise<{
         </section>
       )}
 
+      {customer.lead_id && (
+        <Suspense fallback={null}>
+          <FromTheCall leadId={customer.lead_id} />
+        </Suspense>
+      )}
+
       <ReviewSection
         customerId={customer.id}
         reviewAskedAt={customer.review_asked_at}
@@ -115,6 +121,56 @@ export default async function CustomerDetailPage({ params }: { params: Promise<{
         <DeferredActivityTimeline customerId={id} leadId={customer.lead_id} />
       </Suspense>
     </div>
+  )
+}
+
+type CallLead = {
+  owner_notes: string | null
+  message: string | null
+  service_type: string | null
+  size_raw: string | null
+  needs_concrete: string | null
+}
+
+/**
+ * What was written down when this customer was a lead.
+ *
+ * Mark Won copies only contact details onto the customer row, and this page is
+ * where it lands — so the call notes, size and concrete answer stayed on the
+ * lead with nothing here pointing at them, and read as lost. Shown from the
+ * lead rather than copied, so an edit to the lead's notes shows up here too.
+ */
+async function FromTheCall({ leadId }: { leadId: string }) {
+  const { data } = await getAdminClient()
+    .from('leads')
+    .select('owner_notes, message, service_type, size_raw, needs_concrete')
+    .eq('id', leadId)
+    .maybeSingle<CallLead>()
+  if (!data) return null
+
+  const facts = [
+    data.service_type?.replace(/_/g, ' '),
+    data.size_raw,
+    data.needs_concrete ? `concrete: ${data.needs_concrete.replace(/_/g, ' ')}` : null,
+  ].filter(Boolean)
+  const notes = [data.owner_notes?.trim(), data.message?.trim()].filter(Boolean)
+  if (facts.length === 0 && notes.length === 0) return null
+
+  return (
+    <section className="rounded-2xl border border-(--border-subtle) bg-(--surface-2) p-5">
+      <div className="flex items-center justify-between gap-3">
+        <h2 className="text-[13px] font-semibold uppercase tracking-wider text-(--text-tertiary)">From the call</h2>
+        <Link href={`/hq/leads/${leadId}`} className="text-[13px] font-semibold text-(--brand-fg)">
+          Open the lead
+        </Link>
+      </div>
+      {facts.length > 0 && (
+        <p className="mt-2 text-[14px] text-(--text-secondary)">{facts.join(' · ')}</p>
+      )}
+      {notes.map((n, i) => (
+        <p key={i} className="mt-2 whitespace-pre-wrap text-[15px] text-(--text-primary)">{n}</p>
+      ))}
+    </section>
   )
 }
 

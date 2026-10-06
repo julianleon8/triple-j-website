@@ -5,10 +5,15 @@ import {
   DRAFT_VERSION,
   FIELD_KEYS,
   FIELD_LABELS,
+  acknowledge,
   clearDraft,
   completedCount,
+  draftHref,
   draftKey,
+  draftTitle,
   emptyDraft,
+  hasUnsavedWork,
+  listUnsavedDrafts,
   isDraftLead,
   loadDraft,
   mergeServerDraft,
@@ -33,6 +38,16 @@ function fakeStore(initial: Record<string, string> = {}) {
     removeItem: (k) => void m.delete(k),
   }
   return store
+}
+
+/** The slice of Storage that listUnsavedDrafts walks. */
+function listingStore(entries: Record<string, string>): Pick<Storage, 'getItem' | 'key' | 'length'> {
+  const keys = Object.keys(entries)
+  return {
+    length: keys.length,
+    key: (i) => keys[i] ?? null,
+    getItem: (k) => entries[k] ?? null,
+  }
 }
 
 /** Safari private mode: setItem throws rather than no-opping. */
@@ -83,6 +98,106 @@ describe('the interruption path', () => {
     expect(saveDraft(emptyDraft('x'), throwingStore)).toBe(false)
     expect(loadDraft('x', throwingStore)).toBeNull()
     expect(() => clearDraft('x', throwingStore)).not.toThrow()
+  })
+})
+
+describe('call notes', () => {
+  it('survive the PWA being killed before there is a phone number', () => {
+    const store = fakeStore()
+    saveDraft({ ...emptyDraft(null), notes: '15x21 on the concrete\nHunter Green', notesPending: true }, store)
+    const restored = loadDraft(null, store)!
+    expect(restored.notes).toBe('15x21 on the concrete\nHunter Green')
+    expect(restored.notesPending).toBe(true)
+  })
+
+  it('read as empty on a draft saved before notes were mirrored, instead of dropping the draft', () => {
+    const legacy = JSON.stringify({ v: DRAFT_VERSION, leadId: 'l1', fields: { name: 'Dana' }, pending: ['name'] })
+    const d = parseDraft(legacy)!
+    expect(d.fields.name).toBe('Dana')
+    expect(d.notes).toBe('')
+    expect(d.notesPending).toBe(false)
+  })
+
+  it('prefer the phone copy while unacknowledged, the server copy once acknowledged', () => {
+    const pending = { ...emptyDraft('l1'), notes: 'newer on the phone', notesPending: true }
+    expect(mergeServerDraft(pending, {}, 'older on the server').notes).toBe('newer on the phone')
+
+    const acked = { ...emptyDraft('l1'), notes: 'stale phone copy', notesPending: false }
+    expect(mergeServerDraft(acked, {}, 'edited on the lead screen').notes).toBe('edited on the lead screen')
+
+    expect(mergeServerDraft(null, {}, 'server only').notes).toBe('server only')
+  })
+})
+
+describe('acknowledge', () => {
+  it('clears only what the server now holds', () => {
+    const d: CaptureDraft = {
+      ...emptyDraft('l1'),
+      fields: { name: 'Dana', city: 'Temple' },
+      pending: ['name', 'city'],
+      notes: 'two windows',
+      notesPending: true,
+    }
+    const after = acknowledge(d, { fields: { name: 'Dana', city: 'Temple' }, notes: 'two windows' }, 1000)
+    expect(after.pending).toEqual([])
+    expect(after.notesPending).toBe(false)
+    expect(after.savedAt).toBe(1000)
+    expect(hasUnsavedWork(after)).toBe(false)
+  })
+
+  it('keeps a row typed into while the request was in flight', () => {
+    // Sent "Dan", then the operator finished typing "Dana" before the 2xx.
+    const d: CaptureDraft = { ...emptyDraft('l1'), fields: { name: 'Dana' }, pending: ['name'] }
+    const after = acknowledge(d, { fields: { name: 'Dan' }, notes: '' }, 1000)
+    expect(after.pending).toEqual(['name'])
+    expect(hasUnsavedWork(after)).toBe(true)
+  })
+
+  it('keeps notes typed into while the request was in flight', () => {
+    const d: CaptureDraft = { ...emptyDraft('l1'), notes: 'two windows, gutters', notesPending: true }
+    const after = acknowledge(d, { fields: {}, notes: 'two windows' }, 1000)
+    expect(after.notesPending).toBe(true)
+  })
+})
+
+describe('listUnsavedDrafts', () => {
+  const draft = (over: Partial<CaptureDraft>) => serializeDraft({ ...emptyDraft(), ...over })
+
+  it('lists only drafts the server has not acknowledged, newest edit first', () => {
+    const store = listingStore({
+      [draftKey(null)]: draft({ notes: 'caller from Belton', notesPending: true, editedAt: 100 }),
+      [draftKey('l1')]: draft({ leadId: 'l1', fields: { name: 'Dana' }, pending: ['name'], editedAt: 300 }),
+      [draftKey('l2')]: draft({ leadId: 'l2', fields: { name: 'Saved' }, pending: [], editedAt: 500 }),
+      unrelated_key: 'x',
+      [draftKey('broken')]: '{"v":1,"fields":',
+    })
+    const list = listUnsavedDrafts(store)
+    expect(list.map((d) => d.leadId)).toEqual(['l1', null])
+  })
+
+  it('returns what it has rather than throwing when storage does', () => {
+    const store = {
+      length: 1,
+      key: () => {
+        throw new DOMException('SecurityError')
+      },
+      getItem: () => null,
+    }
+    expect(listUnsavedDrafts(store)).toEqual([])
+  })
+})
+
+describe('draftTitle and draftHref', () => {
+  it('names a draft by name, then phone, then the first line of the notes', () => {
+    expect(draftTitle({ ...emptyDraft(), fields: { name: 'Topliff', phone: '5125550199' } })).toBe('Topliff')
+    expect(draftTitle({ ...emptyDraft(), fields: { phone: '5125550199' } })).toBe('5125550199')
+    expect(draftTitle({ ...emptyDraft(), notes: '\n  14x20 garage\nBelton' })).toBe('14x20 garage')
+    expect(draftTitle(emptyDraft())).toBe('Unnamed call')
+  })
+
+  it('reopens a saved lead by id and an unsaved capture on the bare screen', () => {
+    expect(draftHref(emptyDraft('l1'))).toBe('/hq/capture?id=l1')
+    expect(draftHref(emptyDraft(null))).toBe('/hq/capture')
   })
 })
 

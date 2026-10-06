@@ -6,6 +6,7 @@ import { redirect } from 'next/navigation'
 import { PhoneCall } from 'lucide-react'
 import { NextActionCard } from './components/NextActionCard'
 import { DraftsToFinish } from './components/DraftsToFinish'
+import { SavedOnThisPhone } from './components/SavedOnThisPhone'
 import { QuotesWaiting } from './components/QuotesWaiting'
 import { CardSkeleton, RowSkeleton } from '@/components/hq/Skeleton'
 
@@ -44,6 +45,8 @@ export default async function TodayPage({ searchParams }: { searchParams: Search
       <Suspense fallback={<CardSkeleton height="h-40" />}>
         <NextActionCard />
       </Suspense>
+
+      <SavedOnThisPhone />
 
       <Suspense fallback={null}>
         <DraftsToFinish />
