@@ -286,3 +286,20 @@ describe("framing around openings and lean-tos", () => {
     expect(ledger).toBeTruthy();
   });
 });
+
+describe("lean-to posts", () => {
+  it("keeps a post out of the drive path of a roll-up on the wall the lean-to covers", () => {
+    // 30 ft long: frame line at z = 0. A 10×10 on the right wall at x = 10 spans z -5..5.
+    const d = with_(garage, {
+      height: 12,
+      openings: [{ id: "a", spec: "r10x10", wall: "right", x: 10 }],
+      leanTos: [{ side: "right", depth: 10, walls: "open" }],
+    });
+    expect(designIssues(d)).toEqual([]);
+    const outerPosts = layoutBuilding(d).members.filter(
+      (m) => m.mat === "frame" && m.a[0] > 24 && m.a[0] === m.b[0] && m.a[2] === m.b[2] && m.a[1] < m.b[1],
+    );
+    expect(outerPosts.map((m) => Math.round(m.a[2]))).not.toContain(0);
+    expect(outerPosts).toHaveLength(2);
+  });
+});

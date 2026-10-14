@@ -12,13 +12,36 @@ import { wallState } from "@/lib/builder/rules";
 type Tone = "light" | "dark";
 
 const PALETTE: Record<Tone, { ink: string; muted: string; fill: string; lean: string; bg: string }> = {
-  light: { ink: "#00182a", muted: "#788a9c", fill: "#f4f6f8", lean: "#ffffff", bg: "#ffffff" },
-  dark: { ink: "#e3e9ee", muted: "#8b9aa8", fill: "rgba(255,255,255,.05)", lean: "rgba(255,255,255,.02)", bg: "transparent" },
+  light: {
+    ink: "#00182a",
+    muted: "#788a9c",
+    fill: "#f4f6f8",
+    lean: "#ffffff",
+    bg: "#ffffff",
+  },
+  dark: {
+    ink: "#e3e9ee",
+    muted: "#8b9aa8",
+    fill: "rgba(255,255,255,.05)",
+    lean: "rgba(255,255,255,.02)",
+    bg: "transparent",
+  },
 };
 
 const SHORT: Record<string, string> = { walk: "Walk door", win3x3: "Window" };
 
-export function PlanView({ design: d, tone = "light", className }: { design: Design; tone?: Tone; className?: string }) {
+/** `labels={false}` drops all text, for thumbnails too small to read it. */
+export function PlanView({
+  design: d,
+  tone = "light",
+  className,
+  labels = true,
+}: {
+  design: Design;
+  tone?: Tone;
+  className?: string;
+  labels?: boolean;
+}) {
   const c = PALETTE[tone];
   const W = d.width / 2;
   const L = d.length / 2;
@@ -29,7 +52,7 @@ export function PlanView({ design: d, tone = "light", className }: { design: Des
   const z1 = L;
   const size = Math.max(x1 - x0, z1 - z0);
   const font = Math.max(1.4, size * 0.055);
-  const pad = font * 4;
+  const pad = labels ? font * 4 : Math.max(0.35, size * 0.012) * 3;
   const vb = `${x0 - pad} ${z0 - pad} ${x1 - x0 + pad * 2} ${z1 - z0 + pad * 2.2}`;
   const thick = Math.max(0.35, size * 0.012);
   const thin = thick / 3;
@@ -76,17 +99,19 @@ export function PlanView({ design: d, tone = "light", className }: { design: Des
               strokeWidth={l.walls === "enclosed" ? thick : thin}
               strokeDasharray={l.walls === "enclosed" ? undefined : `${thick * 2} ${thick * 1.5}`}
             />
-            <text
-              x={r.x + r.w / 2}
-              y={r.y + r.h / 2}
-              fill={c.muted}
-              fontSize={font * 0.8}
-              textAnchor="middle"
-              dominantBaseline="middle"
-              transform={l.side === "back" ? undefined : `rotate(-90 ${r.x + r.w / 2} ${r.y + r.h / 2})`}
-            >
-              Lean-to · {l.depth} ft
-            </text>
+            {labels ? (
+              <text
+                x={r.x + r.w / 2}
+                y={r.y + r.h / 2}
+                fill={c.muted}
+                fontSize={font * 0.8}
+                textAnchor="middle"
+                dominantBaseline="middle"
+                transform={l.side === "back" ? undefined : `rotate(-90 ${r.x + r.w / 2} ${r.y + r.h / 2})`}
+              >
+                Lean-to · {l.depth} ft
+              </text>
+            ) : null}
           </g>
         );
       })}
@@ -122,46 +147,72 @@ export function PlanView({ design: d, tone = "light", className }: { design: Des
         const [bx, bz] = along(o.wall, o.x + spec.w);
         const [mx, mz] = along(o.wall, o.x + spec.w / 2);
         const out = font * 1.25;
-        const offset: Record<Side, [number, number]> = { front: [0, out], back: [0, -out], left: [-out, 0], right: [out, 0] };
+        // Labels sit just inside the wall, clear of the dimensions outside it.
+        const offset: Record<Side, [number, number]> = {
+          front: [0, -out],
+          back: [0, out],
+          left: [out, 0],
+          right: [-out, 0],
+        };
         const [ox, oz] = offset[o.wall];
         const vertical = o.wall === "left" || o.wall === "right";
         return (
           <g key={o.id}>
-            <line x1={ax} y1={az} x2={bx} y2={bz} stroke={c.bg === "transparent" ? "#14181c" : c.bg} strokeWidth={thick * 1.6} />
+            <line
+              x1={ax}
+              y1={az}
+              x2={bx}
+              y2={bz}
+              stroke={c.bg === "transparent" ? "#14181c" : c.bg}
+              strokeWidth={thick * 1.6}
+            />
             <line x1={ax} y1={az} x2={bx} y2={bz} stroke={c.ink} strokeWidth={thin} />
-            <text
-              x={mx + ox}
-              y={mz + oz}
-              fill={c.ink}
-              fontSize={font * 0.8}
-              textAnchor="middle"
-              dominantBaseline="middle"
-              transform={vertical ? `rotate(-90 ${mx + ox} ${mz + oz})` : undefined}
-            >
-              {SHORT[o.spec] ?? spec.label}
-            </text>
+            {labels ? (
+              <text
+                x={mx + ox}
+                y={mz + oz}
+                fill={c.ink}
+                fontSize={font * 0.8}
+                textAnchor="middle"
+                dominantBaseline="middle"
+                transform={vertical ? `rotate(-90 ${mx + ox} ${mz + oz})` : undefined}
+              >
+                {SHORT[o.spec] ?? spec.label}
+              </text>
+            ) : null}
           </g>
         );
       })}
 
       {/* Dimensions */}
-      <text x={0} y={z1 + pad * 0.62} fill={c.ink} fontSize={font} fontWeight={600} textAnchor="middle">
-        {d.width} ft
-      </text>
-      <text x={0} y={z1 + pad * 1.15} fill={c.muted} fontSize={font * 0.75} textAnchor="middle" letterSpacing={font * 0.12}>
-        FRONT
-      </text>
-      <text
-        x={x1 + pad * 0.55}
-        y={0}
-        fill={c.ink}
-        fontSize={font}
-        fontWeight={600}
-        textAnchor="middle"
-        transform={`rotate(-90 ${x1 + pad * 0.55} 0)`}
-      >
-        {d.length} ft
-      </text>
+      {labels ? (
+        <>
+          <text x={0} y={z1 + pad * 0.62} fill={c.ink} fontSize={font} fontWeight={600} textAnchor="middle">
+            {d.width} ft
+          </text>
+          <text
+            x={0}
+            y={z1 + pad * 1.15}
+            fill={c.muted}
+            fontSize={font * 0.75}
+            textAnchor="middle"
+            letterSpacing={font * 0.12}
+          >
+            FRONT
+          </text>
+          <text
+            x={x1 + pad * 0.55}
+            y={0}
+            fill={c.ink}
+            fontSize={font}
+            fontWeight={600}
+            textAnchor="middle"
+            transform={`rotate(-90 ${x1 + pad * 0.55} 0)`}
+          >
+            {d.length} ft
+          </text>
+        </>
+      ) : null}
     </svg>
   );
 }

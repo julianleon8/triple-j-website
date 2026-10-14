@@ -145,7 +145,12 @@ export function packOpenings(d: Design): Opening[] {
   return next;
 }
 
-export type Issue = { code: string; message: string; openingId?: string };
+export type Issue = { code: string; message: string; openingId?: string; leanSide?: LeanSide };
+
+/** The same problem keeps the same key as numbers change, so an edit that only moves an existing problem toward a fix is not a new one. */
+export function issueKey(i: Issue): string {
+  return `${i.code}:${i.openingId ?? i.leanSide ?? ""}`;
+}
 
 /**
  * Where a lean-to's rafters meet this main wall, if one is attached to it. A
@@ -214,6 +219,7 @@ function leanIssues(d: Design): Issue[] {
     if (l.depth > max)
       issues.push({
         code: "lean-depth",
+        leanSide: l.side,
         message: `A ${l.depth} ft lean-to drops below ${LEAN_MIN_OUTER} ft clear at its low edge. Raise the main eave or shorten it.`,
       });
   }

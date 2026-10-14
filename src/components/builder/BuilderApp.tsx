@@ -100,6 +100,30 @@ export function BuilderApp() {
     });
     if (hasLink) window.history.replaceState(null, "", window.location.pathname + window.location.search);
     capture("builder_opened", { from_link: Boolean(fromLink), bad_link: hasLink && !fromLink, restored_draft: Boolean(!fromLink && fromDraft) });
+
+    // A link pasted into this tab, or clicked on this page, changes only the
+    // fragment: no reload, so read it here. Loading it is undoable.
+    const onHash = () => {
+      const h = window.location.hash;
+      if (!/(?:^#|&)d=/.test(h)) return;
+      const linked = designFromHash(h);
+      const s = useBuilder.getState();
+      if (linked) {
+        s.load(linked);
+        s.setSection("review");
+        useBuilder.setState({ badLink: false });
+        try {
+          localStorage.setItem(DRAFT_KEY, encodeDesign(linked));
+        } catch {
+          // Storage blocked: it lives in the page until the tab closes.
+        }
+      } else {
+        useBuilder.setState({ badLink: true });
+      }
+      window.history.replaceState(null, "", window.location.pathname + window.location.search);
+    };
+    window.addEventListener("hashchange", onHash);
+    return () => window.removeEventListener("hashchange", onHash);
   }, []);
 
   useEffect(() => {
@@ -358,7 +382,8 @@ function ViewportControls() {
   return (
     <>
       <UndoRedo className="absolute left-3 top-3" />
-      <div role="group" aria-label="Camera views" className="absolute right-3 top-3 flex gap-1">
+      {/* Bounded on the left so it wraps instead of sliding over Undo/Redo on a narrow pane. */}
+      <div role="group" aria-label="Camera views" className="absolute left-[100px] right-3 top-3 flex flex-wrap justify-end gap-1">
         {VIEW_BUTTONS.map((b) => (
           <button key={b.v} type="button" className={chip} onClick={() => look(b.v)}>
             {b.label}

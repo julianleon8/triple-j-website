@@ -519,7 +519,9 @@ function layoutLean(d: Design, lean: LeanTo, { base, eave, member, surface }: Le
     const eo = depth - COL / 2;
     const zs = frameLines(d.length);
     for (const z of zs) {
-      member({ a: [X(eo), base, z], b: [X(eo), base + rafterY(z, eo) - BEAM_D / 2, z], w: COL, d: COL, mat: "frame" });
+      // No post in front of a roll-up on the wall this lean-to covers: the header spans it.
+      if (!inDrivePath(d, lean.side, sx < 0 ? z + L : L - z))
+        member({ a: [X(eo), base, z], b: [X(eo), base + rafterY(z, eo) - BEAM_D / 2, z], w: COL, d: COL, mat: "frame" });
       member({ a: [X(-COL / 2), base + rafterY(z, -COL / 2), z], b: [X(eo), base + rafterY(z, eo), z], w: BEAM_W, d: BEAM_D, mat: "frame" });
     }
     member({ a: [X(eo), base + rafterY(-L, eo), -L], b: [X(eo), base + rafterY(L, eo), L], w: BEAM_W, d: BEAM_D, mat: "frame" });
@@ -601,7 +603,8 @@ function layoutLean(d: Design, lean: LeanTo, { base, eave, member, surface }: Le
   const xs = spread(-(W - COL / 2), W - COL / 2, Math.max(1, Math.ceil(d.width / MAX_BAY_FT)) + 1);
   const ry = (e: number) => rafterY(zBack, e);
   for (const x of xs) {
-    member({ a: [x, base, Z(eo)], b: [x, base + ry(eo) - BEAM_D / 2, Z(eo)], w: COL, d: COL, mat: "frame" });
+    if (!inDrivePath(d, "back", W - x))
+      member({ a: [x, base, Z(eo)], b: [x, base + ry(eo) - BEAM_D / 2, Z(eo)], w: COL, d: COL, mat: "frame" });
     member({ a: [x, base + ry(-COL / 2), Z(-COL / 2)], b: [x, base + ry(eo), Z(eo)], w: BEAM_W, d: BEAM_D, mat: "frame" });
   }
   member({ a: [-W, base + ry(eo), Z(eo)], b: [W, base + ry(eo), Z(eo)], w: BEAM_W, d: BEAM_D, mat: "frame" });
@@ -709,3 +712,12 @@ export function evalPiecewise(points: [number, number][], u: number): number {
 
 /** Roll-up specs, for the scene's door surfaces. */
 export const ROLLUP_IDS = OPENING_SPECS.filter((s) => s.kind === "rollup").map((s) => s.id);
+
+/** Whether `u` along a main wall falls within 1 ft of a roll-up door on it: no lean-to post goes there. */
+function inDrivePath(d: Design, wall: Side, u: number): boolean {
+  return d.openings.some((o) => {
+    if (o.wall !== wall) return false;
+    const s = openingSpec(o.spec);
+    return s.kind === "rollup" && u > o.x - 1 && u < o.x + s.w + 1;
+  });
+}

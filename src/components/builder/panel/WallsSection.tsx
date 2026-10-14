@@ -31,7 +31,7 @@ export function WallsSection() {
     const affected = state === "enclosed" ? 0 : d.openings.filter((o) => sides.includes(o.wall)).length;
     if (affected) {
       setPending({ sides, state, count: affected });
-      announce(`${affected === 1 ? "A door or window sits" : `${affected} doors and windows sit`} in that wall. They need an enclosed wall.`);
+      announce(pendingMessage(affected, sides));
     } else apply(sides, state, false);
   }
 
@@ -42,7 +42,7 @@ export function WallsSection() {
       lede="Leave it open, close the top, or enclose it. Doors and windows go in enclosed walls."
     >
       <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-4 rounded-[10px] border border-forge-silver bg-white p-3">
-        <PlanView design={d} className="h-[120px] w-full" />
+        <PlanView design={d} labels={false} className="h-[120px] w-full" />
         <div className="flex flex-col gap-2">
           <button
             type="button"
@@ -63,9 +63,7 @@ export function WallsSection() {
 
       {pending ? (
         <Notice action={{ label: `Remove ${pending.count === 1 ? "it" : "them"} and change the wall`, onClick: () => apply(pending.sides, pending.state, true) }}>
-          {pending.count === 1 ? "A door or window" : `${pending.count} doors and windows`} sit in{" "}
-          {pending.sides.length === 1 ? `the ${SIDE_LABEL[pending.sides[0]].toLowerCase()} wall` : "those walls"}. They need an
-          enclosed wall.
+          {pendingMessage(pending.count, pending.sides)}
         </Notice>
       ) : null}
 
@@ -80,4 +78,11 @@ export function WallsSection() {
       ))}
     </SectionShell>
   );
+}
+
+function pendingMessage(count: number, sides: Side[]): string {
+  const where = sides.length === 1 ? `the ${SIDE_LABEL[sides[0]].toLowerCase()} wall` : "those walls";
+  return count === 1
+    ? `A door or window sits in ${where}. It needs an enclosed wall.`
+    : `${count} doors and windows sit in ${where}. They need an enclosed wall.`;
 }

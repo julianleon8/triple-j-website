@@ -9,7 +9,7 @@
 import { create } from "zustand";
 
 import { DEFAULT_DESIGN, type Design } from "@/lib/builder/design";
-import { designIssues, normalizeDesign, type Issue } from "@/lib/builder/rules";
+import { designIssues, issueKey, normalizeDesign, type Issue } from "@/lib/builder/rules";
 
 export type ViewName = "iso" | "front" | "back" | "left" | "right" | "top";
 export type SectionId = "start" | "size" | "walls" | "openings" | "leans" | "colors" | "site" | "review";
@@ -74,8 +74,10 @@ export const useBuilder = create<BuilderState>()((set, get) => ({
     const { design, past, lastKey, lastAt, edits } = get();
     const next = normalizeDesign(fn(structuredClone(design)));
     if (same(next, design)) return { ok: true };
-    const before = new Set(designIssues(design).map((i) => i.message));
-    const fresh = designIssues(next).filter((i) => !before.has(i.message));
+    // Refused only for a problem the design did not already have: a design
+    // opened with a problem (an old link or draft) can still be edited toward a fix.
+    const before = new Set(designIssues(design).map(issueKey));
+    const fresh = designIssues(next).filter((i) => !before.has(issueKey(i)));
     if (fresh.length) {
       get().announce(fresh[0].message);
       return { ok: false, issues: fresh };
