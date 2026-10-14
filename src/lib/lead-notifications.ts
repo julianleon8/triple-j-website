@@ -5,6 +5,8 @@ import { getResend } from '@/lib/resend'
 import { formatCityOrZip } from '@/lib/locations'
 import { leadDisplayName } from '@/lib/pipeline'
 import { zipInfo, formatDistance, formatLeadLocation } from '@/lib/zip'
+import { getSiteUrl } from '@/lib/site-url'
+import { storedDesignUrl } from '@/lib/builder/share'
 
 const CONCRETE_LABELS: Record<string, string> = {
   yes: 'Yes — include concrete pad',
@@ -63,6 +65,8 @@ export interface LeadRecord {
   is_military: boolean | null
   message: string | null
   source: string | null
+  // Migration 034: the 3D builder design, on builder leads only.
+  design?: unknown
   created_at?: string
 }
 
@@ -124,6 +128,7 @@ export async function notifyNewLead({ lead, sizeLine = null }: NotifyNewLeadInpu
     serviceType,
     structureType: lead.structure_type,
     sizeLine,
+    designUrl: storedDesignUrl(getSiteUrl(), lead.design),
     needsConcreteLabel: label(lead.needs_concrete, CONCRETE_LABELS),
     currentSurfaceLabel: label(lead.current_surface, SURFACE_LABELS),
     timelineLabel: label(lead.timeline, TIMELINE_LABELS),

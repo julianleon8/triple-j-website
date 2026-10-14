@@ -11,29 +11,42 @@ type BuildCompilation = {
   };
 };
 
+type PrecacheFilterArg = { asset: BuildAsset; compilation: BuildCompilation };
+
 /**
- * Every emitted file that carries pdf.js — matched by contents, not by name.
- * Next's splitChunks lifts big libraries into hash-named chunks, so a name
- * pattern can't find pdf.js's 490 KB main chunk; its worker is a plain asset
- * that keeps its own name. Computed once per compilation.
+ * Every emitted file whose chunk carries a module from `pattern`: matched by
+ * contents, not by name. Next's splitChunks lifts big libraries into
+ * hash-named chunks, so a name pattern can't find them. Computed once per
+ * compilation.
  */
-const pdfJsAssets = new WeakMap<BuildCompilation, Set<string>>();
-function isPdfJsAsset({ asset, compilation }: { asset: BuildAsset; compilation: BuildCompilation }) {
-  let files = pdfJsAssets.get(compilation);
-  if (!files) {
-    files = new Set();
-    for (const chunk of compilation.chunks) {
-      for (const m of compilation.chunkGraph.getChunkModulesIterable(chunk)) {
-        if (/[\\/]pdfjs-dist[\\/]/.test(m.nameForCondition() ?? "")) {
-          for (const f of chunk.files) files.add(f);
-          break;
+function chunksWith(pattern: RegExp) {
+  const cache = new WeakMap<BuildCompilation, Set<string>>();
+  return ({ asset, compilation }: PrecacheFilterArg) => {
+    let files = cache.get(compilation);
+    if (!files) {
+      files = new Set();
+      for (const chunk of compilation.chunks) {
+        for (const m of compilation.chunkGraph.getChunkModulesIterable(chunk)) {
+          if (pattern.test(m.nameForCondition() ?? "")) {
+            for (const f of chunk.files) files.add(f);
+            break;
+          }
         }
       }
+      cache.set(compilation, files);
     }
-    pdfJsAssets.set(compilation, files);
-  }
-  return files.has(asset.name) || /pdf\.worker/.test(asset.name);
+    return files.has(asset.name);
+  };
 }
+
+/** pdf.js's 490 KB main chunk, plus its worker, a plain asset that keeps its own name. */
+const pdfJsChunk = chunksWith(/[\\/]pdfjs-dist[\\/]/);
+const isPdfJsAsset = (arg: PrecacheFilterArg) => pdfJsChunk(arg) || /pdf\.worker/.test(arg.asset.name);
+
+/** three.js, React Three Fiber and the builder's own scene code: only /build loads them. */
+const isBuilder3dAsset = chunksWith(
+  /[\\/]node_modules[\\/](three|@react-three|camera-controls|three-stdlib|troika-[^\\/]+)[\\/]|[\\/]src[\\/]components[\\/]builder[\\/]scene[\\/]/,
+);
 
 const withSerwist = withSerwistInit({
   // Service worker source file — compiled by Serwist into /sw.js
@@ -45,10 +58,11 @@ const withSerwist = withSerwistInit({
   disable: process.env.NODE_ENV === "development",
   // The SW registers on every page, public site included, and precaches every
   // build asset under 2 MB. pdf.js (~1.7 MB with its worker) is only ever used
-  // by the HQ quote PDF viewer, so it stays out: website visitors must not
-  // download it in the background. The first two entries are Serwist's own
-  // defaults, which setting `exclude` would otherwise drop.
-  exclude: [/\.map$/, /^manifest.*\.js$/, isPdfJsAsset],
+  // by the HQ quote PDF viewer, and the 3D engine only by /build, so both stay
+  // out: website visitors must not download them in the background. The first
+  // two entries are Serwist's own defaults, which setting `exclude` would
+  // otherwise drop.
+  exclude: [/\.map$/, /^manifest.*\.js$/, isPdfJsAsset, isBuilder3dAsset],
 });
 
 // Files the OG cards read from disk at render time (src/lib/og-card.tsx).

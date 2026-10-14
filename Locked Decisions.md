@@ -12,6 +12,8 @@ Do not copy anything from this file into `AGENTS.md`. That duplication is what p
 
 - **Website claims and city-page cleanup:** Removed unsupported competitor installation/lead-time/exclusivity claims and the unverifiable Temple Steel Buildings listing. Concrete is separately priced; service pricing uses the approved steel-and-install basis. Salado, Lampasas, Holland, Taylor, Troy, Nolanville, Harker Heights and Copperas Cove now have researched local context, planning guidance, service links and a cited local source. City galleries show only active projects with matching city labels. **Service pages, About and Contact were cut shorter on 2026-10-03 with the same rule: no competitor-can't-pour-concrete claim, no job counts above the site's 150+, no promised turnkey-permit help, no day-count timeline, no "storm-proof" absolute, and no HOA-approval track record until the owner confirms one.** (2026-09-26; Harker Heights and Copperas Cove 2026-10-01; copy pass 2026-10-03)
 
+- **3D builder (`/build`, 2026-10-14):** live on `main` but **unlisted**: noindex, not in any menu or the sitemap, until Julian and Freddy try it and sign off the draft shop rules (ruleset `tj-v1-draft` in `src/lib/builder/catalog.ts`; sign-off sheet in `docs/3D-BUILDER.md`). Starting points: carport, RV & boat cover, garage & shop, barn. Its only price is the closest sales-pack "From $X" (see Pricing). Its leads are `source = 'builder'` with the design in `leads.design` (see Project inquiries). A shared design lives in the link (`/build#d=…`), never on a server. three.js and React Three Fiber load only on `/build` and stay out of the service-worker precache. It never implies engineering, permit approval or a final price: the review step calls it a concept design confirmed for the site before anything is ordered. (2026-10-14)
+
 - **Steel:** 14-gauge framing is standard. The **heavy-duty upgrade** is 11-gauge columns, welded to the receivers and purlins; the rest of the frame stays 14-gauge. Never "12-gauge", never a full 11-gauge frame. (2026-10-02)
 
 - **Fencing launch:** Metal privacy, pipe/ranch, ornamental metal fencing and gates approved. Gates have their own page, `/services/gates` (2026-10-02). Dedicated page and quote intake; project-specific price and schedule, with no invented rankings. Fencing is stored as `other` with explicit scope in lead notes. Campaign spend comes out of the paid-ad cap below. (2026-09-26)
@@ -94,7 +96,7 @@ Do not copy anything from this file into `AGENTS.md`. That duplication is what p
 
 ## Project inquiries
 
-- **The `leads.source` allowlist is owned by the database CHECK** (`leads_source_check`, migration 029). The public `POST /api/leads` accepts only `website_form | quote_page` from a client, as a closed zod enum — a bad value is a 400, never a constraint violation surfacing as a 500 and a lost lead. Every other source value is set server-side by its own ingest path. (2026-09-07)
+- **The `leads.source` allowlist is owned by the database CHECK** (`leads_source_check`, migration 029; `builder` added by 034). The public `POST /api/leads` accepts only `website_form | quote_page | builder` from a client, as a closed zod enum — a bad value is a 400, never a constraint violation surfacing as a 500 and a lost lead. `builder` must carry a design that passes the builder's rules, and only `builder` may carry one; the server derives the build fields, message and 3D link from it and writes `leads.design`. Every other source value is set server-side by its own ingest path. (2026-09-07; builder 2026-10-14)
 
 - **HQ navigation has exactly one owner:** `src/app/hq/nav.ts` — `HQ_TABS`, `HQ_DESKTOP_NAV` derived from
   it, and `titleForPath()`. There were three lists with two different active-match rules and a title map that
@@ -208,6 +210,7 @@ Do not copy anything from this file into `AGENTS.md`. That duplication is what p
 - **2026 price raise:** +13–15% across the board, effective 2026-05-01. (2026-04-30)
 - **Anchors** (steel + install, bolted, before tax): 20×20 carport **$3,000** · 25×25 carport **$4,000** · 30×30 garage **$5,500** · 20×40 RV/boat cover **$6,500** · 40×100 commercial/ranch **$29,500**. Walls $70/LF of perimeter.
 - **Canonical price sheet:** `dev/sales-pack-2026-04-30.md`. **Do not improvise prices.** If a figure isn't in the sheet, ask.
+- **3D builder price (2026-10-14):** only the sales-pack "From $X" for the closest standard size with the same roof, bolted (welded × 1.10 when picked), always with its basis, labelled "Closest standard size" unless exact, and no figure ("Custom size") when no sheet size is within 35% of the floor area. Never a running total. Anchors: `src/lib/builder/price.ts`, copied from the sales pack; change the sheet first.
 
 ## Positioning
 

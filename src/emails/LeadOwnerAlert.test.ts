@@ -61,3 +61,25 @@ describe('LeadOwnerAlert — leads with no phone to dial', () => {
     expect(leadOwnerAlertText({ ...base, phone: 'Not provided', source: 'facebook_lead_ads' })).toContain('📞 Not provided');
   });
 });
+
+describe('LeadOwnerAlert — 3D builder leads', () => {
+  const builderLead = {
+    ...base,
+    source: 'builder',
+    designUrl: 'https://www.triplejmetaltx.com/build#d=abc',
+    message: 'Designed in the 3D builder:\nBuilding: Garage & shop · 30×30 ft\nRoof: Gabled roof · 10 ft eave',
+  };
+
+  it('links the design and keeps the summary on separate lines', async () => {
+    const { renderToStaticMarkup } = await import('react-dom/server');
+    const LeadOwnerAlert = (await import('./LeadOwnerAlert')).default;
+    const html = renderToStaticMarkup(LeadOwnerAlert(builderLead));
+    expect(html).toContain('href="https://www.triplejmetaltx.com/build#d=abc"');
+    expect(html).toMatch(/white-space:\s*pre-wrap/);
+    expect(leadOwnerAlertText(builderLead)).toContain('3D design: https://www.triplejmetaltx.com/build#d=abc');
+  });
+
+  it('adds no 3D row to an ordinary lead', () => {
+    expect(leadOwnerAlertText(base)).not.toContain('3D design');
+  });
+});

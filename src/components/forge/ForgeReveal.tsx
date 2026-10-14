@@ -30,7 +30,10 @@ export function ForgeReveal({
   style?: CSSProperties;
   id?: string;
 }) {
-  const ref = useRef<HTMLElement>(null);
+  const ref = useRef<HTMLDivElement>(null);
+  // Typed as a div for JSX checking only. Since the 3D builder added three.js
+  // elements to JSX, a bare ElementType tag resolves its props to `never`.
+  const El = Tag as "div";
 
   useEffect(() => {
     const el = ref.current;
@@ -73,8 +76,8 @@ export function ForgeReveal({
   }, [stagger]);
 
   return (
-    <Tag ref={ref} id={id} className={className} style={style}>
+    <El ref={ref} id={id} className={className} style={style}>
       {children}
-    </Tag>
+    </El>
   );
 }

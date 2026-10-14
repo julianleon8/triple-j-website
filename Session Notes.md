@@ -1,5 +1,22 @@
 # Session Notes
 
+## 2026-10-14 — 3D builder at `/build` (live, unlisted)
+
+**In plain terms.** Codex researched a 3D configurator on 2026-10-13 and ran out of usage before writing code or saving its findings. This session built the configurator from that plan, the sales pack and the jobsite photos: a Triple J-themed builder where a customer picks a starting point (carport, RV & boat cover, garage & shop, barn), sizes it, sets the roof, walls, doors and windows, lean-tos, colors, frame and concrete, sees it in 3D (red-iron frame, PBR panels, trim, roll-ups with red-iron jambs, a person for scale), and sends it as a quote request. It is live on `main` but unlisted (noindex, no menu or sitemap entry) until the owner and the crew sign off the draft shop rules. Decisions: `Decisions.md` 2026-10-14 (three rows).
+
+**What changed.**
+- New: `src/lib/builder/` (catalog and draft rules, design schema and presets, rules, pure 3D layout, price line, share links, summary), `src/components/builder/` (zustand store, 8 steps, plan SVG, quote form, React Three Fiber scene), `src/app/build/page.tsx`, `docs/3D-BUILDER.md` (with the rule sign-off sheet), `research/3d-configurators-2026-10.md` (Codex's research, recovered from its logs).
+- Leads: `POST /api/leads` accepts `source: 'builder'` with a design, re-checks it against the builder's rules and derives the build fields, message and 3D link from it; migration **034** (applied and verified) adds `builder` to `leads_source_check` and the `leads.design` jsonb column. HQ's lead screen shows the plan, the spec and "Open in 3D". The owner alert email gains an "Open the design in 3D" row, and its notes keep their line breaks (every lead benefits).
+- Price: only the closest sales-pack "From $X", with its basis (`src/lib/builder/price.ts`).
+- three.js / R3F / drei / zustand added (MIT). The 3D code (about 260 KB gzipped) loads only on `/build`, and `next.config.ts` keeps it out of the service-worker precache. `ForgeReveal` needed a one-line type fix because R3F adds its elements to JSX globally.
+- Analytics: nine `builder_*` events; the server's `lead_created` carries `source: builder`.
+
+**Checked.** typecheck, lint, the full test suite (new: `src/lib/builder/builder.test.ts`, builder cases in `src/app/api/leads/route.test.ts` and `src/emails/LeadOwnerAlert.test.ts`), `npm run build` (with the Connectors.md throwaway env, since `.env.local` holds `[SENSITIVE]` placeholders), the vault checker, and headless-Chromium screenshots at desktop, phone portrait and phone landscape. A five-angle review workflow (geometry, rules and editing, API and privacy, copy and accessibility against the vault, live browser QA), each finding checked by three skeptics, found about 40 issues; the real ones were fixed in the same session (examples: staff names in two public-source comments, which the vault check would have failed on commit; a landscape-phone layout with a 30 px panel; focus loss between steps; contrast; reduced motion; a lean-to roof that could cut through a door; columns running through side-wall windows).
+
+**Not checked.** A real lead submission end to end (local runs use a dead Supabase host; the route is unit-tested and the migration verified in production). Real phones (headless Chromium only). The owner's HQ view of a builder lead (needs sign-in).
+
+**Open, owner's call.** Sign off or change the draft rules (`docs/3D-BUILDER.md` sign-off sheet), then make `/build` public with the checklist there. This machine's `main` was 5 commits behind `origin` with uncommitted vault edits again, so the builder was committed from a clean worktree; run `git pull` here once the vault edits are committed.
+
 ## 2026-10-04 — Vercel Web Analytics was on all along
 
 - The owner's dashboard shows a week of data (89 visitors, 389 page views) and a week before it. The MCP's

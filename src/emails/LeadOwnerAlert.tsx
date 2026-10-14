@@ -24,6 +24,8 @@ interface LeadOwnerAlertProps {
   serviceType: string
   structureType?: string | null
   sizeLine?: string | null
+  /** Builder leads: a link that reopens the customer's design in the 3D builder. */
+  designUrl?: string | null
   needsConcreteLabel?: string | null
   currentSurfaceLabel?: string | null
   timelineLabel?: string | null
@@ -49,6 +51,7 @@ export default function LeadOwnerAlert(props: LeadOwnerAlertProps) {
     serviceType,
     structureType,
     sizeLine,
+    designUrl,
     needsConcreteLabel,
     currentSurfaceLabel,
     timelineLabel,
@@ -88,11 +91,12 @@ export default function LeadOwnerAlert(props: LeadOwnerAlertProps) {
   rows.push(['Service', serviceType.replace(/_/g, ' ')])
   if (structureType) rows.push(['Steel type', structureType])
   if (sizeLine) rows.push(['Size', sizeLine])
+  if (designUrl) rows.push(['3D design', <Link key="d" href={designUrl} style={dataLink}>Open the design in 3D</Link>])
   if (needsConcreteLabel) rows.push(['Concrete pad', needsConcreteLabel])
   if (currentSurfaceLabel) rows.push(['Current surface', currentSurfaceLabel])
   if (timelineLabel) rows.push(['Timeline', timelineLabel])
   rows.push(['Military/FR', isMilitary ? '✅ Yes — apply 7% discount' : 'No'])
-  if (message) rows.push(['Notes', <em key="m" style={{ color: '#33475a' }}>&ldquo;{message}&rdquo;</em>])
+  if (message) rows.push(['Notes', <em key="m" style={{ color: '#33475a', whiteSpace: 'pre-wrap', overflowWrap: 'anywhere' }}>&ldquo;{message}&rdquo;</em>])
 
   return (
     <BrandLayout preview={`${isHot ? '⚡ HOT — ' : ''}${name} · ${city} · ${serviceType.replace(/_/g, ' ')}`}>
@@ -200,6 +204,7 @@ export function leadOwnerAlertText(props: LeadOwnerAlertProps): string {
   lines.push(`— DETAILS —`)
   if (props.structureType) lines.push(`Steel: ${props.structureType}`)
   if (props.sizeLine) lines.push(`Size: ${props.sizeLine}`)
+  if (props.designUrl) lines.push(`3D design: ${props.designUrl}`)
   if (props.needsConcreteLabel) lines.push(`Concrete: ${props.needsConcreteLabel}`)
   if (props.currentSurfaceLabel) lines.push(`Surface: ${props.currentSurfaceLabel}`)
   if (props.timelineLabel) lines.push(`Timeline: ${props.timelineLabel}`)

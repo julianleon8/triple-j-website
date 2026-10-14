@@ -12,6 +12,7 @@ import { ColdBanner } from '@/components/hq/ColdBanner'
 import { CardSkeleton } from '@/components/hq/Skeleton'
 import { LeadStatusButtons } from './components/LeadStatusButtons'
 import { AttributionCard } from './components/AttributionCard'
+import { BuilderDesignCard } from './components/BuilderDesignCard'
 import { ReferrerPicker } from './components/ReferrerPicker'
 import { IntentStagePicker } from './components/IntentStagePicker'
 import { zipInfo, formatDistance, formatLeadLocation, BAND_LABELS } from '@/lib/zip'
@@ -57,6 +58,8 @@ type LeadRecord = {
   lost_at: string | null
   lost_reason: string | null
   lost_reason_notes: string | null
+  // Migration 034 — set only on 3D builder leads
+  design: unknown
 }
 
 /**
@@ -189,6 +192,8 @@ export default async function LeadDetailPage({ params }: { params: Promise<{ id:
           <p className="mt-2 whitespace-pre-wrap text-[15px] text-(--text-primary)">{lead.owner_notes}</p>
         </section>
       )}
+
+      {lead.design ? <BuilderDesignCard design={lead.design} /> : null}
 
       {/* What they said, before the field dump. */}
       {lead.message && (

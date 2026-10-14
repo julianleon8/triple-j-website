@@ -1,3 +1,14 @@
+# 3D builder — live at `/build`, unlisted (2026-10-14)
+
+Read `docs/3D-BUILDER.md` first: what it does, where each piece lives, the rule sign-off sheet and the go-public checklist. Decisions: `Decisions.md` 2026-10-14.
+
+1. ☐ **Owner + crew:** open `/build` on a phone and try each starting point. Fill the sign-off sheet in `docs/3D-BUILDER.md` (every limit is a draft). Changes go in `src/lib/builder/catalog.ts`; then set `RULESET_VERSION = "tj-v1"` and log it.
+2. ☐ **Owner:** send one test lead from `/build` and check the owner email's "Open the design in 3D" row and the 3D design card on the HQ lead. Not yet verified end to end against production.
+3. ☐ **Build, after 1:** go public with the checklist in `docs/3D-BUILDER.md` (drop `robots`, OG card, sitemap, two in-body links, link checker), and update `Locked Decisions.md` → Product.
+4. ☐ Not scoped yet: vehicles for scale, roof pitch choice, Premium Line colors, a priced breakdown (needs the roll-up price conflict settled first).
+
+---
+
 # Public names — 2026-10-03 · BUILT AND CHECKED LOCALLY, NOT PUSHED
 
 Only Julian is named on the public site now (`Locked Decisions.md` → Positioning; `Session Notes.md` has the

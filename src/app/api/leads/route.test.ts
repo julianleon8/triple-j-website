@@ -136,3 +136,44 @@ describe('lead_created analytics event', () => {
     expect(mock.track).not.toHaveBeenCalled();
   });
 });
+
+describe('3D builder leads', () => {
+  const garage = {
+    v: 1, use: 'garage', width: 30, length: 30, height: 10, roof: 'gable', frame: 'welded', heavyDuty: true,
+    walls: { front: 'enclosed', back: 'enclosed', left: 'enclosed', right: 'enclosed' },
+    openings: [{ id: 'd1', spec: 'r10x10', wall: 'front', x: 10 }],
+    leanTos: [], colors: { roof: 'Charcoal', walls: 'Light-Stone', trim: 'Charcoal', wainscot: null }, concrete: 'yes',
+  };
+
+  it('saves the design and takes the build facts from it, not the browser', async () => {
+    const response = await POST(request({ source: 'builder', design: garage, service_type: 'carport', width: '99', message: 'Gate on the north side' }));
+    expect(response.status).toBe(200);
+    const saved = mock.insert.mock.calls[0][0];
+    expect(saved).toMatchObject({ source: 'builder', service_type: 'garage', structure_type: 'welded', needs_concrete: 'yes', design: garage });
+    expect(saved.message).toContain('Designed in the 3D builder:');
+    expect(saved.message).toContain('heavy-duty upgrade (11-gauge columns)');
+    expect(saved.message).toMatch(/Open the design in 3D: https?:\/\/\S+\/build#d=[\w-]+/);
+    expect(saved.message).toContain('Customer notes:\nGate on the north side');
+    expect(mock.notify.mock.calls[0][0].sizeLine).toBe('30W × 30L × 10H ft');
+    expect(mock.track.mock.calls[0][0].properties).toMatchObject({ source: 'builder', service_type: 'garage' });
+  });
+
+  it('requires a design from the builder, and refuses one from anywhere else', async () => {
+    expect((await POST(request({ source: 'builder' }))).status).toBe(400);
+    expect((await POST(request({ source: 'quote_page', design: garage }))).status).toBe(400);
+    expect(mock.insert).not.toHaveBeenCalled();
+  });
+
+  it('refuses a design that breaks a builder rule', async () => {
+    const doorOnOpenWall = { ...garage, walls: { ...garage.walls, front: 'open' } };
+    const response = await POST(request({ source: 'builder', design: doorOnOpenWall }));
+    expect(response.status).toBe(400);
+    expect((await response.json()).error).toMatch(/needs the front wall enclosed/);
+    expect(mock.insert).not.toHaveBeenCalled();
+  });
+
+  it('leaves ordinary leads without a design column', async () => {
+    expect((await POST(request())).status).toBe(200);
+    expect(mock.insert.mock.calls[0][0]).not.toHaveProperty('design');
+  });
+});

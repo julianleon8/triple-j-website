@@ -39,6 +39,17 @@ export type AnalyticsEvent =
   // Contact page message form (MessageForm.tsx). Its lead also fires the
   // server-side lead_created, like a quote.
   | 'contact_message_submitted'
+  // The 3D builder (/build), in funnel order. Its lead fires lead_created
+  // with source 'builder'.
+  | 'builder_opened'
+  | 'builder_preset_selected'
+  | 'builder_first_edit'
+  | 'builder_section_viewed'
+  | 'builder_shared'
+  | 'builder_quote_started'
+  | 'builder_quote_submitted'
+  | 'builder_quote_failed'
+  | 'builder_3d_unavailable'
 
 /** Server-side event, sent from /api/leads once the lead row exists. The
  *  canonical conversion: it counts every saved lead, ad blocker or not. */

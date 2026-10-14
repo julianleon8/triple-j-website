@@ -11,6 +11,10 @@ import { inferIntentStage } from '@/lib/intent-stage'
 import { SITE } from '@/lib/site'
 import { cityFromZip } from '@/lib/locations'
 import { trackLeadCreated } from '@/lib/posthog-server'
+import { designSchema } from '@/lib/builder/design'
+import { designIssues } from '@/lib/builder/rules'
+import { shareUrl } from '@/lib/builder/share'
+import { leadMessage } from '@/lib/builder/summary'
 
 export const dynamic = 'force-dynamic'
 
@@ -63,7 +67,12 @@ const leadSchema = z.object({
   // server-side by its own ingest path and is deliberately not accepted here.
   // Spoofing this is uninteresting: anyone who can POST already controls name,
   // phone, message and every utm_* field.
-  source:           z.enum(['website_form', 'quote_page']).default('website_form'),
+  // 'builder' (the 3D builder at /build) must carry its design, and only it may.
+  source:           z.enum(['website_form', 'quote_page', 'builder']).default('website_form'),
+  // The 3D builder's design (src/lib/builder). Checked against the same
+  // rules the builder enforces; the server, not the browser, turns it into
+  // the size fields, the lead message and the link that reopens it in 3D.
+  design:           designSchema.optional(),
   // The browser's PostHog IDs, so the server's lead_created event joins the
   // visitor's funnel and session replay. Never stored on the lead row.
   posthog_distinct_id: z.string().max(200).optional(),
@@ -116,6 +125,29 @@ export async function POST(request: NextRequest) {
     const body = await request.json()
     const data = leadSchema.parse(body)
 
+    // A builder lead is its design, and nothing else may send one. The design
+    // must pass the same rules the builder enforces; a 400 here means a
+    // tampered or stale page, never a buildable design turned away.
+    const design = data.design ?? null
+    if ((data.source === 'builder') !== Boolean(design)) {
+      return NextResponse.json({ error: 'Something went wrong with the design. Please try again.' }, { status: 400 })
+    }
+    if (design) {
+      const issues = designIssues(design)
+      if (issues.length) return NextResponse.json({ error: issues[0].message }, { status: 400 })
+    }
+    // For a builder lead the design, not the browser, supplies these.
+    const fields = design
+      ? {
+          service_type: design.use,
+          structure_type: design.frame,
+          needs_concrete: design.concrete,
+          width: String(design.width),
+          length: String(design.length),
+          height: String(design.height),
+        }
+      : data
+
     // Captcha verification — skipped in dev if HCAPTCHA_SECRET_KEY unset.
     const captcha = await verifyHCaptchaToken(data.captcha_token, ip)
     if (!captcha.success) {
@@ -128,8 +160,8 @@ export async function POST(request: NextRequest) {
     // null (not the raw ZIP) when unrecognised — a ZIP stored in the city
     // column poisons every city-level report. Display handles the fallback.
     const city = cityFromZip(data.zip)
-    const sizeLine = data.width && data.length
-      ? `${data.width}W × ${data.length}L${data.height ? ` × ${data.height}H` : ''} ft`
+    const sizeLine = fields.width && fields.length
+      ? `${fields.width}W × ${fields.length}L${fields.height ? ` × ${fields.height}H` : ''} ft`
       : null
 
     // Header fallback: if the client didn't send referrer_url, the
@@ -167,14 +199,16 @@ export async function POST(request: NextRequest) {
         email:           data.email || null,
         city,
         zip:             data.zip || null,
-        service_type:    data.service_type,
-        structure_type:  data.structure_type || null,
-        needs_concrete:  data.needs_concrete || null,
+        service_type:    fields.service_type,
+        structure_type:  fields.structure_type || null,
+        needs_concrete:  fields.needs_concrete || null,
         current_surface: data.current_surface || null,
         timeline:        data.timeline || null,
         best_time_to_call: data.best_time_to_call || null,
         is_military:     data.is_military,
-        message:         [sizeLine, projectNotes, projectNotes && data.message?.trim() ? `Customer notes:\n${data.message.trim()}` : data.message?.trim()].filter(Boolean).join('\n\n') || null,
+        message:         design
+          ? leadMessage(design, shareUrl(getSiteUrl(), design), data.message)
+          : [sizeLine, projectNotes, projectNotes && data.message?.trim() ? `Customer notes:\n${data.message.trim()}` : data.message?.trim()].filter(Boolean).join('\n\n') || null,
         source:          data.source,
         utm_source:      data.utm_source || null,
         utm_medium:      data.utm_medium || null,
@@ -188,6 +222,8 @@ export async function POST(request: NextRequest) {
         intent_stage:    intentStage,
         estimated_budget_min: data.estimated_budget_min ?? null,
         estimated_budget_max: data.estimated_budget_max ?? null,
+        // Only builder leads write this column (migration 034).
+        ...(design ? { design } : {}),
       })
       .select()
       .single()
@@ -205,8 +241,8 @@ export async function POST(request: NextRequest) {
         // The owner's own test leads: hidden by the project's internal filter.
         internal_traffic: data.posthog_internal || undefined,
         source: data.source,
-        service_type: data.service_type,
-        structure_type: data.structure_type,
+        service_type: fields.service_type,
+        structure_type: fields.structure_type,
         timeline: data.timeline,
         intent_stage: intentStage,
         is_military: data.is_military,
