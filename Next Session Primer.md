@@ -1,11 +1,12 @@
-# 3D builder — live at `/build`, unlisted (2026-10-14)
+# 3D builder — live at `/build`, unlisted (updated 2026-10-15)
 
-Read `docs/3D-BUILDER.md` first: what it does, where each piece lives, the rule sign-off sheet and the go-public checklist. Decisions: `Decisions.md` 2026-10-14.
+Read `docs/3D-BUILDER.md` first: what it does, where each piece lives, the rule sign-off sheet and the go-public checklist. Decisions: `Decisions.md` 2026-10-14 and 2026-10-15. The crew's framing rules: `Business Profile.md` → Framing.
 
-1. ☐ **Owner + crew:** open `/build` on a phone and try each starting point. Fill the sign-off sheet in `docs/3D-BUILDER.md` (every limit is a draft). Changes go in `src/lib/builder/catalog.ts`; then set `RULESET_VERSION = "tj-v1"` and log it.
-2. ☐ **Owner:** send one test lead from `/build` and check the owner email's "Open the design in 3D" row and the 3D design card on the HQ lead. Not yet verified end to end against production.
-3. ☐ **Build, after 1:** go public with the checklist in `docs/3D-BUILDER.md` (drop `robots`, OG card, sitemap, two in-body links, link checker), and update `Locked Decisions.md` → Product.
-4. ☐ Not scoped yet: vehicles for scale, roof pitch choice, Premium Line colors, a priced breakdown (needs the roll-up price conflict settled first).
+1. ☐ **Owner + Freddy:** answer the phone question sheet (claude.ai artifact `Q6ZG9EqgG7KGbpfvo4k5DC`; answers are saved in its database, collection `answers`). Then move the answers into `src/lib/builder/catalog.ts` / `geometry.ts` and the sign-off sheet; set `RULESET_VERSION = "tj-v1"` and log it.
+2. ☐ **Owner:** yes or no on the job-photo reads: flat roofs slope to one long side with purlins running the length (the builder still slopes front to back, purlins across); flush framing; no braces.
+3. ☐ **Owner:** send one test lead from `/build` and check the owner email's "Open the design in 3D" row and the HQ lead card. Not yet verified end to end against production.
+4. ☐ **Build, after 1:** go public with the checklist in `docs/3D-BUILDER.md`, and update `Locked Decisions.md` → Product.
+5. ☐ Not scoped yet: vehicles for scale, roof pitch choice, Premium Line colors, a priced breakdown (needs the roll-up price conflict settled first), I-beam frames for big buildings.
 
 ---
 

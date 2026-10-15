@@ -1,5 +1,20 @@
 # Session Notes
 
+## 2026-10-15 — Builder: drag, clear selection and errors, ridge cap, and the frame as the crew builds it
+
+**In plain terms.** Julian tried `/build` and taught the build. Doors and windows now drag along their wall with a finger or the mouse, in 3D and on the plan. The selected one has a clear blue outline and a tag. Anything refused shows an amber message over the 3D view. The ridge cap matches the roof color unless picked. The frame is drawn the way the crew builds it: posts, then receivers whose top flange rests on the posts (the bottom flange is notched around each post), then purlins slotted inside the receivers, tops flush. The roof now sits at the eave height the customer picks, not 8 in above it.
+
+**What changed.**
+- `4848a7c`: `drag.ts`, `DraggablePlan.tsx`, `Toast.tsx`, `slideOpening` and `slideBlock` in `rules.ts`, store `notify` / `flash` / `dragging`, the 3D outline and tag in `Building.tsx`, `colors.ridge` (null = match roof) with a "Ridge cap" pick on gabled roofs.
+- `e7d1249`: `geometry.ts` frames posts → receivers (plain C, 8 in) → lipped roof purlins (6 in, ≤ 4 ft 6 in apart, no ridge beam) and 4 in wall purlins (first at 3 ft under wainscot). Adds double receivers on middle frame lines, roll-up jambs up to the roof, and the receiver as the header when an opening comes up under it. Lean-tos are framed the same way, their steel kept outside the main wall's sheeting, and enclosed lean-to walls get wall purlins. Channels render as real C sections (`channelGeometry.ts`).
+- Sign-off sheet in `docs/3D-BUILDER.md` gains the framing rows, every size marked a draft.
+
+**Checked.** Typecheck, lint, all 745 tests (new frame tests check every receiver and purlin top against the roof line, purlin ends at the receiver webs, post tops under the top flange, flat roofs and lean-tos), `npm run build`, the vault checker. Headless renders inside and out, locally and on production. A multi-agent review of the frame draft confirmed three lean-to defects, all fixed.
+
+**Not checked.** Real phones for the drag (headless phone viewport only).
+
+**Open, owner's call.** Freddy's answers on the phone sheet (receiver and purlin sizes, how the post fits the receiver, flat-roof purlin direction, lean-to low edge). `Business Profile.md` → Framing holds the crew's rules. That edit is in the main folder, uncommitted, alongside the owner's own vault edits.
+
 ## 2026-10-14 — 3D builder at `/build` (live, unlisted)
 
 **In plain terms.** Codex researched a 3D configurator on 2026-10-13 and ran out of usage before writing code or saving its findings. This session built the configurator from that plan, the sales pack and the jobsite photos: a Triple J-themed builder where a customer picks a starting point (carport, RV & boat cover, garage & shop, barn), sizes it, sets the roof, walls, doors and windows, lean-tos, colors, frame and concrete, sees it in 3D (red-iron frame, PBR panels, trim, roll-ups with red-iron jambs, a person for scale), and sends it as a quote request. It is live on `main` but unlisted (noindex, no menu or sitemap entry) until the owner and the crew sign off the draft shop rules. Decisions: `Decisions.md` 2026-10-14 (three rows).
