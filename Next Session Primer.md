@@ -4,9 +4,10 @@ Read `docs/3D-BUILDER.md` first: what it does, where each piece lives, the rule 
 
 1. ☐ **Owner + Freddy:** answer the phone question sheet (claude.ai artifact `Q6ZG9EqgG7KGbpfvo4k5DC`; answers are saved in its database, collection `answers`). Then move the answers into `src/lib/builder/catalog.ts` / `geometry.ts` and the sign-off sheet; set `RULESET_VERSION = "tj-v1"` and log it.
 2. ☐ **Owner:** yes or no on the job-photo reads: flat roofs slope to one long side with purlins running the length (the builder still slopes front to back, purlins across); flush framing; no braces.
-3. ☐ **Owner:** send one test lead from `/build` and check the owner email's "Open the design in 3D" row and the HQ lead card. Not yet verified end to end against production.
-4. ☐ **Build, after 1:** go public with the checklist in `docs/3D-BUILDER.md`, and update `Locked Decisions.md` → Product.
-5. ☐ Not scoped yet: vehicles for scale, roof pitch choice, Premium Line colors, a priced breakdown (needs the roll-up price conflict settled first), I-beam frames for big buildings.
+3. ☐ **Fix list from 12 simulated customers (2026-10-15):** claude.ai artifact `1vXRyYdz5LWJYMRqM15Std` ("Builder Test Customers"), ranked. Biggest: the × on the floating door label deletes the door; leaving Review wipes the contact form; a vertical swipe on a size slider changes the size (confirm on a real phone); one tap on a starting point replaces the design; the price is for a smaller "closest" size; step bar cut off at every width. Nothing changed in code yet; the owner picks after Freddy's answers. They ran against a local build with a fake database and inbox; the harness was in the session scratchpad and is gone.
+4. ☐ **Owner:** send one test lead from `/build` and check the owner email's "Open the design in 3D" row and the HQ lead card. Not yet verified end to end against production.
+5. ☐ **Build, after 1:** go public with the checklist in `docs/3D-BUILDER.md`, and update `Locked Decisions.md` → Product.
+6. ☐ Not scoped yet: vehicles for scale, roof pitch choice, Premium Line colors, a priced breakdown (needs the roll-up price conflict settled first), I-beam frames for big buildings.
 
 ---
 
