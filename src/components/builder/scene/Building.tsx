@@ -25,6 +25,7 @@ import { fmt } from "@/lib/builder/rules";
 
 import { dragTo, endDrag, startDrag, type DragSession } from "../drag";
 import { useBuilder } from "../store";
+import { channelGeometry } from "./channelGeometry";
 import { panelGeometry } from "./panelGeometry";
 
 const UNDERSIDE = "#c3c8cb";
@@ -116,17 +117,44 @@ export function Building({ design, layout }: { design: Design; layout: Layout })
   );
 }
 
-// ── framing: one instanced draw call per material ──
+// ── framing: one instanced draw call per material and section ──
 
 const UNIT_BOX = new BoxGeometry(1, 1, 1);
 
+/** Splits members by section: solid boxes scale to size; each channel size has its own true-size shape. */
 function Members({ members, material }: { members: Member[]; material: MeshStandardMaterial }) {
+  const groups = useMemo(() => {
+    const by = new Map<string, Member[]>();
+    for (const m of members) {
+      const key = m.profile && m.profile !== "box" ? `${m.profile}|${m.d}|${m.w}` : "box";
+      const list = by.get(key);
+      if (list) list.push(m);
+      else by.set(key, [m]);
+    }
+    return [...by.entries()];
+  }, [members]);
+  return (
+    <>
+      {groups.map(([key, list]) => (
+        <MemberGroup key={key} section={key} members={list} material={material} />
+      ))}
+    </>
+  );
+}
+
+function MemberGroup({ section, members, material }: { section: string; members: Member[]; material: MeshStandardMaterial }) {
   const ref = useRef<InstancedMesh>(null);
+  const geometry = useMemo(() => {
+    if (section === "box") return UNIT_BOX;
+    const [profile, d, w] = section.split("|");
+    return channelGeometry(Number(d), Number(w), profile === "lipped");
+  }, [section]);
   // Capacity grows in steps, so a slider drag rarely rebuilds the mesh.
   const capacity = Math.max(64, Math.ceil(members.length / 64) * 64);
   useLayoutEffect(() => {
     const mesh = ref.current;
     if (!mesh) return;
+    const solid = section === "box";
     const m = new Matrix4();
     const a = new Vector3();
     const b = new Vector3();
@@ -134,6 +162,7 @@ function Members({ members, material }: { members: Member[]; material: MeshStand
     const y = new Vector3();
     const z = new Vector3();
     const up = new Vector3();
+    const open = new Vector3();
     members.forEach((mem, i) => {
       a.fromArray(mem.a);
       b.fromArray(mem.b);
@@ -145,19 +174,29 @@ function Members({ members, material }: { members: Member[]; material: MeshStand
       else up.set(0, 1, 0);
       z.crossVectors(x, up).normalize();
       y.crossVectors(z, x);
-      m.makeBasis(x.multiplyScalar(len), y.multiplyScalar(mem.d), z.multiplyScalar(mem.w));
+      if (solid) {
+        m.makeBasis(x.multiplyScalar(len), y.multiplyScalar(mem.d), z.multiplyScalar(mem.w));
+      } else {
+        // A channel is drawn at true size; turn it half a turn about its
+        // length when its open side has to face the other way.
+        if (mem.open && z.dot(open.fromArray(mem.open)) < 0) {
+          y.negate();
+          z.negate();
+        }
+        m.makeBasis(x.multiplyScalar(len), y, z);
+      }
       m.setPosition((a.x + b.x) / 2, (a.y + b.y) / 2, (a.z + b.z) / 2);
       mesh.setMatrixAt(i, m);
     });
     mesh.count = members.length;
     mesh.instanceMatrix.needsUpdate = true;
     mesh.computeBoundingSphere();
-  }, [members, capacity]);
+  }, [members, capacity, section]);
   return (
     <instancedMesh
       key={capacity}
       ref={ref}
-      args={[UNIT_BOX, material, capacity]}
+      args={[geometry, material, capacity]}
       castShadow
       receiveShadow
       frustumCulled={false}

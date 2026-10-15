@@ -1,8 +1,8 @@
 import { describe, expect, it } from "vitest";
 
-import { BUILDER_COLORS, LIMITS, USES } from "./catalog";
+import { BUILDER_COLORS, FLAT_PITCH, GABLE_PITCH, LEAN_ATTACH_DROP, LEAN_PITCH, LIMITS, USES } from "./catalog";
 import { PRESETS, designSchema, type Design } from "./design";
-import { frameLines, layoutBuilding, type Vec3 } from "./geometry";
+import { COL, PUR_D, REC_B, REC_D, STEEL_T, cross, frameLines, layoutBuilding, type Vec3 } from "./geometry";
 import { formatPrice, priceHint } from "./price";
 import {
   canAddLean,
@@ -281,11 +281,6 @@ describe("framing around openings and lean-tos", () => {
     expect(new Set(front.bottom.map(([, v]) => v))).toEqual(new Set([wide.height - 3]));
   });
 
-  it("gives a back lean-to a ledger to hang its rafters on", () => {
-    const d = with_(garage, { leanTos: [{ side: "back", depth: 10, walls: "open" }] });
-    const ledger = layoutBuilding(d).members.find((m) => m.mat === "frame" && m.a[2] === m.b[2] && Math.abs(m.a[2] + 15 - 1 / 6) < 0.01 && m.a[0] < -14 && m.b[0] > 14);
-    expect(ledger).toBeTruthy();
-  });
 });
 
 describe("lean-to posts", () => {
@@ -363,5 +358,243 @@ describe("ridge cap color", () => {
   it("is drawn as its own piece on a gabled roof only", () => {
     expect(layoutBuilding(garage).members.filter((m) => m.mat === "ridge")).toHaveLength(2);
     expect(layoutBuilding(PRESETS.rv_cover).members.filter((m) => m.mat === "ridge")).toHaveLength(0);
+  });
+});
+
+describe("posts, receivers, purlins", () => {
+  type Lay = ReturnType<typeof layoutBuilding>;
+  type M = Lay["members"][number];
+  const receivers = (lay: Lay) => lay.members.filter((m) => m.profile === "c");
+  const roofPurlins = (lay: Lay) => lay.members.filter((m) => m.profile === "lipped" && m.d === PUR_D);
+  const wallPurlins = (lay: Lay) => lay.members.filter((m) => m.profile === "lipped" && m.d !== PUR_D);
+  const posts = (lay: Lay) =>
+    lay.members.filter((m) => m.mat === "frame" && !m.profile && m.w === COL && m.d === COL && m.a[0] === m.b[0] && m.a[2] === m.b[2]);
+  /** A channel's top edge over the point p on its center line. */
+  const top = (m: M, p: Vec3): Vec3 => {
+    const n = m.up ?? [0, 1, 0];
+    return [p[0] + (n[0] * m.d) / 2, p[1] + (n[1] * m.d) / 2, p[2] + (n[2] * m.d) / 2];
+  };
+  /** The main roof's steel line at (x, z): the eave on the posts, up to the ridge on a gable. */
+  const roofLine = (d: Design, lay: Lay, x: number, z: number) =>
+    lay.base + (d.roof === "gable" ? d.height + (d.width / 2 - Math.abs(x)) * GABLE_PITCH : d.height + (z + d.length / 2) * FLAT_PITCH);
+  /** Purlin ends wanted: one on each side of every receiver web inside the run. */
+  const endsAtWebs = (d: Design) => {
+    const L = d.length / 2;
+    const webs = [L, ...frameLines(d.length).slice(1, -1), -L];
+    return new Set(
+      webs
+        .flatMap((w) => [w - STEEL_T, w + STEEL_T])
+        .filter((z) => Math.abs(z) < L)
+        .map((z) => z.toFixed(6)),
+    );
+  };
+
+  it("rests each receiver's top flange on the posts: the posts run up inside it, the tops flush", () => {
+    for (const d of [carport, garage, PRESETS.rv_cover]) {
+      const lay = layoutBuilding(d);
+      const W = d.width / 2;
+      const sides = receivers(lay).filter((m) => m.a[0] === m.b[0] && Math.abs(m.a[0]) < W);
+      expect(sides).toHaveLength(2);
+      for (const m of sides) {
+        for (const p of [m.a, m.b]) expect(top(m, p)[1]).toBeCloseTo(roofLine(d, lay, W, p[2]), 6);
+        expect(Math.abs(m.a[0]) + REC_B / 2).toBeCloseTo(W);
+        expect(Math.sign(m.open![0])).toBe(-Math.sign(m.a[0])); // open toward the middle
+      }
+      const lines = frameLines(d.length);
+      const cols = posts(lay).filter(
+        (m) => Math.abs(Math.abs(m.a[0]) - (W - COL / 2)) < 1e-9 && lines.some((z) => Math.abs(m.a[2] - z) < 1e-9) && Math.max(m.a[1], m.b[1]) > lay.base + d.height / 2,
+      );
+      expect(cols.length).toBeGreaterThanOrEqual(4);
+      // Each stops just under the top flange: inside the receiver, not under it.
+      for (const m of cols) expect(Math.max(m.a[1], m.b[1])).toBeCloseTo(roofLine(d, lay, W, m.a[2]) - STEEL_T, 6);
+    }
+  });
+
+  it("sets every sloped receiver's top edge on the roof line, eave to ridge, doubles included", () => {
+    for (const d of [carport, garage, with_(carport, { length: 40 }), with_(carport, { width: 40, length: 60 })]) {
+      const lay = layoutBuilding(d);
+      const W = d.width / 2;
+      const sloped = receivers(lay).filter((m) => m.up && Math.abs(m.a[0]) <= W && Math.abs(m.b[0]) <= W);
+      expect(sloped).toHaveLength(2 * 2 * (frameLines(d.length).length - 1));
+      for (const m of sloped) {
+        for (const p of [m.a, m.b]) {
+          const t = top(m, p);
+          expect(t[1]).toBeCloseTo(roofLine(d, lay, t[0], t[2]), 6);
+        }
+      }
+    }
+  });
+
+  it("slots the roof purlins inside the receivers: tops on the roof line, each end at a receiver's web, no ridge beam", () => {
+    for (const d of [carport, garage, PRESETS.barn, with_(carport, { width: 40, length: 60 })]) {
+      const lay = layoutBuilding(d);
+      const W = d.width / 2;
+      const purlins = roofPurlins(lay).filter((m) => Math.abs(m.a[0]) <= W);
+      expect(purlins.length).toBeGreaterThan(0);
+      for (const m of purlins) {
+        for (const p of [m.a, m.b]) {
+          const t = top(m, p);
+          expect(t[1]).toBeCloseTo(roofLine(d, lay, t[0], t[2]), 6);
+        }
+      }
+      expect(new Set(purlins.flatMap((m) => [m.a[2], m.b[2]]).map((z) => z.toFixed(6)))).toEqual(endsAtWebs(d));
+      // Nothing runs along the ridge itself.
+      expect(lay.members.filter((m) => m.mat === "frame" && Math.abs(m.a[0]) < 0.01 && Math.abs(m.b[0]) < 0.01 && m.a[2] !== m.b[2])).toEqual([]);
+    }
+  });
+
+  it("puts three purlins on each slope of a 26 wide, about 4 ft 4 in apart, as on the jobsite photos", () => {
+    const lay = layoutBuilding(with_(carport, { width: 26, length: 25 }));
+    const right = roofPurlins(lay).filter((m) => m.a[0] > 0);
+    expect(right).toHaveLength(3);
+    const xs = right.map((m) => m.a[0]).sort((a, b) => b - a);
+    const eaveX = 13 - REC_B / 2;
+    const gaps = [eaveX - xs[0], xs[0] - xs[1], xs[1] - xs[2]].map((g) => g / Math.cos(Math.atan(GABLE_PITCH)));
+    for (const g of gaps) expect(g).toBeLessThanOrEqual(4.5 + 1e-6);
+    expect(gaps[0]).toBeGreaterThan(4);
+  });
+
+  it("gives a frame line inside the building a double receiver, one opening each way", () => {
+    const lay = layoutBuilding(with_(carport, { length: 40 })); // frame line at z = 0
+    const mid = receivers(lay).filter((m) => m.a[2] === m.b[2] && Math.abs(m.a[2]) < REC_B);
+    expect(mid).toHaveLength(4); // two receivers, both slopes
+    expect(new Set(mid.map((m) => m.open![2]))).toEqual(new Set([1, -1]));
+    // Purlins stop at the webs on both sides of it.
+    const ends = roofPurlins(lay).flatMap((m) => [m.a[2], m.b[2]]).filter((z) => Math.abs(z) < 1);
+    expect(new Set(ends.map((z) => z.toFixed(6)))).toEqual(new Set([STEEL_T.toFixed(6), (-STEEL_T).toFixed(6)]));
+  });
+
+  it("frames a flat roof with level end receivers on the posts and purlins from side receiver to side receiver", () => {
+    const d = PRESETS.rv_cover;
+    const lay = layoutBuilding(d);
+    const L = d.length / 2;
+    const ends = receivers(lay).filter((m) => m.a[2] === m.b[2]);
+    expect(ends).toHaveLength(2);
+    for (const m of ends) {
+      expect(m.a[1]).toBeCloseTo(m.b[1]);
+      expect(top(m, m.a)[1]).toBeCloseTo(roofLine(d, lay, 0, Math.sign(m.a[2]) * L), 6);
+    }
+    const purlins = roofPurlins(lay);
+    expect(purlins.length).toBeGreaterThanOrEqual(Math.ceil(d.length / 4.5) - 1);
+    for (const m of purlins) {
+      expect(Math.abs(m.a[0])).toBeCloseTo(d.width / 2 - STEEL_T);
+      expect(m.a[2]).toBe(m.b[2]);
+      expect(top(m, m.a)[1]).toBeCloseTo(roofLine(d, lay, 0, m.a[2]), 6);
+    }
+  });
+
+  it("puts a wall purlin at the top of the wainscot for it to fasten to", () => {
+    const lay = layoutBuilding(garage); // wainscot on, 3 ft
+    expect(wallPurlins(lay).some((m) => Math.abs(m.a[1] - (lay.base + 3)) < 1e-9)).toBe(true);
+    const plain = layoutBuilding(with_(garage, { colors: { ...garage.colors, wainscot: null } }));
+    expect(wallPurlins(plain).some((m) => Math.abs(m.a[1] - (lay.base + 3)) < 1e-9)).toBe(false);
+  });
+
+  it("keeps every wall purlin under the receiver at the top of the wall", () => {
+    for (const d of [garage, with_(garage, { height: 12 }), with_(garage, { height: 8 }), PRESETS.barn]) {
+      const lay = layoutBuilding(d);
+      const purlins = wallPurlins(lay);
+      expect(purlins.length).toBeGreaterThan(0);
+      // 2 in flanges: 1 in above the middle.
+      for (const m of purlins) expect(Math.max(m.a[1], m.b[1]) + 1 / 12).toBeLessThan(lay.base + d.height - REC_D);
+    }
+  });
+
+  it("runs a roll-up's jambs all the way up inside the receiver; a walk door's stop at its header", () => {
+    const lay = layoutBuilding(garage);
+    const L = garage.length / 2;
+    // Front-wall jambs of d1 (x = 4 to 14 from the left corner, i.e. world x -11 to -1).
+    const jambs = lay.members.filter(
+      (m) => m.profile === undefined && m.mat === "frame" && m.a[0] === m.b[0] && m.a[2] === m.b[2] && Math.abs(m.a[2] - (L - COL / 2)) < 0.1 && m.a[0] > -12 && m.a[0] < -10.5,
+    );
+    expect(jambs).toHaveLength(1);
+    const u = jambs[0].a[0] + garage.width / 2;
+    expect(Math.max(jambs[0].a[1], jambs[0].b[1])).toBeCloseTo(lay.base + wallTopAt(garage, "front", u) - STEEL_T);
+    // The walk door on the right wall: jambs stop near 80 in + header.
+    const walkJambs = lay.members.filter((m) => m.profile === undefined && m.a[0] === m.b[0] && m.a[2] === m.b[2] && m.a[0] > 14.5 && m.a[0] < 15 && m.a[2] > 7 && m.a[2] < 11.5);
+    expect(walkJambs.length).toBeGreaterThan(0);
+    for (const m of walkJambs) expect(Math.max(m.a[1], m.b[1])).toBeLessThan(lay.base + 8);
+  });
+
+  it("lets the receiver be the header when an opening comes up under it", () => {
+    // A 3×3 window tops out at 6 ft 6 in; on a 7 ft wall the receiver comes down to 6 ft 4 in.
+    const d = with_(garage, { height: 7, openings: [{ id: "w", spec: "win3x3", wall: "right", x: 4 }] });
+    const lay = layoutBuilding(d);
+    const x = d.width / 2 - COL / 2;
+    const here = lay.members.filter((m) => m.mat === "frame" && !m.profile && Math.abs(m.a[0] - x) < 1e-6 && Math.abs(m.b[0] - x) < 1e-6);
+    expect(here.filter((m) => m.a[2] !== m.b[2] && m.a[1] > lay.base + 6.5)).toEqual([]);
+    const jambs = here.filter((m) => m.a[2] === m.b[2] && m.a[2] > 7.5 && m.a[2] < 11.5);
+    expect(jambs).toHaveLength(2);
+    for (const m of jambs) expect(Math.max(m.a[1], m.b[1])).toBeCloseTo(lay.base + d.height - STEEL_T);
+  });
+
+  it("frames a side lean-to the same way, its top purlin clear of the main wall's sheeting", () => {
+    const d = PRESETS.barn; // 12 ft open lean-tos on both sides, main walls enclosed
+    const lay = layoutBuilding(d);
+    const W = d.width / 2;
+    const depth = 12;
+    const steel = (x: number) => lay.base + d.height - LEAN_ATTACH_DROP - (Math.abs(x) - W) * LEAN_PITCH;
+    const purlins = roofPurlins(lay).filter((m) => m.a[0] > W);
+    expect(purlins.length).toBeGreaterThan(0);
+    for (const m of purlins) {
+      for (const p of [m.a, m.b]) {
+        const t = top(m, p);
+        expect(t[1]).toBeCloseTo(steel(t[0]), 6);
+      }
+    }
+    expect(new Set(purlins.flatMap((m) => [m.a[2], m.b[2]]).map((z) => z.toFixed(6)))).toEqual(endsAtWebs(d));
+    // Receivers: the ones running out sit on the roof line; the outer one rests on the outer posts.
+    const recs = receivers(lay).filter((m) => Math.max(m.a[0], m.b[0]) > W + 1);
+    expect(recs.filter((m) => !m.up)).toHaveLength(1);
+    for (const m of recs) {
+      for (const p of [m.a, m.b]) {
+        const t = top(m, p);
+        expect(t[1]).toBeCloseTo(m.up ? steel(t[0]) : steel(W + depth), 6);
+      }
+    }
+    const outerPosts = posts(lay).filter((m) => Math.abs(m.a[0] - (W + depth - COL / 2)) < 1e-9);
+    expect(outerPosts.length).toBeGreaterThan(0);
+    for (const m of outerPosts) expect(Math.max(m.a[1], m.b[1])).toBeCloseTo(steel(W + depth) - STEEL_T, 6);
+    // The main wall's sheet is 0.04 ft out with 0.1 ft ribs; no purlin corner reaches into it.
+    const corners = (m: M): number[] => {
+      const n = m.up!;
+      const ax = m.b[2] > m.a[2] ? ([0, 0, 1] as Vec3) : ([0, 0, -1] as Vec3);
+      const wv = cross(ax, n);
+      return [-1, 1].flatMap((s) => [-1, 1].map((t) => m.a[0] + (n[0] * s * m.d) / 2 + (wv[0] * t * m.w) / 2));
+    };
+    const innermost = Math.min(...purlins.flatMap(corners)) - W;
+    expect(innermost).toBeGreaterThanOrEqual(0.14 - 1e-9);
+    expect(innermost).toBeLessThan(0.4); // still a couple of inches off it
+  });
+
+  it("hangs a back lean-to's wall-side receiver outside the main wall's sheeting, purlins flush with it", () => {
+    const d = with_(garage, { leanTos: [{ side: "back", depth: 10, walls: "open" }] });
+    const lay = layoutBuilding(d);
+    const L = d.length / 2;
+    const steel = (z: number) => lay.base + d.height - LEAN_ATTACH_DROP - (-L - z) * LEAN_PITCH;
+    const ledger = receivers(lay).find((m) => !m.up && m.a[2] === m.b[2] && m.a[2] < -L && m.a[2] > -L - 1);
+    expect(ledger?.open).toEqual([0, 0, -1]);
+    const web = ledger!.a[2] + REC_B / 2; // the back, away from the open side
+    expect(web).toBeLessThanOrEqual(-L - 0.14 + 1e-9);
+    expect(top(ledger!, ledger!.a)[1]).toBeCloseTo(steel(web), 6);
+    const purlins = roofPurlins(lay).filter((m) => m.a[2] < -L);
+    expect(purlins.length).toBeGreaterThan(0);
+    for (const m of purlins) {
+      const t = top(m, m.a);
+      expect(t[1]).toBeCloseTo(steel(t[2]), 6);
+      expect(m.a[2] + PUR_D).toBeLessThan(web); // clear of the ledger
+    }
+  });
+
+  it("frames an enclosed lean-to's walls like the main walls, a wall purlin at the top of the wainscot", () => {
+    const d = with_(PRESETS.barn, { leanTos: [{ side: "right", depth: 12, walls: "enclosed" }] });
+    const lay = layoutBuilding(d);
+    const W = d.width / 2;
+    const lean = wallPurlins(lay).filter((m) => Math.max(m.a[0], m.b[0]) > W + 1);
+    expect(lean.some((m) => Math.abs(m.a[1] - (lay.base + 3)) < 1e-9)).toBe(true);
+    // The outer wall's run the whole length.
+    expect(lean.some((m) => m.a[0] === m.b[0] && Math.abs(m.a[2] - m.b[2]) > d.length - 1)).toBe(true);
+    const outerSteel = lay.base + d.height - LEAN_ATTACH_DROP - 12 * LEAN_PITCH;
+    for (const m of lean) expect(Math.max(m.a[1], m.b[1]) + 1 / 12).toBeLessThan(outerSteel - REC_D);
   });
 });

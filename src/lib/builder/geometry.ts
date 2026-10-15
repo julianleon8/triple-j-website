@@ -5,9 +5,12 @@
  *
  * Axes: x runs left → right seen from the front, y is up, z runs back → front
  * (the front wall faces +z). The origin is the middle of the footprint at
- * grade. The main frame follows the jobsite photos: square-tube columns at
- * each frame line, eave headers, gable rafters with a ridge beam and
- * lengthwise purlins, or, on a flat roof, cross purlins over sloped headers.
+ * grade. The frame is built the way the crew builds it: posts, then
+ * receivers (plain C-channels) on top of the posts all the way around, then
+ * purlins (C-channels with their edges turned in) cut to fit and slotted
+ * inside the receivers, tops flush, so the roof steel sits on both. A frame
+ * line inside the building gets a double receiver: two back to back, so the
+ * purlins of both bays slot in.
  */
 
 import {
@@ -30,8 +33,14 @@ export type Vec3 = [number, number, number];
 
 /** "ridge" is the ridge cap, painted the roof color unless the customer picks one. */
 export type MemberMat = "frame" | "trim" | "ridge";
-/** A box from `a` to `b`: `d` deep toward `up` (default: world up), `w` wide across. */
-export type Member = { a: Vec3; b: Vec3; w: number; d: number; mat: MemberMat; up?: Vec3 };
+/** "box" is solid (posts, trim); "c" a plain C-channel (a receiver); "lipped" a C with its edges turned in (a purlin). */
+export type MemberProfile = "box" | "c" | "lipped";
+/**
+ * A member from `a` to `b`: `d` deep toward `up` (default: world up), `w`
+ * wide across. A channel is `d` deep and `w` across its flanges, and its
+ * open side faces `open`.
+ */
+export type Member = { a: Vec3; b: Vec3; w: number; d: number; mat: MemberMat; up?: Vec3; profile?: MemberProfile; open?: Vec3 };
 
 export type SurfaceMat = "roof" | "wall" | "wainscot" | "rollup";
 export type Hole = { u0: number; u1: number; v0: number; v1: number };
@@ -74,18 +83,39 @@ export type Layout = {
   bounds: { min: Vec3; max: Vec3 };
 };
 
-// Section sizes, feet.
-export const COL = 1 / 3; // 4 in square tube
-const BEAM_D = 0.5; // 4×6 headers and rafters
-const BEAM_W = 1 / 3;
-const PURLIN_D = 1 / 3;
-const PURLIN_W = 1 / 6;
+// Section sizes, feet. Drafts until the crew signs them off (docs/3D-BUILDER.md).
+export const COL = 1 / 3; // 4 in square tube posts
+/**
+ * Receiver: a plain C-channel, 8 in deep (Julian: 7 or 8). Its bottom flange
+ * is notched around each post, so the post runs up inside it and the top
+ * flange rests on the post: receiver top flush with the post top, bolted
+ * through the web.
+ */
+export const REC_D = 8 / 12;
+export const REC_B = 2.5 / 12;
+/** Roof purlin: 6 in, edges turned in, slotted inside the receivers. */
+export const PUR_D = 6 / 12;
+export const PUR_B = 2 / 12;
+/** Wall purlin: 4 in, as deep as the posts it runs between. */
+const WALL_PUR_D = 4 / 12;
+const WALL_PUR_B = 2 / 12;
+/** Drawn wall thickness of the channels: 14 gauge is 0.075 in; a hair more so it reads on screen. */
+export const STEEL_T = 0.1 / 12;
+/** The turned-in edge of a purlin. */
+export const PUR_LIP = 0.75 / 12;
 const OVERHANG = 0.5;
-const PURLIN_SPACING = 4;
+/** Most between roof purlins, center to center (the 26×25's were about 4 ft 4 in). */
+const PURLIN_SPACING = 4.5;
+/** The top purlin's edge this far off the ridge or the main wall. */
+const PURLIN_TOP_GAP = 2 / 12;
 const GIRT_SPACING = 4;
+/** A wall purlin's middle stays this far under the receiver, so the two don't touch. */
+const GIRT_CLEAR = 0.25;
 const END_POST_SPACING = 10;
 /** Header (and window sill) depth framing an opening. */
 const OPENING_HEAD = 0.35;
+/** Less room than this between an opening and the receiver, and the receiver is the header. */
+const MIN_HEADER = 0.15;
 const FASCIA_D = 0.42;
 const FASCIA_W = 0.08;
 const RIB = 0.1; // panel rib height
@@ -93,10 +123,40 @@ export const SLAB_T = 1 / 3;
 const SLAB_MARGIN = 0.25;
 /** Air between panels and the steel behind them, so the two never flicker through each other. */
 const GAP = 0.04;
-/** Column top to the underside of the roof panels. */
-const ROOF_LIFT = BEAM_D + PURLIN_D + GAP;
-/** Rafter centerline to the underside of the roof panels, measured square to the roof. */
-const PANEL_OFF = BEAM_D / 2 + PURLIN_D + GAP;
+
+const CHANNEL = {
+  rec: { d: REC_D, w: REC_B, profile: "c" },
+  pur: { d: PUR_D, w: PUR_B, profile: "lipped" },
+  wall: { d: WALL_PUR_D, w: WALL_PUR_B, profile: "lipped" },
+} as const;
+type Channel = (kind: keyof typeof CHANNEL, a: Vec3, b: Vec3, open: Vec3, up?: Vec3) => void;
+
+/**
+ * Receiver lines across a run, in order: an end line opens inward, a line
+ * inside the run is a double receiver opening both ways. `webs` are where the
+ * receivers' backs sit, from one end to the other.
+ */
+function receiverLines(webs: number[]): { at: number; dir: 1 | -1 }[] {
+  const out: { at: number; dir: 1 | -1 }[] = [];
+  const sign = webs[1] > webs[0] ? 1 : -1;
+  webs.forEach((at, i) => {
+    if (i > 0) out.push({ at, dir: (-sign) as 1 | -1 });
+    if (i < webs.length - 1) out.push({ at, dir: sign as 1 | -1 });
+  });
+  return out;
+}
+
+/** The stretches between receiver backs, where purlins run, each end stopping at a web. */
+function bays(webs: number[]): [number, number][] {
+  const sign = webs[1] > webs[0] ? 1 : -1;
+  return webs.slice(0, -1).map((at, i) => [at + sign * STEEL_T, webs[i + 1] - sign * STEEL_T] as [number, number]);
+}
+
+/** Purlin stations between `first` and `last`, no gap wider than PURLIN_SPACING; the ends themselves are excluded. */
+function stations(first: number, last: number): number[] {
+  const gaps = Math.max(1, Math.ceil((last - first) / PURLIN_SPACING - 1e-9));
+  return Array.from({ length: gaps - 1 }, (_, i) => first + ((last - first) * (i + 1)) / gaps);
+}
 
 // ── small vector helpers ──────────────────────────────────────────────────
 
@@ -180,6 +240,10 @@ export function layoutBuilding(d: Design): Layout {
     grow(m.a);
     grow(m.b);
   };
+  const channel: Channel = (kind, a, b, open, up) => {
+    const c = CHANNEL[kind];
+    member({ a, b, w: c.w, d: c.d, mat: "frame", profile: c.profile, open, up });
+  };
   const surface = (s: Surface) => {
     surfaces.push(s);
     for (const [u, v] of [...s.top, ...s.bottom]) grow(add(add(s.origin, scale(s.uAxis, u)), scale(s.vAxis, v)));
@@ -194,14 +258,16 @@ export function layoutBuilding(d: Design): Layout {
   const zs = frameLines(d.length);
   const gable = d.roof === "gable";
 
-  // Column top (eave) at z, relative to the slab.
+  // Column top (eave) at z, relative to the slab. The receivers' top flanges
+  // rest on the columns, so this is also the top of the steel at the eave.
   const eave = (z: number) => (gable ? h : h + (z + L) * FLAT_PITCH);
 
-  // Underside of the roof panels, relative to the slab.
+  // Top of the receivers and purlins (where the roof steel sits) and the
+  // underside of the roof panels, relative to the slab.
   const cosG = 1 / Math.hypot(1, GABLE_PITCH);
-  const ridgeC = h + BEAM_D / 2 + xc * GABLE_PITCH; // rafter centerline at the ridge
-  const roofUnderAt = (x: number, z: number) =>
-    gable ? ridgeC + PANEL_OFF / cosG - Math.abs(x) * GABLE_PITCH : eave(z) + ROOF_LIFT;
+  const sinG = GABLE_PITCH * cosG;
+  const steelTop = (x: number, z: number) => (gable ? h + (W - Math.abs(x)) * GABLE_PITCH : eave(z));
+  const roofUnderAt = (x: number, z: number) => steelTop(x, z) + (gable ? GAP / cosG : GAP);
 
   // ── columns, headers, roof framing ──
   // A side-wall door or window may span a frame line. The column is then
@@ -216,7 +282,7 @@ export function layoutBuilding(d: Design): Layout {
         .filter((o) => o.wall === side && wallState(d, side) === "enclosed")
         .map((o) => ({ o, s: openingSpec(o.spec) }))
         .filter(({ o, s }) => u > o.x - COL && u < o.x + s.w + COL);
-      const top = eave(z);
+      const top = eave(z) - STEEL_T; // up inside the receiver, under its top flange
       if (!spans.length) {
         member({ a: [sx * xc, base, z], b: [sx * xc, base + top, z], w: COL, d: COL, mat: "frame" });
         continue;
@@ -227,48 +293,56 @@ export function layoutBuilding(d: Design): Layout {
       if (sill > 0.3) member({ a: [sx * xc, base, z], b: [sx * xc, base + sill, z], w: COL, d: COL, mat: "frame" });
     }
   }
+  // Receivers along both sides, top flange resting on the posts, backs flush
+  // with the posts' outer faces, open toward the middle.
   for (const sx of [-1, 1]) {
-    member({
-      a: [sx * xc, base + eave(-L) + BEAM_D / 2, -L],
-      b: [sx * xc, base + eave(L) + BEAM_D / 2, L],
-      w: BEAM_W,
-      d: BEAM_D,
-      mat: "frame",
-    });
+    const x = sx * (W - REC_B / 2);
+    channel("rec", [x, base + eave(-L) - REC_D / 2, -L], [x, base + eave(L) - REC_D / 2, L], [-sx, 0, 0]);
   }
+  // Receiver lines across the building: the front and back ends, and a
+  // double receiver on every frame line in between.
+  const webs = [L, ...zs.slice(1, -1), -L];
 
   if (gable) {
-    const top = base + ridgeC;
-    for (const z of zs) {
+    // Peaked receivers follow the roof, top edge on the roof line, from each
+    // corner up to the ridge. Purlins run the length between them, a couple
+    // of inches off the ridge at the top: no ridge beam.
+    for (const { at, dir } of receiverLines(webs)) {
+      const zc = at + dir * (REC_B / 2);
       for (const sx of [-1, 1]) {
-        member({ a: [sx * xc, base + h + BEAM_D / 2, z], b: [0, top, z], w: BEAM_W, d: BEAM_D, mat: "frame" });
+        const n: Vec3 = [sx * sinG, cosG, 0];
+        const drop = scale(n, -REC_D / 2);
+        channel("rec", add([sx * W, base + steelTop(W, 0), zc], drop), add([0, base + steelTop(0, 0), zc], drop), [0, 0, dir], n);
       }
     }
-    member({ a: [0, top, -L], b: [0, top, L], w: BEAM_W, d: BEAM_D, mat: "frame" });
-    const slope = xc / cosG;
-    const count = Math.max(2, Math.ceil(slope / PURLIN_SPACING) + 1);
+    const run = W / cosG; // eave edge to ridge, along the roof
     for (const sx of [-1, 1]) {
-      const n: Vec3 = [sx * GABLE_PITCH * cosG, cosG, 0];
-      for (const t of spread(0.04, 0.92, count)) {
-        const x = sx * xc * (1 - t);
-        const y = base + h + BEAM_D / 2 + xc * t * GABLE_PITCH;
-        const off = scale(n, BEAM_D / 2 + PURLIN_D / 2);
-        member({ a: add([x, y, -L], off), b: add([x, y, L], off), w: PURLIN_W, d: PURLIN_D, mat: "frame", up: n });
+      const n: Vec3 = [sx * sinG, cosG, 0];
+      const upSlope: Vec3 = [-sx * cosG, sinG, 0];
+      for (const s of stations(REC_B / 2, run - PURLIN_TOP_GAP - PUR_B / 2).concat(run - PURLIN_TOP_GAP - PUR_B / 2)) {
+        const x = sx * (W - s * cosG);
+        const c = add([x, base + steelTop(x, 0), 0], scale(n, -PUR_D / 2));
+        for (const [z0, z1] of bays(webs)) channel("pur", [c[0], c[1], z0], [c[0], c[1], z1], upSlope, n);
       }
     }
   } else {
-    const count = Math.ceil(d.length / PURLIN_SPACING) + 1;
-    for (const z of spread(-L + 0.1, L - 0.1, count)) {
-      const y = base + eave(z) + BEAM_D + PURLIN_D / 2;
-      member({ a: [-W, y, z], b: [W, y, z], w: PURLIN_W, d: PURLIN_D, mat: "frame" });
+    // Flat: front and back receivers run level across the width; purlins
+    // span from side receiver to side receiver, following the slope.
+    for (const { at, dir } of receiverLines([L, -L])) {
+      const zc = at + dir * (REC_B / 2);
+      const y = base + eave(at) - REC_D / 2;
+      channel("rec", [-W, y, zc], [W, y, zc], [0, 0, dir]);
+    }
+    for (const z of stations(-L + REC_B / 2, L - REC_B / 2)) {
+      const y = base + steelTop(0, z) - PUR_D / 2;
+      channel("pur", [-(W - STEEL_T), y, z], [W - STEEL_T, y, z], [0, 0, 1]);
     }
   }
 
   // ── roof panels and roof trim ──
   if (gable) {
-    const yr = base + ridgeC + PANEL_OFF / cosG;
+    const yr = base + roofUnderAt(0, 0);
     const vLen = (W + OVERHANG) / cosG;
-    const sinG = GABLE_PITCH * cosG;
     const span = d.length + 2 * OVERHANG;
     const flat = (len: number): [number, number][] => [
       [0, len],
@@ -317,7 +391,7 @@ export function layoutBuilding(d: Design): Layout {
     const sinF = FLAT_PITCH / Math.hypot(1, FLAT_PITCH);
     const cosF = 1 / Math.hypot(1, FLAT_PITCH);
     const zf = L + OVERHANG;
-    const yFront = base + eave(zf) + ROOF_LIFT;
+    const yFront = base + eave(zf) + GAP;
     const uLen = d.width + 2 * OVERHANG;
     const vLen = (d.length + 2 * OVERHANG) / cosF;
     surface({
@@ -338,7 +412,7 @@ export function layoutBuilding(d: Design): Layout {
       ],
       holes: [],
     });
-    const fy = (z: number) => base + eave(z) + ROOF_LIFT + RIB + 0.02 - FASCIA_D / 2;
+    const fy = (z: number) => base + eave(z) + GAP + RIB + 0.02 - FASCIA_D / 2;
     const xe = W + OVERHANG;
     for (const sz of [-1, 1]) {
       const z = sz * (zf + FASCIA_W / 2);
@@ -406,41 +480,56 @@ export function layoutBuilding(d: Design): Layout {
       }
     }
 
-    // Girts behind the panels; they stop at each opening's jambs.
+    // The bottom of the receiver along the top of this wall, which hangs
+    // from the eave line; on a gable end it follows the slope.
+    const sloped = gable && (side === "front" || side === "back");
+    const recUnder = (u: number) => wallTopAt(d, side, u) - (sloped ? REC_D / cosG : REC_D);
+
+    // Wall purlins behind the panels, between the posts and as deep as they
+    // are, open side down, clear of the receiver; they stop at each opening's
+    // jambs. Under wainscot the first sits at its top edge: that is what the
+    // wainscot fastens to.
     const inside = -COL / 2 - GAP;
-    const girtFrom = state === "enclosed" ? 3.5 : state === "partial" ? Math.max(0.5, lowEave - PARTIAL_WALL_FT + 0.5) : lowEave + 1;
-    for (let v = girtFrom; v < lowEave - 0.4; v += GIRT_SPACING) {
+    const girtFrom =
+      state === "enclosed" ? (wainscot ? wainscot : 3.5) : state === "partial" ? Math.max(0.5, lowEave - PARTIAL_WALL_FT + 0.5) : lowEave + 1;
+    for (let v = girtFrom; v < lowEave - REC_D - GIRT_CLEAR; v += GIRT_SPACING) {
       const gaps = holes
         .filter((hl) => hl.v0 - OPENING_HEAD < v && hl.v1 + OPENING_HEAD > v)
         .map((hl) => [hl.u0 - COL - 0.04, hl.u1 + COL + 0.04] as [number, number]);
       for (const [u0, u1] of segments(COL, len - COL, gaps)) {
-        member({ a: wallPoint(f, u0, v, -PURLIN_W / 2 - GAP), b: wallPoint(f, u1, v, -PURLIN_W / 2 - GAP), w: PURLIN_W, d: PURLIN_D, mat: "frame" });
+        channel("wall", wallPoint(f, u0, v, inside), wallPoint(f, u1, v, inside), [0, -1, 0], scale(f.normal, -1));
       }
     }
-    // End-wall posts on enclosed ends. On a flat roof they run up to the
-    // purlins, since there is no end rafter to meet.
+    // End-wall posts on enclosed ends, up inside the end receiver.
     if (state === "enclosed" && (side === "front" || side === "back")) {
       const n = Math.ceil(len / END_POST_SPACING);
       for (let i = 1; i < n; i++) {
         const u = (len * i) / n;
         if (holes.some((hl) => u > hl.u0 - COL - 0.5 && u < hl.u1 + COL + 0.5)) continue;
-        const postTop = wallTopAt(d, side, u) + (gable ? 0 : BEAM_D);
-        member({ a: wallPoint(f, u, 0, inside), b: wallPoint(f, u, postTop, inside), w: COL, d: COL, mat: "frame", up: f.normal });
+        member({ a: wallPoint(f, u, 0, inside), b: wallPoint(f, u, wallTopAt(d, side, u) - STEEL_T, inside), w: COL, d: COL, mat: "frame", up: f.normal });
       }
     }
 
     // Openings: placements for the scene; a framed opening (jambs, header and,
     // under a window, a sill) inside the wall line; red-iron trim jambs outside
-    // around roll-ups, as on the jobsite photos.
+    // around roll-ups, as on the jobsite photos. A roll-up's jambs run all the
+    // way up inside the receiver, for reinforcement; a walk door's and a
+    // window's stop at the header. An opening that comes up close under the
+    // receiver gets a shallower header, or none: the receiver is its header.
     for (const o of on) {
       const s = openingSpec(o.spec);
       openings.push({ id: o.id, kind: s.kind, side, origin: wallPoint(f, o.x, s.sill), uAxis: f.uAxis, normal: f.normal, w: s.w, h: s.h });
-      const headV = s.sill + s.h + OPENING_HEAD / 2;
-      for (const u of [o.x - COL / 2 - 0.02, o.x + s.w + COL / 2 + 0.02]) {
-        member({ a: wallPoint(f, u, 0, inside), b: wallPoint(f, u, s.sill + s.h + OPENING_HEAD, inside), w: COL, d: COL, mat: "frame", up: f.normal });
-      }
       const across: [number, number] = [o.x - COL - 0.02, o.x + s.w + COL + 0.02];
-      member({ a: wallPoint(f, across[0], headV, inside), b: wallPoint(f, across[1], headV, inside), w: COL, d: OPENING_HEAD, mat: "frame" });
+      const headD = Math.min(OPENING_HEAD, Math.min(recUnder(across[0]), recUnder(across[1])) - (s.sill + s.h));
+      const header = headD >= MIN_HEADER;
+      for (const u of [o.x - COL / 2 - 0.02, o.x + s.w + COL / 2 + 0.02]) {
+        const jambTop = s.kind === "rollup" || !header ? wallTopAt(d, side, u) - STEEL_T : s.sill + s.h + headD;
+        member({ a: wallPoint(f, u, 0, inside), b: wallPoint(f, u, jambTop, inside), w: COL, d: COL, mat: "frame", up: f.normal });
+      }
+      if (header) {
+        const headV = s.sill + s.h + headD / 2;
+        member({ a: wallPoint(f, across[0], headV, inside), b: wallPoint(f, across[1], headV, inside), w: COL, d: headD, mat: "frame" });
+      }
       if (s.sill > 0) {
         const sillV = s.sill - OPENING_HEAD / 2;
         member({ a: wallPoint(f, across[0], sillV, inside), b: wallPoint(f, across[1], sillV, inside), w: COL, d: OPENING_HEAD, mat: "frame" });
@@ -473,7 +562,7 @@ export function layoutBuilding(d: Design): Layout {
   }
 
   // ── lean-tos ──
-  for (const lean of d.leanTos) layoutLean(d, lean, { base, eave, member, surface });
+  for (const lean of d.leanTos) layoutLean(d, lean, { base, eave, member, channel, surface });
 
   // ── slab ──
   let slab: Layout["slab"] = null;
@@ -500,36 +589,61 @@ type LeanCtx = {
   base: number;
   eave: (z: number) => number;
   member: (m: Member) => void;
+  channel: Channel;
   surface: (s: Surface) => void;
 };
 
-function layoutLean(d: Design, lean: LeanTo, { base, eave, member, surface }: LeanCtx) {
+/**
+ * A lean-to is framed like the main building: posts along its outer edge, a
+ * receiver along the top of them, receivers running out from the main
+ * building on each frame line (doubles inside the run), and purlins slotted
+ * between them, tops flush, the top one a couple of inches off the main wall.
+ */
+function layoutLean(d: Design, lean: LeanTo, { base, eave, member, channel, surface }: LeanCtx) {
   const W = d.width / 2;
   const L = d.length / 2;
   const depth = lean.depth;
   const cosA = 1 / Math.hypot(1, LEAN_PITCH);
+  const sinA = LEAN_PITCH * cosA;
   const tuck = 0.2; // panels start this far under the main eave
-  // Horizontal distance e out from the main wall face; t along the attached wall.
-  const innerC = (z: number) => eave(z) - LEAN_ATTACH_DROP;
-  const rafterY = (z: number, e: number) => innerC(z) + BEAM_D / 2 - (e + COL / 2) * LEAN_PITCH;
-  const underY = (z: number, e: number) => base + rafterY(z, e) + PANEL_OFF / cosA;
+  // e runs out from the main wall face; z (or x) along the wall it hangs from.
+  /** Top of the lean-to's steel e out from the main wall, where the roof sheets sit; its posts stop just under it. */
+  const steelTop = (z: number, e: number) => eave(z) - LEAN_ATTACH_DROP - e * LEAN_PITCH;
+  const underY = (z: number, e: number) => base + steelTop(z, e) + GAP / cosA;
+  // Steel running along the main wall stays outside its sheeting, ribs and all.
+  const sheeted = ["enclosed", "partial"].includes(wallState(d, lean.side));
+  const clear = sheeted ? GAP + RIB + 0.03 : 0;
+  // The top purlin, a couple of inches off the main wall at its lowest corner.
+  const first = clear + PURLIN_TOP_GAP + PUR_D * sinA + (PUR_B / 2) * cosA;
+  const outer = depth - REC_B / 2; // the outer receiver
+  const purlinEs = [first, ...stations(first, outer)];
 
   if (lean.side === "left" || lean.side === "right") {
     const sx = lean.side === "left" ? -1 : 1;
     const X = (e: number) => sx * (W + e);
+    const n: Vec3 = [sx * sinA, cosA, 0];
+    const upSlope: Vec3 = [-sx * cosA, sinA, 0];
     const eo = depth - COL / 2;
     const zs = frameLines(d.length);
     for (const z of zs) {
-      // No post in front of a roll-up on the wall this lean-to covers: the header spans it.
+      // No post in front of a roll-up on the wall this lean-to covers: the receiver spans it.
       if (!inDrivePath(d, lean.side, sx < 0 ? z + L : L - z))
-        member({ a: [X(eo), base, z], b: [X(eo), base + rafterY(z, eo) - BEAM_D / 2, z], w: COL, d: COL, mat: "frame" });
-      member({ a: [X(-COL / 2), base + rafterY(z, -COL / 2), z], b: [X(eo), base + rafterY(z, eo), z], w: BEAM_W, d: BEAM_D, mat: "frame" });
+        member({ a: [X(eo), base, z], b: [X(eo), base + steelTop(z, depth) - STEEL_T, z], w: COL, d: COL, mat: "frame" });
     }
-    member({ a: [X(eo), base + rafterY(-L, eo), -L], b: [X(eo), base + rafterY(L, eo), L], w: BEAM_W, d: BEAM_D, mat: "frame" });
-    const count = Math.max(2, Math.ceil(depth / PURLIN_SPACING) + 1);
-    for (const e of spread(0.4, eo - 0.2, count)) {
-      const y = (z: number) => base + rafterY(z, e) + (BEAM_D / 2 + PURLIN_D / 2) / cosA;
-      member({ a: [X(e), y(-L), -L], b: [X(e), y(L), L], w: PURLIN_W, d: PURLIN_D, mat: "frame" });
+    // Along the outer posts, top flange resting on them, open toward the building.
+    channel("rec", [X(outer), base + steelTop(-L, depth) - REC_D / 2, -L], [X(outer), base + steelTop(L, depth) - REC_D / 2, L], [-sx, 0, 0]);
+    // Out from the main building on each frame line.
+    const webs = [L, ...zs.slice(1, -1), -L];
+    for (const { at, dir } of receiverLines(webs)) {
+      const zc = at + dir * (REC_B / 2);
+      const drop = scale(n, -REC_D / 2);
+      channel("rec", add([X(0), base + steelTop(zc, 0), zc], drop), add([X(depth), base + steelTop(zc, depth), zc], drop), [0, 0, dir], n);
+    }
+    for (const e of purlinEs) {
+      for (const [z0, z1] of bays(webs)) {
+        const at = (z: number): Vec3 => add([X(e), base + steelTop(z, e), z], scale(n, -PUR_D / 2));
+        channel("pur", at(z0), at(z1), upSlope, n);
+      }
     }
 
     // Roof plane: u along the main wall, v down the slope, normal up.
@@ -576,17 +690,22 @@ function layoutLean(d: Design, lean: LeanTo, { base, eave, member, surface }: Le
           ? { origin: [xo, base, -L], uAxis: [0, 0, 1], normal: [-1, 0, 0], len: d.length }
           : { origin: [xo, base, L], uAxis: [0, 0, -1], normal: [1, 0, 0], len: d.length };
       const zAt = (u: number) => (sx < 0 ? -L + u : L - u);
-      leanWalls(d, surface, member, [
-        { key: `lean-${lean.side}-outer`, f: outer, topAt: (u) => underY(zAt(u), depth) - base },
+      // Wall purlins run between post faces, and stop outside the main wall's sheeting.
+      const fromMain: [number, number] = [clear, depth - COL];
+      const toMain: [number, number] = [COL, depth - clear];
+      leanWalls(d, { surface, member, channel }, [
+        { key: `lean-${lean.side}-outer`, f: outer, topAt: (u) => underY(zAt(u), depth) - base, span: [COL, d.length - COL] },
         {
           key: `lean-${lean.side}-front`,
           f: { origin: [sx < 0 ? X(depth) : X(0), base, L + GAP], uAxis: [1, 0, 0], normal: [0, 0, 1], len: depth },
           topAt: (u) => underY(L, sx < 0 ? depth - u : u) - base,
+          span: sx < 0 ? toMain : fromMain,
         },
         {
           key: `lean-${lean.side}-back`,
           f: { origin: [sx < 0 ? X(0) : X(depth), base, -L - GAP], uAxis: [-1, 0, 0], normal: [0, 0, -1], len: depth },
           topAt: (u) => underY(-L, sx < 0 ? u : depth - u) - base,
+          span: sx < 0 ? fromMain : toMain,
         },
       ]);
       for (const sz of [-1, 1]) {
@@ -600,22 +719,32 @@ function layoutLean(d: Design, lean: LeanTo, { base, eave, member, surface }: Le
   // Back lean-to: runs across the width behind the back wall.
   const Z = (e: number) => -L - e;
   const zBack = -L;
+  const n: Vec3 = [0, cosA, -sinA];
+  const upSlope: Vec3 = [0, sinA, cosA];
   const eo = depth - COL / 2;
   const xs = spread(-(W - COL / 2), W - COL / 2, Math.max(1, Math.ceil(d.width / MAX_BAY_FT)) + 1);
-  const ry = (e: number) => rafterY(zBack, e);
   for (const x of xs) {
     if (!inDrivePath(d, "back", W - x))
-      member({ a: [x, base, Z(eo)], b: [x, base + ry(eo) - BEAM_D / 2, Z(eo)], w: COL, d: COL, mat: "frame" });
-    member({ a: [x, base + ry(-COL / 2), Z(-COL / 2)], b: [x, base + ry(eo), Z(eo)], w: BEAM_W, d: BEAM_D, mat: "frame" });
+      member({ a: [x, base, Z(eo)], b: [x, base + steelTop(zBack, depth) - STEEL_T, Z(eo)], w: COL, d: COL, mat: "frame" });
   }
-  member({ a: [-W, base + ry(eo), Z(eo)], b: [W, base + ry(eo), Z(eo)], w: BEAM_W, d: BEAM_D, mat: "frame" });
-  // Ledger along the main end wall: the end frame has columns only at its
-  // corners, so the inner ends of the rafters need something to sit on.
-  member({ a: [-(W - COL / 2), base + ry(-COL / 2), Z(-COL / 2)], b: [W - COL / 2, base + ry(-COL / 2), Z(-COL / 2)], w: BEAM_W, d: BEAM_D, mat: "frame" });
-  const count = Math.max(2, Math.ceil(depth / PURLIN_SPACING) + 1);
-  for (const e of spread(0.4, eo - 0.2, count)) {
-    const y = base + ry(e) + (BEAM_D / 2 + PURLIN_D / 2) / cosA;
-    member({ a: [-W, y, Z(e)], b: [W, y, Z(e)], w: PURLIN_W, d: PURLIN_D, mat: "frame" });
+  // Along the outer posts, top flange resting on them, open toward the building.
+  const yOuter = base + steelTop(zBack, depth) - REC_D / 2;
+  channel("rec", [-W, yOuter, Z(outer)], [W, yOuter, Z(outer)], [0, 0, 1]);
+  // Along the main end wall, outside its sheeting, open toward the lean-to:
+  // the end frame has posts only at its corners, so the receivers running out
+  // need something to land on.
+  const yLedger = base + steelTop(zBack, clear) - REC_D / 2;
+  channel("rec", [-W, yLedger, Z(clear + REC_B / 2)], [W, yLedger, Z(clear + REC_B / 2)], [0, 0, -1]);
+  // Out from that receiver over each post line.
+  const webs = [-W, ...xs.slice(1, -1), W];
+  for (const { at, dir } of receiverLines(webs)) {
+    const xc = at + dir * (REC_B / 2);
+    const drop = scale(n, -REC_D / 2);
+    channel("rec", add([xc, base + steelTop(zBack, clear), Z(clear)], drop), add([xc, base + steelTop(zBack, depth), Z(depth)], drop), [dir, 0, 0], n);
+  }
+  for (const e of [...stations(clear + REC_B / 2, outer)]) {
+    const c = add([0, base + steelTop(zBack, e), Z(e)], scale(n, -PUR_D / 2));
+    for (const [x0, x1] of bays(webs)) channel("pur", [x0, c[1], c[2]], [x1, c[1], c[2]], upSlope, n);
   }
   const uLen = d.width + 2 * OVERHANG;
   const vLen = (depth + OVERHANG + tuck) / cosA;
@@ -646,10 +775,25 @@ function layoutLean(d: Design, lean: LeanTo, { base, eave, member, surface }: Le
   }
   if (lean.walls === "enclosed") {
     const zo = Z(depth + GAP);
-    leanWalls(d, surface, member, [
-      { key: "lean-back-outer", f: { origin: [W, base, zo], uAxis: [-1, 0, 0], normal: [0, 0, -1], len: d.width }, topAt: () => underY(zBack, depth) - base },
-      { key: "lean-back-left", f: { origin: [-W - GAP, base, zo], uAxis: [0, 0, 1], normal: [-1, 0, 0], len: depth }, topAt: (u) => underY(zBack, depth - u) - base },
-      { key: "lean-back-right", f: { origin: [W + GAP, base, -L], uAxis: [0, 0, -1], normal: [1, 0, 0], len: depth }, topAt: (u) => underY(zBack, u) - base },
+    leanWalls(d, { surface, member, channel }, [
+      {
+        key: "lean-back-outer",
+        f: { origin: [W, base, zo], uAxis: [-1, 0, 0], normal: [0, 0, -1], len: d.width },
+        topAt: () => underY(zBack, depth) - base,
+        span: [COL, d.width - COL],
+      },
+      {
+        key: "lean-back-left",
+        f: { origin: [-W - GAP, base, zo], uAxis: [0, 0, 1], normal: [-1, 0, 0], len: depth },
+        topAt: (u) => underY(zBack, depth - u) - base,
+        span: [COL + GAP, depth + GAP - clear],
+      },
+      {
+        key: "lean-back-right",
+        f: { origin: [W + GAP, base, -L], uAxis: [0, 0, -1], normal: [1, 0, 0], len: depth },
+        topAt: (u) => underY(zBack, u) - base,
+        span: [clear, depth - COL],
+      },
     ]);
     for (const sx of [-1, 1]) {
       const z = Z(depth + 0.06);
@@ -658,15 +802,22 @@ function layoutLean(d: Design, lean: LeanTo, { base, eave, member, surface }: Le
   }
 }
 
-/** Enclosed lean-to walls: straight-topped panels with an optional wainscot. */
+/**
+ * Enclosed lean-to walls: straight-topped panels with an optional wainscot,
+ * and wall purlins behind them across `span` (between post faces), framed
+ * like the main walls: the first at the wainscot's top edge, or 3 ft 6 in.
+ */
 function leanWalls(
   d: Design,
-  surface: (s: Surface) => void,
-  member: (m: Member) => void,
-  walls: { key: string; f: WallFrame; topAt: (u: number) => number }[],
+  { surface, member, channel }: Pick<LeanCtx, "surface" | "member" | "channel">,
+  walls: { key: string; f: WallFrame; topAt: (u: number) => number; span: [number, number] }[],
 ) {
   const wainscot = d.colors.wainscot ? WAINSCOT_FT : 0;
-  for (const { key, f, topAt } of walls) {
+  for (const { key, f, topAt, span } of walls) {
+    const lowTop = Math.min(topAt(0), topAt(f.len));
+    for (let v = wainscot || 3.5; v < lowTop - GAP - REC_D - GIRT_CLEAR; v += GIRT_SPACING) {
+      channel("wall", wallPoint(f, span[0], v, -COL / 2 - GAP), wallPoint(f, span[1], v, -COL / 2 - GAP), [0, -1, 0], scale(f.normal, -1));
+    }
     const ends = [0, f.len];
     surface({
       key,

@@ -29,6 +29,15 @@ Every number is a **draft** (`tj-v1-draft`), set from the sales pack and the gal
 | Flat roof slope | ½ in per ft, high at the front | Photos; the stated height is at the back (clearance) | |
 | Gable pitch | 3:12, not adjustable | Photos | |
 | Frame lines | every ≤ 25 ft (20×40 gets a center post, 25×25 does not) | Sales pack | |
+| Build order | posts → receivers all the way around → purlins cut to fit and slotted inside the receivers, tops flush | Julian, 2026-10-15 | |
+| Receiver on the post | the receiver's bottom flange is notched around the post, so the post runs up inside it and the top flange rests on the post: receiver top flush with the post top (the eave), bolted through the web; corners cut so both receivers sit on the corner post | Julian, 2026-10-15 | |
+| Receiver | plain C-channel (no lips), 8 in deep × 2½ in, back flush with the posts' outside, open side in. The 4 in post is wider than the 2½ in flange, so it shows 1½ in past the flange inside | Julian: "7 or 8 in", unconfirmed; flange width and post size guesses | |
+| Middle frame line | a double receiver: two back to back, purlins slot in from both bays | Julian, 2026-10-15 | |
+| Roof purlin | C with lips, 6 in × 2 in (¾ in lips), open side up the slope; no ridge beam, the top purlin 2 in off the ridge each side | Julian (6 in); photos (no ridge beam); open side a guess | |
+| Roof purlin spacing | ≤ 4 ft 6 in, spread evenly (a 26 wide gets 3 per side) | The 26×25 photos, about 4 ft 4 in | |
+| Wall purlin | C with lips, 4 in × 2 in, between the posts, open side down; first at 3 ft 6 in, then every 4 ft, the top one kept clear under the receiver; with wainscot the first is at 3 ft for it to fasten to. Enclosed lean-to walls get the same | Julian (4 in, the 3 ft wainscot purlin); spacing a guess | |
+| Roll-up jambs | posts each side run up inside the receiver; walk doors and windows stop at a header. An opening within 2 in of the receiver gets no header of its own: the receiver is its header (a 3×3 window on a 7 ft wall comes 2 in into it) | Julian (roll-ups); walk doors, windows and the receiver-as-header unconfirmed | |
+| Flat roof framing | level receivers front and back, sloped side receivers, purlins side to side | Draft: the job photos suggest the long way, sloping to one long side — waiting on Julian | |
 | Partial wall | top 3 ft closed | Industry standard; Triple J unconfirmed | |
 | Wainscot | bottom 3 ft | Common practice | |
 | Roll-up sizes | 8×8, 10×10, 12×12, 12×14, 14×14, 16×16 | Handwritten crew sheet + sales pack | |
@@ -37,7 +46,7 @@ Every number is a **draft** (`tj-v1-draft`), set from the sales pack and the gal
 | Window | 3×3, sill at 3 ft 6 in | Sales pack ($350, no size given) | |
 | Corner and gap clearance | 1 ft from a corner and between openings | Columns at the corners | |
 | Lean-to depth | 6–16 ft | Draft choice; no source gives one | |
-| Lean-to height | hangs 1 ft under the main eave, slopes 2:12, keeps ≥ 7 ft clear at its low edge | Photos | |
+| Lean-to height | hangs 1 ft under the main eave, slopes 2:12, keeps ≥ 7 ft at its low edge (the outer posts; 6 ft 4 in under the receiver there). Framed like the main building; steel along the main wall stays outside its sheeting | Photos; whether the 7 ft is measured under the receiver is unconfirmed | |
 | Lean-tos per building | 2; back can't combine with left/right | Keeps the corners simple | |
 | Doors on a lean-to | not offered | V1 scope | |
 
