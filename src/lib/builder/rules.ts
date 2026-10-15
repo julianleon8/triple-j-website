@@ -339,6 +339,80 @@ export function openingRange(d: Design, o: Opening): { min: number; max: number 
   return { min, max };
 }
 
+/** What stops a door or window, and which opening, if one is in the way. */
+export type SlideBlock = { message: string; by?: string };
+
+/**
+ * Where a dragged door or window lands: the target snapped to half a foot and
+ * held inside the stretch it can reach without jumping a neighbour. When it
+ * is held back, `blocked` says why.
+ */
+export function slideOpening(d: Design, o: Opening, target: number): { x: number; blocked: SlideBlock | null } {
+  const want = round05(target);
+  if (!fitsAt(d, o, o.x)) {
+    // It doesn't fit where it is (an old link, a building made smaller):
+    // any spot on the wall that fits is a fix, so take the nearest one.
+    const spec = openingSpec(o.spec);
+    const len = wallLength(d, o.wall);
+    let best: number | null = null;
+    for (let x = OPENING_EDGE_MARGIN; x + spec.w <= len - OPENING_EDGE_MARGIN + 1e-6; x += 0.5) {
+      if (fitsAt(d, o, x) && (best === null || Math.abs(x - want) < Math.abs(best - want))) best = x;
+    }
+    if (best === null) return { x: o.x, blocked: { message: `${openingName(o)} doesn't fit anywhere on the ${SIDE_LABEL[o.wall].toLowerCase()} wall.` } };
+    return { x: best, blocked: best === want ? null : slideBlock(d, { ...o, x: best }, want > best ? 1 : -1) };
+  }
+  const { min, max } = openingRange(d, o);
+  if (want >= min - 1e-6 && want <= max + 1e-6) return { x: want, blocked: null };
+  const dir = want < min ? -1 : 1;
+  const x = dir < 0 ? min : max;
+  return { x, blocked: slideBlock(d, { ...o, x }, dir) };
+}
+
+/** Whether an opening fits with its left edge at x: on the wall, clear of its neighbours, under the wall's height there. */
+function fitsAt(d: Design, o: Opening, x: number): boolean {
+  const spec = openingSpec(o.spec);
+  if (x < OPENING_EDGE_MARGIN - 1e-6 || x + spec.w > wallLength(d, o.wall) - OPENING_EDGE_MARGIN + 1e-6) return false;
+  for (const s of d.openings) {
+    if (s.id === o.id || s.wall !== o.wall) continue;
+    const sw = openingSpec(s.spec).w;
+    if (x < s.x + sw + OPENING_GAP - 1e-6 && s.x < x + spec.w + OPENING_GAP - 1e-6) return false;
+  }
+  return openingCeiling(d, o.wall, x, x + spec.w) >= heightNeeded(o) - 1e-6;
+}
+
+/** Why an opening at `o.x` can't go another half foot in `dir`. */
+function slideBlock(d: Design, o: Opening, dir: -1 | 1): SlideBlock {
+  const spec = openingSpec(o.spec);
+  const name = openingName(o);
+  const next = o.x + dir * 0.5;
+  if (next < OPENING_EDGE_MARGIN - 1e-6 || next + spec.w > wallLength(d, o.wall) - OPENING_EDGE_MARGIN + 1e-6) {
+    return { message: `${name} stays ${fmt(OPENING_EDGE_MARGIN)} ft from the corner.` };
+  }
+  const ahead = d.openings
+    .filter((s) => s.wall === o.wall && s.id !== o.id && (dir > 0 ? s.x >= o.x + spec.w : s.x + openingSpec(s.spec).w <= o.x))
+    .sort((a, b) => (dir > 0 ? a.x - b.x : b.x - a.x))[0];
+  if (ahead) {
+    const tooClose =
+      dir > 0 ? next + spec.w + OPENING_GAP > ahead.x + 1e-6 : ahead.x + openingSpec(ahead.spec).w + OPENING_GAP > next + 1e-6;
+    if (tooClose) {
+      const other = openingName(ahead);
+      const pair =
+        other === name
+          ? `the two ${name.replace(/^The /, "").replace(/door$/, "doors").replace(/window$/, "windows")}`
+          : `${name.replace(/^The /, "the ")} and ${other.replace(/^The /, "the ")}`;
+      return { message: `Keep ${fmt(OPENING_GAP)} ft of wall between ${pair}.`, by: ahead.id };
+    }
+  }
+  const top = openingCeiling(d, o.wall, next, next + spec.w);
+  const there = fmt(Math.floor(top * 10) / 10);
+  const byLean = top < minWallTop(d, o.wall, next, next + spec.w) - 1e-6;
+  return {
+    message: byLean
+      ? `${name} needs ${fmt(heightNeeded(o))} ft of wall; past here the lean-to leaves ${there} ft below its roof.`
+      : `${name} needs ${fmt(heightNeeded(o))} ft of wall; past here the wall is ${there} ft tall.`,
+  };
+}
+
 export function fmt(n: number): string {
   return Number.isInteger(n) ? String(n) : n.toFixed(1).replace(/\.0$/, "");
 }

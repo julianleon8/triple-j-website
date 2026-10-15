@@ -7,17 +7,23 @@ import {
   DoubleSide,
   FrontSide,
   Matrix4,
+  MeshBasicMaterial,
   MeshStandardMaterial,
+  Plane,
   Vector3,
+  type Ray,
   type InstancedMesh,
   type Side,
 } from "three";
-import { useThree, type ThreeEvent } from "@react-three/fiber";
+import { useThree, type RootState, type ThreeEvent } from "@react-three/fiber";
+import { Html } from "@react-three/drei";
 
-import { FRAME_HEX, builderColor } from "@/lib/builder/catalog";
+import { FRAME_HEX, OPENING_KIND_LABEL, builderColor, openingSpec } from "@/lib/builder/catalog";
 import type { Design } from "@/lib/builder/design";
 import type { Layout, Member, OpeningPlacement, Surface } from "@/lib/builder/geometry";
+import { fmt } from "@/lib/builder/rules";
 
+import { dragTo, endDrag, startDrag, type DragSession } from "../drag";
 import { useBuilder } from "../store";
 import { panelGeometry } from "./panelGeometry";
 
@@ -26,7 +32,10 @@ const CONCRETE = "#b1ada4";
 const DOOR_SLAB = "#ecebe6";
 const WINDOW_FRAME = "#efefeb";
 const GLASS = "#33434e";
-const HIGHLIGHT = "#00182a";
+/** Selected: the site's link blue on a white halo, readable on any wall color. */
+const SELECTED = "#1e6bd6";
+/** In the way: amber, like the warning message that names it. */
+const BLOCKING = "#f59e0b";
 
 function usePaint(hex: string, opts: { metallic?: boolean; side?: Side; roughness?: number } = {}) {
   const { metallic = false, side = FrontSide, roughness } = opts;
@@ -51,18 +60,22 @@ const paintFor = (slug: string) => builderColor(slug);
 export function Building({ design, layout }: { design: Design; layout: Layout }) {
   const frameOnly = useBuilder((s) => s.frameOnly);
   const selected = useBuilder((s) => s.selected);
+  const flash = useBuilder((s) => s.flash?.id ?? null);
+  const dragging = useBuilder((s) => s.dragging);
   const invalidate = useThree((s) => s.invalidate);
   // The canvas only draws on demand, and removing meshes alone does not ask for a frame.
-  useEffect(() => invalidate(), [invalidate, layout, frameOnly, selected, design.colors]);
+  useEffect(() => invalidate(), [invalidate, layout, frameOnly, selected, flash, dragging, design.colors]);
   const roof = paintFor(design.colors.roof);
   const walls = paintFor(design.colors.walls);
   const trim = paintFor(design.colors.trim);
   const wainscot = paintFor(design.colors.wainscot ?? design.colors.walls);
+  const ridge = paintFor(design.colors.ridge ?? design.colors.roof);
 
   const roofMat = usePaint(roof.hex, { metallic: roof.metallic });
   const wallMat = usePaint(walls.hex, { metallic: walls.metallic });
   const wainscotMat = usePaint(wainscot.hex, { metallic: wainscot.metallic });
   const trimMat = usePaint(trim.hex, { metallic: trim.metallic, roughness: 0.42 });
+  const ridgeMat = usePaint(ridge.hex, { metallic: ridge.metallic, roughness: 0.42 });
   const doorMat = usePaint(trim.hex, { metallic: trim.metallic, side: DoubleSide, roughness: 0.45 });
   const insideMat = usePaint(UNDERSIDE, { metallic: true, side: BackSide, roughness: 0.55 });
   const frameMat = usePaint(FRAME_HEX, { roughness: 0.62 });
@@ -73,6 +86,7 @@ export function Building({ design, layout }: { design: Design; layout: Layout })
   }, [layout]);
   const frame = useMemo(() => layout.members.filter((m) => m.mat === "frame"), [layout]);
   const trimMembers = useMemo(() => layout.members.filter((m) => m.mat === "trim"), [layout]);
+  const ridgeMembers = useMemo(() => layout.members.filter((m) => m.mat === "ridge"), [layout]);
 
   return (
     <group>
@@ -84,8 +98,17 @@ export function Building({ design, layout }: { design: Design; layout: Layout })
           <Panels surfaces={bySurface.wall} outside={wallMat} inside={insideMat} />
           <Panels surfaces={bySurface.wainscot} outside={wainscotMat} inside={insideMat} />
           <Members members={trimMembers} material={trimMat} />
+          {ridgeMembers.length ? <Members members={ridgeMembers} material={ridgeMat} /> : null}
           {layout.openings.map((o) => (
-            <OpeningMesh key={o.id} o={o} doorMat={doorMat} trimMat={trimMat} selected={selected === o.id} />
+            <OpeningMesh
+              key={o.id}
+              o={o}
+              doorMat={doorMat}
+              trimMat={trimMat}
+              selected={selected === o.id}
+              blocking={flash === o.id}
+              dragging={dragging === o.id}
+            />
           ))}
         </>
       )}
@@ -190,25 +213,125 @@ function useOpeningMatrix(o: OpeningPlacement) {
   }, [o]);
 }
 
+/**
+ * The camera and the cursor for a drag: "drag" holds the camera still and
+ * shows a closed hand; "hover" an open one; "idle" gives both back.
+ */
+function setGrab(get: () => RootState, state: "idle" | "hover" | "drag") {
+  const { controls, gl } = get();
+  if (controls) (controls as unknown as { enabled: boolean }).enabled = state !== "drag";
+  gl.domElement.style.cursor = state === "drag" ? "grabbing" : state === "hover" ? "grab" : "";
+}
+
+/**
+ * One door or window. Press and drag slides it along its wall: the pointer's
+ * ray meets the wall's plane, and the distance moved along the wall is the
+ * distance the opening moves. The camera holds still for the drag.
+ */
 function OpeningMesh({
   o,
   doorMat,
   trimMat,
   selected,
+  blocking,
+  dragging,
 }: {
   o: OpeningPlacement;
   doorMat: MeshStandardMaterial;
   trimMat: MeshStandardMaterial;
   selected: boolean;
+  blocking: boolean;
+  dragging: boolean;
 }) {
   const matrix = useOpeningMatrix(o);
-  const select = useBuilder((s) => s.select);
-  const setSection = useBuilder((s) => s.setSection);
-  const onClick = (e: ThreeEvent<MouseEvent>) => {
-    e.stopPropagation();
-    select(o.id);
-    setSection("openings");
+  const get = useThree((s) => s.get);
+  const drag = useRef<{ session: DragSession; plane: Plane; hit0: Vector3; u: Vector3; stop: () => void } | null>(null);
+  const hovered = useRef(false);
+  const normal = useMemo(() => new Vector3(...o.normal), [o]);
+  // Only walls and roof with no handlers sit between the pointer and an
+  // opening, so they hide nothing from it. A wall facing away from the camera
+  // is behind the building: its openings can't be grabbed or hovered.
+  const hidden = (ray: Ray) => ray.direction.dot(normal) >= 0;
+
+  /** End the drag, however it ends. Safe to call twice. */
+  const finish = () => {
+    const d = drag.current;
+    if (!d) return;
+    drag.current = null;
+    d.stop();
+    endDrag();
+    setGrab(get, hovered.current ? "hover" : "idle");
   };
+
+  const onPointerDown = (e: ThreeEvent<PointerEvent>) => {
+    if (e.pointerType === "mouse" && e.button !== 0) return;
+    if (hidden(e.ray)) return;
+    // On a touch screen the first tap only selects (onClick), so a finger
+    // that lands on a door can still turn or pinch the view. Once it's
+    // selected, it drags.
+    if (e.pointerType !== "mouse" && !selected) return;
+    const plane = new Plane().setFromNormalAndCoplanarPoint(normal, new Vector3(...o.origin));
+    const hit0 = e.ray.intersectPlane(plane, new Vector3());
+    if (!hit0) return;
+    const session = startDrag(o.id, "scene");
+    if (!session) return;
+    e.stopPropagation();
+    useBuilder.getState().setSection("openings");
+    const target = e.target as Element;
+    const pointerId = e.pointerId;
+    target.setPointerCapture(pointerId);
+    // The 3D library doesn't pass pointercancel or a lost capture on to the
+    // object, so listen on the canvas itself; a second finger hands the
+    // gesture back to the camera.
+    const el = (get().events.connected ?? get().gl.domElement) as HTMLElement;
+    const onEnd = (ev: PointerEvent) => ev.pointerId === pointerId && finish();
+    const onSecond = (ev: PointerEvent) => ev.pointerId !== pointerId && finish();
+    el.addEventListener("pointerup", onEnd);
+    el.addEventListener("pointercancel", onEnd);
+    el.addEventListener("lostpointercapture", onEnd);
+    el.addEventListener("pointerdown", onSecond);
+    const stop = () => {
+      el.removeEventListener("pointerup", onEnd);
+      el.removeEventListener("pointercancel", onEnd);
+      el.removeEventListener("lostpointercapture", onEnd);
+      el.removeEventListener("pointerdown", onSecond);
+      try {
+        target.releasePointerCapture(pointerId);
+      } catch {
+        // Already released.
+      }
+    };
+    drag.current = { session, plane, hit0, u: new Vector3(...o.uAxis), stop };
+    setGrab(get, "drag");
+  };
+  const onPointerMove = (e: ThreeEvent<PointerEvent>) => {
+    const d = drag.current;
+    if (!d) return;
+    e.stopPropagation();
+    // The button came up somewhere we didn't hear about.
+    if (e.buttons === 0) return finish();
+    const hit = e.ray.intersectPlane(d.plane, new Vector3());
+    if (hit) dragTo(d.session, d.session.x0 + hit.sub(d.hit0).dot(d.u));
+  };
+  const onClick = (e: ThreeEvent<MouseEvent>) => {
+    if (e.delta > 6 || hidden(e.ray)) return;
+    e.stopPropagation();
+    const s = useBuilder.getState();
+    s.select(o.id);
+    s.setSection("openings");
+  };
+  // A drag cut short (the opening removed, Frame only turned on) gives the camera back.
+  useEffect(
+    () => () => {
+      const d = drag.current;
+      if (d) {
+        d.stop();
+        endDrag();
+      }
+      setGrab(get, "idle");
+    },
+    [get],
+  );
   const slabMat = usePaint(DOOR_SLAB, { roughness: 0.6 });
   const frameMat = usePaint(WINDOW_FRAME, { roughness: 0.6 });
   const glassMat = useMemo(() => new MeshStandardMaterial({ color: GLASS, metalness: 0.2, roughness: 0.06, envMapIntensity: 0.9 }), []);
@@ -218,7 +341,23 @@ function OpeningMesh({
 
   const { w, h } = o;
   return (
-    <group matrix={matrix} matrixAutoUpdate={false} onClick={onClick}>
+    <group
+      matrix={matrix}
+      matrixAutoUpdate={false}
+      onPointerDown={onPointerDown}
+      onPointerMove={onPointerMove}
+      onPointerUp={finish}
+      onClick={onClick}
+      onPointerOver={(e) => {
+        hovered.current = !hidden(e.ray) && e.pointerType === "mouse";
+        // Mid-drag the cursor and the camera belong to the drag.
+        if (!useBuilder.getState().dragging && hovered.current) setGrab(get, "hover");
+      }}
+      onPointerOut={() => {
+        hovered.current = false;
+        if (!useBuilder.getState().dragging) setGrab(get, "idle");
+      }}
+    >
       {o.kind === "rollup" && rollup ? (
         <>
           <mesh geometry={rollup} material={doorMat} castShadow receiveShadow />
@@ -250,7 +389,8 @@ function OpeningMesh({
           <Casing w={w} h={h} material={frameMat} sill />
         </>
       ) : null}
-      {selected ? <Highlight w={w} h={h} floor={o.kind !== "window"} /> : null}
+      {selected || blocking ? <Outline w={w} h={h} floor={o.kind !== "window"} color={blocking ? BLOCKING : SELECTED} /> : null}
+      {selected ? <Tag o={o} dragging={dragging} /> : null}
     </group>
   );
 }
@@ -301,30 +441,100 @@ function Casing({ w, h, material, sill }: { w: number; h: number; material: Mesh
   );
 }
 
-/** An outline around the selected opening. Doors stand on the floor, so their outline stops there; a window gets all four sides. */
-function Highlight({ w, h, floor }: { w: number; h: number; floor: boolean }) {
-  const t = 0.14;
-  const pad = 0.45;
-  const z = 0.3;
-  const low = floor ? 0.1 : -pad;
-  const sideH = h + pad - low;
-  const mat = useMemo(() => new MeshStandardMaterial({ color: HIGHLIGHT, emissive: HIGHLIGHT, roughness: 0.4 }), []);
-  useEffect(() => () => mat.dispose(), [mat]);
+/**
+ * The outline on the selected opening (blue) or the one in the way (amber):
+ * a white halo under a colored band and a tinted fill, unlit, so it reads on
+ * a black wall and a white one alike. Doors stand on the floor, so their
+ * outline stops there; a window gets all four sides.
+ */
+function Outline({ w, h, floor, color }: { w: number; h: number; floor: boolean; color: string }) {
+  const pad = 0.38;
+  const low = floor ? 0.08 : -pad;
+  const mats = useMemo(
+    () => ({
+      halo: new MeshBasicMaterial({ color: "#ffffff", toneMapped: false }),
+      band: new MeshBasicMaterial({ color, toneMapped: false }),
+      fill: new MeshBasicMaterial({ color, toneMapped: false, transparent: true, opacity: 0.18, depthWrite: false }),
+    }),
+    [color],
+  );
+  useEffect(() => () => Object.values(mats).forEach((m) => m.dispose()), [mats]);
+  // Thin plates, the band in front of the halo, so both show from any angle.
+  const frame = (t: number, z: number, mat: MeshBasicMaterial, key: string) => {
+    const sideH = h + pad - low;
+    const depth = 0.05;
+    return (
+      <group key={key}>
+        <mesh position={[-pad, low + sideH / 2, z]} material={mat}>
+          <boxGeometry args={[t, sideH + t, depth]} />
+        </mesh>
+        <mesh position={[w + pad, low + sideH / 2, z]} material={mat}>
+          <boxGeometry args={[t, sideH + t, depth]} />
+        </mesh>
+        <mesh position={[w / 2, h + pad, z]} material={mat}>
+          <boxGeometry args={[w + 2 * pad + t, t, depth]} />
+        </mesh>
+        {floor ? null : (
+          <mesh position={[w / 2, low, z]} material={mat}>
+            <boxGeometry args={[w + 2 * pad + t, t, depth]} />
+          </mesh>
+        )}
+      </group>
+    );
+  };
   return (
     <>
-      <mesh position={[-pad, low + sideH / 2, z]} material={mat}>
-        <boxGeometry args={[t, sideH, t]} />
-      </mesh>
-      <mesh position={[w + pad, low + sideH / 2, z]} material={mat}>
-        <boxGeometry args={[t, sideH, t]} />
-      </mesh>
-      <mesh position={[w / 2, h + pad, z]} material={mat}>
-        <boxGeometry args={[w + 2 * pad, t, t]} />
-      </mesh>
-      <mesh position={[w / 2, low, z]} material={mat}>
-        <boxGeometry args={[w + 2 * pad, t, t]} />
+      {frame(0.5, 0.3, mats.halo, "halo")}
+      {frame(0.28, 0.36, mats.band, "band")}
+      <mesh position={[w / 2, h / 2, 0.24]} material={mats.fill} renderOrder={2}>
+        <planeGeometry args={[w, h]} />
       </mesh>
     </>
+  );
+}
+
+/**
+ * A label over the selected opening: what it is and how to move it, then,
+ * mid-drag, where it is. Pointer-only and hidden from assistive tech: the
+ * Doors and windows step has the same controls for keyboards.
+ */
+function Tag({ o, dragging }: { o: OpeningPlacement; dragging: boolean }) {
+  const x = useBuilder((s) => s.design.openings.find((y) => y.id === o.id)?.x);
+  const spec = useBuilder((s) => s.design.openings.find((y) => y.id === o.id)?.spec);
+  if (x == null || !spec) return null;
+  const sp = openingSpec(spec);
+  const name = sp.kind === "walk" ? "Walk door" : `${OPENING_KIND_LABEL[sp.kind]} ${sp.label}`;
+  const remove = () => {
+    const s = useBuilder.getState();
+    s.edit((d) => ({ ...d, openings: d.openings.filter((y) => y.id !== o.id) }));
+    s.select(null);
+    s.notify(`${name} removed. Undo brings it back.`, { tone: "info" });
+  };
+  return (
+    <Html position={[o.w / 2, o.h + 1.7, 0.36]} center zIndexRange={[30, 10]} style={{ pointerEvents: "none" }}>
+      <div
+        aria-hidden="true"
+        className="flex items-center gap-1 whitespace-nowrap rounded-full py-1 pl-3 pr-1 text-[12px] font-semibold leading-none text-white shadow-[0_4px_14px_rgba(0,24,42,.3)]"
+        style={{ background: SELECTED }}
+      >
+        <span>{name}</span>
+        <span className="font-medium text-white">· {dragging ? `${fmt(x)} ft from the left corner` : "Drag to move"}</span>
+        {dragging ? null : (
+          <button
+            type="button"
+            tabIndex={-1}
+            // The label sits over the canvas: keep this press from also grabbing a door or turning the camera.
+            onPointerDown={(e) => e.stopPropagation()}
+            onClick={remove}
+            className="ml-1 inline-flex size-7 cursor-pointer items-center justify-center rounded-full text-[15px] text-white hover:bg-white/20"
+            style={{ pointerEvents: "auto" }}
+            title={`Remove ${name.toLowerCase()}`}
+          >
+            ×
+          </button>
+        )}
+      </div>
+    </Html>
   );
 }
 

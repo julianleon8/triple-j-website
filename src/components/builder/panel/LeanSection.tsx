@@ -15,7 +15,7 @@ const LABEL: Record<LeanSide, string> = { left: SIDE_LABEL.left, right: SIDE_LAB
 export function LeanSection() {
   const d = useBuilder((s) => s.design);
   const edit = useBuilder((s) => s.edit);
-  const announce = useBuilder((s) => s.announce);
+  const notify = useBuilder((s) => s.notify);
   const [notice, setNotice] = useState<string | null>(null);
   const max = maxLeanDepth(d);
 
@@ -23,7 +23,7 @@ export function LeanSection() {
     const can = canAddLean(d, side);
     if (!can.ok) {
       setNotice(can.reason);
-      announce(can.reason);
+      notify(can.reason);
       return;
     }
     const depth = Math.max(LIMITS.leanDepth.min, Math.min(10, max));
@@ -90,6 +90,15 @@ export function LeanSection() {
               min={LIMITS.leanDepth.min}
               max={Math.max(LIMITS.leanDepth.min, max)}
               onChange={(depth) => update(side, { depth })}
+              onLimit={(edge) =>
+                notify(
+                  edge === "min"
+                    ? `${LIMITS.leanDepth.min} ft is the shallowest lean-to the builder takes.`
+                    : max < LIMITS.leanDepth.max
+                      ? `Any deeper and the lean-to would drop below ${LEAN_MIN_OUTER} ft clear at its low edge. Raise the main eave to go deeper.`
+                      : `${LIMITS.leanDepth.max} ft is the deepest lean-to the builder takes. Call us for deeper.`,
+                )
+              }
               helper={`${fmt(leanOuterHeight(d, lean.depth))} ft clear at the low edge.`}
             />
             <PillGroup

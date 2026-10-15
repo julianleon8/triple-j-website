@@ -1,12 +1,24 @@
 "use client";
 
-import { useId, useState, type KeyboardEvent, type ReactNode } from "react";
+import { useId, useRef, useState, type KeyboardEvent, type ReactNode } from "react";
+import { TriangleAlert } from "lucide-react";
 
 import { FieldLabel } from "@/components/forge/form";
 import { BUILDER_COLORS, builderColor } from "@/lib/builder/catalog";
+import { fmt } from "@/lib/builder/rules";
 
 import { useBuilder, type SectionId } from "../store";
+import { WARN } from "../Toast";
 import { SECTIONS } from "./sections";
+
+/** A short side-to-side shake: "that's as far as it goes". Skipped under reduced motion. */
+export function shake(el: HTMLElement | null) {
+  if (!el || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  el.animate(
+    [0, -7, 6, -4, 3, 0].map((x) => ({ transform: `translateX(${x}px)` })),
+    { duration: 360, easing: "ease-out" },
+  );
+}
 
 /**
  * Heading, lede, body and the Back / Next row every section shares. The
@@ -70,6 +82,8 @@ const stepBtn =
 /**
  * A feet value: − / typed number / + and a slider, bounded by min/max. When
  * the floor is raised by something the customer added, `reason` says what.
+ * Pushing past an end shakes the control and says why on screen: `onLimit`
+ * explains it, or a plain "that's the most" is shown.
  */
 export function Stepper({
   label,
@@ -81,6 +95,7 @@ export function Stepper({
   helper,
   reason,
   unit = "ft",
+  onLimit,
 }: {
   label: string;
   value: number;
@@ -91,8 +106,17 @@ export function Stepper({
   helper?: ReactNode;
   reason?: string | null;
   unit?: string;
+  onLimit?: (edge: "min" | "max") => void;
 }) {
   const id = useId();
+  const row = useRef<HTMLDivElement>(null);
+  const notify = useBuilder((s) => s.notify);
+  const limit = (edge: "min" | "max") => {
+    shake(row.current);
+    if (onLimit) return onLimit(edge);
+    if (edge === "min") notify(reason ?? `${fmt(min)} ${unit} is the least the builder takes for ${label.toLowerCase()}.`);
+    else notify(`${fmt(max)} ${unit} is the most the builder takes for ${label.toLowerCase()}. Call us for anything bigger.`);
+  };
   // What's typed, only while the field is being edited; otherwise the value shows.
   const [draft, setDraft] = useState<string | null>(null);
   const commit = (raw: string) => {
@@ -102,19 +126,21 @@ export function Stepper({
     const snapped = Math.round(n / step) * step;
     const v = Math.min(max, Math.max(min, snapped));
     if (v !== value) onChange(v);
+    if (snapped < min) limit("min");
+    else if (snapped > max) limit("max");
   };
   const atMin = value <= min;
   const atMax = value >= max;
   return (
     <div>
       <FieldLabel htmlFor={id}>{label}</FieldLabel>
-      <div className="flex items-center gap-2">
+      <div ref={row} className="flex items-center gap-2">
         <button
           type="button"
           className={stepBtn}
           aria-label={`Decrease ${label.toLowerCase()}`}
           aria-disabled={atMin || undefined}
-          onClick={() => !atMin && onChange(Math.max(min, value - step))}
+          onClick={() => (atMin ? limit("min") : onChange(Math.max(min, value - step)))}
         >
           −
         </button>
@@ -137,7 +163,7 @@ export function Stepper({
           className={stepBtn}
           aria-label={`Increase ${label.toLowerCase()}`}
           aria-disabled={atMax || undefined}
-          onClick={() => !atMax && onChange(Math.min(max, value + step))}
+          onClick={() => (atMax ? limit("max") : onChange(Math.min(max, value + step)))}
         >
           +
         </button>
@@ -268,14 +294,17 @@ export function SwatchGrid({
   value,
   onChange,
   allowNone = false,
+  noneLabel = "None",
 }: {
   label: string;
   value: string | null;
   onChange: (slug: string | null) => void;
   allowNone?: boolean;
+  /** What the no-color choice means here: "None", or "Match roof". */
+  noneLabel?: string;
 }) {
   const id = useId();
-  const current = value ? builderColor(value).name : "None";
+  const current = value ? builderColor(value).name : noneLabel;
   const choices: (string | null)[] = [...(allowNone ? [null] : []), ...BUILDER_COLORS.map((c) => c.slug)];
   const index = choices.indexOf(value);
   return (
@@ -303,13 +332,13 @@ export function SwatchGrid({
                 role="radio"
                 aria-checked={on}
                 tabIndex={tabIndex}
-                title="None"
+                title={noneLabel}
                 onClick={() => onChange(null)}
-                className={`flex aspect-square cursor-pointer items-center justify-center rounded-[8px] border-2 bg-white text-[11px] font-semibold text-forge-slate ${
+                className={`flex aspect-square cursor-pointer items-center justify-center rounded-[8px] border-2 bg-white text-center text-[10px] font-semibold leading-[1.15] text-forge-slate ${
                   on ? "border-forge-navy" : "border-forge-silver hover:border-forge-steel"
                 }`}
               >
-                None
+                {noneLabel}
               </button>
             );
           }
@@ -347,21 +376,28 @@ export function SwatchGrid({
 
 /**
  * An inline notice: a reason something is blocked, with an optional fix.
- * Visual only; the store's live region (BuilderApp) reads refusals aloud.
+ * Amber with a warning sign so it reads as a problem at a glance. Visual
+ * only; the store's live region (BuilderApp) reads refusals aloud.
  */
 export function Notice({ children, action }: { children: ReactNode; action?: { label: string; onClick: () => void } }) {
   return (
-    <div className="rounded-[8px] border border-forge-silver bg-forge-fog px-3.5 py-3 text-[13px] leading-[1.5] text-forge-navy">
-      {children}
-      {action ? (
-        <button
-          type="button"
-          onClick={action.onClick}
-          className="mt-1 flex min-h-11 cursor-pointer items-center text-[13px] font-semibold text-forge-navy underline decoration-forge-silver underline-offset-4 hover:decoration-forge-navy"
-        >
-          {action.label} →
-        </button>
-      ) : null}
+    <div
+      className="flex gap-2.5 rounded-[8px] border border-l-[5px] px-3.5 py-3 text-[14px] font-medium leading-[1.5] text-forge-navy"
+      style={{ borderColor: WARN, background: "#fffaf2" }}
+    >
+      <TriangleAlert aria-hidden="true" className="mt-[2px] size-[18px] flex-none" strokeWidth={2.2} style={{ color: WARN }} />
+      <div className="min-w-0 flex-1">
+        {children}
+        {action ? (
+          <button
+            type="button"
+            onClick={action.onClick}
+            className="mt-1 flex min-h-11 cursor-pointer items-center text-[13px] font-semibold text-forge-navy underline decoration-forge-silver underline-offset-4 hover:decoration-forge-navy"
+          >
+            {action.label} →
+          </button>
+        ) : null}
+      </div>
     </div>
   );
 }

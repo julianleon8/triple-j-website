@@ -70,6 +70,8 @@ export function colorsLabel(d: Design): string {
   const anyEnclosed = SIDES.some((s) => wallState(d, s) === "enclosed") || d.leanTos.some((l) => l.walls === "enclosed");
   if (anyWall) parts.push(`Walls ${builderColor(d.colors.walls).name}`);
   parts.push(`Trim ${builderColor(d.colors.trim).name}`);
+  // Only worth a line when it differs: by default the ridge cap matches the roof.
+  if (d.roof === "gable" && d.colors.ridge && d.colors.ridge !== d.colors.roof) parts.push(`Ridge cap ${builderColor(d.colors.ridge).name}`);
   if (anyEnclosed && d.colors.wainscot) parts.push(`Wainscot ${builderColor(d.colors.wainscot).name}`);
   return parts.join(" · ");
 }

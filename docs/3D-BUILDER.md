@@ -7,13 +7,15 @@ Live on `main` since 2026-10-14, **unlisted** (noindex, no menu link, no sitemap
 1. **Start:** carport, RV & boat cover, garage & shop, or barn. Each loads a sales-pack size.
 2. **Size & roof:** width, length, eave height; flat (low single slope, high at the front) or gabled 3:12.
 3. **Walls:** each side open, partial (top 3 ft), gable end (front/back of a gable roof) or enclosed.
-4. **Doors & windows:** roll-up, walk door, window; pick the wall and slide it along. Tap one in 3D to jump to it.
+4. **Doors & windows:** roll-up, walk door, window; pick the wall, then drag it along the wall in the 3D view or on the plan (half-foot steps; it stops a foot from a corner, a foot from the next opening, and where the wall gets too low, and says which). The selected one is outlined in blue with a label; whatever is in the way flashes amber.
 5. **Lean-tos:** left, right or back; depth; open or enclosed. Up to two; a back lean-to can't share corners with a side one.
-6. **Colors:** roof, walls, trim (roll-up doors follow trim), optional 3 ft wainscot. Standard Line colors from `src/lib/colors.ts`.
+6. **Colors:** roof, walls, trim (roll-up doors follow trim), ridge cap on a gabled roof (matches the roof unless picked), optional 3 ft wainscot. Standard Line colors from `src/lib/colors.ts`.
 7. **Frame & site:** welded / bolted / not sure, heavy-duty upgrade, concrete pad.
 8. **Review & quote:** summary, dimensioned plan, the "From $X" line, a share link, and the contact form.
 
-The 3D view has undo/redo (also ⌘Z / ⇧⌘Z), Front / Side / Back / Top / 3D views, a **Frame only** view of the red iron, and a 5 ft 11 in figure for scale. Without WebGL the view becomes the plan drawing and everything still works.
+The 3D view has undo/redo (also ⌘Z / ⇧⌘Z), Front / Side / Back / Top / 3D views, a **Frame only** view of the red iron, and a 5 ft 11 in figure for scale. Without WebGL the view becomes the plan drawing (doors still drag) and everything still works.
+
+Anything the builder refuses (a door that won't fit, a size past the limit, a lean-to too deep for the eave) says why in an amber message over the 3D view, and the control shakes; screen readers hear the same text.
 
 ## Shop rules: sign-off sheet
 

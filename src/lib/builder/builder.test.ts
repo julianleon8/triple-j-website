@@ -12,10 +12,11 @@ import {
   normalizeDesign,
   openingRange,
   placeOpening,
+  slideOpening,
   wallTopAt,
 } from "./rules";
 import { decodeDesign, designFromHash, encodeDesign, shareUrl } from "./share";
-import { leadMessage, summaryRows } from "./summary";
+import { colorsLabel, leadMessage, summaryRows } from "./summary";
 
 const garage = PRESETS.garage;
 const carport = PRESETS.carport;
@@ -301,5 +302,66 @@ describe("lean-to posts", () => {
     );
     expect(outerPosts.map((m) => Math.round(m.a[2]))).not.toContain(0);
     expect(outerPosts).toHaveLength(2);
+  });
+});
+
+describe("dragging a door or window", () => {
+  const d1 = garage.openings.find((o) => o.id === "d1")!;
+  const d3 = garage.openings.find((o) => o.id === "d3")!;
+
+  it("lands on the nearest half foot inside its reach", () => {
+    expect(slideOpening(garage, d3, 7.3)).toEqual({ x: 7.5, blocked: null });
+  });
+
+  it("stops at the next door and names it", () => {
+    const r = slideOpening(garage, d1, 9);
+    expect(r.x).toBe(5);
+    expect(r.blocked?.by).toBe("d2");
+    expect(r.blocked?.message).toBe("Keep 1 ft of wall between the two 10×10 roll-up doors.");
+    const mixed = with_(garage, { openings: [d1, { id: "w", spec: "walk", wall: "front", x: 16 }] });
+    expect(slideOpening(mixed, d1, 9).blocked?.message).toBe("Keep 1 ft of wall between the 10×10 roll-up door and the walk door.");
+  });
+
+  it("stops where the gable end gets too low, and says how tall it is there", () => {
+    const r = slideOpening(garage, d1, 1);
+    expect(r.x).toBe(4);
+    expect(r.blocked?.by).toBeUndefined();
+    expect(r.blocked?.message).toMatch(/needs 11 ft of wall; past here the wall is 10\.8 ft tall/);
+  });
+
+  it("lets a door that doesn't fit where it sits jump to the nearest spot that does", () => {
+    // An old link: d1 at 1 ft on the gable end, where the wall is too low for a 10×10.
+    const stuck = { ...d1, x: 1 };
+    const d = with_(garage, { openings: [stuck, ...garage.openings.filter((o) => o.id !== "d1")] });
+    expect(designIssues(d).some((i) => i.openingId === "d1")).toBe(true);
+    const r = slideOpening(d, stuck, 2);
+    expect(r.x).toBe(4);
+    expect(r.blocked?.message).toMatch(/past here the wall is/);
+  });
+
+  it("stops a foot from the corner", () => {
+    const r = slideOpening(garage, d3, -6);
+    expect(r.x).toBe(1);
+    expect(r.blocked?.message).toMatch(/stays 1 ft from the corner/);
+  });
+});
+
+describe("ridge cap color", () => {
+  it("matches the roof unless picked, and old links read that way", () => {
+    const { ridge: _ridge, ...oldColors } = garage.colors;
+    expect(designSchema.parse({ ...garage, colors: oldColors }).colors.ridge).toBeNull();
+    expect(colorsLabel(garage)).not.toMatch(/Ridge cap/);
+  });
+
+  it("is listed only when it differs on a gabled roof", () => {
+    expect(colorsLabel(with_(garage, { colors: { ...garage.colors, ridge: "Black" } }))).toMatch(/Ridge cap Black/);
+    expect(colorsLabel(with_(garage, { colors: { ...garage.colors, ridge: garage.colors.roof } }))).not.toMatch(/Ridge cap/);
+    const flat = PRESETS.rv_cover;
+    expect(colorsLabel(with_(flat, { colors: { ...flat.colors, ridge: "Black" } }))).not.toMatch(/Ridge cap/);
+  });
+
+  it("is drawn as its own piece on a gabled roof only", () => {
+    expect(layoutBuilding(garage).members.filter((m) => m.mat === "ridge")).toHaveLength(2);
+    expect(layoutBuilding(PRESETS.rv_cover).members.filter((m) => m.mat === "ridge")).toHaveLength(0);
   });
 });

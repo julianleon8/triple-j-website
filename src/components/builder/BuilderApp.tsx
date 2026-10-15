@@ -11,9 +11,10 @@ import { encodeDesign, decodeDesign, designFromHash } from "@/lib/builder/share"
 import { describeDesign } from "@/lib/builder/summary";
 import { capture } from "@/lib/analytics";
 
-import { PlanView } from "./PlanView";
+import { DraggablePlan } from "./DraggablePlan";
 import { PriceLine } from "./PriceLine";
 import { ShareButton } from "./ShareButton";
+import { BuilderToast } from "./Toast";
 import { useBuilder, type SectionId, type ViewName } from "./store";
 import { SECTIONS } from "./panel/sections";
 import { StartSection } from "./panel/StartSection";
@@ -202,18 +203,20 @@ export function BuilderApp() {
           className="relative h-[44svh] flex-none overflow-hidden bg-[#dfe7ec] lg:h-auto lg:flex-1 [@media(orientation:landscape)_and_(max-height:540px)]:h-auto [@media(orientation:landscape)_and_(max-height:540px)]:flex-1"
         >
           {gl === true ? (
-            <div role="img" aria-label={describeDesign(design)} className="absolute inset-0">
+            // isolate: labels drawn over the 3D view stay under the buttons and messages.
+            <div role="img" aria-label={describeDesign(design)} className="absolute inset-0 isolate">
               <Scene />
             </div>
           ) : gl === false ? (
             <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-white p-6">
-              <PlanView design={design} className="h-full max-h-[70%] w-full" />
+              <DraggablePlan className="h-full max-h-[70%] w-full" />
               <p className="max-w-[360px] text-center text-[13px] leading-[1.5] text-forge-slate">
                 3D isn&apos;t available on this device, so here is your plan. It updates as you build.
               </p>
             </div>
           ) : null}
           {gl === true ? <ViewportControls /> : gl === false ? <UndoRedo className="absolute left-3 top-3" /> : null}
+          <BuilderToast />
         </section>
 
         <aside className="flex min-h-0 flex-1 flex-col border-t border-forge-silver lg:w-[440px] lg:flex-none lg:border-l lg:border-t-0 [@media(orientation:landscape)_and_(max-height:540px)]:w-[52%] [@media(orientation:landscape)_and_(max-height:540px)]:flex-none [@media(orientation:landscape)_and_(max-height:540px)]:border-l [@media(orientation:landscape)_and_(max-height:540px)]:border-t-0">

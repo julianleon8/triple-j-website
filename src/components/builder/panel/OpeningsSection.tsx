@@ -14,8 +14,9 @@ import {
   type Side,
 } from "@/lib/builder/catalog";
 import type { Opening } from "@/lib/builder/design";
-import { openingRange, placeOpening, wallState, wallsForOpening } from "@/lib/builder/rules";
+import { fmt, openingRange, placeOpening, slideOpening, wallState, wallsForOpening } from "@/lib/builder/rules";
 
+import { DraggablePlan } from "../DraggablePlan";
 import { useBuilder } from "../store";
 import { Notice, SectionShell, Stepper, focusHeading, textAction } from "./controls";
 
@@ -38,13 +39,13 @@ export function OpeningsSection() {
   const select = useBuilder((s) => s.select);
   const selected = useBuilder((s) => s.selected);
   const setSection = useBuilder((s) => s.setSection);
-  const announce = useBuilder((s) => s.announce);
+  const notify = useBuilder((s) => s.notify);
   const [notice, setNoticeState] = useState<{ text: string; toWalls?: boolean } | null>(null);
   const [cardNotice, setCardNoticeState] = useState<{ id: string; text: string } | null>(null);
-  // Shown on screen and read out (refused edits are already read out by the store).
+  // Shown here, over the 3D view and read out (refused edits already are, by the store).
   const setNotice = (n: { text: string; toWalls?: boolean } | null) => {
     setNoticeState(n);
-    if (n) announce(n.text);
+    if (n) notify(n.text);
   };
   const setCardNotice = (n: { id: string; text: string } | null) => setCardNoticeState(n);
 
@@ -82,14 +83,15 @@ export function OpeningsSection() {
     const spot = placeOpening(others, o.spec, [wall]);
     if (!spot) {
       const text = `There isn't room on the ${SIDE_LABEL[wall].toLowerCase()} wall.`;
-      announce(text);
+      notify(text);
       return setCardNotice({ id: o.id, text });
     }
     update(o, { wall, x: spot.x });
   }
 
   function resize(o: Opening, spec: string) {
-    const r = edit((x) => ({ ...x, openings: x.openings.map((y) => (y.id === o.id ? { ...y, spec } : y)) }));
+    // Tried in place first, quietly: if it doesn't fit there, it moves.
+    const r = edit((x) => ({ ...x, openings: x.openings.map((y) => (y.id === o.id ? { ...y, spec } : y)) }), undefined, { quiet: true });
     if (r.ok) return setCardNotice(null);
     // Same wall, new spot that fits the new size.
     const others = { ...d, openings: d.openings.filter((x) => x.id !== o.id) };
@@ -98,6 +100,7 @@ export function OpeningsSection() {
       edit((x) => ({ ...x, openings: x.openings.map((y) => (y.id === o.id ? { ...y, spec, x: spot.x } : y)) }));
       setCardNotice(null);
     } else {
+      notify(r.issues[0].message, { flash: o.id });
       setCardNotice({ id: o.id, text: r.issues[0].message });
     }
   }
@@ -110,9 +113,10 @@ export function OpeningsSection() {
   }
 
   // A door tapped in the 3D view scrolls its card into view. One frame later,
-  // because opening this step scrolls the panel to its top first.
+  // because opening this step scrolls the panel to its top first. Not while
+  // it's being dragged on the plan: the plan would scroll out from under the finger.
   useEffect(() => {
-    if (!selected) return;
+    if (!selected || useBuilder.getState().dragFrom === "plan") return;
     const id = requestAnimationFrame(() =>
       document.querySelector(`[data-opening="${selected}"]`)?.scrollIntoView({ block: "nearest" }),
     );
@@ -123,7 +127,7 @@ export function OpeningsSection() {
     <SectionShell
       id="openings"
       title="Doors and windows"
-      lede="Add them here, then pick the wall and slide them into place. Tap one in the 3D view to jump to it."
+      lede="Add them here, then drag them along the wall in the 3D view or on the plan below. Tap one to select it."
     >
       <div className="grid grid-cols-3 gap-2">
         {(["rollup", "walk", "window"] as const).map((k) => (
@@ -139,6 +143,12 @@ export function OpeningsSection() {
       </div>
       {notice ? (
         <Notice action={notice.toWalls ? { label: "Go to walls", onClick: () => setSection("walls") } : undefined}>{notice.text}</Notice>
+      ) : null}
+      {d.openings.length ? (
+        <div>
+          <DraggablePlan className="h-[220px] w-full rounded-[10px] border border-forge-mist" />
+          <p className="mt-2 text-[12px] leading-[1.45] text-forge-slate">Drag a door or window along its wall. Front is at the bottom.</p>
+        </div>
       ) : null}
 
       {d.openings.length === 0 ? (
@@ -157,11 +167,19 @@ export function OpeningsSection() {
             key={o.id}
             data-opening={o.id}
             role="group"
-            aria-label={`${OPENING_KIND_LABEL[spec.kind]} ${spec.label}, ${SIDE_LABEL[o.wall].toLowerCase()} wall`}
+            aria-label={`${OPENING_KIND_LABEL[spec.kind]} ${spec.label}, ${SIDE_LABEL[o.wall].toLowerCase()} wall, ${fmt(o.x)} ft from the left corner`}
             onFocusCapture={() => select(o.id)}
             onClick={() => select(o.id)}
-            className={`flex flex-col gap-4 rounded-[10px] border-2 p-4 ${on ? "border-forge-navy" : "border-forge-silver"}`}
+            className={`relative flex flex-col gap-4 rounded-[10px] border-2 p-4 transition-colors ${
+              on ? "border-[#1e6bd6] bg-[#f2f7fe] shadow-[0_0_0_3px_rgba(30,107,214,.18)]" : "border-forge-silver bg-white"
+            }`}
           >
+            {/* On the border, so selecting a card never moves the control under the pointer. */}
+            {on ? (
+              <p className="absolute -top-[11px] left-3.5 m-0 inline-flex items-center rounded-full bg-[#1e6bd6] px-2 py-[3px] text-[10px] font-bold uppercase leading-none tracking-[.14em] text-white">
+                Selected
+              </p>
+            ) : null}
             <div className="flex items-start justify-between gap-3">
               <p className="font-forge-display text-[17px] font-bold leading-[1.2] text-forge-navy">
                 {OPENING_KIND_LABEL[spec.kind]}
@@ -169,7 +187,7 @@ export function OpeningsSection() {
               </p>
               <button
                 type="button"
-                aria-label={`Remove ${OPENING_KIND_LABEL[spec.kind].toLowerCase()} ${spec.label} from the ${SIDE_LABEL[o.wall].toLowerCase()} wall`}
+                aria-label={`Remove ${OPENING_KIND_LABEL[spec.kind].toLowerCase()} ${spec.label} from the ${SIDE_LABEL[o.wall].toLowerCase()} wall, ${fmt(o.x)} ft from the left corner`}
                 onClick={(e) => {
                   e.stopPropagation();
                   remove(o);
@@ -202,6 +220,10 @@ export function OpeningsSection() {
                 max={range.max}
                 step={0.5}
                 onChange={(x) => update(o, { x })}
+                onLimit={(edge) => {
+                  const { blocked } = slideOpening(d, o, edge === "min" ? range.min - 0.5 : range.max + 0.5);
+                  if (blocked) notify(blocked.message, { flash: blocked.by });
+                }}
                 helper={`Measured to the ${spec.kind === "window" ? "window" : "door"}'s left edge, standing outside the ${SIDE_LABEL[o.wall].toLowerCase()} wall.`}
               />
             </div>

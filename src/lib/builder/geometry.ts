@@ -28,7 +28,8 @@ import { wallLength, wallState, wallTopAt } from "./rules";
 
 export type Vec3 = [number, number, number];
 
-export type MemberMat = "frame" | "trim";
+/** "ridge" is the ridge cap, painted the roof color unless the customer picks one. */
+export type MemberMat = "frame" | "trim" | "ridge";
 /** A box from `a` to `b`: `d` deep toward `up` (default: world up), `w` wide across. */
 export type Member = { a: Vec3; b: Vec3; w: number; d: number; mat: MemberMat; up?: Vec3 };
 
@@ -310,7 +311,7 @@ export function layoutBuilding(d: Design): Layout {
       const n: Vec3 = [sx * sinG, cosG, 0];
       const s = 0.28;
       const c = add([sx * s * cosG, yr - s * sinG, 0], scale(n, RIB + 0.03));
-      member({ a: [c[0], c[1], -L - OVERHANG], b: [c[0], c[1], L + OVERHANG], w: 0.6, d: 0.04, mat: "trim", up: n });
+      member({ a: [c[0], c[1], -L - OVERHANG], b: [c[0], c[1], L + OVERHANG], w: 0.6, d: 0.04, mat: "ridge", up: n });
     }
   } else {
     const sinF = FLAT_PITCH / Math.hypot(1, FLAT_PITCH);

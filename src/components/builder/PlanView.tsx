@@ -4,6 +4,8 @@
  * also the whole view on a device without WebGL.
  */
 
+import type { PointerEvent as ReactPointerEvent, Ref } from "react";
+
 import { openingSpec, type Side } from "@/lib/builder/catalog";
 import type { Design } from "@/lib/builder/design";
 import { COL, frameLines } from "@/lib/builder/geometry";
@@ -29,6 +31,32 @@ const PALETTE: Record<Tone, { ink: string; muted: string; fill: string; lean: st
 };
 
 const SHORT: Record<string, string> = { walk: "Walk door", win3x3: "Window" };
+/** Same meanings as the 3D view: blue is selected, amber is in the way. */
+const SELECTED = "#1e6bd6";
+const BLOCKING = "#d97706";
+/** Amber dark enough for text on white (5:1). */
+const BLOCKING_TEXT = "#b45309";
+
+/** A wall's two ends in plan (x, z), from its left corner as seen from outside. */
+export function planWallEnds(d: Design, side: Side): [number, number, number, number] {
+  const W = d.width / 2;
+  const L = d.length / 2;
+  const ends: Record<Side, [number, number, number, number]> = {
+    front: [-W, L, W, L],
+    back: [W, -L, -W, -L],
+    left: [-W, -L, -W, L],
+    right: [W, L, W, -L],
+  };
+  return ends[side];
+}
+
+/** Draggable doors and windows, in the builder only (HQ's plan is a picture). */
+export type PlanInteraction = {
+  selected: string | null;
+  blocking: string | null;
+  onGrab: (id: string, e: ReactPointerEvent<SVGGElement>) => void;
+  svgRef: Ref<SVGSVGElement>;
+};
 
 /** `labels={false}` drops all text, for thumbnails too small to read it. */
 export function PlanView({
@@ -36,11 +64,13 @@ export function PlanView({
   tone = "light",
   className,
   labels = true,
+  interactive,
 }: {
   design: Design;
   tone?: Tone;
   className?: string;
   labels?: boolean;
+  interactive?: PlanInteraction;
 }) {
   const c = PALETTE[tone];
   const W = d.width / 2;
@@ -57,12 +87,11 @@ export function PlanView({
   const thick = Math.max(0.35, size * 0.012);
   const thin = thick / 3;
 
-  // A wall's two ends in plan, from its left corner seen from outside.
   const ends: Record<Side, [number, number, number, number]> = {
-    front: [-W, L, W, L],
-    back: [W, -L, -W, -L],
-    left: [-W, -L, -W, L],
-    right: [W, L, W, -L],
+    front: planWallEnds(d, "front"),
+    back: planWallEnds(d, "back"),
+    left: planWallEnds(d, "left"),
+    right: planWallEnds(d, "right"),
   };
   const along = (side: Side, u: number): [number, number] => {
     const [ax, az, bx, bz] = ends[side];
@@ -74,6 +103,7 @@ export function PlanView({
 
   return (
     <svg
+      ref={interactive?.svgRef}
       viewBox={vb}
       className={className}
       role="img"
@@ -156,8 +186,17 @@ export function PlanView({
         };
         const [ox, oz] = offset[o.wall];
         const vertical = o.wall === "left" || o.wall === "right";
+        const mark = interactive?.blocking === o.id ? BLOCKING : interactive?.selected === o.id ? SELECTED : null;
         return (
-          <g key={o.id}>
+          <g
+            key={o.id}
+            data-plan-opening={interactive ? o.id : undefined}
+            onPointerDown={interactive ? (e) => interactive.onGrab(o.id, e) : undefined}
+            style={interactive ? { cursor: "grab" } : undefined}
+          >
+            {mark ? (
+              <line x1={ax} y1={az} x2={bx} y2={bz} stroke={mark} strokeWidth={thick * 3.2} strokeLinecap="round" opacity={0.9} />
+            ) : null}
             <line
               x1={ax}
               y1={az}
@@ -167,11 +206,27 @@ export function PlanView({
               strokeWidth={thick * 1.6}
             />
             <line x1={ax} y1={az} x2={bx} y2={bz} stroke={c.ink} strokeWidth={thin} />
+            {interactive ? (
+              // A fat invisible line, 32 screen pixels whatever the plan's scale,
+              // reaching past the ends: a finger-sized target for a thin mark.
+              <line
+                x1={ax}
+                y1={az}
+                x2={bx}
+                y2={bz}
+                stroke="transparent"
+                strokeWidth={32}
+                strokeLinecap="round"
+                vectorEffect="non-scaling-stroke"
+                pointerEvents="stroke"
+              />
+            ) : null}
             {labels ? (
               <text
                 x={mx + ox}
                 y={mz + oz}
-                fill={c.ink}
+                fill={mark === BLOCKING ? BLOCKING_TEXT : (mark ?? c.ink)}
+                fontWeight={mark ? 700 : undefined}
                 fontSize={font * 0.8}
                 textAnchor="middle"
                 dominantBaseline="middle"

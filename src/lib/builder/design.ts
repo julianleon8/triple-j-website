@@ -51,7 +51,8 @@ export const designSchema = z.object({
   walls: z.object({ front: wallState, back: wallState, left: wallState, right: wallState }),
   openings: z.array(openingSchema).max(MAX_OPENINGS),
   leanTos: z.array(leanToSchema).max(2),
-  colors: z.object({ roof: color, walls: color, trim: color, wainscot: color.nullable() }),
+  /** `ridge` null: the ridge cap matches the roof, as the crew trims it unless asked otherwise. */
+  colors: z.object({ roof: color, walls: color, trim: color, wainscot: color.nullable(), ridge: color.nullable().default(null) }),
   concrete: z.enum(CONCRETE),
 }).refine((d) => new Set(d.openings.map((o) => o.id)).size === d.openings.length, {
   message: "Each door and window needs its own id.",
@@ -78,7 +79,7 @@ export const PRESETS: Record<Use, Design> = {
     walls: { ...OPEN },
     openings: [],
     leanTos: [],
-    colors: { roof: "Pewter-Gray", walls: "Light-Stone", trim: "Charcoal", wainscot: null },
+    colors: { roof: "Pewter-Gray", walls: "Light-Stone", trim: "Charcoal", wainscot: null, ridge: null },
     concrete: "yes",
   },
   rv_cover: {
@@ -93,7 +94,7 @@ export const PRESETS: Record<Use, Design> = {
     walls: { ...OPEN },
     openings: [],
     leanTos: [],
-    colors: { roof: "Galvalume", walls: "Polar-White", trim: "Galvalume", wainscot: null },
+    colors: { roof: "Galvalume", walls: "Polar-White", trim: "Galvalume", wainscot: null, ridge: null },
     concrete: "yes",
   },
   garage: {
@@ -113,7 +114,7 @@ export const PRESETS: Record<Use, Design> = {
       { id: "d4", spec: "win3x3", wall: "left", x: 13.5 },
     ],
     leanTos: [],
-    colors: { roof: "Burnished-Slate", walls: "Light-Stone", trim: "Burnished-Slate", wainscot: "Burnished-Slate" },
+    colors: { roof: "Burnished-Slate", walls: "Light-Stone", trim: "Burnished-Slate", wainscot: "Burnished-Slate", ridge: null },
     concrete: "yes",
   },
   barn: {
@@ -134,7 +135,7 @@ export const PRESETS: Record<Use, Design> = {
       { side: "left", depth: 12, walls: "open" },
       { side: "right", depth: 12, walls: "open" },
     ],
-    colors: { roof: "Black", walls: "Polar-White", trim: "Black", wainscot: "Black" },
+    colors: { roof: "Black", walls: "Polar-White", trim: "Black", wainscot: "Black", ridge: null },
     concrete: "unsure",
   },
 };

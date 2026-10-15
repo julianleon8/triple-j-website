@@ -21,7 +21,7 @@ export function StartSection() {
   const use = useBuilder((s) => s.design.use);
   const load = useBuilder((s) => s.load);
   const setSection = useBuilder((s) => s.setSection);
-  const announce = useBuilder((s) => s.announce);
+  const notify = useBuilder((s) => s.notify);
   const edited = useBuilder((s) => s.past.length > 0);
 
   function pick(u: Use) {
@@ -29,7 +29,7 @@ export function StartSection() {
     if (u !== use) {
       load(PRESETS[u]);
       capture("builder_preset_selected", { use: u });
-      if (edited) announce(`Started over from ${USE_LABEL[u]}. Undo brings your design back.`);
+      if (edited) notify(`Started over from ${USE_LABEL[u]}. Undo brings your design back.`, { tone: "info" });
     }
     setSection("size");
   }
