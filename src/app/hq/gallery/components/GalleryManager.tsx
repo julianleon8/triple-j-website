@@ -96,7 +96,7 @@ type GalleryItem = {
 const TYPE_OPTIONS = ['Carport', 'Garage', 'Barn', 'RV Cover', 'Lean-To', 'Porch Cover', 'Hybrid', 'Other']
 const TAG_OPTIONS = ['Welded', 'Bolted', 'Turnkey']
 const PANEL_PROFILE_OPTIONS = ['PBR', 'PBU']
-const GAUGE_OPTIONS = ['26', '29']
+const GAUGE_OPTIONS = ['26']
 
 const TAG_COLORS: Record<string, string> = {
   Welded:  'bg-(--brand-fg)/15 text-(--brand-fg)',
