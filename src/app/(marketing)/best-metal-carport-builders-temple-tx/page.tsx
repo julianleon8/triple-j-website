@@ -27,6 +27,8 @@ export const metadata: Metadata = {
     'Honest roundup of Bell County metal carport builders: Triple J Metal, Rough Country, L&E Metal, Texas Custom Carports, A+ Sheds and Premier Portables.',
   alternates: { canonical: '/best-metal-carport-builders-temple-tx' },
   openGraph: {
+    siteName: SITE.name,
+    locale: 'en_US',
     title: 'Best Metal Carport Builders in Temple, TX (2026)',
     description: 'Honest comparison of Bell County metal building contractors.',
     type: 'article',

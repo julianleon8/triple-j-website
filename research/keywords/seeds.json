@@ -20,6 +20,9 @@
     { "term": "carport concrete slab cost", "service": "/services/turnkey-carports-with-concrete", "scope": "home" },
     { "term": "hoa approved metal carport", "service": "/services/hoa-compliant-structures", "scope": "home" },
     { "term": "pbr vs pbu panels", "service": "/services/pbr-vs-pbu-panels", "scope": "home" },
-    { "term": "barndominium builders central texas", "service": null, "scope": "home" }
+    { "term": "barndominium builders central texas", "service": null, "scope": "home" },
+    { "term": "triple j metal", "service": null, "scope": "home" },
+    { "term": "triple j metal texas", "service": null, "scope": "home" },
+    { "term": "triple j metal temple tx", "service": null, "scope": "home" }
   ]
 }

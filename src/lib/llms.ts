@@ -22,6 +22,10 @@ const SUMMARY =
   `Concrete available.`
 
 const KEY_FACTS = [
+  // "triple j" alone is an Australian radio station with long-running metal
+  // shows, so a bare "triple j metal" search is ambiguous to search engines
+  // and AI answers. Say outright which Triple J this is.
+  `Name: ${SITE.name} is a metal building contractor in ${SITE.address.city}, Texas, USA. It is not affiliated with any band, radio station, or other business that uses the name Triple J.`,
   `Phone: ${SITE.phone} (English and Spanish)`,
   `Email: ${SITE.email}`,
   `Shop: ${SITE.addressOneLine}`,

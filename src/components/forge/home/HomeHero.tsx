@@ -49,13 +49,14 @@ export function HomeHero({ builds }: { builds: readonly BuildItem[] }) {
         <h1 className="mt-[22px] font-forge-display text-[clamp(35px,7.4vw,104px)] font-black leading-[1.02] tracking-[.01em] text-white">
           <span className="block">Built right.</span>
           <span className="block">Built fast.</span>
-          {/* Padding keeps descenders and the gradient from clipping. */}
+          {/* Padding keeps descenders and the gradient from clipping. The
+              non-breaking spaces keep the brand on one line on phones. */}
           <span className="-mx-[.14em] -mt-[.06em] -mb-[.2em] block px-[.14em] pt-[.06em] pb-[.2em]">
-            <span className="forge-steel-text">Built by Triple J.</span>
+            <span className="forge-steel-text">Built by Triple&nbsp;J&nbsp;Metal.</span>
           </span>
         </h1>
         <p className="mx-auto mt-[22px] max-w-[560px] text-[clamp(16px,.4vw_+_14px,18px)] leading-[1.55] text-white/86">
-          Carports, garages, barns and patios,{" "}
+          Triple J Metal builds carports, garages, barns and patios,{" "}
           <Link href="/blog/welded-vs-bolted-metal-buildings-central-texas" className={HERO_LINK}>
             welded or bolted
           </Link>{" "}

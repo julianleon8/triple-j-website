@@ -9,6 +9,7 @@ import { QuoteSection } from '@/components/forge/QuoteSection'
 import { getBuilds } from '@/lib/forge-builds'
 import { filtersWithCounts, matchesFilter, resolveGalleryFilter } from '@/lib/gallery-filters'
 import { getSiteUrl } from '@/lib/site-url'
+import { SITE } from '@/lib/site'
 
 export const metadata: Metadata = {
   title: 'Project Gallery — 150+ Central Texas Builds',
@@ -16,6 +17,8 @@ export const metadata: Metadata = {
     'Browse 150+ metal carports, garages, barns, and RV covers built across Temple, Belton, Killeen, and Central Texas. Welded and bolted.',
   alternates: { canonical: '/gallery' },
   openGraph: {
+    siteName: SITE.name,
+    locale: 'en_US',
     title: 'Project Gallery | Triple J Metal',
     description: '150+ completed metal building projects across Central Texas.',
     type: 'website',

@@ -10,7 +10,9 @@ import { ServicesBand } from "@/components/forge/home/ServicesBand";
 import { getBuilds } from "@/lib/forge-builds";
 
 export const metadata: Metadata = {
-  title: "Metal Carports, Garages & Barns, Temple TX",
+  // Brand first, and absolute so the layout's "| Triple J Metal" template is
+  // not appended twice. This is the page Google should return for the brand.
+  title: { absolute: `${SITE.name} | Metal Carports & Buildings, Temple TX` },
   description:
     `Welded or bolted metal carports, garages, barns and RV covers from ${SITE.name}, Temple TX. Concrete available, same-week scheduling. Call ${SITE.phone}.`,
   alternates: { canonical: "/" },
@@ -20,6 +22,8 @@ export const metadata: Metadata = {
       "Welded or bolted metal buildings built by our Temple TX crew — concrete available, same-week scheduling.",
     url: "/",
     type: "website",
+    siteName: SITE.name,
+    locale: "en_US",
   },
 };
 

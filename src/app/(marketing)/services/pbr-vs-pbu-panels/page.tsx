@@ -11,6 +11,7 @@ import { SectionHeading } from '@/components/forge/SectionHeading'
 import { buttonClass, type } from '@/components/forge/styles'
 import { TrackedPhoneLink } from '@/components/site/TrackedPhone'
 import { getSiteUrl } from '@/lib/site-url'
+import { SITE } from '@/lib/site'
 
 export const metadata: Metadata = {
   title: 'PBR vs PBU Roofing Panels — Which to Pick',
@@ -18,6 +19,8 @@ export const metadata: Metadata = {
     'PBR vs PBU metal roofing panels: when to use each. Triple J Metal builds with both across Central Texas — which panel type fits your project?',
   alternates: { canonical: '/services/pbr-vs-pbu-panels' },
   openGraph: {
+    siteName: SITE.name,
+    locale: 'en_US',
     title: 'PBR vs PBU Metal Panels | Triple J Metal',
     description: 'PBR vs PBU — which metal roofing panel is right for your carport, garage, or barn in Central Texas?',
     type: 'article',

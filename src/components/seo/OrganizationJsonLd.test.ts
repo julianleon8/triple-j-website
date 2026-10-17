@@ -32,3 +32,29 @@ describe('business hours', () => {
     expect(SITE.hours).toBe('Mon–Fri 8am–7pm · Sat 8am–3pm')
   })
 })
+
+const node = (type: string) => graph().find((n) => JSON.stringify(n['@type']).includes(type))!
+
+// "triple j metal" alone is triple j's (the Australian radio station's) metal
+// shows to Google. These fields are what tell it which Triple J this is.
+describe('brand', () => {
+  it('names the business in a way that cannot be mistaken for another Triple J', () => {
+    const org = node('Organization')
+    expect(org.alternateName).toBe(SITE.alternateName)
+    expect(org.alternateName).not.toBe(org.name)
+    expect(node('WebSite').alternateName).toBe(SITE.alternateName)
+    expect(org.disambiguatingDescription).toMatch(/Temple, Texas/)
+  })
+
+  it('links every profile in SITE.social from both business nodes', () => {
+    const profiles = Object.values(SITE.social).filter(Boolean)
+    expect(profiles.length).toBeGreaterThan(0)
+    expect(node('Organization').sameAs).toEqual(profiles)
+    expect(node('LocalBusiness').sameAs).toEqual(profiles)
+  })
+
+  // Locked Decisions → Pricing: "concrete available", never turnkey as a blanket.
+  it('never labels the whole business turnkey', () => {
+    for (const n of graph()) expect(n.description).not.toMatch(/turnkey concrete/i)
+  })
+})

@@ -60,6 +60,8 @@ export async function generateMetadata(
     description,
     alternates: { canonical: `/gallery/${id}` },
     openGraph: {
+      siteName: SITE.name,
+      locale: 'en_US',
       title,
       description,
       type: 'article',

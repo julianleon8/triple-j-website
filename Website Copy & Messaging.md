@@ -10,6 +10,11 @@ _Last updated: 2026-04-15_
 ## Tagline (approved 2026-04-15)
 **"Built right, built fast, built by Triple J."**
 
+## Homepage headline and brand name (2026-10-17)
+- **Homepage H1:** "Built right. Built fast. Built by Triple J Metal." The full brand name stays in the H1, with non-breaking spaces so it never splits on a phone. The tagline above is unchanged.
+- **Say "Triple J Metal", never "Triple J" alone, in the first sentence of a key page** (the homepage subhead, the About lede). A bare "triple j" is the ABC's Australian radio station, and Google has to see the full name next to "Temple, Texas" and "metal buildings" to tell them apart.
+- Don't mention the radio station in customer copy. Only `/llms.txt` says outright that Triple J Metal is not affiliated with it.
+
 ## Core Value Propositions
 1. **Same-Week Scheduling** — Materials arrive within 48 hrs of approval; crew on-site same week. Small carports done same day. Competitors take 4–16 weeks.
 2. **Single-Contract Turnkey** — We handle site prep, concrete pad pouring, and installation. One company, one contract. No coordinating multiple trades.

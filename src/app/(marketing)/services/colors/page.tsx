@@ -17,6 +17,7 @@ import {
   getSwatchUrl,
   type PanelColor,
 } from '@/lib/colors'
+import { SITE } from '@/lib/site'
 
 const STANDARD_LABEL = LINE_LABELS.Turnium
 const PREMIUM_LABEL  = LINE_LABELS.Sheffield
@@ -29,6 +30,8 @@ export const metadata: Metadata = {
     'Browse 39 metal panel colors for your Central Texas carport, garage, or barn. Every panel is 26-gauge Galvalume® steel with a 40-year paint warranty.',
   alternates: { canonical: '/services/colors' },
   openGraph: {
+    siteName: SITE.name,
+    locale: 'en_US',
     title: 'Metal Panel Colors & Finishes | Triple J Metal',
     description: 'Choose from 39 painted Galvalume® panel colors for your Central Texas metal building. Standard and Premium lines.',
     type: 'website',

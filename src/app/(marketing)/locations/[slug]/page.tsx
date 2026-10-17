@@ -51,6 +51,8 @@ export async function generateMetadata(
       ...(loc.military?.keywords ?? []),
     ],
     openGraph: {
+      siteName: SITE.name,
+      locale: "en_US",
       title: loc.metaTitle,
       description: loc.metaDescription,
       type: "website",

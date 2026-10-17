@@ -13,6 +13,7 @@ import { buttonClass, type } from '@/components/forge/styles'
 import { TrackedPhoneLink } from '@/components/site/TrackedPhone'
 import { getAdminClient } from '@/lib/supabase/admin'
 import { describeGalleryColors } from '@/lib/gallery-colors'
+import { SITE } from '@/lib/site'
 
 export const dynamic = 'force-dynamic'
 
@@ -39,6 +40,8 @@ export const metadata: Metadata = {
     'Triple J builds projects that don\'t fit a catalog — horse stalls, warehouses, decks, custom commercial. Welded + bolted, Central Texas crew.',
   alternates: { canonical: '/services/hybrid-projects' },
   openGraph: {
+    siteName: SITE.name,
+    locale: 'en_US',
     title: 'Hybrid Projects | Triple J Metal',
     description:
       'Custom horse stalls, warehouses, decks, and one-off metal builds across Central Texas. Welded + bolted, on-site, no kits.',

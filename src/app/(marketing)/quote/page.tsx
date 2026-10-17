@@ -29,6 +29,8 @@ export const metadata: Metadata = {
   // Without this each one would look like a separate URL.
   alternates: { canonical: '/quote' },
   openGraph: {
+    siteName: SITE.name,
+    locale: 'en_US',
     title: 'Get a Free Quote | Triple J Metal',
     description:
       'Tell us about your build and a real Texas crew calls you back. Same day, guaranteed within 24 hours.',

@@ -8,6 +8,12 @@ export const SITE = {
   name: "Triple J Metal",
   shortName: "Triple J Metal",
   /**
+   * schema.org `alternateName` only. "triple j" alone is an Australian radio
+   * station, so the state suffix tells Google which Triple J this is. Never
+   * "Triple J Metal Buildings" — that is a different company in Henderson, TX.
+   */
+  alternateName: "Triple J Metal TX",
+  /**
    * Legal/registered name — use ONLY for:
    *   - footer copyright lines (©)
    *   - schema.org `legalName`

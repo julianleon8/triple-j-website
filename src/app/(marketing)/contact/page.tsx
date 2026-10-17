@@ -22,6 +22,8 @@ export const metadata: Metadata = {
     `Call ${SITE.phone} for a same-day callback. Temple-based metal building crew — carports, garages, barns, and RV covers across Central Texas.`,
   alternates: { canonical: '/contact' },
   openGraph: {
+    siteName: SITE.name,
+    locale: 'en_US',
     title: 'Contact Triple J Metal | Temple, TX',
     description: `Call ${SITE.phone} for a same-day callback. Temple-based metal building contractor.`,
     type: 'website',

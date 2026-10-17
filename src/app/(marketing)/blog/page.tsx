@@ -11,6 +11,7 @@ import { SectionHeading } from '@/components/forge/SectionHeading'
 import { buttonClass, containerClass } from '@/components/forge/styles'
 import { TrackedPhoneLink } from '@/components/site/TrackedPhone'
 import { BLOG_POSTS, type BlogCategory } from '@/lib/blog'
+import { SITE } from '@/lib/site'
 
 export const metadata: Metadata = {
   title: 'Blog | Central Texas Metal Building Guides',
@@ -18,6 +19,8 @@ export const metadata: Metadata = {
     'Local guides, permit walkthroughs, and metal building education for Central Texas. Written by the Triple J Metal crew in Temple, TX.',
   alternates: { canonical: '/blog' },
   openGraph: {
+    siteName: SITE.name,
+    locale: 'en_US',
     title: 'Blog | Triple J Metal',
     description: 'Central Texas metal building guides — permits, welding, HOA, military, and soil.',
     type: 'website',

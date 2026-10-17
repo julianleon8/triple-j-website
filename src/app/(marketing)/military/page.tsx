@@ -107,6 +107,8 @@ export const metadata: Metadata = {
     'Welded or bolted carports, RV covers and garages for Fort Cavazos families. Same-week installs near Killeen and Harker Heights. 7% military discount.',
   alternates: { canonical: '/military' },
   openGraph: {
+    siteName: SITE.name,
+    locale: 'en_US',
     title: 'Fort Cavazos Carports — Same-Week Installs for PCS Families',
     description:
       'Local Temple-based crew. Welded or bolted carports + RV covers + garages built around PCS timelines. 7% military discount. Hablamos español.',

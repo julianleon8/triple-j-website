@@ -13,6 +13,7 @@ import { buttonClass } from '@/components/forge/styles'
 import { PinIcon } from '@/components/ui/icons'
 import { TrackedPhoneLink, TrackedPhoneNumber } from '@/components/site/TrackedPhone'
 import { LOCATIONS, LOCATION_SLUGS } from '@/lib/locations'
+import { SITE } from '@/lib/site'
 
 export const metadata: Metadata = {
   title: 'Metal Building Service Areas, Central TX',
@@ -20,6 +21,8 @@ export const metadata: Metadata = {
     `Welded or bolted carports, garages, RV covers and barns in ${LOCATION_SLUGS.length} Central Texas cities, from Waco to Round Rock. Same-week installs from our Temple shop.`,
   alternates: { canonical: '/locations' },
   openGraph: {
+    siteName: SITE.name,
+    locale: 'en_US',
     title: 'Service Areas | Triple J Metal',
     description: 'Metal building installation across Central Texas. Temple-based crew.',
     type: 'website',

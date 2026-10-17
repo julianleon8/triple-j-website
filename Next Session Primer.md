@@ -1,3 +1,18 @@
+# Brand search "triple j metal" — 2026-10-17 · PUSHED TO `main`
+
+The site side is done (`Decisions.md` 2026-10-17; `Locked Decisions.md` → Brand disambiguation). What moves the ranking now is owner-only, heaviest first:
+
+1. ☐ **Owner: Google Business Profile.** One profile, named exactly "Triple J Metal", primary category "Metal building contractor". Request reinstatement with the LLC certificate, a utility bill or lease for 3319 Tem-Bel Ln, and photos of signage or a branded truck. Then put the Maps link in `SITE.social.google`; it feeds `sameAs` and `hasMap`.
+2. ☐ **Owner: `triplejmetal.com`.** WHOIS 2026-10-17: still held by Wix in its auto-renew grace period, not pending delete. Recover the Wix account through Wix support, renew, point the domain at Vercel and 308 it to `https://www.triplejmetaltx.com`. Same for `triplejjjmetal.com` before 2026-12-03. Doing this reverses the 2026-10-03 lapse decision, so log it in both ledgers.
+3. ☐ **Owner: Bing Webmaster Tools** (import from Search Console) **and Bing Places.** ChatGPT search and Copilot read Bing's index.
+4. ☐ **Owner: listings.** Claim one Yelp listing and have Yelp close the duplicate; rename MapQuest's "Triple J Metal Construction" to "Triple J Metal"; add Apple Business Connect and BBB. Each live profile URL goes into `SITE.social`.
+5. ☐ **Search Console:** the Pages report re-check (due 2026-10-17), and request indexing for `/` and `/about` now that this is live.
+6. ☐ **Measure:** Search Console → Performance, query contains "triple j", weekly. The monthly keyword run now carries the three brand terms.
+
+The `~/triple-j-website` checkout is behind `origin` and holds uncommitted vault and HQ edits from 2026-10-04 and 2026-10-06: commit or stash them and `git pull` before working there.
+
+---
+
 # 3D builder — live at `/build`, unlisted (updated 2026-10-17)
 
 Read `docs/3D-BUILDER.md` first: what it does, where each piece lives, the rule sign-off sheet and the go-public checklist. Decisions: `Decisions.md` 2026-10-14 and 2026-10-15. The crew's framing rules: `Business Profile.md` → Framing.

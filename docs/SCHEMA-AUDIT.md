@@ -4,13 +4,13 @@ Sitewide JSON-LD refactor. Replaces ad-hoc per-page LocalBusiness duplicates wit
 
 ## Canonical entity graph
 
-Emitted by `src/components/seo/OrganizationJsonLd.tsx`, mounted once via `src/app/(marketing)/layout.tsx`. Every marketing page receives this graph.
+Emitted by `src/components/seo/OrganizationJsonLd.tsx`, mounted once via `src/app/(marketing)/layout.tsx`. Every marketing page receives this graph. `OrganizationJsonLd.test.ts` covers the brand fields. (Table current as of 2026-10-17.)
 
 | `@id` | `@type` | Purpose |
 |---|---|---|
-| `<base>/#organization` | `Organization` | Legal entity. Fields: `name`, `legalName`, `alternateName`, `description`, `url`, `logo` (ImageObject), `image`, `foundingDate`, `founder` (Person, "Juan Leon"), `address` (PostalAddress), `contactPoint[]` (telephone + email + `contactType: "customer service"` + `areaServed: "US-TX"` + `availableLanguage: ["English","Spanish"]`), `sameAs` (Instagram + Facebook + Google when populated). |
-| `<base>/#localbusiness` | `["LocalBusiness", "HomeAndConstructionBusiness"]` | The local-business presence. Dual-typed so Rich Results validators that look for the literal "LocalBusiness" string still match while Google gets the more specific subtype. Fields: full NAP, `geo` (31.0982, -97.3428 — Temple HQ), `openingHoursSpecification` (Mon–Sat 08:00–18:00), `priceRange: "$$"`, `currenciesAccepted: "USD"`, `paymentAccepted`, `areaServed[]` (every LOCATIONS city + de-duped county list), `knowsAbout[]`, `hasOfferCatalog` (services with URLs), `parentOrganization → #organization`. |
-| `<base>/#website` | `WebSite` | Canonical site identity. `publisher → #organization`, `inLanguage: "en-US"`. |
+| `<base>/#organization` | `Organization` | Legal entity. Fields: `name`, `legalName`, `alternateName` ("Triple J Metal TX", from `SITE.alternateName`), `description`, `disambiguatingDescription`, `url`, `logo` (ImageObject), `image`, `foundingDate`, `address` (PostalAddress), `contactPoint[]` (telephone + email + `contactType: "customer service"` + `areaServed: "US-TX"` + `availableLanguage: ["English","Spanish"]`), `sameAs` (Instagram + Facebook + Google when populated). |
+| `<base>/#localbusiness` | `["LocalBusiness", "HomeAndConstructionBusiness"]` | The local-business presence. Dual-typed so Rich Results validators that look for the literal "LocalBusiness" string still match while Google gets the more specific subtype. Fields: full NAP, `geo` (31.0982, -97.3428 — Temple HQ), `openingHoursSpecification` (Mon–Sat 08:00–18:00), `priceRange: "$$"`, `currenciesAccepted: "USD"`, `paymentAccepted`, `areaServed[]` (every LOCATIONS city + de-duped county list), `knowsAbout[]`, `hasOfferCatalog` (services with URLs), `parentOrganization → #organization`, `sameAs` (same list as the Organization), `hasMap` (only once `SITE.social.google` is filled). |
+| `<base>/#website` | `WebSite` | Canonical site identity. `name`, `alternateName`, `publisher → #organization`, `inLanguage: "en-US"`. |
 
 ## Per-page schema (post-refactor)
 
@@ -41,13 +41,24 @@ Emitted by `src/components/seo/OrganizationJsonLd.tsx`, mounted once via `src/ap
 | Promoted `OrganizationJsonLd` to a `@graph` of three nodes (Organization + LocalBusiness + WebSite) with `@id` URIs | Per Google's structured-data guide, identifying the legal entity (Organization) and the local presence (LocalBusiness) as separate nodes — linked via `parentOrganization` — is the strongest signal for businesses where the registered name differs from the public brand. |
 | LocalBusiness dual-typed as `["LocalBusiness", "HomeAndConstructionBusiness"]` | `HomeAndConstructionBusiness` is the schema.org subtype for construction contractors. Dual typing keeps Rich Results compatibility while giving Google the more specific subtype. |
 | Added `contactPoint` with `availableLanguage: ["English", "Spanish"]` | Triple J's Hispanic homeowner base is a real demographic — surfacing bilingual support in schema is a direct AI-search and Knowledge Panel signal. |
-| Added `founder: Juan Leon` + Person | Founder data improves Knowledge Panel completeness. Juan is the public face per AGENTS.md. |
+| Added `founder: Juan Leon` + Person | Founder data improves Knowledge Panel completeness. Juan is the public face per AGENTS.md. **Removed 2026-10-03:** the public site names only Julian (`Locked Decisions.md` → Positioning). |
 | `areaServed` expanded to include de-duped county AdministrativeArea entries (Bell, Coryell, McLennan, Williamson) alongside cities | Counties carry SEO weight for "metal carport [county] tx" queries that don't name a specific city. |
 | `/locations/[slug]` switched from inline LocalBusiness duplicate → `Service` + `WebPage` referencing `#localbusiness` via `@id` | Multiple LocalBusiness nodes for the same physical location create entity ambiguity for Google. The Service-per-page pattern is what schema.org and Google recommend for "service-area landing pages." |
 | `/services/[slug]` FAQPage moved out of `Service.mainEntity` and into a sibling `@graph` node | Sibling FAQPage scores cleaner in the Rich Results test and keeps `Service` focused on the service entity. Both forms are valid, but the sibling form is the recommended Google pattern. |
 | `/about` + `/contact` LocalBusiness duplicates removed → replaced with `AboutPage` and `ContactPage` referencing the canonical graph | Both pages already received the layout's full LocalBusiness graph. The inline duplicates were missing fields (geo on /about, openingHoursSpecification on /contact) and risked entity confusion. The page-type nodes are the schema.org-recommended pattern for these page templates. |
 | Hardcoded `https://www.triplejmetaltx.com` and `https://triplejmetaltx.com` URLs in JSON-LD switched to `getSiteUrl()` | Mismatched canonical hosts (`www.` vs apex) in schema confuses crawlers. `getSiteUrl()` reads `NEXT_PUBLIC_SITE_URL` so prod, preview, and dev all emit the right host. |
 | `/blog/[slug]` BlogPosting added `image`, `mainEntityOfPage`, `articleSection`, `@id`, `inLanguage` | Required + recommended BlogPosting fields per Google's article rich-result guidelines. |
+
+## 2026-10-17 — brand disambiguation
+
+A bare "triple j metal" search matches triple j, the ABC's Australian radio station, and its metal shows. These fields tell Google which Triple J this is:
+
+| Change | Reason |
+|---|---|
+| Organization and WebSite `alternateName` → "Triple J Metal TX" (was the same string as `name`) | An alternate name equal to `name` says nothing. The state suffix matches the domain. Never "Triple J Metal Buildings": a different company in Henderson, TX. |
+| Organization `disambiguatingDescription` | schema.org's field for telling an entity apart from similarly named ones. Says what the business is, not what it isn't. |
+| `sameAs` on LocalBusiness as well as Organization; `hasMap` once the GBP link exists | Google can match either node to the Business Profile and Knowledge Panel. |
+| Both descriptions: "turnkey concrete" → "concrete available" | `Locked Decisions.md` → Pricing forbids turnkey as a blanket label. |
 
 ## Review / AggregateRating audit
 

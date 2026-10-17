@@ -37,7 +37,7 @@ export async function generateMetadata(
     title: svc.metaTitle,
     description: svc.metaDescription,
     alternates: { canonical: `/services/${slug}` },
-    openGraph: { title: svc.metaTitle, description: svc.metaDescription, type: 'website' },
+    openGraph: { title: svc.metaTitle, description: svc.metaDescription, type: 'website', siteName: SITE.name, locale: 'en_US' },
     twitter: {
       card: 'summary_large_image',
       title: svc.metaTitle,

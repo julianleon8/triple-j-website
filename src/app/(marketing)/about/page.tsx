@@ -16,9 +16,11 @@ import { getSiteUrl } from '@/lib/site-url'
 export const metadata: Metadata = {
   title: 'About — Temple, TX Metal Building Family',
   description:
-    'Temple, TX family metal building contractor. 150+ completed projects, welded red iron steel, turnkey concrete. Not a national chain.',
+    'Temple, TX family metal building contractor. 150+ completed projects, welded red iron steel, concrete available. Not a national chain.',
   alternates: { canonical: '/about' },
   openGraph: {
+    siteName: SITE.name,
+    locale: 'en_US',
     title: 'About Triple J Metal | Temple, TX',
     description: 'Local Temple family business. 150+ completed metal building projects across Central Texas.',
     type: 'website',
@@ -133,7 +135,7 @@ export default function AboutPage() {
         eyebrow="About Triple J"
         h1a="Temple’s metal building family."
         h1b="Not a national chain."
-        lede="A Temple family, run out of Temple, TX. We build every structure ourselves. No subcontractors, no kit drops, no hand-offs. One crew. One contract. Done right."
+        lede={`${SITE.name} is a family-owned metal building contractor in ${SITE.address.city}, Texas, founded in ${SITE.established}. We build every structure ourselves. No subcontractors, no kit drops, no hand-offs. One crew. One contract. Done right.`}
         facts={[
           { k: 'Projects', v: `${SITE.stats.projects} completed` },
           { k: 'On-site', v: 'Mon–Sat' },

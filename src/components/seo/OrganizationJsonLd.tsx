@@ -7,8 +7,10 @@ import { LOCATIONS, LOCATION_SLUGS } from '@/lib/locations'
  * Mounted once per marketing page via the marketing layout. Emits a single
  * JSON-LD document with three linked nodes:
  *
- *   - Organization (#organization)  — the legal entity (founder, contactPoint,
- *     availableLanguage, sameAs).
+ *   - Organization (#organization)  — the legal entity (contactPoint,
+ *     availableLanguage, sameAs). `disambiguatingDescription` and the
+ *     "Triple J Metal TX" alternateName separate it from triple j, the
+ *     Australian radio station that owns the bare "triple j metal" search.
  *   - HomeAndConstructionBusiness   — Triple J's local-business presence,
  *     dual-typed as LocalBusiness for Rich Results validators that look for
  *     the LocalBusiness string. Links back to the Organization via @id.
@@ -16,7 +18,7 @@ import { LOCATIONS, LOCATION_SLUGS } from '@/lib/locations'
  *     Organization as publisher.
  *
  * Per-page schemas (Service on /locations/[slug] and /services/[slug],
- * BlogPosting on /blog/[slug], FAQPage on /services/pbr-vs-pbu-panels) all
+ * BlogPosting on /blog/[slug], WebPage on /services/pbr-vs-pbu-panels) all
  * reference these nodes by @id rather than redefining the business inline.
  *
  * NOTE: any field added here must also be reflected in the audit report
@@ -24,6 +26,10 @@ import { LOCATIONS, LOCATION_SLUGS } from '@/lib/locations'
  */
 export function OrganizationJsonLd() {
   const url = getSiteUrl()
+
+  // Organization and LocalBusiness both carry the profile links: Google
+  // matches either node to the Business Profile and Knowledge Panel.
+  const sameAs = Object.values(SITE.social).filter(Boolean)
 
   const cityAreaServed = LOCATION_SLUGS.map((slug) => ({
     '@type': 'City',
@@ -48,9 +54,10 @@ export function OrganizationJsonLd() {
         '@id': `${url}/#organization`,
         name: SITE.name,
         legalName: SITE.legalName,
-        alternateName: SITE.shortName,
+        alternateName: SITE.alternateName,
         description:
-          'Family-owned Central Texas metal building contractor — welded or bolted carports, garages, barns, and RV covers with turnkey concrete pads.',
+          'Family-owned Central Texas metal building contractor — welded or bolted carports, garages, barns, and RV covers, concrete available.',
+        disambiguatingDescription: `Metal building and carport contractor based in ${SITE.address.city}, Texas, USA.`,
         url,
         logo: {
           '@type': 'ImageObject',
@@ -78,14 +85,14 @@ export function OrganizationJsonLd() {
             availableLanguage: ['English', 'Spanish'],
           },
         ],
-        sameAs: Object.values(SITE.social).filter(Boolean),
+        sameAs,
       },
       {
         '@type': ['LocalBusiness', 'HomeAndConstructionBusiness'],
         '@id': `${url}/#localbusiness`,
         name: SITE.name,
         description:
-          'Welded or bolted metal carports, garages, barns, and RV covers with turnkey concrete — built by our Temple, TX crew across Central Texas.',
+          'Welded or bolted metal carports, garages, barns, and RV covers, concrete available — built by our Temple, TX crew across Central Texas.',
         url,
         logo: `${url}/images/logo-lion.png`,
         image: `${url}/og-default.jpg`,
@@ -159,12 +166,15 @@ export function OrganizationJsonLd() {
           })),
         },
         parentOrganization: { '@id': `${url}/#organization` },
+        sameAs,
+        ...(SITE.social.google ? { hasMap: SITE.social.google } : {}),
       },
       {
         '@type': 'WebSite',
         '@id': `${url}/#website`,
         url,
         name: SITE.name,
+        alternateName: SITE.alternateName,
         description:
           'Welded or bolted metal carports, garages, barns, and RV covers across Central Texas.',
         publisher: { '@id': `${url}/#organization` },

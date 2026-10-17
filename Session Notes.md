@@ -1,5 +1,21 @@
 # Session Notes
 
+## 2026-10-17 — Brand search: the site says which Triple J it is
+
+**In plain terms.** Julian wants to be #1 on Google for "triple j metal"; Google's AI answer keeps showing "the rock band". A bare "triple j metal" search matches triple j, the ABC's Australian radio station, and its decades of metal shows (The Racket, now CORE). Triple J Metal is also a weak entity: an unverified GBP, 5 of 60 pages indexed, two profile links in the schema. Most of the fix is off-site and owner-only (see the primer); this change makes the site itself unambiguous.
+
+**What changed.**
+- Homepage: H1 "Built right. Built fast. Built by Triple J Metal." (owner's pick; non-breaking spaces keep the brand on one line on phones), the subhead opens "Triple J Metal builds…", and the `<title>` is `Triple J Metal | Metal Carports & Buildings, Temple TX` (`absolute`, brand first).
+- About: the lede opens "Triple J Metal is a family-owned metal building contractor in Temple, Texas, founded in 2025." The meta description's "turnkey concrete" is now "concrete available".
+- Schema: new `SITE.alternateName` "Triple J Metal TX" on the Organization and WebSite (it used to repeat `name`), a `disambiguatingDescription`, `sameAs` on the LocalBusiness too, `hasMap` once `SITE.social.google` is set, and "turnkey concrete" out of both descriptions. Brand tests added to `OrganizationJsonLd.test.ts`; `docs/SCHEMA-AUDIT.md` updated.
+- `og:site_name` and `og:locale` on every page that sets its own `openGraph` (about 40 built pages had none); `og-coverage.test.ts` now fails without them.
+- `/llms.txt` Key facts: a "Name:" line saying Triple J Metal is not affiliated with any band, radio station or other Triple J.
+- `research/keywords/seeds.json`: "triple j metal", "triple j metal texas", "triple j metal temple tx" (home scope), so the monthly run tracks the brand search.
+
+**Checked:** typecheck, lint, tests, vault check and a production build. The built `/`, `/about`, `/locations/temple`, `/services/carports` and `/blog` carry the new title and `og:site_name`; the JSON-LD carries the new fields; `/llms.txt` has the Name line; the hero was screenshotted at 1440, 375 and 320 px.
+
+**Found along the way.** The `~/triple-j-website` checkout is 16 commits behind `origin` and holds uncommitted vault and HQ edits from 2026-10-04 and 2026-10-06, so this was committed from a clean worktree on `origin/main`. `.env.local` there holds redacted URL values, so a local `npm run build` needs `NEXT_PUBLIC_SITE_URL` and `NEXT_PUBLIC_SUPABASE_URL` passed on the command line. At 320 px the header wordmark touches the phone button and the hero's "Scroll" cue overlaps "See Our Builds"; both were there before this change.
+
 ## 2026-10-17 — Every panel is 26-gauge; the builder draws and names 26-gauge PBR
 
 **In plain terms.** Julian: "we only build in 26 gauge", and 26-gauge PBR is the usual panel. The site still offered 29-gauge in places, 8 gallery projects said "29 ga", and the 3D builder never named its panels.

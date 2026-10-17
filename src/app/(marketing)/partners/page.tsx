@@ -23,6 +23,8 @@ export const metadata: Metadata = {
     'Triple J is the Central Texas install crew for manufacturers, dealers, and GCs. Welded + bolted, named in-house crew, no subcontractors.',
   alternates: { canonical: '/partners' },
   openGraph: {
+    siteName: SITE.name,
+    locale: 'en_US',
     title: 'Become a Triple J Install Partner | Triple J Metal',
     description:
       'B2B install partnership in Central Texas — welded + bolted, no subs, photo-documented. Suppliers, manufacturers, GCs welcome.',
