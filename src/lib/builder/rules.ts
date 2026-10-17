@@ -105,9 +105,53 @@ export function canAddLean(d: Design, side: LeanSide): { ok: true } | { ok: fals
 
 // ── Doors and windows ─────────────────────────────────────────────────────
 
-function openingName(o: Opening): string {
+/** "The 10×10 roll-up door", "The walk door": the start of a sentence about one opening. */
+export function openingName(o: Pick<Opening, "spec">): string {
   const spec = openingSpec(o.spec);
   return spec.kind === "walk" ? "The walk door" : `The ${spec.label} ${OPENING_KIND_LABEL[spec.kind].toLowerCase()}`;
+}
+
+// Where a customer measures a door from: on the side walls, the front
+// corner; on the front and back, the left side as seen from the front. The
+// stored x is the left edge seen from outside that wall, which on the left
+// and back walls runs the other way. Only what is shown and typed converts.
+
+const measuredBackwards = (side: Side) => side === "left" || side === "back";
+
+/** "from the front corner" on a side wall, "from the left side" on the front and back. */
+export function positionFrom(side: Side): string {
+  return side === "left" || side === "right" ? "from the front corner" : "from the left side";
+}
+
+/** The distance a customer reads for an opening whose stored left edge is at `x`. */
+export function shownPosition(d: Design, o: Pick<Opening, "wall" | "spec">, x: number): number {
+  return measuredBackwards(o.wall) ? wallLength(d, o.wall) - x - openingSpec(o.spec).w : x;
+}
+
+/** The stored left edge for a distance the customer typed. The flip undoes itself. */
+export function storedPosition(d: Design, o: Pick<Opening, "wall" | "spec">, shown: number): number {
+  return shownPosition(d, o, shown);
+}
+
+/**
+ * Where an opening sits, the way a customer measures it: "4 ft from the front
+ * corner" on a side wall, "3 ft from the left side" on the front or back. The
+ * one wording for the Doors and windows cards, the plan, the 3D label and the
+ * summary.
+ */
+export function openingPosition(d: Design, o: Pick<Opening, "wall" | "spec" | "x">): string {
+  return `${fmt(shownPosition(d, o, o.x))} ft ${positionFrom(o.wall)}`;
+}
+
+/** A stored range (openingRange) as the customer reads it; on the left and back walls its ends swap. */
+export function shownRange(
+  d: Design,
+  o: Pick<Opening, "wall" | "spec">,
+  r: { min: number; max: number },
+): { min: number; max: number } {
+  const a = shownPosition(d, o, r.min);
+  const b = shownPosition(d, o, r.max);
+  return { min: Math.min(a, b), max: Math.max(a, b) };
 }
 
 /** Wall height an opening needs: its top edge plus header room. */
@@ -184,15 +228,15 @@ function openingIssues(d: Design): Issue[] {
     }
     const top = openingCeiling(d, o.wall, o.x, o.x + spec.w);
     if (heightNeeded(o) > top + 1e-6) {
-      // Available height rounds down, so it never reads as "needs 13 ft; there is 13 ft".
+      // Available height rounds down, so it never reads as "needs 13 ft; the wall is 13 ft tall".
       const there = fmt(Math.floor(top * 10) / 10);
       const byLean = top < minWallTop(d, o.wall, o.x, o.x + spec.w) - 1e-6;
       issues.push({
         code: "too-tall",
         openingId: o.id,
         message: byLean
-          ? `${name} needs ${fmt(heightNeeded(o))} ft of wall; the lean-to on that side leaves ${there} ft below its roof.`
-          : `${name} needs ${fmt(heightNeeded(o))} ft of wall where it sits; there is ${there} ft.`,
+          ? `${name} needs ${fmt(heightNeeded(o))} ft of wall height; the lean-to on that side leaves ${there} ft below its roof.`
+          : `${name} needs ${fmt(heightNeeded(o))} ft of wall height where it sits; the wall is ${there} ft tall there.`,
       });
     }
   }
@@ -257,22 +301,77 @@ export type Dim = "width" | "length" | "height";
 export type DimLimit = { min: number; max: number; reason: string | null };
 
 /**
+ * The design at a new width, length or height. Doors and windows keep the
+ * distance a customer reads for them (shownPosition: from the front corner,
+ * from the left side), so on the left and back walls, whose stored edge
+ * counts from the far end, they move with the change. Not yet normalised.
+ */
+export function resizeDesign(d: Design, dim: Dim, value: number): Design {
+  const to = clamp(Math.round(value), LIMITS[dim].min, LIMITS[dim].max);
+  const by = to - d[dim];
+  const wall: Side | null = dim === "width" ? "back" : dim === "length" ? "left" : null;
+  return {
+    ...d,
+    [dim]: to,
+    openings: wall && by ? d.openings.map((o) => (o.wall === wall ? { ...o, x: o.x + by } : o)) : d.openings,
+  };
+}
+
+/**
  * How far each dimension can move from here. The floor rises above the
  * catalog minimum only because of something the customer added, and `reason`
- * names it.
+ * names it, in terms of the floor: "Narrower than 25 ft, the 12×12 roll-up
+ * door on the front wall won't fit."
  */
 export function dimensionLimits(d: Design, dim: Dim): DimLimit {
   const base = LIMITS[dim];
-  const ok = (v: number) => designIssues(normalizeDesign({ ...d, [dim]: v })).length === 0;
+  const ok = (v: number) => designIssues(normalizeDesign(resizeDesign(d, dim, v))).length === 0;
   if (!ok(d[dim])) return { min: base.min, max: base.max, reason: null };
   let min = d[dim];
   while (min > base.min && ok(min - 1)) min--;
   let reason: string | null = null;
   if (min > base.min) {
-    const blocked = designIssues(normalizeDesign({ ...d, [dim]: min - 1 }));
-    reason = blocked[0] ? `${blocked[0].message.replace(/\.$/, "")}, so ${min} ft is the minimum.` : null;
+    const below = normalizeDesign(resizeDesign(d, dim, min - 1));
+    const blocked = designIssues(below)[0];
+    reason = blocked ? `${belowFloor(d, dim, min)}, ${whatStops(below, blocked)}.` : null;
   }
   return { min, max: base.max, reason };
+}
+
+/** A dimension just under its floor, as the Size step names it: "Lower than an 11 ft eave". */
+function belowFloor(d: Design, dim: Dim, min: number): string {
+  if (dim === "width") return `Narrower than ${min} ft`;
+  if (dim === "length") return `Shorter than ${min} ft`;
+  if (d.roof === "flat") return `Lower than ${min} ft at the back`;
+  return `Lower than ${[8, 11, 18].includes(min) ? "an" : "a"} ${min} ft eave`;
+}
+
+const COUNT_WORD = ["no", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten"];
+
+/**
+ * What gives out under the floor, to end that sentence: "the 10×10 roll-up
+ * door on the front wall won't fit". Doors alike on one wall are named
+ * together, "the two 10×10 roll-up doors": which of them gives out first is
+ * nothing a customer can tell apart.
+ */
+function whatStops(d: Design, i: Issue): string {
+  const o = d.openings.find((x) => x.id === i.openingId);
+  if (o) {
+    const wall = `the ${SIDE_LABEL[o.wall].toLowerCase()} wall`;
+    if (i.code === "overlap") return `the doors and windows on ${wall} won't all fit`;
+    const w = openingSpec(o.spec).w;
+    const underLean = i.code === "too-tall" && openingCeiling(d, o.wall, o.x, o.x + w) < minWallTop(d, o.wall, o.x, o.x + w) - 1e-6;
+    const alike = d.openings.filter((x) => x.wall === o.wall && x.spec === o.spec).length;
+    const name = openingName(o).replace(/^The /, "");
+    const who = alike > 1 ? `the ${COUNT_WORD[alike] ?? alike} ${name.replace(/door$/, "doors").replace(/window$/, "windows")}` : `the ${name}`;
+    return `${who} on ${wall} won't fit${underLean ? " under the lean-to" : ""}`;
+  }
+  const l = d.leanTos.find((x) => x.side === i.leanSide);
+  if (i.code === "lean-depth" && l) {
+    const where = l.side === "back" ? "the back" : `the ${l.side} side`;
+    return `the ${l.depth} ft lean-to on ${where} would drop below ${LEAN_MIN_OUTER} ft at its low edge`;
+  }
+  return i.message.replace(/\.$/, "").replace(/^\w/, (c) => c.toLowerCase());
 }
 
 /**
@@ -408,8 +507,8 @@ function slideBlock(d: Design, o: Opening, dir: -1 | 1): SlideBlock {
   const byLean = top < minWallTop(d, o.wall, next, next + spec.w) - 1e-6;
   return {
     message: byLean
-      ? `${name} needs ${fmt(heightNeeded(o))} ft of wall; past here the lean-to leaves ${there} ft below its roof.`
-      : `${name} needs ${fmt(heightNeeded(o))} ft of wall; past here the wall is ${there} ft tall.`,
+      ? `${name} needs ${fmt(heightNeeded(o))} ft of wall height; past here the lean-to leaves ${there} ft below its roof.`
+      : `${name} needs ${fmt(heightNeeded(o))} ft of wall height; past here the wall is ${there} ft tall.`,
   };
 }
 

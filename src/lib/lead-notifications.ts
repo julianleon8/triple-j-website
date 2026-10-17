@@ -1,4 +1,4 @@
-import LeadOwnerAlert, { leadOwnerAlertText } from '@/emails/LeadOwnerAlert'
+import LeadOwnerAlert, { formatSubmittedAt, leadOwnerAlertText } from '@/emails/LeadOwnerAlert'
 import LeadCustomerConfirmation, { leadCustomerConfirmationText } from '@/emails/LeadCustomerConfirmation'
 import { sendPushBackground } from '@/lib/push'
 import { getResend } from '@/lib/resend'
@@ -113,7 +113,7 @@ export async function notifyNewLead({ lead, sizeLine = null }: NotifyNewLeadInpu
   // most. formatLeadLocation fills that name in from the ZIP without touching
   // what gets persisted.
   const locationLine = formatLeadLocation(lead.city, lead.zip)
-  const submittedAt = `${new Date(lead.created_at ?? Date.now()).toLocaleString('en-US', { timeZone: 'America/Chicago' })} CST`
+  const submittedAt = formatSubmittedAt(new Date(lead.created_at ?? Date.now()))
 
   const ownerAlertProps = {
     leadId: lead.id,

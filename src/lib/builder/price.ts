@@ -62,6 +62,15 @@ export function priceHint(d: Design): PriceHint {
   return { kind: "anchor", anchor: a, exact, bolted: a.price, welded: Math.round(a.price * WELDED_FACTOR) };
 }
 
+/**
+ * What a starting price is for: the standard size, the frame and what it
+ * covers. Until a frame is chosen the bolted price shows, and says so.
+ */
+export function priceBasis(d: Design, a: PriceAnchor): string {
+  const frame = d.frame === "welded" ? "welded" : d.frame === "bolted" ? "bolted" : "bolted price shown";
+  return `${a.w}×${a.l} ${a.roof === "gable" ? "gabled" : "flat"} roof · ${a.h} ft · ${frame}, steel + install, before tax`;
+}
+
 export function formatPrice(n: number): string {
   return `$${n.toLocaleString("en-US")}`;
 }

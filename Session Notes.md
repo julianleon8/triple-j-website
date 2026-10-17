@@ -1,5 +1,48 @@
 # Session Notes
 
+## 2026-10-17 — Builder polish from twelve test customers; Freddy's framing answers
+
+**In plain terms.** Twelve agents played customers on a local copy of the site (fake database and inbox, nothing sent), in two rounds: getting a quote through, then polish on a sideways phone, a small Android, an iPad, a small laptop, a wide screen and a keyboard alone. All twelve sent their designs. The owner approved the 28 fixes that needed no judgment, plus three of their own requests: the customer's first name on the thank-you page, a heavier feel when spinning and zooming the 3D view, and a panel that hides on phones so the building fills the screen.
+
+**What changed.**
+- Work-saving fixes:
+  - The 3D door label lost its × (it deleted doors).
+  - Selection clears when leaving the Doors step, and the label hides when its wall faces away.
+  - The contact form keeps its values between steps.
+  - A vertical swipe on a slider no longer changes the size.
+  - Picking a new starting point asks first.
+  - Remove can't be double-tapped onto the next card.
+  - The design stays in the address bar.
+- Clearer messages:
+  - The minimum-size notes are rewritten.
+  - Door refusals say "wall height".
+  - Positions read "from the front corner" on side walls and "from the left side" on the front and back, in the panel, the review, Julian's email and the 3D label.
+  - "Bolted price shown" until a frame is picked.
+  - The military discount is confirmed on screen.
+  - Send says what's missing.
+- Layout:
+  - The step bar scrolls the current step into view, with edge fades.
+  - The price shows once on Review.
+  - Camera views keep clear of the buttons.
+  - The active view is marked, and "Back" is now "Rear".
+  - FRONT, BACK, LEFT and RIGHT are labeled on the Walls plan.
+  - The starting-point cards say what they include.
+  - 16 px fields.
+  - The header focus ring is visible.
+- Email: one 3D link, and CDT or CST as it should be.
+- Data:
+  - Alamo, Polar and Brilliant White have real values.
+  - Corner trim stops under the roof.
+- No limit message tells a customer to call: they point to the quote form (Decisions 2026-10-17).
+- Freddy's answers are in `Business Profile.md` → Framing. The builder's framing rules don't use them yet.
+- The competitor teardown is in `research/competitors/wolf-steel-buildings.md`.
+
+**Checked.**
+- Typecheck, lint, 874 tests, the vault check and the production build.
+- A code review and a browser pass of every fix on a phone and a desktop; their 13 real findings were fixed.
+
+**Not checked.** On a real phone: the slider swipe fix and the hide-panel slide. Both were tested with simulated touch only.
+
 ## 2026-10-15 — Builder: drag, clear selection and errors, ridge cap, and the frame as the crew builds it
 
 **In plain terms.** Julian tried `/build` and taught the build. Doors and windows now drag along their wall with a finger or the mouse, in 3D and on the plan. The selected one has a clear blue outline and a tag. Anything refused shows an amber message over the 3D view. The ridge cap matches the roof color unless picked. The frame is drawn the way the crew builds it: posts, then receivers whose top flange rests on the posts (the bottom flange is notched around each post), then purlins slotted inside the receivers, tops flush. The roof now sits at the eave height the customer picks, not 8 in above it.

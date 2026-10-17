@@ -12,9 +12,10 @@ const SHOW_MS = { error: 7000, info: 4500 } as const;
 /**
  * What the builder just refused, or a short note, over the 3D view where the
  * visitor is looking. Visual only: the live region in BuilderApp reads the
- * same text aloud.
+ * same text aloud. `full`: the panel is away and the bottom row of buttons
+ * sits up off the home bar, so the message rises with it.
  */
-export function BuilderToast() {
+export function BuilderToast({ full = false }: { full?: boolean }) {
   const toast = useBuilder((s) => s.toast);
   const dismiss = useBuilder((s) => s.dismissToast);
   const ref = useRef<HTMLDivElement>(null);
@@ -41,7 +42,9 @@ export function BuilderToast() {
   const error = toast.tone === "error";
   const Icon = error ? TriangleAlert : Info;
   return (
-    <div className="pointer-events-none absolute inset-x-3 bottom-[60px] z-20 flex justify-center">
+    <div
+      className={`pointer-events-none absolute inset-x-3 z-20 flex justify-center ${full ? "bottom-[calc(max(12px,env(safe-area-inset-bottom))+48px)]" : "bottom-[60px]"}`}
+    >
       <div
         ref={ref}
         className="pointer-events-auto flex w-full max-w-[480px] items-start gap-2.5 rounded-[10px] border border-l-[5px] py-2.5 pl-3 pr-1 shadow-[0_8px_28px_rgba(0,24,42,.22)]"

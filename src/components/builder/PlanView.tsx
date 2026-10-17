@@ -6,10 +6,10 @@
 
 import type { PointerEvent as ReactPointerEvent, Ref } from "react";
 
-import { openingSpec, type Side } from "@/lib/builder/catalog";
+import { OPENING_KIND_LABEL, SIDE_LABEL, openingSpec, type Side } from "@/lib/builder/catalog";
 import type { Design } from "@/lib/builder/design";
 import { COL, frameLines } from "@/lib/builder/geometry";
-import { wallState } from "@/lib/builder/rules";
+import { openingPosition, wallState } from "@/lib/builder/rules";
 
 type Tone = "light" | "dark";
 
@@ -50,6 +50,18 @@ export function planWallEnds(d: Design, side: Side): [number, number, number, nu
   return ends[side];
 }
 
+/**
+ * The draggable plan's label: each door and window where a customer measures
+ * it, "Roll-up door 10×10, front wall, 4 ft from the left side".
+ */
+export function planLabel(d: Design): string {
+  const said = d.openings.map((o) => {
+    const spec = openingSpec(o.spec);
+    return `. ${OPENING_KIND_LABEL[spec.kind]} ${spec.label}, ${SIDE_LABEL[o.wall].toLowerCase()} wall, ${openingPosition(d, o)}`;
+  });
+  return `Plan view, ${d.width} by ${d.length} feet, front at the bottom${said.join("")}`;
+}
+
 /** Draggable doors and windows, in the builder only (HQ's plan is a picture). */
 export type PlanInteraction = {
   selected: string | null;
@@ -58,21 +70,26 @@ export type PlanInteraction = {
   svgRef: Ref<SVGSVGElement>;
 };
 
-/** `labels={false}` drops all text, for thumbnails too small to read it. */
+/**
+ * `labels={false}` drops all text, for thumbnails too small to read it;
+ * `labels="sides"` keeps only the wall names, for the Walls step's small plan.
+ */
 export function PlanView({
   design: d,
   tone = "light",
   className,
-  labels = true,
+  labels: labelMode = true,
   interactive,
 }: {
   design: Design;
   tone?: Tone;
   className?: string;
-  labels?: boolean;
+  labels?: boolean | "sides";
   interactive?: PlanInteraction;
 }) {
   const c = PALETTE[tone];
+  const labels = labelMode === true;
+  const sides = labelMode === "sides";
   const W = d.width / 2;
   const L = d.length / 2;
   const lean = (side: string) => d.leanTos.find((l) => l.side === side)?.depth ?? 0;
@@ -82,8 +99,10 @@ export function PlanView({
   const z1 = L;
   const size = Math.max(x1 - x0, z1 - z0);
   const font = Math.max(1.4, size * 0.055);
-  const pad = labels ? font * 4 : Math.max(0.35, size * 0.012) * 3;
-  const vb = `${x0 - pad} ${z0 - pad} ${x1 - x0 + pad * 2} ${z1 - z0 + pad * 2.2}`;
+  // Wall names read at about 12px in a plan 120px tall and 200px wide, whatever its shape.
+  const sideFont = Math.max((z1 - z0) / 7, (x1 - x0) / 14);
+  const pad = labels ? font * 4 : sides ? sideFont * 1.6 : Math.max(0.35, size * 0.012) * 3;
+  const vb = `${x0 - pad} ${z0 - pad} ${x1 - x0 + pad * 2} ${z1 - z0 + pad * (sides ? 2 : 2.2)}`;
   const thick = Math.max(0.35, size * 0.012);
   const thin = thick / 3;
 
@@ -107,7 +126,7 @@ export function PlanView({
       viewBox={vb}
       className={className}
       role="img"
-      aria-label={`Plan view, ${d.width} by ${d.length} feet, front at the bottom`}
+      aria-label={interactive ? planLabel(d) : `Plan view, ${d.width} by ${d.length} feet, front at the bottom`}
       style={{ background: c.bg }}
     >
       {d.leanTos.map((l) => {
@@ -267,6 +286,29 @@ export function PlanView({
             {d.length} ft
           </text>
         </>
+      ) : null}
+
+      {sides ? (
+        <g fill={c.ink} fontSize={sideFont} fontWeight={700} letterSpacing={sideFont * 0.08} textAnchor="middle">
+          {(
+            [
+              ["FRONT", 0, z1 + pad / 2],
+              ["BACK", 0, z0 - pad / 2],
+              ["LEFT", x0 - pad / 2, 0],
+              ["RIGHT", x1 + pad / 2, 0],
+            ] as const
+          ).map(([name, x, y]) => (
+            <text
+              key={name}
+              x={x}
+              y={y}
+              dominantBaseline="middle"
+              transform={name === "LEFT" || name === "RIGHT" ? `rotate(-90 ${x} ${y})` : undefined}
+            >
+              {name}
+            </text>
+          ))}
+        </g>
       ) : null}
     </svg>
   );

@@ -32,7 +32,15 @@ export function ReviewSection() {
         {summaryRows(d).map((r) => (
           <div key={r.k} className="grid grid-cols-[110px_minmax(0,1fr)] gap-3 border-b border-forge-mist py-2.5 text-[13px]">
             <dt className="text-forge-slate">{r.k}</dt>
-            <dd className="m-0 font-semibold leading-[1.45] text-forge-navy">{r.v}</dd>
+            <dd className="m-0 font-semibold leading-[1.45] text-forge-navy">
+              {r.lines?.length
+                ? r.lines.map((l) => (
+                    <span key={l} className="block">
+                      {l}
+                    </span>
+                  ))
+                : r.v}
+            </dd>
           </div>
         ))}
       </dl>

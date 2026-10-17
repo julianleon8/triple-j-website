@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useLayoutEffect, useMemo, useRef } from "react";
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import {
   BackSide,
   BoxGeometry,
@@ -11,20 +11,22 @@ import {
   MeshStandardMaterial,
   Plane,
   Vector3,
+  type Camera,
+  type Object3D,
   type Ray,
   type InstancedMesh,
   type Side,
 } from "three";
-import { useThree, type RootState, type ThreeEvent } from "@react-three/fiber";
+import { useFrame, useThree, type RootState, type ThreeEvent } from "@react-three/fiber";
 import { Html } from "@react-three/drei";
 
 import { FRAME_HEX, OPENING_KIND_LABEL, builderColor, openingSpec } from "@/lib/builder/catalog";
 import type { Design } from "@/lib/builder/design";
-import type { Layout, Member, OpeningPlacement, Surface } from "@/lib/builder/geometry";
-import { fmt } from "@/lib/builder/rules";
+import { keepLabelInside, openingFaces, type Layout, type Member, type OpeningPlacement, type Surface } from "@/lib/builder/geometry";
+import { openingPosition } from "@/lib/builder/rules";
 
 import { dragTo, endDrag, startDrag, type DragSession } from "../drag";
-import { useBuilder } from "../store";
+import { canPickOpening, useBuilder } from "../store";
 import { channelGeometry } from "./channelGeometry";
 import { panelGeometry } from "./panelGeometry";
 
@@ -304,7 +306,7 @@ function OpeningMesh({
 
   const onPointerDown = (e: ThreeEvent<PointerEvent>) => {
     if (e.pointerType === "mouse" && e.button !== 0) return;
-    if (hidden(e.ray)) return;
+    if (hidden(e.ray) || !canPickOpening(useBuilder.getState())) return;
     // On a touch screen the first tap only selects (onClick), so a finger
     // that lands on a door can still turn or pinch the view. Once it's
     // selected, it drags.
@@ -353,9 +355,9 @@ function OpeningMesh({
     if (hit) dragTo(d.session, d.session.x0 + hit.sub(d.hit0).dot(d.u));
   };
   const onClick = (e: ThreeEvent<MouseEvent>) => {
-    if (e.delta > 6 || hidden(e.ray)) return;
-    e.stopPropagation();
     const s = useBuilder.getState();
+    if (e.delta > 6 || hidden(e.ray) || !canPickOpening(s)) return;
+    e.stopPropagation();
     s.select(o.id);
     s.setSection("openings");
   };
@@ -388,7 +390,7 @@ function OpeningMesh({
       onPointerUp={finish}
       onClick={onClick}
       onPointerOver={(e) => {
-        hovered.current = !hidden(e.ray) && e.pointerType === "mouse";
+        hovered.current = !hidden(e.ray) && e.pointerType === "mouse" && canPickOpening(useBuilder.getState());
         // Mid-drag the cursor and the camera belong to the drag.
         if (!useBuilder.getState().dragging && hovered.current) setGrab(get, "hover");
       }}
@@ -532,46 +534,61 @@ function Outline({ w, h, floor, color }: { w: number; h: number; floor: boolean;
   );
 }
 
+/** Room, in px, kept between the door label and the sides of the 3D view. */
+const TAG_EDGE = 8;
+const tagAnchor = new Vector3();
+
 /**
  * A label over the selected opening: what it is and how to move it, then,
  * mid-drag, where it is. Pointer-only and hidden from assistive tech: the
- * Doors and windows step has the same controls for keyboards.
+ * Doors and windows step has the same controls for keyboards. Removing lives
+ * there too: an × here read as "close this label". Hidden while its wall
+ * faces away from the camera, where it would float over another wall or sky.
+ * Over a door near the side of the view it slides in, so none of it is cut off.
  */
 function Tag({ o, dragging }: { o: OpeningPlacement; dragging: boolean }) {
-  const x = useBuilder((s) => s.design.openings.find((y) => y.id === o.id)?.x);
   const spec = useBuilder((s) => s.design.openings.find((y) => y.id === o.id)?.spec);
-  if (x == null || !spec) return null;
+  // Mid-drag, where it is, measured the way the Doors and windows step measures it.
+  const where = useBuilder((s) => {
+    const y = s.design.openings.find((z) => z.id === o.id);
+    return y ? openingPosition(s.design, y) : null;
+  });
+  const camera = useThree((s) => s.camera);
+  const invalidate = useThree((s) => s.invalidate);
+  const [facing, setFacing] = useState(() => openingFaces(o, camera.position.toArray()));
+  useFrame((state) => {
+    const f = openingFaces(o, state.camera.position.toArray());
+    if (f !== facing) setFacing(f);
+  });
+  const tagRef = useRef<HTMLDivElement>(null);
+  // Where it goes on screen: over the opening, held inside the view.
+  const keepInside = useCallback((anchor: Object3D, cam: Camera, size: { width: number; height: number }) => {
+    tagAnchor.setFromMatrixPosition(anchor.matrixWorld).project(cam);
+    const x = ((tagAnchor.x + 1) / 2) * size.width;
+    const y = ((1 - tagAnchor.y) / 2) * size.height;
+    return [keepLabelInside(x, tagRef.current?.offsetWidth ?? 0, size.width, TAG_EDGE), y];
+  }, []);
+  // Its width changes with its text: place it again.
+  useEffect(() => invalidate(), [invalidate, dragging, where]);
+  if (!spec || where == null) return null;
   const sp = openingSpec(spec);
   const name = sp.kind === "walk" ? "Walk door" : `${OPENING_KIND_LABEL[sp.kind]} ${sp.label}`;
-  const remove = () => {
-    const s = useBuilder.getState();
-    s.edit((d) => ({ ...d, openings: d.openings.filter((y) => y.id !== o.id) }));
-    s.select(null);
-    s.notify(`${name} removed. Undo brings it back.`, { tone: "info" });
-  };
   return (
-    <Html position={[o.w / 2, o.h + 1.7, 0.36]} center zIndexRange={[30, 10]} style={{ pointerEvents: "none" }}>
+    <Html
+      position={[o.w / 2, o.h + 1.7, 0.36]}
+      center
+      calculatePosition={keepInside}
+      zIndexRange={[30, 10]}
+      style={{ pointerEvents: "none" }}
+    >
       <div
+        ref={tagRef}
         aria-hidden="true"
-        className="flex items-center gap-1 whitespace-nowrap rounded-full py-1 pl-3 pr-1 text-[12px] font-semibold leading-none text-white shadow-[0_4px_14px_rgba(0,24,42,.3)]"
-        style={{ background: SELECTED }}
+        className="flex items-center gap-1 whitespace-nowrap rounded-full px-3 py-2 text-[12px] font-semibold leading-none text-white shadow-[0_4px_14px_rgba(0,24,42,.3)]"
+        style={{ background: SELECTED, visibility: facing ? undefined : "hidden" }}
       >
         <span>{name}</span>
-        <span className="font-medium text-white">· {dragging ? `${fmt(x)} ft from the left corner` : "Drag to move"}</span>
-        {dragging ? null : (
-          <button
-            type="button"
-            tabIndex={-1}
-            // The label sits over the canvas: keep this press from also grabbing a door or turning the camera.
-            onPointerDown={(e) => e.stopPropagation()}
-            onClick={remove}
-            className="ml-1 inline-flex size-7 cursor-pointer items-center justify-center rounded-full text-[15px] text-white hover:bg-white/20"
-            style={{ pointerEvents: "auto" }}
-            title={`Remove ${name.toLowerCase()}`}
-          >
-            ×
-          </button>
-        )}
+        <span className="font-medium text-white">· {dragging ? where : "Drag to move"}</span>
       </div>
     </Html>
   );

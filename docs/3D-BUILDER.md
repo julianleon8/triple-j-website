@@ -47,7 +47,7 @@ Every number is a **draft** (`tj-v1-draft`), set from the sales pack and the gal
 | Corner and gap clearance | 1 ft from a corner and between openings | Columns at the corners | |
 | Lean-to depth | 6–16 ft | Draft choice; no source gives one | |
 | Lean-to height | hangs 1 ft under the main eave, slopes 2:12, keeps ≥ 7 ft at its low edge (the outer posts; 6 ft 4 in under the receiver there). Framed like the main building; steel along the main wall stays outside its sheeting | Photos; whether the 7 ft is measured under the receiver is unconfirmed | |
-| Lean-tos per building | 2; back can't combine with left/right | Keeps the corners simple | |
+| Lean-tos per building | 2; back can't combine with left/right (builder today) | Julian, 2026-10-17: Triple J builds lean-tos on all four sides, front included; the builder will follow | |
 | Doors on a lean-to | not offered | V1 scope | |
 
 ## How it fits together

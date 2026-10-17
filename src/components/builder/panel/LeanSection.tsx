@@ -96,7 +96,7 @@ export function LeanSection() {
                     ? `${LIMITS.leanDepth.min} ft is the shallowest lean-to the builder takes.`
                     : max < LIMITS.leanDepth.max
                       ? `Any deeper and the lean-to would drop below ${LEAN_MIN_OUTER} ft clear at its low edge. Raise the main eave to go deeper.`
-                      : `${LIMITS.leanDepth.max} ft is the deepest lean-to the builder takes. Call us for deeper.`,
+                      : `${LIMITS.leanDepth.max} ft is the deepest lean-to the builder takes. For deeper, send your design and say so in the quote form.`,
                 )
               }
               helper={`${fmt(leanOuterHeight(d, lean.depth))} ft clear at the low edge.`}

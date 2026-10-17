@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'vitest';
-import { leadOwnerAlertText } from './LeadOwnerAlert';
+import { PRESETS } from '@/lib/builder/design';
+import { leadMessage } from '@/lib/builder/summary';
+import LeadOwnerAlert, { formatSubmittedAt, leadOwnerAlertText } from './LeadOwnerAlert';
 
 const base = {
   leadId: 'lead-1',
@@ -8,7 +10,7 @@ const base = {
   city: 'Killeen',
   serviceType: 'carport',
   isMilitary: false,
-  submittedAt: 'Sep 7, 2026, 9:00:00 AM CST',
+  submittedAt: 'Sep 7, 2026, 9:00:00 AM CDT',
 };
 
 describe('leadOwnerAlertText — best time to call', () => {
@@ -81,5 +83,54 @@ describe('LeadOwnerAlert — 3D builder leads', () => {
 
   it('adds no 3D row to an ordinary lead', () => {
     expect(leadOwnerAlertText(base)).not.toContain('3D design');
+  });
+});
+
+describe('LeadOwnerAlert — the 3D link shows once', () => {
+  const designUrl = 'https://www.triplejmetaltx.com/build#d=abc';
+  const builderLead = {
+    ...base,
+    source: 'builder',
+    designUrl,
+    message: leadMessage(PRESETS.garage, designUrl, 'Gate on the north side'),
+  };
+  const count = (s: string, part: string) => s.split(part).length - 1;
+
+  it('keeps the "3D design" row and drops the link line from the notes', async () => {
+    const { renderToStaticMarkup } = await import('react-dom/server');
+    const html = renderToStaticMarkup(LeadOwnerAlert(builderLead));
+    expect(count(html, designUrl)).toBe(1);
+    expect(html).not.toContain('Open the design in 3D:');
+    expect(html).toContain('Designed in the 3D builder:');
+    expect(html).toContain('Gate on the north side');
+  });
+
+  it('does the same in the plain-text version', () => {
+    const text = leadOwnerAlertText(builderLead);
+    expect(count(text, designUrl)).toBe(1);
+    expect(text).toContain(`3D design: ${designUrl}`);
+    expect(text).not.toContain('Open the design in 3D:');
+    expect(text).toContain('Customer notes:\nGate on the north side');
+  });
+
+  it('leaves the notes alone when there is no 3D row to carry the link', () => {
+    const text = leadOwnerAlertText({ ...builderLead, designUrl: null });
+    expect(text).toContain(`Open the design in 3D: ${designUrl}`);
+  });
+});
+
+describe('formatSubmittedAt — Central time with the right abbreviation', () => {
+  it('says CDT in summer', () => {
+    expect(formatSubmittedAt(new Date('2026-07-04T15:00:00Z'))).toBe('7/4/2026, 10:00:00 AM CDT');
+  });
+
+  it('says CST in winter', () => {
+    expect(formatSubmittedAt(new Date('2026-01-15T15:00:00Z'))).toBe('1/15/2026, 9:00:00 AM CST');
+  });
+
+  it('switches on the night the clocks change, not on a fixed date', () => {
+    // 2026-11-01: 1:59 AM CDT, then 1:00 AM CST.
+    expect(formatSubmittedAt(new Date('2026-11-01T06:59:00Z'))).toMatch(/1:59:00 AM CDT$/);
+    expect(formatSubmittedAt(new Date('2026-11-01T07:00:00Z'))).toMatch(/1:00:00 AM CST$/);
   });
 });

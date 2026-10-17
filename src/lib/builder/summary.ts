@@ -18,9 +18,15 @@ import {
   type Side,
 } from "./catalog";
 import type { Design } from "./design";
-import { fmt, frontEave, leanOuterHeight, wallState } from "./rules";
+import { fmt, frontEave, leanOuterHeight, positionFrom, shownPosition, wallState } from "./rules";
 
-export type SummaryRow = { k: string; v: string };
+/** Where one door or window sits, in words. Owned by rules.ts, next to the measuring it words; offered here with the rest of the wording. */
+export { openingPosition } from "./rules";
+
+/** `lines`: the same list as `v`, one item each, for a place with room to stack them. */
+export type SummaryRow = { k: string; v: string; lines?: string[] };
+
+const AND = new Intl.ListFormat("en", { type: "conjunction" });
 
 export function sizeLabel(d: Design): string {
   return `${d.width}×${d.length} ft`;
@@ -38,22 +44,31 @@ export function wallsLabel(d: Design): string {
   return SIDES.map((s) => `${SIDE_LABEL[s]} ${WALL_STATE_LABEL[wallState(d, s)].toLowerCase()}`).join(" · ");
 }
 
+/**
+ * One line per size per wall, with every spot that size sits at, measured as
+ * rules.openingPosition measures one:
+ * "1 × walk door (36 in × 80 in), right side, 4 ft from the front corner",
+ * "2 × 10×10 roll-up door, front, 4 ft and 16 ft from the left side".
+ */
 export function openingLines(d: Design): string[] {
-  const groups = new Map<string, { label: string; walls: Side[] }>();
+  const groups = new Map<string, { label: string; wall: Side; at: number[] }>();
   for (const o of d.openings) {
     const spec = openingSpec(o.spec);
     const label =
       spec.kind === "walk"
         ? `walk door (${spec.label})`
         : `${spec.label} ${OPENING_KIND_LABEL[spec.kind].toLowerCase()}`;
-    const g = groups.get(o.spec) ?? { label, walls: [] };
-    g.walls.push(o.wall);
-    groups.set(o.spec, g);
+    const key = `${o.wall}:${o.spec}`;
+    const g = groups.get(key) ?? { label, wall: o.wall, at: [] };
+    g.at.push(shownPosition(d, o, o.x));
+    groups.set(key, g);
   }
-  return [...groups.values()].map(({ label, walls }) => {
-    const where = [...new Set(walls)].map((w) => SIDE_LABEL[w].toLowerCase()).join(", ");
-    return `${walls.length} × ${label}, ${where}`;
-  });
+  return [...groups.values()]
+    .sort((a, b) => SIDES.indexOf(a.wall) - SIDES.indexOf(b.wall))
+    .map(({ label, wall, at }) => {
+      const where = AND.format(at.sort((a, b) => a - b).map((n) => `${fmt(n)} ft`));
+      return `${at.length} × ${label}, ${SIDE_LABEL[wall].toLowerCase()}, ${where} ${positionFrom(wall)}`;
+    });
 }
 
 export function leanLines(d: Design): string[] {
@@ -88,17 +103,22 @@ export function concreteLabel(d: Design): string {
 }
 
 export function summaryRows(d: Design): SummaryRow[] {
+  const openings = openingLines(d);
+  const leans = leanLines(d);
   return [
     { k: "Building", v: `${USE_LABEL[d.use]} · ${sizeLabel(d)}` },
     { k: "Roof", v: `${ROOF_LABEL[d.roof]} · ${heightLabel(d)}` },
     { k: "Frame", v: frameLabel(d) },
     { k: "Walls", v: wallsLabel(d) },
-    { k: "Doors & windows", v: openingLines(d).join(" · ") || "None" },
-    { k: "Lean-tos", v: leanLines(d).join(" · ") || "None" },
+    { k: "Doors & windows", v: openings.join(" · ") || "None", lines: openings },
+    { k: "Lean-tos", v: leans.join(" · ") || "None", lines: leans },
     { k: "Colors", v: colorsLabel(d) },
     { k: "Concrete", v: concreteLabel(d) },
   ];
 }
+
+/** Starts the line of a lead message that carries the 3D link. */
+const DESIGN_LINK_LINE = "Open the design in 3D: ";
 
 /** The lead's `message`: the design, then the link that reopens it in 3D. */
 export function leadMessage(d: Design, link: string, notes?: string): string {
@@ -106,10 +126,25 @@ export function leadMessage(d: Design, link: string, notes?: string): string {
     "Designed in the 3D builder:",
     ...summaryRows(d).map((r) => `${r.k}: ${r.v}`),
     "",
-    `Open the design in 3D: ${link}`,
+    `${DESIGN_LINK_LINE}${link}`,
   ];
   if (notes?.trim()) lines.push("", `Customer notes:\n${notes.trim()}`);
   return lines.join("\n");
+}
+
+/**
+ * A lead message without its 3D link line, for a place that already shows the
+ * link on its own (the owner alert's "3D design" row). The stored message
+ * keeps the line for HQ.
+ */
+export function withoutDesignLink(message: string): string {
+  const lines = message.split("\n");
+  const i = lines.findIndex((l) => l.startsWith(DESIGN_LINK_LINE));
+  if (i < 0) return message;
+  // Take the blank line above it too, so no gap is left behind.
+  const from = i > 0 && lines[i - 1].trim() === "" ? i - 1 : i;
+  lines.splice(from, i - from + 1);
+  return lines.join("\n").trim();
 }
 
 /** One sentence for the canvas's accessible description. */

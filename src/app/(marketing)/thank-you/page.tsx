@@ -8,6 +8,7 @@ import { PageHero } from "@/components/forge/PageHero";
 import { SectionHeading } from "@/components/forge/SectionHeading";
 import { buttonClass } from "@/components/forge/styles";
 import { GoogleAdsConversion } from "@/components/seo/GoogleAdsConversion";
+import { ThanksGreeting } from "@/components/site/ThanksGreeting";
 import { TrackedPhoneLink, TrackedPhoneNumber } from "@/components/site/TrackedPhone";
 import { PhoneIcon } from "@/components/ui/icons";
 
@@ -78,7 +79,7 @@ export default async function ThankYouPage({ searchParams }: PageProps<'/thank-y
             ✓
           </span>
         }
-        h1a="Got it."
+        h1a={<ThanksGreeting />}
         h1b="We’ll be in touch."
         lede={
           fromQuotePage

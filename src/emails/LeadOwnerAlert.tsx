@@ -1,11 +1,26 @@
 import { Heading, Text, Section, Row, Column, Link, Hr } from '@react-email/components'
 import BrandLayout, { BRAND_COLOR, INK_900 } from './BrandLayout'
 import { dialablePhone, isMessengerLead, MESSENGER_INBOX_URL } from '@/lib/lead-contact'
+import { withoutDesignLink } from '@/lib/builder/summary'
 
 /** What the Phone line says when there is no number to dial. */
 function phoneLabel(phone: string, messenger: boolean): string {
   if (messenger) return 'None (Messenger DM, reply in Meta Business Suite)'
   return phone && phone !== 'Not provided' ? phone : 'Not provided'
+}
+
+/**
+ * The notes as shown here. A builder lead's message carries its own 3D link
+ * line; the "3D design" row already shows that link, so it isn't repeated.
+ */
+function shownNotes(message: string | null | undefined, designUrl: string | null | undefined): string | null {
+  if (!message) return null
+  return (designUrl ? withoutDesignLink(message) : message) || null
+}
+
+/** "7/4/2026, 10:00:00 AM CDT": Central time, with CDT or CST as it was on that date. */
+export function formatSubmittedAt(at: Date): string {
+  return at.toLocaleString('en-US', { timeZone: 'America/Chicago', timeZoneName: 'short' })
 }
 
 interface LeadOwnerAlertProps {
@@ -96,7 +111,8 @@ export default function LeadOwnerAlert(props: LeadOwnerAlertProps) {
   if (currentSurfaceLabel) rows.push(['Current surface', currentSurfaceLabel])
   if (timelineLabel) rows.push(['Timeline', timelineLabel])
   rows.push(['Military/FR', isMilitary ? '✅ Yes — apply 7% discount' : 'No'])
-  if (message) rows.push(['Notes', <em key="m" style={{ color: '#33475a', whiteSpace: 'pre-wrap', overflowWrap: 'anywhere' }}>&ldquo;{message}&rdquo;</em>])
+  const notes = shownNotes(message, designUrl)
+  if (notes) rows.push(['Notes', <em key="m" style={{ color: '#33475a', whiteSpace: 'pre-wrap', overflowWrap: 'anywhere' }}>&ldquo;{notes}&rdquo;</em>])
 
   return (
     <BrandLayout preview={`${isHot ? '⚡ HOT — ' : ''}${name} · ${city} · ${serviceType.replace(/_/g, ' ')}`}>
@@ -209,7 +225,8 @@ export function leadOwnerAlertText(props: LeadOwnerAlertProps): string {
   if (props.currentSurfaceLabel) lines.push(`Surface: ${props.currentSurfaceLabel}`)
   if (props.timelineLabel) lines.push(`Timeline: ${props.timelineLabel}`)
   lines.push(`Military/FR: ${props.isMilitary ? 'Yes — apply 7% discount' : 'No'}`)
-  if (props.message) lines.push(`Notes: ${props.message}`)
+  const notes = shownNotes(props.message, props.designUrl)
+  if (notes) lines.push(`Notes: ${notes}`)
   lines.push(``)
   lines.push(`Open in HQ: https://www.triplejmetaltx.com/hq/leads/${props.leadId}`)
   lines.push(``)

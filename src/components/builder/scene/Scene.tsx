@@ -7,8 +7,8 @@
  */
 
 import { useEffect, useLayoutEffect, useMemo, useRef, useSyncExternalStore } from "react";
-import { Canvas, useThree } from "@react-three/fiber";
-import { CameraControls } from "@react-three/drei";
+import { Canvas, useThree, type RootState } from "@react-three/fiber";
+import { CameraControls, CameraControlsImpl } from "@react-three/drei";
 import {
   BackSide,
   Box3,
@@ -21,13 +21,14 @@ import {
   PlaneGeometry,
   Scene as Scene3,
   ShaderMaterial,
+  Spherical,
   Vector3,
   type DirectionalLight,
   type PerspectiveCamera,
 } from "three";
 
-import { layoutBuilding, type Layout } from "@/lib/builder/geometry";
-import { useBuilder, type ViewName } from "../store";
+import { framingClearOf, layoutBuilding, steadyStep, type Layout, type ScreenRect, type Vec3 } from "@/lib/builder/geometry";
+import { deselectOnEscape, useBuilder, type ViewName } from "../store";
 import { Building, Person, personSpot } from "./Building";
 
 const HORIZON = "#dfe7ec";
@@ -35,6 +36,10 @@ const ZENITH = "#9ec0db";
 const GROUND = "#8b9471";
 
 export default function Scene() {
+  useEffect(() => {
+    window.addEventListener("keydown", deselectOnEscape);
+    return () => window.removeEventListener("keydown", deselectOnEscape);
+  }, []);
   return (
     <Canvas
       frameloop="demand"
@@ -207,23 +212,67 @@ const VIEWS: Record<ViewName, [number, number]> = {
 };
 
 /**
- * Frame the building at the current angle. camera-controls' own fitToBox snaps
- * to the nearest axis, which would undo the 3D view, so the distance is worked
- * out here from the bounding sphere and the narrower field of view.
+ * Room kept clear over the 3D view, in CSS px, until the controls over it can
+ * be measured: the view buttons along its top and the chips and size badge
+ * along its bottom are 36 px tall, 12 px in from the edge, plus a little air.
  */
-function fitBox(c: CameraControls, box: Box3, smooth: boolean) {
+const CLEAR_TOP = 56;
+const CLEAR_BOTTOM = 56;
+const CLEAR_SIDE = 16;
+/** Air kept between the building and a measured control. */
+const CLEAR_AIR = 8;
+/** Marks the controls laid over the 3D view, so the camera can frame clear of them. */
+const OVERLAY = "[data-scene-overlay]";
+
+/**
+ * The controls over the 3D view, measured, so a row of view buttons that
+ * wraps on a narrow phone is cleared too; until they are on screen, the
+ * one-row layout's bands across the top and bottom.
+ */
+function overlaysOver({ size, gl }: RootState): ScreenRect[] {
+  const view = gl.domElement.getBoundingClientRect();
+  const measured = [...document.querySelectorAll<HTMLElement>(OVERLAY)]
+    .map((el) => el.getBoundingClientRect())
+    .filter((r) => r.height > 0)
+    .map((r) => ({ left: r.left - view.left, right: r.right - view.left, top: r.top - view.top, bottom: r.bottom - view.top }));
+  if (measured.length) return measured;
+  return [
+    { left: 0, right: size.width, top: 0, bottom: CLEAR_TOP - CLEAR_AIR },
+    { left: 0, right: size.width, top: size.height - (CLEAR_BOTTOM - CLEAR_AIR), bottom: size.height },
+  ];
+}
+
+/**
+ * Frame the building at the angle the camera is heading to. camera-controls'
+ * own fitToBox snaps to the nearest axis, which would undo the 3D view, so the
+ * distance is worked out here: near enough to fill the view, far enough that
+ * every corner of the building stays clear of the buttons over it.
+ */
+function fitBox(c: CameraControls, box: Box3, smooth: boolean, state: RootState) {
   const cam = c.camera as PerspectiveCamera;
   const center = box.getCenter(new Vector3());
-  const radius = box.getSize(new Vector3()).length() / 2;
-  const vFov = (cam.fov * Math.PI) / 180;
-  const hFov = 2 * Math.atan(Math.tan(vFov / 2) * cam.aspect);
-  const dist = (radius / Math.sin(Math.min(vFov, hFov) / 2)) * 0.92;
-  void c.setTarget(center.x, center.y * 0.85, center.z, smooth);
+  const target: Vec3 = [center.x, center.y * 0.85, center.z];
+  const { theta, phi } = c.getSpherical(new Spherical(), true);
+  const tanV = Math.tan((cam.fov * Math.PI) / 360);
+  const { width, height } = state.size;
+  const dist = framingClearOf(box.min.toArray(), box.max.toArray(), target, theta, phi, tanV, width, height, overlaysOver(state), {
+    side: CLEAR_SIDE,
+    air: CLEAR_AIR,
+  });
+  void c.setTarget(...target, smooth);
   void c.dollyTo(Math.min(dist, 440), smooth);
+}
+
+/** Camera moves ease in after a pause, without slowing on a slow phone (geometry.steadyStep). */
+class SteadyControls extends CameraControlsImpl {
+  override update(delta: number): boolean {
+    return super.update(steadyStep(delta));
+  }
 }
 
 function CameraRig({ layout }: { layout: Layout }) {
   const ref = useRef<CameraControls>(null);
+  const get = useThree((s) => s.get);
   const camera = useBuilder((s) => s.camera);
   const reduced = useReducedMotion();
   const box = useMemo(() => {
@@ -251,9 +300,9 @@ function CameraRig({ layout }: { layout: Layout }) {
       const [az, polar] = VIEWS[camera.view];
       void c.rotateTo(az, polar, smooth);
     }
-    fitBox(c, latestBox.current, smooth);
+    fitBox(c, latestBox.current, smooth, get());
     framed.current = latestBox.current.getSize(new Vector3());
-  }, [camera, reduced]);
+  }, [camera, reduced, get]);
 
   // A building that grows or shrinks noticeably is re-framed, keeping the angle.
   useEffect(() => {
@@ -263,21 +312,25 @@ function CameraRig({ layout }: { layout: Layout }) {
     const change = Math.max(...[size.x / prev.x, size.y / prev.y, size.z / prev.z].map((r) => Math.abs(Math.log(r))));
     if (change < 0.08) return;
     const t = setTimeout(() => {
-      if (ref.current) fitBox(ref.current, box, !reduced);
+      if (ref.current) fitBox(ref.current, box, !reduced, get());
       framed.current = size;
     }, 350);
     return () => clearTimeout(t);
-  }, [box, reduced]);
+  }, [box, reduced, get]);
 
   return (
     <CameraControls
       ref={ref}
+      impl={SteadyControls}
       makeDefault
       minDistance={6}
       maxDistance={450}
       maxPolarAngle={Math.PI / 2 - 0.05}
+      // Seconds to catch up. A spin, the wheel or a pinch, by mouse or finger,
+      // eases after the pointer and glides to a stop once it lets go, so the
+      // building has some weight; a named view takes a moment longer.
       smoothTime={reduced ? 0 : 0.3}
-      draggingSmoothTime={reduced ? 0 : 0.1}
+      draggingSmoothTime={reduced ? 0 : 0.22}
       dollyToCursor
     />
   );

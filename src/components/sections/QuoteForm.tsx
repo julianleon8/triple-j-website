@@ -10,6 +10,7 @@ import type HCaptcha from "@hcaptcha/react-hcaptcha";
 
 import { Eyebrow } from "@/components/forge/Eyebrow";
 import { CheckboxRow, FieldHelper, FieldLabel, PillGroup, StepProgress, TextArea, TextInput } from "@/components/forge/form";
+import { stashThanksName } from "@/components/site/ThanksGreeting";
 import { QUOTE_EVENT, scrollToId, type QuoteRequest } from "@/lib/forge-quote";
 import { cityFromZip } from "@/lib/locations";
 import { projectService, type ProjectReference } from "@/lib/project-reference";
@@ -662,6 +663,9 @@ export function QuoteForm({
           // without enhanced match data.
         }
       }
+      // "Got it, Ray." on /thank-you: the first name only, under its own
+      // key, since GoogleAdsConversion deletes the stash above.
+      stashThanksName(form.name);
       // Success — redirect to /thank-you for clean conversion analytics
       // (per 2026-04-23 design decision). The router push preserves
       // history so back-button still works for the user.

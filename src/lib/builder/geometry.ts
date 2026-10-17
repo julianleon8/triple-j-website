@@ -118,6 +118,10 @@ const OPENING_HEAD = 0.35;
 const MIN_HEADER = 0.15;
 const FASCIA_D = 0.42;
 const FASCIA_W = 0.08;
+/** Corner trim: square, standing just outside the corner it covers. */
+const CORNER_TRIM = 0.3;
+/** Air between the top of a corner trim and the roof panel over it. */
+const TRIM_CLEAR = 0.02;
 const RIB = 0.1; // panel rib height
 export const SLAB_T = 1 / 3;
 const SLAB_MARGIN = 0.25;
@@ -162,6 +166,7 @@ function stations(first: number, last: number): number[] {
 
 const add = (a: Vec3, b: Vec3): Vec3 => [a[0] + b[0], a[1] + b[1], a[2] + b[2]];
 const scale = (a: Vec3, s: number): Vec3 => [a[0] * s, a[1] * s, a[2] * s];
+const dot = (a: Vec3, b: Vec3) => a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
 const norm = (a: Vec3): Vec3 => {
   const l = Math.hypot(a[0], a[1], a[2]);
   return [a[0] / l, a[1] / l, a[2] / l];
@@ -196,6 +201,18 @@ function segments(lo: number, hi: number, gaps: [number, number][]): [number, nu
   }
   if (start < hi) out.push([start, hi]);
   return out.filter(([a, b]) => b - a > 0.05);
+}
+
+/**
+ * Corner trim centered on (x, z), from `bottom` up to just under the roof.
+ * It stands outside the walls, where a sloped roof is already lower than over
+ * the corner itself, so it stops under the lowest point of the roof over it;
+ * `roofUnder` is the roof's underside there.
+ */
+function cornerTrim(member: (m: Member) => void, x: number, z: number, bottom: number, roofUnder: (x: number, z: number) => number) {
+  const r = CORNER_TRIM / 2;
+  const top = Math.min(...[-r, r].flatMap((dx) => [-r, r].map((dz) => roofUnder(x + dx, z + dz)))) - TRIM_CLEAR;
+  member({ a: [x, bottom, z], b: [x, top, z], w: CORNER_TRIM, d: CORNER_TRIM, mat: "trim" });
 }
 
 // ── wall frames ───────────────────────────────────────────────────────────
@@ -554,11 +571,8 @@ export function layoutBuilding(d: Design): Layout {
   for (const [s1, s2, sx, sz] of corners) {
     const states = [wallState(d, s1), wallState(d, s2)].filter((s) => s === "enclosed" || s === "partial");
     if (!states.length) continue;
-    const x = sx * (W + GAP + 0.06);
-    const z = sz * (L + GAP + 0.06);
-    const topV = roofUnderAt(sx * W, sz * L);
     const bottomV = states.includes("enclosed") ? 0 : Math.max(0, eave(sz * L) - PARTIAL_WALL_FT);
-    member({ a: [x, base + bottomV, z], b: [x, base + topV, z], w: 0.3, d: 0.3, mat: "trim" });
+    cornerTrim(member, sx * (W + GAP + 0.06), sz * (L + GAP + 0.06), base + bottomV, (x, z) => base + roofUnderAt(x, z));
   }
 
   // ── lean-tos ──
@@ -709,8 +723,7 @@ function layoutLean(d: Design, lean: LeanTo, { base, eave, member, channel, surf
         },
       ]);
       for (const sz of [-1, 1]) {
-        const z = sz * (L + 0.06);
-        member({ a: [X(depth + 0.06), base, z], b: [X(depth + 0.06), underY(sz * L, depth), z], w: 0.3, d: 0.3, mat: "trim" });
+        cornerTrim(member, X(depth + 0.06), sz * (L + 0.06), base, (x, z) => underY(z, sx * x - W));
       }
     }
     return;
@@ -796,8 +809,7 @@ function layoutLean(d: Design, lean: LeanTo, { base, eave, member, channel, surf
       },
     ]);
     for (const sx of [-1, 1]) {
-      const z = Z(depth + 0.06);
-      member({ a: [sx * (W + 0.06), base, z], b: [sx * (W + 0.06), underY(zBack, depth), z], w: 0.3, d: 0.3, mat: "trim" });
+      cornerTrim(member, sx * (W + 0.06), Z(depth + 0.06), base, (_x, z) => underY(zBack, -L - z));
     }
   }
 }
@@ -860,6 +872,149 @@ export function evalPiecewise(points: [number, number][], u: number): number {
     }
   }
   return points[points.length - 1][1];
+}
+
+/**
+ * How far from `target` the camera has to stand, looking from azimuth `theta`
+ * and polar angle `phi` (three.js spherical angles: phi 0 is overhead), to
+ * see every corner of the box from `min` to `max`. `tan` holds the tangents
+ * of the half-angles of the view left clear of the buttons over it: across,
+ * above the middle and below it.
+ */
+export function framingDistance(
+  min: Vec3,
+  max: Vec3,
+  target: Vec3,
+  theta: number,
+  phi: number,
+  tan: { across: number; up: number; down: number },
+): number {
+  const { back, right, up } = cameraAxes(theta, phi);
+  let dist = 0;
+  for (const x of [min[0], max[0]]) {
+    for (const y of [min[1], max[1]]) {
+      for (const z of [min[2], max[2]]) {
+        const q: Vec3 = [x - target[0], y - target[1], z - target[2]];
+        const v = dot(q, up);
+        const need = Math.max(Math.abs(dot(q, right)) / tan.across, v > 0 ? v / tan.up : -v / tan.down);
+        dist = Math.max(dist, dot(q, back) + need);
+      }
+    }
+  }
+  return dist;
+}
+
+/** A rectangle on screen, in CSS px from the 3D view's top-left corner. */
+export type ScreenRect = { left: number; top: number; right: number; bottom: number };
+
+/** The camera's axes for azimuth `theta` and polar angle `phi`: back toward the camera, then right and up on screen. */
+function cameraAxes(theta: number, phi: number): { back: Vec3; right: Vec3; up: Vec3 } {
+  const back: Vec3 = [Math.sin(phi) * Math.sin(theta), Math.cos(phi), Math.sin(phi) * Math.cos(theta)];
+  const right: Vec3 = [Math.cos(theta), 0, -Math.sin(theta)];
+  return { back, right, up: cross(back, right) };
+}
+
+/**
+ * Where the box from `min` to `max` lands in a `w` × `h` px view, with the
+ * camera `dist` back from `target` at azimuth `theta` and polar angle `phi`;
+ * `tanV`: the tangent of half the vertical field of view.
+ */
+export function screenBounds(min: Vec3, max: Vec3, target: Vec3, theta: number, phi: number, dist: number, tanV: number, w: number, h: number): ScreenRect {
+  const { back, right, up } = cameraAxes(theta, phi);
+  const out: ScreenRect = { left: Infinity, top: Infinity, right: -Infinity, bottom: -Infinity };
+  for (const x of [min[0], max[0]]) {
+    for (const y of [min[1], max[1]]) {
+      for (const z of [min[2], max[2]]) {
+        const q: Vec3 = [x - target[0], y - target[1], z - target[2]];
+        const depth = Math.max(dist - dot(q, back), 1e-6);
+        const sx = ((1 + dot(q, right) / (depth * tanV * (w / h))) / 2) * w;
+        const sy = ((1 - dot(q, up) / (depth * tanV)) / 2) * h;
+        out.left = Math.min(out.left, sx);
+        out.right = Math.max(out.right, sx);
+        out.top = Math.min(out.top, sy);
+        out.bottom = Math.max(out.bottom, sy);
+      }
+    }
+  }
+  return out;
+}
+
+/**
+ * How far back the camera stands to frame the box as large as it fits in a
+ * `w` × `h` px view, `side` px in from each side and clear of the controls
+ * laid over the view (`overlays`, with `air` px kept from each). A control
+ * clears a band the full width of the view, from its edge to its far side.
+ * A control that stays out of the middle third, like the size badge in a
+ * corner, clears its band only if the building would otherwise reach it: on
+ * a wide, short view a band for it would shrink the building for nothing.
+ */
+export function framingClearOf(
+  min: Vec3,
+  max: Vec3,
+  target: Vec3,
+  theta: number,
+  phi: number,
+  tanV: number,
+  w: number,
+  h: number,
+  overlays: readonly ScreenRect[],
+  { side, air }: { side: number; air: number },
+): number {
+  // The share of the half-view left clear; never under a quarter, on a very small canvas.
+  const share = (px: number, of: number) => Math.max(0.25, 1 - (2 * px) / Math.max(of, 1));
+  const counted = new Set(overlays.filter((r) => r.right > w / 3 && r.left < (2 * w) / 3));
+  for (;;) {
+    let top = air;
+    let bottom = air;
+    for (const r of counted) {
+      if (r.top + r.bottom < h) top = Math.max(top, r.bottom + air);
+      else bottom = Math.max(bottom, h - r.top + air);
+    }
+    const dist = framingDistance(min, max, target, theta, phi, {
+      across: tanV * (w / Math.max(h, 1)) * share(side, w),
+      up: tanV * share(top, h),
+      down: tanV * share(bottom, h),
+    });
+    const b = screenBounds(min, max, target, theta, phi, dist, tanV, w, h);
+    const reached = overlays.filter(
+      (r) => !counted.has(r) && r.left - air < b.right && r.right + air > b.left && r.top - air < b.bottom && r.bottom + air > b.top,
+    );
+    if (!reached.length) return dist;
+    for (const r of reached) counted.add(r);
+  }
+}
+
+/** The longest time step, in seconds, the camera takes in one frame after a pause. */
+export const MAX_CAMERA_STEP = 1 / 20;
+/** A time step longer than this, in seconds, follows a pause rather than a slow frame. */
+export const CAMERA_PAUSE = 0.25;
+
+/**
+ * The time step the camera moves by. The 3D view draws only on demand, so the
+ * first frame after a pause reports the whole pause as its step, and the
+ * camera would make nearly all of its move in that one frame: that step is
+ * capped, so every move eases in. A slow frame mid-move is not a pause: a
+ * phone drawing under 20 frames a second keeps its real step, so its glide
+ * ends on time rather than in slow motion.
+ */
+export function steadyStep(delta: number): number {
+  return delta > CAMERA_PAUSE ? MAX_CAMERA_STEP : delta;
+}
+
+/**
+ * The x, in px, at which to centre a label `w` px wide that points at
+ * `anchor` in a view `of` px wide: on the anchor, or moved in just far enough
+ * to stay `edge` px from both sides; centred when it is wider than that.
+ */
+export function keepLabelInside(anchor: number, w: number, of: number, edge: number): number {
+  const half = w / 2 + edge;
+  if (of < 2 * half) return of / 2;
+  return Math.min(Math.max(anchor, half), of - half);
+}
+
+/** Whether `from` (a camera, say) is out in front of the wall an opening is on, where its face can be seen. */
+export function openingFaces(o: Pick<OpeningPlacement, "origin" | "normal">, from: Vec3): boolean {
+  return dot([from[0] - o.origin[0], from[1] - o.origin[1], from[2] - o.origin[2]], o.normal) > 0;
 }
 
 /** Roll-up specs, for the scene's door surfaces. */

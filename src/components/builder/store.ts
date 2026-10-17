@@ -47,6 +47,8 @@ type BuilderState = {
   dragFrom: "plan" | "scene" | null;
   /** A shared link that could not be opened (malformed, cut off, or from an older version). */
   badLink: boolean;
+  /** The panel is put away on a phone (BuilderApp keeps this in step), so the step it is on can't be seen. */
+  panelHidden: boolean;
   /** A request for the camera; `seq` changes on every request so the same view can be asked for twice. */
   camera: { view: ViewName | "fit"; seq: number };
 
@@ -94,6 +96,7 @@ export const useBuilder = create<BuilderState>()((set, get) => ({
   dragging: null,
   dragFrom: null,
   badLink: false,
+  panelHidden: false,
 
   edit(fn, key, opts) {
     const { design, past, lastKey, lastAt, edits } = get();
@@ -149,7 +152,9 @@ export const useBuilder = create<BuilderState>()((set, get) => ({
     set({ design: next, past: [...past, design], future: future.slice(1), lastKey: null, selected: null });
   },
 
-  setSection: (section) => set({ section }),
+  // A door or window is selected only on the Doors and windows step: leaving
+  // it lets go, so its label and outline don't follow into the next steps.
+  setSection: (section) => set((s) => ({ section, selected: section === "openings" ? s.selected : null })),
   setFrameOnly: (frameOnly) => set({ frameOnly }),
   setShowPerson: (showPerson) => set({ showPerson }),
   select: (selected) => set({ selected }),
@@ -172,3 +177,28 @@ export const useBuilder = create<BuilderState>()((set, get) => ({
   setDragging: (dragging, from) => set({ dragging, dragFrom: dragging ? (from ?? "scene") : null }),
   dismissBadLink: () => set({ badLink: false }),
 }));
+
+/**
+ * Whether a door or window in the 3D view can be picked (selected, dragged)
+ * now. Picking one opens the Doors and windows step, so while the panel is
+ * put away on another step a tap on a door is the camera's: the panel comes
+ * back on the step, and at the scroll, it was left on.
+ */
+export function canPickOpening(s: Pick<BuilderState, "panelHidden" | "section">): boolean {
+  return !s.panelHidden || s.section === "openings";
+}
+
+/** A text field keeps Escape for itself. */
+function typingIn(target: EventTarget | null): boolean {
+  const t = target as HTMLElement | null;
+  if (!t || typeof t.tagName !== "string") return false;
+  if (t.isContentEditable || t.tagName === "TEXTAREA") return true;
+  return t.tagName === "INPUT" && !["range", "checkbox", "radio", "button"].includes((t as HTMLInputElement).type);
+}
+
+/** Escape lets go of the selected door or window, so a keyboard can deselect too. A keydown handler. */
+export function deselectOnEscape(e: Pick<KeyboardEvent, "key" | "target" | "defaultPrevented">) {
+  if (e.key !== "Escape" || e.defaultPrevented || typingIn(e.target)) return;
+  const s = useBuilder.getState();
+  if (s.selected && !s.dragging) s.select(null);
+}

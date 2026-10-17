@@ -135,10 +135,16 @@ export function openingSpec(id: string): OpeningSpec {
 // ── Colors ────────────────────────────────────────────────────────────────
 
 /**
- * Screen colors for the Standard Line (26 & 29-gauge exposed fastener), the
+ * Screen colors for the Standard Line (26-gauge exposed fastener), the
  * panels the builder draws. Averaged from the centre of each swatch image that
  * /services/colors shows (getSwatchUrl), 2026-10-14. Names come from
  * src/lib/colors.ts, which stays the one owner of the catalog.
+ *
+ * Alamo White and Polar White share a value because their swatches do: both
+ * images, the full-size originals too, are one flat rgb(232, 233, 217)
+ * (re-sampled 2026-10-17). Brilliant White is the brighter rgb(239, 242, 235).
+ * Tell them apart only from a real measurement, such as a painted sample,
+ * never by eye. Until then the Colors step says they look alike (sameOnScreen).
  */
 const SWATCH_HEX: Record<string, string> = {
   "Alamo-White": "#e8e9d9",
@@ -179,6 +185,12 @@ export const COLOR_SLUGS = BUILDER_COLORS.map((c) => c.slug) as [string, ...stri
 
 export function builderColor(slug: string): BuilderColor {
   return BUILDER_COLORS.find((c) => c.slug === slug) ?? BUILDER_COLORS[0];
+}
+
+/** Every color drawn the same on screen as `slug`, itself included, in catalog order. */
+export function sameOnScreen(slug: string): BuilderColor[] {
+  const { hex } = builderColor(slug);
+  return BUILDER_COLORS.filter((c) => c.hex === hex);
 }
 
 /** Red iron, the frame color in every gallery photo. Not a customer choice. */

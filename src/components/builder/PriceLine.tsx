@@ -1,7 +1,7 @@
 "use client";
 
 import type { Design } from "@/lib/builder/design";
-import { formatPrice, priceHint } from "@/lib/builder/price";
+import { formatPrice, priceBasis, priceHint } from "@/lib/builder/price";
 
 /**
  * The sales-pack starting price for the closest standard build, always with
@@ -18,8 +18,7 @@ export function PriceLine({ design: d, detailed = false }: { design: Design; det
     );
   }
   const welded = d.frame === "welded";
-  const a = hint.anchor;
-  const basis = `${a.w}×${a.l} ${a.roof === "gable" ? "gabled" : "flat"} roof · ${a.h} ft · ${welded ? "welded" : "bolted"}, steel + install, before tax`;
+  const basis = priceBasis(d, hint.anchor);
   return (
     <div>
       <p className="font-forge-display text-[20px] font-bold leading-[1.15] tabular-nums text-forge-navy">

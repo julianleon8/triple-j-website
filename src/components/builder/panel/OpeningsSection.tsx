@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { FieldLabel, PillGroup } from "@/components/forge/form";
 import {
@@ -13,12 +13,50 @@ import {
   type OpeningKind,
   type Side,
 } from "@/lib/builder/catalog";
-import type { Opening } from "@/lib/builder/design";
-import { fmt, openingRange, placeOpening, slideOpening, wallState, wallsForOpening } from "@/lib/builder/rules";
+import type { Design, Opening } from "@/lib/builder/design";
+import {
+  openingName,
+  openingPosition,
+  openingRange,
+  placeOpening,
+  positionFrom,
+  shownPosition,
+  shownRange,
+  slideOpening,
+  storedPosition,
+  wallState,
+  wallsForOpening,
+} from "@/lib/builder/rules";
 
 import { DraggablePlan } from "../DraggablePlan";
 import { useBuilder } from "../store";
 import { Notice, SectionShell, Stepper, focusHeading, textAction } from "./controls";
+
+/**
+ * After a removal the next card slides up, its Remove button right under the
+ * thumb: a second tap this soon is a double tap, not a second removal.
+ */
+export const REMOVE_GUARD_MS = 500;
+
+/** Whether a Remove tapped at `at` is the second half of a double tap on the removal at `last` (event times, in ms). */
+export function doubleTap(at: number, last: number): boolean {
+  return at - last < REMOVE_GUARD_MS;
+}
+
+/** The card that takes focus after one is removed: the next, else the one before, else none (the add buttons do). */
+export function focusAfterRemoval(ids: readonly string[], removed: string): string | null {
+  const i = ids.indexOf(removed);
+  if (i < 0) return null;
+  return ids[i + 1] ?? ids[i - 1] ?? null;
+}
+
+const wallName = (side: Side) => `${SIDE_LABEL[side].toLowerCase()} wall`;
+
+/** What the position field measures: "Measured from the front corner to the door's nearest edge." */
+export function positionHelper(side: Side, thing: "door" | "window"): string {
+  const seen = side === "front" || side === "back" ? ", as seen from the front," : "";
+  return `Measured ${positionFrom(side)}${seen} to the ${thing}'s nearest edge.`;
+}
 
 /** Where each kind of opening goes first. */
 const PREFERRED: Record<OpeningKind, Side[]> = {
@@ -32,6 +70,21 @@ const FIRST_CHOICE: Record<OpeningKind, string[]> = {
   window: ["win3x3"],
 };
 const ROLLUPS = OPENING_SPECS.filter((s) => s.kind === "rollup");
+
+/**
+ * Said when a new door or window lands on a wall other than the one the
+ * customer would expect (the first enclosed one it prefers), or null.
+ */
+export function placedElsewhere(d: Design, kind: OpeningKind, o: Opening): string | null {
+  const expected = PREFERRED[kind].find((s) => wallState(d, s) === "enclosed");
+  if (!expected || o.wall === expected) return null;
+  return `No room on the ${wallName(expected)}, so ${openingName(o).replace(/^The /, "the ")} went on the ${wallName(o.wall)}.`;
+}
+
+/** Said when no enclosed wall has room for a new door or window. */
+export function noRoomFor(kind: OpeningKind): string {
+  return `No enclosed wall has room for a ${OPENING_KIND_LABEL[kind].toLowerCase()}. Enclose another wall, make the building bigger, or ask for it in the quote form.`;
+}
 
 export function OpeningsSection() {
   const d = useBuilder((s) => s.design);
@@ -48,6 +101,11 @@ export function OpeningsSection() {
     if (n) notify(n.text);
   };
   const setCardNotice = (n: { id: string; text: string } | null) => setCardNoticeState(n);
+  /** When the last Remove went through, for the double-tap guard. */
+  const removedAt = useRef(-Infinity);
+  /** Focus moved by script after a removal: the card it lands on isn't selected for it. */
+  const refocusing = useRef(false);
+  const addRow = useRef<HTMLDivElement>(null);
 
   const anyEnclosed = SIDES.some((s) => wallState(d, s) === "enclosed");
 
@@ -63,13 +121,15 @@ export function OpeningsSection() {
     for (const spec of FIRST_CHOICE[kind]) {
       const o = placeOpening(d, spec, PREFERRED[kind]);
       if (o) {
-        edit((x) => ({ ...x, openings: [...x.openings, o] }));
+        if (!edit((x) => ({ ...x, openings: [...x.openings, o] })).ok) return;
         select(o.id);
         setNotice(null);
+        const elsewhere = placedElsewhere(d, kind, o);
+        if (elsewhere) notify(elsewhere, { tone: "info" });
         return;
       }
     }
-    setNotice({ text: `No enclosed wall has room for a ${OPENING_KIND_LABEL[kind].toLowerCase()}. Enclose another wall or make the building bigger.` });
+    setNotice({ text: noRoomFor(kind) });
   }
 
   function update(o: Opening, patch: Partial<Opening>) {
@@ -105,11 +165,26 @@ export function OpeningsSection() {
     }
   }
 
-  function remove(o: Opening) {
-    edit((x) => ({ ...x, openings: x.openings.filter((y) => y.id !== o.id) }));
+  /** `at`: the tap's event time, for the double-tap guard. */
+  function remove(o: Opening, at: number) {
+    if (doubleTap(at, removedAt.current)) return;
+    const next = focusAfterRemoval(d.openings.map((x) => x.id), o.id);
+    if (!edit((x) => ({ ...x, openings: x.openings.filter((y) => y.id !== o.id) })).ok) return;
+    removedAt.current = at;
     if (selected === o.id) select(null);
     if (cardNotice?.id === o.id) setCardNotice(null);
-    focusHeading();
+    // The pressed button is gone. Focus goes where the eye does: the card that
+    // took its place (or the one above, after the last), or the add buttons once none are left.
+    requestAnimationFrame(() => {
+      const el = next
+        ? document.querySelector<HTMLElement>(`[data-opening="${next}"]`)
+        : addRow.current?.querySelector<HTMLElement>("button");
+      if (!el) return focusHeading();
+      refocusing.current = true;
+      el.focus({ preventScroll: true });
+      refocusing.current = false;
+      el.scrollIntoView({ block: "nearest" });
+    });
   }
 
   // A door tapped in the 3D view scrolls its card into view. One frame later,
@@ -127,9 +202,9 @@ export function OpeningsSection() {
     <SectionShell
       id="openings"
       title="Doors and windows"
-      lede="Add them here, then drag them along the wall in the 3D view or on the plan below. Tap one to select it."
+      lede="Add them here. Drag one along its wall in the 3D view or on the plan below, or set the distance in its card. Tap one to select it."
     >
-      <div className="grid grid-cols-3 gap-2">
+      <div ref={addRow} className="grid grid-cols-3 gap-2">
         {(["rollup", "walk", "window"] as const).map((k) => (
           <button
             key={k}
@@ -162,15 +237,24 @@ export function OpeningsSection() {
         const range = openingRange(d, o);
         const on = selected === o.id;
         const walls = wallsForOpening(d, o);
+        // Shown and typed the way a customer measures it (positionFrom); stored as the left edge seen from outside.
+        const from = positionFrom(o.wall);
+        const at = shownPosition(d, o, o.x);
+        const shown = shownRange(d, o, range);
+        const where = openingPosition(d, o);
         return (
           <div
             key={o.id}
             data-opening={o.id}
             role="group"
-            aria-label={`${OPENING_KIND_LABEL[spec.kind]} ${spec.label}, ${SIDE_LABEL[o.wall].toLowerCase()} wall, ${fmt(o.x)} ft from the left corner`}
-            onFocusCapture={() => select(o.id)}
+            tabIndex={-1}
+            aria-label={`${OPENING_KIND_LABEL[spec.kind]} ${spec.label}, ${wallName(o.wall)}, ${where}`}
+            onFocusCapture={() => {
+              if (!refocusing.current) select(o.id);
+            }}
             onClick={() => select(o.id)}
-            className={`relative flex flex-col gap-4 rounded-[10px] border-2 p-4 transition-colors ${
+            // scroll-mt-4: scrolled to the top of the panel, its Selected badge (above the border) stays in view.
+            className={`relative flex scroll-mt-4 flex-col gap-4 rounded-[10px] border-2 p-4 transition-colors ${
               on ? "border-[#1e6bd6] bg-[#f2f7fe] shadow-[0_0_0_3px_rgba(30,107,214,.18)]" : "border-forge-silver bg-white"
             }`}
           >
@@ -187,10 +271,10 @@ export function OpeningsSection() {
               </p>
               <button
                 type="button"
-                aria-label={`Remove ${OPENING_KIND_LABEL[spec.kind].toLowerCase()} ${spec.label} from the ${SIDE_LABEL[o.wall].toLowerCase()} wall, ${fmt(o.x)} ft from the left corner`}
+                aria-label={`Remove ${OPENING_KIND_LABEL[spec.kind].toLowerCase()} ${spec.label} from the ${wallName(o.wall)}, ${where}`}
                 onClick={(e) => {
                   e.stopPropagation();
-                  remove(o);
+                  remove(o, e.timeStamp);
                 }}
                 className={textAction}
               >
@@ -214,17 +298,18 @@ export function OpeningsSection() {
             />
             <div>
               <Stepper
-                label="From the left corner"
-                value={o.x}
-                min={range.min}
-                max={range.max}
+                label={from.replace(/^f/, "F")}
+                value={at}
+                min={shown.min}
+                max={shown.max}
                 step={0.5}
-                onChange={(x) => update(o, { x })}
+                onChange={(v) => update(o, { x: storedPosition(d, o, v) })}
                 onLimit={(edge) => {
-                  const { blocked } = slideOpening(d, o, edge === "min" ? range.min - 0.5 : range.max + 0.5);
+                  const past = edge === "min" ? shown.min - 0.5 : shown.max + 0.5;
+                  const { blocked } = slideOpening(d, o, storedPosition(d, o, past));
                   if (blocked) notify(blocked.message, { flash: blocked.by });
                 }}
-                helper={`Measured to the ${spec.kind === "window" ? "window" : "door"}'s left edge, standing outside the ${SIDE_LABEL[o.wall].toLowerCase()} wall.`}
+                helper={positionHelper(o.wall, spec.kind === "window" ? "window" : "door")}
               />
             </div>
             {cardNotice?.id === o.id ? <Notice>{cardNotice.text}</Notice> : null}

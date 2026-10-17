@@ -72,7 +72,10 @@ describe("doors and windows", () => {
   it("stops the eave where a roll-up on a side wall needs its header room", () => {
     const d = with_(garage, { height: 14, openings: [{ id: "a", spec: "r12x12", wall: "left", x: 9 }] });
     expect(designIssues(d)).toEqual([]);
-    expect(dimensionLimits(d, "height")).toMatchObject({ min: 13, reason: expect.stringMatching(/needs 13 ft/) });
+    expect(dimensionLimits(d, "height")).toMatchObject({
+      min: 13,
+      reason: "Lower than a 13 ft eave, the 12×12 roll-up door on the left side wall won't fit.",
+    });
   });
 
   it("refuses an opening on a wall that isn't enclosed", () => {
@@ -321,7 +324,7 @@ describe("dragging a door or window", () => {
     const r = slideOpening(garage, d1, 1);
     expect(r.x).toBe(4);
     expect(r.blocked?.by).toBeUndefined();
-    expect(r.blocked?.message).toMatch(/needs 11 ft of wall; past here the wall is 10\.8 ft tall/);
+    expect(r.blocked?.message).toMatch(/needs 11 ft of wall height; past here the wall is 10\.8 ft tall/);
   });
 
   it("lets a door that doesn't fit where it sits jump to the nearest spot that does", () => {

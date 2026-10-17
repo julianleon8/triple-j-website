@@ -1,6 +1,6 @@
 "use client";
 
-import { useId, useRef, useState, type KeyboardEvent, type ReactNode } from "react";
+import { useId, useRef, useState, type KeyboardEvent, type PointerEvent, type ReactNode } from "react";
 import { TriangleAlert } from "lucide-react";
 
 import { FieldLabel } from "@/components/forge/form";
@@ -115,7 +115,7 @@ export function Stepper({
     shake(row.current);
     if (onLimit) return onLimit(edge);
     if (edge === "min") notify(reason ?? `${fmt(min)} ${unit} is the least the builder takes for ${label.toLowerCase()}.`);
-    else notify(`${fmt(max)} ${unit} is the most the builder takes for ${label.toLowerCase()}. Call us for anything bigger.`);
+    else notify(`${fmt(max)} ${unit} is the most the builder takes for ${label.toLowerCase()}. For bigger, send your design and say so in the quote form.`);
   };
   // What's typed, only while the field is being edited; otherwise the value shows.
   const [draft, setDraft] = useState<string | null>(null);
@@ -168,17 +168,8 @@ export function Stepper({
           +
         </button>
       </div>
-      <input
-        type="range"
-        aria-label={`${label} slider`}
-        min={min}
-        max={max}
-        step={step}
-        value={value}
-        onChange={(e) => onChange(Number(e.target.value))}
-        className="mt-3 w-full accent-forge-navy"
-      />
-      <div className="mt-0.5 flex justify-between text-[11px] tabular-nums text-forge-slate">
+      <Slider label={label} value={value} min={min} max={max} step={step} unit={unit} onChange={onChange} />
+      <div className="flex justify-between text-[11px] tabular-nums text-forge-slate">
         <span>
           {min} {unit}
         </span>
@@ -187,6 +178,131 @@ export function Stepper({
         </span>
       </div>
       {reason ? <Helper>{reason}</Helper> : helper ? <Helper>{helper}</Helper> : null}
+    </div>
+  );
+}
+
+/** The slider's knob, in px. The knob stays inside the track at both ends. */
+const KNOB = 24;
+/** How far a finger moves before the slider decides whether it is a drag or a scroll. */
+const TOUCH_SLOP = 10;
+
+/** The value at a point along the track (0 to 1), snapped to `step` and kept in range. */
+export function sliderValue(fraction: number, min: number, max: number, step: number): number {
+  const raw = min + Math.min(1, Math.max(0, fraction)) * (max - min);
+  return Math.min(max, Math.max(min, min + Math.round((raw - min) / step) * step));
+}
+
+/** Arrows move one step, PageUp/PageDown ten, Home/End to the ends. Null for any other key. */
+export function sliderKey(key: string, value: number, min: number, max: number, step: number): number | null {
+  if (key === "Home") return min;
+  if (key === "End") return max;
+  const by: Record<string, number> = { ArrowRight: 1, ArrowUp: 1, ArrowLeft: -1, ArrowDown: -1, PageUp: 10, PageDown: -10 };
+  if (!(key in by)) return null;
+  return Math.min(max, Math.max(min, value + by[key] * step));
+}
+
+/**
+ * Where a finger on the slider is heading: "drag" once it has moved clearly
+ * sideways, "scroll" once it has moved more up or down, null until it has
+ * moved far enough to tell.
+ */
+export function touchIntent(dx: number, dy: number): "drag" | "scroll" | null {
+  const ax = Math.abs(dx);
+  const ay = Math.abs(dy);
+  if (Math.max(ax, ay) < TOUCH_SLOP) return null;
+  return ax > ay ? "drag" : "scroll";
+}
+
+/**
+ * The slider under a Stepper. Built by hand, not as <input type="range">, so a
+ * thumb scrolling the panel on a phone can start on it: a touch moves the
+ * value only once it is dragged clearly sideways, and `touch-pan-y` hands an
+ * up-or-down swipe to the page. A tap with no slide changes nothing. Mouse and
+ * pen move it at once.
+ */
+function Slider({
+  label,
+  value,
+  min,
+  max,
+  step,
+  unit,
+  onChange,
+}: {
+  label: string;
+  value: number;
+  min: number;
+  max: number;
+  step: number;
+  unit: string;
+  onChange: (v: number) => void;
+}) {
+  const gesture = useRef<{ id: number; x: number; y: number; mode: "drag" | "scroll" | "wait" } | null>(null);
+  const f = max > min ? Math.min(1, Math.max(0, (value - min) / (max - min))) : 0;
+  const set = (v: number) => {
+    if (v !== value) onChange(v);
+  };
+  const at = (el: HTMLElement, clientX: number) => {
+    const r = el.getBoundingClientRect();
+    return sliderValue((clientX - r.left - KNOB / 2) / Math.max(1, r.width - KNOB), min, max, step);
+  };
+  const end = (e: PointerEvent<HTMLDivElement>) => {
+    if (gesture.current?.id === e.pointerId) gesture.current = null;
+  };
+  return (
+    <div
+      role="slider"
+      tabIndex={0}
+      aria-label={`${label} slider`}
+      aria-valuemin={min}
+      aria-valuemax={max}
+      aria-valuenow={value}
+      aria-valuetext={`${fmt(value)} ${unit}`}
+      onKeyDown={(e) => {
+        const v = sliderKey(e.key, value, min, max, step);
+        if (v === null) return;
+        e.preventDefault();
+        set(v);
+      }}
+      onPointerDown={(e) => {
+        if (e.button !== 0) return;
+        const touch = e.pointerType === "touch";
+        gesture.current = { id: e.pointerId, x: e.clientX, y: e.clientY, mode: touch ? "wait" : "drag" };
+        e.currentTarget.setPointerCapture(e.pointerId);
+        if (touch) return;
+        // No text selection while dragging; focus by hand, as preventDefault skips it.
+        e.preventDefault();
+        e.currentTarget.focus();
+        set(at(e.currentTarget, e.clientX));
+      }}
+      onPointerMove={(e) => {
+        const g = gesture.current;
+        if (!g || g.id !== e.pointerId) return;
+        if (g.mode === "wait") g.mode = touchIntent(e.clientX - g.x, e.clientY - g.y) ?? "wait";
+        if (g.mode === "drag") set(at(e.currentTarget, e.clientX));
+      }}
+      onPointerUp={end}
+      // The browser took the swipe to scroll the page.
+      onPointerCancel={end}
+      onLostPointerCapture={end}
+      className="relative h-9 w-full cursor-pointer touch-pan-y select-none"
+    >
+      {/* High-contrast mode blanks painted backgrounds; system colors keep the track and knob visible. */}
+      <span
+        aria-hidden="true"
+        className="absolute inset-x-0 top-1/2 h-1.5 -translate-y-1/2 rounded-full bg-forge-silver forced-colors:bg-[GrayText] forced-colors:forced-color-adjust-none"
+      />
+      <span
+        aria-hidden="true"
+        className="absolute left-0 top-1/2 h-1.5 -translate-y-1/2 rounded-full bg-forge-navy forced-colors:bg-[Highlight] forced-colors:forced-color-adjust-none"
+        style={{ width: `calc(${KNOB / 2}px + ${f} * (100% - ${KNOB}px))` }}
+      />
+      <span
+        aria-hidden="true"
+        className="absolute top-1/2 size-6 -translate-y-1/2 rounded-full border-2 border-white bg-forge-navy shadow-[0_1px_3px_rgba(0,0,0,.35)] forced-colors:border-[Canvas] forced-colors:bg-[Highlight] forced-colors:forced-color-adjust-none"
+        style={{ left: `calc(${f} * (100% - ${KNOB}px))` }}
+      />
     </div>
   );
 }
