@@ -2,7 +2,8 @@ import { describe, expect, it } from "vitest";
 
 import { BUILDER_COLORS, FLAT_PITCH, GABLE_PITCH, LEAN_ATTACH_DROP, LEAN_PITCH, LIMITS, USES } from "./catalog";
 import { PRESETS, designSchema, type Design } from "./design";
-import { COL, PUR_D, REC_B, REC_D, STEEL_T, cross, frameLines, layoutBuilding, type Vec3 } from "./geometry";
+import { COL, PUR_D, REC_B, REC_D, RIB, STEEL_T, cross, frameLines, layoutBuilding, type Vec3 } from "./geometry";
+import { PBR } from "@/components/builder/scene/panelGeometry";
 import { formatPrice, priceHint } from "./price";
 import {
   canAddLean,
@@ -186,10 +187,27 @@ describe("summary", () => {
     expect(msg).toContain("2 × 10×10 roll-up door, front");
   });
 
+  it("names the panels 26-gauge PBR, walls only when there are any", () => {
+    expect(summaryRows(garage).find((r) => r.k === "Panels")?.v).toBe("26-gauge PBR, roof and walls");
+    const open = with_(carport, { walls: { front: "open", back: "open", left: "open", right: "open" }, leanTos: [] });
+    expect(summaryRows(open).find((r) => r.k === "Panels")?.v).toBe("26-gauge PBR roof");
+    for (const d of [garage, open]) expect(summaryRows(d).map((r) => r.v).join(" ")).not.toContain("29");
+  });
+
   it("states the concrete spec the way the vault does", () => {
     const row = summaryRows(carport).find((r) => r.k === "Concrete");
     expect(row?.v).toContain("3,000 PSI standard");
     expect(row?.v).not.toContain("4,000");
+  });
+});
+
+describe("panels", () => {
+  it("draws 26-gauge PBR: a 1¼ in major rib every 12 in, two stiffeners per pan", () => {
+    expect(RIB * 12).toBeCloseTo(1.25);
+    expect(PBR.period).toBe(1);
+    expect(Math.max(...PBR.points.map(([, d]) => d))).toBeCloseTo(RIB);
+    const stiffeners = PBR.points.filter(([, d], i, p) => d > 0 && d < RIB && d > p[i - 1][1] && d > p[i + 1][1]);
+    expect(stiffeners).toHaveLength(2);
   });
 });
 

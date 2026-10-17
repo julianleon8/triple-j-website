@@ -1,5 +1,16 @@
 # Session Notes
 
+## 2026-10-17 — Every panel is 26-gauge; the builder draws and names 26-gauge PBR
+
+**In plain terms.** Julian: "we only build in 26 gauge", and 26-gauge PBR is the usual panel. The site still offered 29-gauge in places, 8 gallery projects said "29 ga", and the 3D builder never named its panels.
+
+**What changed.**
+- Site copy (`6fd5372`): the Colors page, PBR vs PBU page, About page and the welded-vs-bolted post say 26-gauge only; 29-gauge is named only as the thinner panel we don't offer. The hail FAQ no longer says "ask us about upgrading to 26-gauge". Those pages get their own sitemap / `dateModified` dates (`PAGE_REVISED`, a post's `revised`), so untouched pages keep theirs.
+- Gallery (`1696730`): the 8 rows entered 2026-04-26/27 as 29-gauge were wrong (owner); set to 26 in `gallery_items`. The HQ gallery form offers only 26. All 8 live pages checked: "26 ga".
+- Builder: the major rib is 1¼ in (`RIB`, was 1.2 in); the PBR profile is written in inches; the summary gets a Panels row. A sign-off row lists the crown, base and stiffener widths as drafts.
+
+**Open.** A photo of a cut panel end with a tape across one rib would settle the draft widths. The roll-up door's `SLAT` profile reads its points as fractions of the 3 in slat but gives them in feet, so the crown covers only the first ~⅝ in of each slat: worth a look on the next builder pass.
+
 ## 2026-10-17 — Builder polish from twelve test customers; Freddy's framing answers
 
 **In plain terms.** Twelve agents played customers on a local copy of the site (fake database and inbox, nothing sent), in two rounds: getting a quote through, then polish on a sideways phone, a small Android, an iPad, a small laptop, a wide screen and a keyboard alone. All twelve sent their designs. The owner approved the 28 fixes that needed no judgment, plus three of their own requests: the customer's first name on the thank-you page, a heavier feel when spinning and zooming the 3D view, and a panel that hides on phones so the building fills the screen.

@@ -78,9 +78,14 @@ export function leanLines(d: Design): string[] {
   });
 }
 
+/** Any wall with panels on it: an open wall has none. */
+function hasWallPanels(d: Design): boolean {
+  return SIDES.some((s) => wallState(d, s) !== "open") || d.leanTos.some((l) => l.walls === "enclosed");
+}
+
 export function colorsLabel(d: Design): string {
   const parts = [`Roof ${builderColor(d.colors.roof).name}`];
-  const anyWall = SIDES.some((s) => wallState(d, s) !== "open") || d.leanTos.some((l) => l.walls === "enclosed");
+  const anyWall = hasWallPanels(d);
   // Wainscot is drawn, and offered, on enclosed walls only.
   const anyEnclosed = SIDES.some((s) => wallState(d, s) === "enclosed") || d.leanTos.some((l) => l.walls === "enclosed");
   if (anyWall) parts.push(`Walls ${builderColor(d.colors.walls).name}`);
@@ -97,6 +102,11 @@ export function frameLabel(d: Design): string {
   return d.heavyDuty ? `${base} · heavy-duty upgrade (11-gauge columns)` : base;
 }
 
+/** Every panel is 26-gauge PBR: the only panel Triple J builds with. */
+export function panelsLabel(d: Design): string {
+  return hasWallPanels(d) ? "26-gauge PBR, roof and walls" : "26-gauge PBR roof";
+}
+
 export function concreteLabel(d: Design): string {
   if (d.concrete === "yes") return "Pour a pad · 3,000 PSI standard, priced separately";
   return CONCRETE_LABEL[d.concrete];
@@ -110,6 +120,7 @@ export function summaryRows(d: Design): SummaryRow[] {
     { k: "Roof", v: `${ROOF_LABEL[d.roof]} · ${heightLabel(d)}` },
     { k: "Frame", v: frameLabel(d) },
     { k: "Walls", v: wallsLabel(d) },
+    { k: "Panels", v: panelsLabel(d) },
     { k: "Doors & windows", v: openings.join(" · ") || "None", lines: openings },
     { k: "Lean-tos", v: leans.join(" · ") || "None", lines: leans },
     { k: "Colors", v: colorsLabel(d) },

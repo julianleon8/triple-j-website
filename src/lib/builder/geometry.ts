@@ -122,7 +122,8 @@ const FASCIA_W = 0.08;
 const CORNER_TRIM = 0.3;
 /** Air between the top of a corner trim and the roof panel over it. */
 const TRIM_CLEAR = 0.02;
-const RIB = 0.1; // panel rib height
+/** PBR major rib height: 1¼ in, on the 26-gauge PBR every roof and wall gets. */
+export const RIB = 1.25 / 12;
 export const SLAB_T = 1 / 3;
 const SLAB_MARGIN = 0.25;
 /** Air between panels and the steel behind them, so the two never flicker through each other. */

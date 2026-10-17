@@ -6,27 +6,36 @@
 
 import { BufferGeometry, Float32BufferAttribute } from "three";
 
-import { cross, evalPiecewise, type Surface, type Vec3 } from "@/lib/builder/geometry";
+import { RIB, cross, evalPiecewise, type Surface, type Vec3 } from "@/lib/builder/geometry";
 
 type Profile = { period: number; points: [number, number][] };
 
-/** PBR panel: 12 in pitch, a trapezoid major rib and two stiffeners per pan. */
-const PBR: Profile = {
+/**
+ * 26-gauge PBR, the only panel Triple J builds with: a trapezoid major rib
+ * every 12 in, 1¼ in tall (`RIB`), its 1 in crown on a 3.4 in base, and two
+ * shallow stiffener ribs in each pan. The sheet itself (26 gauge, about
+ * 0.018 in) is drawn with no thickness. As [inches across the pitch, inches
+ * deep]; crown, base and stiffener sizes are drafts on the sign-off sheet.
+ */
+const PBR_INCHES: readonly [number, number][] = [
+  [0, RIB * 12],
+  [0.5, RIB * 12],
+  [1.7, 0],
+  [4.3, 0],
+  [4.65, 0.18],
+  [5, 0],
+  [7, 0],
+  [7.35, 0.18],
+  [7.7, 0],
+  [10.3, 0],
+  [11.5, RIB * 12],
+  [12, RIB * 12],
+];
+
+/** Points are [fraction of the 12 in pitch, depth in ft]. */
+export const PBR: Profile = {
   period: 1,
-  points: [
-    [0, 0.1],
-    [0.04, 0.1],
-    [0.14, 0],
-    [0.36, 0],
-    [0.39, 0.015],
-    [0.42, 0],
-    [0.58, 0],
-    [0.61, 0.015],
-    [0.64, 0],
-    [0.86, 0],
-    [0.96, 0.1],
-    [1, 0.1],
-  ],
+  points: PBR_INCHES.map(([across, deep]) => [across / 12, deep / 12]),
 };
 
 /** Roll-up door curtain: 3 in slats, crowned outward. */

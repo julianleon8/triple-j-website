@@ -40,6 +40,7 @@ Every number is a **draft** (`tj-v1-draft`), set from the sales pack and the gal
 | Flat roof framing | level receivers front and back, sloped side receivers, purlins side to side | Draft: the job photos suggest the long way, sloping to one long side — waiting on Julian | |
 | Partial wall | top 3 ft closed | Industry standard; Triple J unconfirmed | |
 | Wainscot | bottom 3 ft | Common practice | |
+| Panels | 26-gauge PBR on every roof and wall: major ribs 12 in on center, 1¼ in tall, a 1 in crown on a 3.4 in base, two shallow stiffener ribs (0.18 in) per pan; the summary's Panels row names it | Julian, 2026-10-17: 26-gauge PBR, the only gauge built; the 12 in pitch and 1¼ in rib are the standard PBR spec. Crown, base and stiffeners are from typical PBR drawings, waiting on a measured panel | |
 | Roll-up sizes | 8×8, 10×10, 12×12, 12×14, 14×14, 16×16 | Handwritten crew sheet + sales pack | |
 | Roll-up header room | wall must be ≥ door height + 1 ft where the door sits | Common practice (drum) | |
 | Walk door | 36 in × 80 in, needs + 6 in above | Sales pack "36-in walk door" | |
@@ -63,7 +64,7 @@ Every number is a **draft** (`tj-v1-draft`), set from the sales pack and the gal
 | Words | `src/lib/builder/summary.ts` | Review list, lead message, screen-reader text |
 | Page | `src/app/build/page.tsx` | noindex until sign-off |
 | UI | `src/components/builder/` | zustand store, 8 panels, plan SVG, quote form |
-| 3D | `src/components/builder/scene/` | React Three Fiber, renders on demand, real PBR rib geometry, no textures or model files |
+| 3D | `src/components/builder/scene/` | React Three Fiber, renders on demand, real 26-gauge PBR rib geometry, no textures or model files |
 | Leads | `src/app/api/leads/route.ts` | `source: 'builder'` + validated design → `leads.design` (migration 034) |
 | HQ | `src/app/hq/leads/[id]/components/BuilderDesignCard.tsx` | Plan, spec rows, "Open in 3D" (new tab) |
 
