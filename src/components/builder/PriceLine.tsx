@@ -28,7 +28,7 @@ export function PriceLine({ design: d, detailed = false }: { design: Design; det
       {detailed ? (
         <p className="mt-2 text-[12px] leading-[1.5] text-forge-slate">
           {welded ? "" : `Welded from ${formatPrice(hint.welded)}. `}
-          Walls, doors, windows, lean-tos, colored panels, the heavy-duty upgrade, extra height and concrete are quoted on top. Your quote covers the whole design.
+          Walls, doors, windows, lean-tos, storage rooms, gutters, insulation, colored panels, the heavy-duty upgrade, extra height and concrete are quoted on top. Your quote covers the whole design.
         </p>
       ) : null}
     </div>

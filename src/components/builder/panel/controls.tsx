@@ -83,7 +83,9 @@ const stepBtn =
  * A feet value: − / typed number / + and a slider, bounded by min/max. When
  * the floor is raised by something the customer added, `reason` says what.
  * Pushing past an end shakes the control and says why on screen: `onLimit`
- * explains it, or a plain "that's the most" is shown.
+ * explains it, or a plain "that's the most" is shown. A number typed past an
+ * end goes to `onOutside` first, for a place the range doesn't reach (a door
+ * through the storage room's wall); it returns true when it took it.
  */
 export function Stepper({
   label,
@@ -96,6 +98,7 @@ export function Stepper({
   reason,
   unit = "ft",
   onLimit,
+  onOutside,
 }: {
   label: string;
   value: number;
@@ -107,6 +110,7 @@ export function Stepper({
   reason?: string | null;
   unit?: string;
   onLimit?: (edge: "min" | "max") => void;
+  onOutside?: (typed: number) => boolean;
 }) {
   const id = useId();
   const row = useRef<HTMLDivElement>(null);
@@ -124,6 +128,7 @@ export function Stepper({
     const n = Number(raw);
     if (!Number.isFinite(n) || raw.trim() === "") return;
     const snapped = Math.round(n / step) * step;
+    if ((snapped < min || snapped > max) && onOutside?.(snapped)) return;
     const v = Math.min(max, Math.max(min, snapped));
     if (v !== value) onChange(v);
     if (snapped < min) limit("min");
@@ -517,6 +522,12 @@ export function Notice({ children, action }: { children: ReactNode; action?: { l
     </div>
   );
 }
+
+/**
+ * The line under every add-on the builder shows no price for: the quote
+ * prices it. Never "call for a price" (owner's call, 2026-10-17).
+ */
+export const PRICED_IN_QUOTE = "Priced in your quote. Add it here and send your design.";
 
 /** Helper text under a control. Slate, not Forge's steel: at 12px steel fails WCAG AA on white. */
 export function Helper({ children }: { children: ReactNode }) {

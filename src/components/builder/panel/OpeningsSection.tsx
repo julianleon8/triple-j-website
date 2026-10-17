@@ -309,6 +309,14 @@ export function OpeningsSection() {
                   const { blocked } = slideOpening(d, o, storedPosition(d, o, past));
                   if (blocked) notify(blocked.message, { flash: blocked.by });
                 }}
+                onOutside={(typed) => {
+                  // Typed across the storage room's wall: it goes through, when it fits on the far side.
+                  const r = slideOpening(d, o, storedPosition(d, o, typed));
+                  if (r.x >= range.min - 1e-6 && r.x <= range.max + 1e-6) return false;
+                  update(o, { x: r.x });
+                  if (r.blocked) notify(r.blocked.message, { flash: r.blocked.by });
+                  return true;
+                }}
                 helper={positionHelper(o.wall, spec.kind === "window" ? "window" : "door")}
               />
             </div>

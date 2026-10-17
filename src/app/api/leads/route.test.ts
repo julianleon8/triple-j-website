@@ -158,6 +158,39 @@ describe('3D builder leads', () => {
     expect(mock.track.mock.calls[0][0].properties).toMatchObject({ source: 'builder', service_type: 'garage' });
   });
 
+  it('fills in the add-ons as none on a design sent without them', async () => {
+    expect((await POST(request({ source: 'builder', design: garage }))).status).toBe(200);
+    const saved = mock.insert.mock.calls[0][0];
+    expect(saved.design).toMatchObject({ storage: null, gutters: false, insulation: false });
+    expect(saved.message).toContain('Storage room: None');
+  });
+
+  it('takes a storage room, gutters, insulation and a front lean-to, and words them for the owner', async () => {
+    const design = {
+      ...garage,
+      openings: [{ id: 'd1', spec: 'walk', wall: 'front', x: 13 }],
+      leanTos: [{ side: 'front', depth: 8, walls: 'open' }],
+      storage: { end: 'back', depth: 10 },
+      gutters: true,
+      insulation: true,
+    };
+    const response = await POST(request({ source: 'builder', design }));
+    expect(response.status).toBe(200);
+    const saved = mock.insert.mock.calls[0][0];
+    expect(saved.design).toMatchObject({ storage: { end: 'back', depth: 10 }, gutters: true, insulation: true });
+    expect(saved.message).toContain('Storage room: 10 ft deep at the back, closed in, with a walk door');
+    expect(saved.message).toContain('Gutters: K-style, with downspouts');
+    expect(saved.message).toContain('Insulation: Fiberglass, on the roof and the closed walls');
+    expect(saved.message).toContain('Lean-tos: Front: 8 ft deep, open');
+  });
+
+  it('refuses a storage room that leaves too little of the building', async () => {
+    const response = await POST(request({ source: 'builder', design: { ...garage, storage: { end: 'front', depth: 26 } } }));
+    expect(response.status).toBe(400);
+    expect((await response.json()).error).toMatch(/leaves less than 6 ft of the building/);
+    expect(mock.insert).not.toHaveBeenCalled();
+  });
+
   it('requires a design from the builder, and refuses one from anywhere else', async () => {
     expect((await POST(request({ source: 'builder' }))).status).toBe(400);
     expect((await POST(request({ source: 'quote_page', design: garage }))).status).toBe(400);

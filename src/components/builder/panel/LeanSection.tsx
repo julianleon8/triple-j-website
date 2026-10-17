@@ -8,16 +8,13 @@ import type { LeanTo } from "@/lib/builder/design";
 import { canAddLean, fmt, leanOuterHeight, maxLeanDepth } from "@/lib/builder/rules";
 
 import { useBuilder } from "../store";
-import { Notice, SectionShell, Stepper, focusHeading, textAction } from "./controls";
-
-const LABEL: Record<LeanSide, string> = { left: SIDE_LABEL.left, right: SIDE_LABEL.right, back: "Back" };
+import { Helper, Notice, PRICED_IN_QUOTE, SectionShell, Stepper, focusHeading, textAction } from "./controls";
 
 export function LeanSection() {
   const d = useBuilder((s) => s.design);
   const edit = useBuilder((s) => s.edit);
   const notify = useBuilder((s) => s.notify);
   const [notice, setNotice] = useState<string | null>(null);
-  const max = maxLeanDepth(d);
 
   function add(side: LeanSide) {
     const can = canAddLean(d, side);
@@ -26,7 +23,7 @@ export function LeanSection() {
       notify(can.reason);
       return;
     }
-    const depth = Math.max(LIMITS.leanDepth.min, Math.min(10, max));
+    const depth = Math.max(LIMITS.leanDepth.min, Math.min(10, maxLeanDepth(d, side)));
     const r = edit((x) => ({ ...x, leanTos: [...x.leanTos, { side, depth, walls: "open" }] }));
     setNotice(r.ok ? null : r.issues[0].message);
   }
@@ -44,18 +41,21 @@ export function LeanSection() {
     <SectionShell
       id="leans"
       title="Lean-tos"
-      lede={`A lean-to runs the full length of its side, hangs 1 ft under the main eave and slopes 2:12 to keep at least ${LEAN_MIN_OUTER} ft clear at its low edge.`}
+      lede={`One per side, up to four. Each runs the full length of its side, hangs 1 ft under the main eave and slopes 2:12 to keep at least ${LEAN_MIN_OUTER} ft clear at its low edge. Where two meet, the corner stays open.`}
     >
+      <Helper>{PRICED_IN_QUOTE}</Helper>
       {notice ? <Notice>{notice}</Notice> : null}
       {LEAN_SIDES.map((side) => {
         const lean = d.leanTos.find((l) => l.side === side);
-        const name = LABEL[side].toLowerCase();
+        const label = SIDE_LABEL[side];
+        const name = label.toLowerCase();
+        const max = maxLeanDepth(d, side);
         if (!lean) {
           const can = canAddLean(d, side);
           return (
             <div key={side} className="flex items-center justify-between gap-4 rounded-[10px] border border-forge-silver p-4">
               <div className="min-w-0">
-                <p className="font-forge-display text-[17px] font-bold text-forge-navy">{LABEL[side]}</p>
+                <p className="font-forge-display text-[17px] font-bold text-forge-navy">{label}</p>
                 {can.ok ? null : (
                   <p id={`lean-why-${side}`} className="mt-1 text-[12px] leading-[1.45] text-forge-slate">
                     {can.reason}
@@ -77,9 +77,9 @@ export function LeanSection() {
           );
         }
         return (
-          <div key={side} role="group" aria-label={`${LABEL[side]} lean-to`} className="flex flex-col gap-4 rounded-[10px] border-2 border-forge-navy p-4">
+          <div key={side} role="group" aria-label={`${label} lean-to`} className="flex flex-col gap-4 rounded-[10px] border-2 border-forge-navy p-4">
             <div className="flex items-start justify-between gap-3">
-              <p className="font-forge-display text-[17px] font-bold text-forge-navy">{LABEL[side]} lean-to</p>
+              <p className="font-forge-display text-[17px] font-bold text-forge-navy">{label} lean-to</p>
               <button type="button" onClick={() => remove(side)} aria-label={`Remove ${name} lean-to`} className={textAction}>
                 Remove
               </button>
@@ -99,7 +99,7 @@ export function LeanSection() {
                       : `${LIMITS.leanDepth.max} ft is the deepest lean-to the builder takes. For deeper, send your design and say so in the quote form.`,
                 )
               }
-              helper={`${fmt(leanOuterHeight(d, lean.depth))} ft clear at the low edge.`}
+              helper={`${fmt(leanOuterHeight(d, lean.depth, side))} ft clear at the low edge.`}
             />
             <PillGroup
               label="Walls"

@@ -10,7 +10,8 @@
  * purlins (C-channels with their edges turned in) cut to fit and slotted
  * inside the receivers, tops flush, so the roof steel sits on both. A frame
  * line inside the building gets a double receiver: two back to back, so the
- * purlins of both bays slot in.
+ * purlins of both bays slot in. A storage room's inner wall stands on a frame
+ * line of its own.
  */
 
 import {
@@ -21,24 +22,32 @@ import {
   MAX_BAY_FT,
   OPENING_SPECS,
   PARTIAL_WALL_FT,
+  RECEIVER_DEPTH,
+  SIDES,
   WAINSCOT_FT,
   openingSpec,
   type OpeningKind,
+  type OpeningSpec,
   type Side,
+  type WallState,
 } from "./catalog";
 import type { Design, LeanTo } from "./design";
-import { wallLength, wallState, wallTopAt } from "./rules";
+import { gutterEdges, partitionAt, wallLength, wallState, wallTopAt } from "./rules";
 
 export type Vec3 = [number, number, number];
 
 /** "ridge" is the ridge cap, painted the roof color unless the customer picks one. */
 export type MemberMat = "frame" | "trim" | "ridge";
-/** "box" is solid (posts, trim); "c" a plain C-channel (a receiver); "lipped" a C with its edges turned in (a purlin). */
-export type MemberProfile = "box" | "c" | "lipped";
+/**
+ * "box" is solid (posts, trim); "c" a plain C-channel (a receiver); "lipped"
+ * a C with its edges turned in (a purlin); "gutter" a K-style gutter.
+ */
+export type MemberProfile = "box" | "c" | "lipped" | "gutter";
 /**
  * A member from `a` to `b`: `d` deep toward `up` (default: world up), `w`
  * wide across. A channel is `d` deep and `w` across its flanges, and its
- * open side faces `open`.
+ * open side faces `open`. A gutter is `d` tall and `w` wide, open at the
+ * top, its front facing (b − a) × up.
  */
 export type Member = { a: Vec3; b: Vec3; w: number; d: number; mat: MemberMat; up?: Vec3; profile?: MemberProfile; open?: Vec3 };
 
@@ -74,12 +83,26 @@ export type OpeningPlacement = {
   h: number;
 };
 
+/** A door drawn into the design that is not one of its doors (the storage room's walk door): not picked, not dragged. */
+export type FixedDoor = {
+  key: string;
+  /** Bottom-left corner on the face it is seen from, as for an opening. */
+  origin: Vec3;
+  uAxis: Vec3;
+  normal: Vec3;
+  w: number;
+  h: number;
+  /** Thickness of the wall it stands in, back from that face. */
+  thick: number;
+};
+
 export type Layout = {
   base: number;
   slab: { x0: number; x1: number; z0: number; z1: number; t: number } | null;
   members: Member[];
   surfaces: Surface[];
   openings: OpeningPlacement[];
+  fixedDoors: FixedDoor[];
   bounds: { min: Vec3; max: Vec3 };
 };
 
@@ -91,7 +114,7 @@ export const COL = 1 / 3; // 4 in square tube posts
  * flange rests on the post: receiver top flush with the post top, bolted
  * through the web.
  */
-export const REC_D = 8 / 12;
+export const REC_D = RECEIVER_DEPTH;
 export const REC_B = 2.5 / 12;
 /** Roof purlin: 6 in, edges turned in, slotted inside the receivers. */
 export const PUR_D = 6 / 12;
@@ -124,10 +147,26 @@ const CORNER_TRIM = 0.3;
 const TRIM_CLEAR = 0.02;
 /** PBR major rib height: 1¼ in, on the 26-gauge PBR every roof and wall gets. */
 export const RIB = 1.25 / 12;
+/** K-style gutter, 5 in across the top and 4 in tall, hung just under the top of the fascia. */
+export const GUTTER_W = 5 / 12;
+export const GUTTER_H = 4 / 12;
+const GUTTER_DROP = 0.03;
+/** Downspout, 2 × 3 in: 2 in out from the wall, 3 in along it. */
+export const DOWNSPOUT_D = 2 / 12;
+export const DOWNSPOUT_W = 3 / 12;
+/** A downspout's middle this far from a corner with trim on it; with none, it runs down the corner post. */
+const DOWNSPOUT_INSET = 0.5;
 export const SLAB_T = 1 / 3;
 const SLAB_MARGIN = 0.25;
 /** Air between panels and the steel behind them, so the two never flicker through each other. */
 const GAP = 0.04;
+/** Out past a wall's ribs, from its line: where a downspout runs down a sheeted wall. */
+const PAST_RIBS = GAP + RIB + 0.02;
+/**
+ * A lean-to's roof end at an open corner (a side lean-to meeting a front or
+ * back one): just past its end wall's ribs, not out over the corner square.
+ */
+const SHEET_OUT = PAST_RIBS;
 
 const CHANNEL = {
   rec: { d: REC_D, w: REC_B, profile: "c" },
@@ -166,6 +205,7 @@ function stations(first: number, last: number): number[] {
 // ── small vector helpers ──────────────────────────────────────────────────
 
 const add = (a: Vec3, b: Vec3): Vec3 => [a[0] + b[0], a[1] + b[1], a[2] + b[2]];
+const sub = (a: Vec3, b: Vec3): Vec3 => [a[0] - b[0], a[1] - b[1], a[2] - b[2]];
 const scale = (a: Vec3, s: number): Vec3 => [a[0] * s, a[1] * s, a[2] * s];
 const dot = (a: Vec3, b: Vec3) => a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
 const norm = (a: Vec3): Vec3 => {
@@ -183,6 +223,29 @@ export function frameLines(length: number): number[] {
   const n = Math.max(1, Math.ceil(length / MAX_BAY_FT));
   const span = length - COL;
   return Array.from({ length: n + 1 }, (_, i) => length / 2 - COL / 2 - (i * span) / n);
+}
+
+/** Where the storage room's inner wall stands (z), or null with no storage room. */
+export function partitionZ(d: Design): number | null {
+  if (!d.storage) return null;
+  const L = d.length / 2;
+  return d.storage.end === "back" ? -L + d.storage.depth : L - d.storage.depth;
+}
+
+/**
+ * The main building's frame lines, front to back. A storage room's inner wall
+ * is a frame line of its own, and the bays each side of it are spread the way
+ * frameLines spreads a whole building's.
+ */
+export function buildingFrameLines(d: Design): number[] {
+  const zp = partitionZ(d);
+  if (zp === null) return frameLines(d.length);
+  const L = d.length / 2;
+  const run = (from: number, to: number, len: number) => {
+    const n = Math.max(1, Math.ceil(len / MAX_BAY_FT));
+    return Array.from({ length: n + 1 }, (_, i) => from + ((to - from) * i) / n);
+  };
+  return [...run(L - COL / 2, zp, L - zp), ...run(zp, -L + COL / 2, zp + L).slice(1)];
 }
 
 /** `count` evenly spaced values from a to b inclusive. */
@@ -216,6 +279,54 @@ function cornerTrim(member: (m: Member) => void, x: number, z: number, bottom: n
   member({ a: [x, bottom, z], b: [x, top, z], w: CORNER_TRIM, d: CORNER_TRIM, mat: "trim" });
 }
 
+/**
+ * A K-style gutter hung on a fascia, `a` to `b` along the top of its outer
+ * face, the gutter's front toward `out`, with a downspout from it to each
+ * point in `drops` (where the downspout meets the ground, on the line it runs
+ * down). Each leaves the gutter's bottom, elbows back to that line, runs down
+ * it and kicks out at the foot.
+ */
+function gutterRun(member: (m: Member) => void, a0: Vec3, b0: Vec3, out: Vec3, drops: Vec3[]) {
+  const shift = add(scale(out, GUTTER_W / 2 + 0.01), [0, -GUTTER_DROP - GUTTER_H / 2, 0]);
+  let a = add(a0, shift);
+  let b = add(b0, shift);
+  // The gutter's front faces (b − a) × up.
+  if (dot(cross(sub(b, a), [0, 1, 0]), out) < 0) [a, b] = [b, a];
+  member({ a, b, w: GUTTER_W, d: GUTTER_H, mat: "trim", profile: "gutter" });
+  const run = sub(b, a);
+  const len = Math.hypot(run[0], run[1], run[2]);
+  const t = scale(run, 1 / len);
+  const level = norm([t[0], 0, t[2]]);
+  // End caps.
+  for (const [p, dir] of [
+    [a, -1],
+    [b, 1],
+  ] as const) {
+    member({ a: p, b: add(p, scale(t, dir * 0.03)), w: GUTTER_W, d: GUTTER_H, mat: "trim" });
+  }
+  for (const g of drops) {
+    // Measured level, so a gutter that follows a slope still finds the spot over the drop.
+    const along = Math.min(len, Math.max(0, dot(sub(g, a), level) / dot(t, level)));
+    const c = add(a, scale(t, along));
+    const top: Vec3 = [c[0], c[1] - GUTTER_H / 2, c[2]];
+    const outlet: Vec3 = [c[0], top[1] - 0.3, c[2]];
+    const back = Math.hypot(g[0] - c[0], g[2] - c[2]);
+    const elbow: Vec3 = [g[0], outlet[1] - back, g[2]];
+    const foot: Vec3 = [g[0], g[1] + 0.5, g[2]];
+    const kick: Vec3 = [g[0] + out[0] * 0.4, g[1] + 0.12, g[2] + out[2] * 0.4];
+    // Joints overlap a little, so a bend shows no gap.
+    const lap = DOWNSPOUT_D / 2;
+    const piece = (p: Vec3, q: Vec3, lapP: number, lapQ: number) => {
+      const u = norm(sub(q, p));
+      member({ a: add(p, scale(u, -lapP)), b: add(q, scale(u, lapQ)), w: DOWNSPOUT_D, d: DOWNSPOUT_W, mat: "trim", up: level });
+    };
+    piece(top, outlet, 0, lap);
+    piece(outlet, elbow, lap, lap);
+    piece(elbow, foot, lap, lap);
+    piece(foot, kick, lap, 0);
+  }
+}
+
 // ── wall frames ───────────────────────────────────────────────────────────
 
 type WallFrame = { origin: Vec3; uAxis: Vec3; normal: Vec3; len: number };
@@ -239,12 +350,55 @@ function wallFrame(d: Design, side: Side, base: number): WallFrame {
 const wallPoint = (f: WallFrame, u: number, v: number, out = 0): Vec3 =>
   add(add(add(f.origin, scale(f.uAxis, u)), [0, v, 0]), scale(f.normal, out));
 
+/** Where posts and wall purlins sit from a wall's panel face: their middle, half a post inside the wall line. */
+const INSIDE = -COL / 2 - GAP;
+/**
+ * How far the storage room's inner wall reaches each way from its middle: the
+ * double receiver on it, air, then the panel and its ribs.
+ */
+const PARTITION_FACE = REC_B + GAP + RIB + 0.03;
+
+/**
+ * The framing inside a wall line around one opening at `x`: jambs each side,
+ * a header and, under a window, a sill. A roll-up's jambs run all the way up
+ * inside the receiver, for reinforcement; a walk door's and a window's stop
+ * at the header. An opening that comes up close under the receiver gets a
+ * shallower header, or none: the receiver is its header. `topAt` is the
+ * wall's eave line, `recUnder` the receiver's bottom along it.
+ */
+function frameOpening(
+  member: (m: Member) => void,
+  f: WallFrame,
+  inside: number,
+  x: number,
+  s: OpeningSpec,
+  topAt: (u: number) => number,
+  recUnder: (u: number) => number,
+) {
+  const across: [number, number] = [x - COL - 0.02, x + s.w + COL + 0.02];
+  const headD = Math.min(OPENING_HEAD, Math.min(recUnder(across[0]), recUnder(across[1])) - (s.sill + s.h));
+  const header = headD >= MIN_HEADER;
+  for (const u of [x - COL / 2 - 0.02, x + s.w + COL / 2 + 0.02]) {
+    const jambTop = s.kind === "rollup" || !header ? topAt(u) - STEEL_T : s.sill + s.h + headD;
+    member({ a: wallPoint(f, u, 0, inside), b: wallPoint(f, u, jambTop, inside), w: COL, d: COL, mat: "frame", up: f.normal });
+  }
+  if (header) {
+    const headV = s.sill + s.h + headD / 2;
+    member({ a: wallPoint(f, across[0], headV, inside), b: wallPoint(f, across[1], headV, inside), w: COL, d: headD, mat: "frame" });
+  }
+  if (s.sill > 0) {
+    const sillV = s.sill - OPENING_HEAD / 2;
+    member({ a: wallPoint(f, across[0], sillV, inside), b: wallPoint(f, across[1], sillV, inside), w: COL, d: OPENING_HEAD, mat: "frame" });
+  }
+}
+
 // ── the layout ────────────────────────────────────────────────────────────
 
 export function layoutBuilding(d: Design): Layout {
   const members: Member[] = [];
   const surfaces: Surface[] = [];
   const openings: OpeningPlacement[] = [];
+  const fixedDoors: FixedDoor[] = [];
   const min: Vec3 = [Infinity, Infinity, Infinity];
   const max: Vec3 = [-Infinity, -Infinity, -Infinity];
   const grow = (p: Vec3) => {
@@ -273,8 +427,13 @@ export function layoutBuilding(d: Design): Layout {
   const L = d.length / 2;
   const h = d.height;
   const xc = W - COL / 2;
-  const zs = frameLines(d.length);
+  const zs = buildingFrameLines(d);
+  const zp = partitionZ(d);
   const gable = d.roof === "gable";
+  const gutters = gutterEdges(d);
+  const gutterOn = (roof: "main" | "lean", side: Side) => gutters.some((g) => g.roof === roof && g.side === side);
+  const leanOn = (side: Side) => d.leanTos.some((l) => l.side === side);
+  const sheeted = (side: Side) => ["enclosed", "partial"].includes(wallState(d, side));
 
   // Column top (eave) at z, relative to the slab. The receivers' top flanges
   // rest on the columns, so this is also the top of the steel at the eave.
@@ -318,7 +477,7 @@ export function layoutBuilding(d: Design): Layout {
     channel("rec", [x, base + eave(-L) - REC_D / 2, -L], [x, base + eave(L) - REC_D / 2, L], [-sx, 0, 0]);
   }
   // Receiver lines across the building: the front and back ends, and a
-  // double receiver on every frame line in between.
+  // double receiver on every frame line in between, the storage room's included.
   const webs = [L, ...zs.slice(1, -1), -L];
 
   if (gable) {
@@ -345,15 +504,20 @@ export function layoutBuilding(d: Design): Layout {
     }
   } else {
     // Flat: front and back receivers run level across the width; purlins
-    // span from side receiver to side receiver, following the slope.
-    for (const { at, dir } of receiverLines([L, -L])) {
+    // span from side receiver to side receiver, following the slope. A
+    // storage room's inner wall gets a level double receiver too, and the
+    // purlins are spread over each side of it.
+    const lines = zp === null ? [L, -L] : [L, zp, -L];
+    for (const { at, dir } of receiverLines(lines)) {
       const zc = at + dir * (REC_B / 2);
       const y = base + eave(at) - REC_D / 2;
       channel("rec", [-W, y, zc], [W, y, zc], [0, 0, dir]);
     }
-    for (const z of stations(-L + REC_B / 2, L - REC_B / 2)) {
-      const y = base + steelTop(0, z) - PUR_D / 2;
-      channel("pur", [-(W - STEEL_T), y, z], [W - STEEL_T, y, z], [0, 0, 1]);
+    for (let i = 0; i < lines.length - 1; i++) {
+      for (const z of stations(lines[i + 1] + REC_B / 2, lines[i] - REC_B / 2)) {
+        const y = base + steelTop(0, z) - PUR_D / 2;
+        channel("pur", [-(W - STEEL_T), y, z], [W - STEEL_T, y, z], [0, 0, 1]);
+      }
     }
   }
 
@@ -394,7 +558,21 @@ export function layoutBuilding(d: Design): Layout {
     const yEdge = base + roofUnderAt(xe, 0) + RIB + 0.02 - FASCIA_D / 2;
     const yPeak = yr + RIB + 0.02 - FASCIA_D / 2;
     for (const sx of [-1, 1]) {
+      const side: Side = sx < 0 ? "left" : "right";
       member({ a: [sx * (xe + FASCIA_W / 2), yEdge, -L - OVERHANG], b: [sx * (xe + FASCIA_W / 2), yEdge, L + OVERHANG], w: FASCIA_W, d: FASCIA_D, mat: "trim" });
+      if (gutterOn("main", side)) {
+        // A downspout at each end, down the corner post, or clear of the
+        // corner's trim and of a front or back lean-to's roof.
+        const drops = ([-1, 1] as const).map((sz): Vec3 => {
+          const end: Side = sz > 0 ? "front" : "back";
+          const onSheet = sheeted(side) || d.storage?.end === end;
+          const inset = onSheet || sheeted(end) || leanOn(end) ? DOWNSPOUT_INSET : COL / 2;
+          return [sx * (W + (onSheet ? PAST_RIBS : 0) + DOWNSPOUT_D / 2), base, sz * (L - inset)];
+        });
+        const xf = sx * (xe + FASCIA_W);
+        const yTop = yEdge + FASCIA_D / 2;
+        gutterRun(member, [xf, yTop, -L - OVERHANG], [xf, yTop, L + OVERHANG], [sx, 0, 0], drops);
+      }
       for (const sz of [-1, 1]) {
         const z = sz * (L + OVERHANG + FASCIA_W / 2);
         member({ a: [sx * xe, yEdge, z], b: [0, yPeak, z], w: FASCIA_W, d: FASCIA_D, mat: "trim" });
@@ -440,6 +618,18 @@ export function layoutBuilding(d: Design): Layout {
       const x = sx * (xe + FASCIA_W / 2);
       member({ a: [x, fy(-zf), -zf], b: [x, fy(zf), zf], w: FASCIA_W, d: FASCIA_D, mat: "trim" });
     }
+    if (gutterOn("main", "back")) {
+      // The low edge drains to the back: a downspout at each corner.
+      const onSheet = sheeted("back");
+      const drops = ([-1, 1] as const).map((sx): Vec3 => {
+        const side: Side = sx < 0 ? "left" : "right";
+        const inset = onSheet || sheeted(side) || leanOn(side) ? DOWNSPOUT_INSET : COL / 2;
+        return [sx * (W - inset), base, -(L + (onSheet ? PAST_RIBS : 0) + DOWNSPOUT_D / 2)];
+      });
+      const zb = -(zf + FASCIA_W);
+      const yTop = fy(-zf) + FASCIA_D / 2;
+      gutterRun(member, [-xe, yTop, zb], [xe, yTop, zb], [0, 0, -1], drops);
+    }
   }
 
   // ── main walls ──
@@ -450,108 +640,137 @@ export function layoutBuilding(d: Design): Layout {
   const breaks = (side: Side, len: number): number[] =>
     gable && (side === "front" || side === "back") ? [0, len / 2, len] : [0, len];
 
-  for (const side of ["front", "back", "left", "right"] as const) {
+  /**
+   * Stretches of a wall and how each is closed. `key` names its panels
+   * (`wall-<key>`, `wainscot-<key>`); its wall purlins run across `girts`,
+   * between post faces.
+   */
+  type Stretch = { key: string; u0: number; u1: number; state: WallState; girts: [number, number] };
+
+  /**
+   * Panels from `u0` to `u1` along a wall frame, meeting the roof at the
+   * breakpoints `us` and standing on `bottom`, with the wainscot under them
+   * and the trim along its top when there is one. Holes are in the frame's u.
+   */
+  const wallPanels = (key: string, f: WallFrame, u0: number, u1: number, us: number[], bottom: number, holes: Hole[], wainscot: number) => {
+    const len = u1 - u0;
+    const at = [u0, ...us.filter((u) => u > u0 + 1e-9 && u < u1 - 1e-9), u1];
+    const top = at.map((u) => [u - u0, roofUnderOnWall(f, u)] as [number, number]);
+    const local = holes.filter((hl) => hl.u1 > u0 && hl.u0 < u1).map((hl) => ({ ...hl, u0: hl.u0 - u0, u1: hl.u1 - u0 }));
+    const panel = { profile: "pbr" as const, origin: wallPoint(f, u0, 0), uAxis: f.uAxis, vAxis: [0, 1, 0] as Vec3, uLen: len };
+    surface({ key: `wall-${key}`, mat: "wall", ...panel, bottom: at.map((u) => [u - u0, bottom]), top, holes: local });
+    if (!wainscot) return;
+    surface({
+      key: `wainscot-${key}`,
+      mat: "wainscot",
+      ...panel,
+      bottom: [
+        [0, 0],
+        [len, 0],
+      ],
+      top: [
+        [0, wainscot],
+        [len, wainscot],
+      ],
+      holes: local,
+    });
+    // Transition trim, broken where a door passes through it.
+    const gaps = local.filter((hl) => hl.v0 < wainscot && hl.v1 > wainscot).map((hl) => [hl.u0, hl.u1] as [number, number]);
+    for (const [a, b] of segments(0, len, gaps)) {
+      member({ a: wallPoint(f, u0 + a, wainscot, RIB + 0.03), b: wallPoint(f, u0 + b, wainscot, RIB + 0.03), w: 0.06, d: 0.12, mat: "trim" });
+    }
+  };
+
+  /**
+   * Wall purlins behind a wall's panels, from `from` up every 4 ft, between
+   * the posts (across `span`) and as deep as they are, open side down, clear
+   * of the receiver over `lowEave`. They stop at each opening's jambs.
+   */
+  const wallGirts = (f: WallFrame, from: number, lowEave: number, span: [number, number], holes: Hole[], out: number) => {
+    for (let v = from; v < lowEave - REC_D - GIRT_CLEAR; v += GIRT_SPACING) {
+      const gaps = holes
+        .filter((hl) => hl.v0 - OPENING_HEAD < v && hl.v1 + OPENING_HEAD > v)
+        .map((hl) => [hl.u0 - COL - 0.04, hl.u1 + COL + 0.04] as [number, number]);
+      for (const [u0, u1] of segments(span[0], span[1], gaps)) {
+        channel("wall", wallPoint(f, u0, v, out), wallPoint(f, u1, v, out), [0, -1, 0], scale(f.normal, -1));
+      }
+    }
+  };
+
+  /**
+   * One stretch of a main wall: its panels and the wall purlins behind them.
+   * Under wainscot the first wall purlin sits at its top edge: that is what
+   * the wainscot fastens to.
+   */
+  const wallStretch = (side: Side, f: WallFrame, st: Stretch, holes: Hole[], lowEave: number) => {
+    const wainscot = st.state === "enclosed" && d.colors.wainscot ? WAINSCOT_FT : 0;
+    let bottom: number;
+    if (st.state === "enclosed") bottom = wainscot;
+    // Level bottom 3 ft under the lowest eave, so a partial gable end also
+    // closes the whole triangle, and its girt stays behind the panel.
+    else if (st.state === "partial") bottom = Math.max(0, lowEave - PARTIAL_WALL_FT);
+    else bottom = h; // gable end: the triangle above the eave
+    wallPanels(st.key, f, st.u0, st.u1, breaks(side, wallLength(d, side)), bottom, holes, wainscot);
+    const girtFrom =
+      st.state === "enclosed" ? (wainscot ? wainscot : 3.5) : st.state === "partial" ? Math.max(0.5, lowEave - PARTIAL_WALL_FT + 0.5) : lowEave + 1;
+    wallGirts(f, girtFrom, lowEave, st.girts, holes, INSIDE);
+  };
+
+  for (const side of SIDES) {
     const state = wallState(d, side);
-    if (state === "open") continue;
+    // A side wall that isn't enclosed is still closed in, ground to eave,
+    // along the storage room: that stretch, out past its inner wall's face.
+    const p = state === "enclosed" ? null : partitionAt(d, side);
+    if (state === "open" && p === null) continue;
     const f = wallFrame(d, side, base);
     const len = wallLength(d, side);
-    const us = breaks(side, len);
-    const top = us.map((u) => [u, roofUnderOnWall(f, u)] as [number, number]);
-    const eaveLine = us.map((u) => [u, wallTopAt(d, side, u)] as [number, number]);
+    const eaveLine = breaks(side, len).map((u) => [u, wallTopAt(d, side, u)] as [number, number]);
+    const lowEave = Math.min(...eaveLine.map(([, v]) => v));
     const on = d.openings.filter((o) => o.wall === side);
     const holes: Hole[] = on.map((o) => {
       const s = openingSpec(o.spec);
       return { u0: o.x, u1: o.x + s.w, v0: s.sill, v1: s.sill + s.h };
     });
-    const wainscot = state === "enclosed" && d.colors.wainscot ? WAINSCOT_FT : 0;
-    const lowEave = Math.min(...eaveLine.map(([, v]) => v));
-    let bottom: [number, number][];
-    if (state === "enclosed") bottom = us.map((u) => [u, wainscot]);
-    // Level bottom 3 ft under the lowest eave, so a partial gable end also
-    // closes the whole triangle, and its girt stays behind the panel.
-    else if (state === "partial") bottom = us.map((u) => [u, Math.max(0, lowEave - PARTIAL_WALL_FT)]);
-    else bottom = us.map((u) => [u, h]); // gable end: the triangle above the eave
-    surface({ key: `wall-${side}`, mat: "wall", profile: "pbr", origin: f.origin, uAxis: f.uAxis, vAxis: [0, 1, 0], uLen: len, bottom, top, holes });
-    if (wainscot) {
-      surface({
-        key: `wainscot-${side}`,
-        mat: "wainscot",
-        profile: "pbr",
-        origin: f.origin,
-        uAxis: f.uAxis,
-        vAxis: [0, 1, 0],
-        uLen: len,
-        bottom: [
-          [0, 0],
-          [len, 0],
-        ],
-        top: [
-          [0, wainscot],
-          [len, wainscot],
-        ],
-        holes,
-      });
-      // Transition trim, broken where a door passes through it.
-      const gaps = holes.filter((hl) => hl.v0 < wainscot && hl.v1 > wainscot).map((hl) => [hl.u0, hl.u1] as [number, number]);
-      for (const [u0, u1] of segments(0, len, gaps)) {
-        member({ a: wallPoint(f, u0, wainscot, RIB + 0.03), b: wallPoint(f, u1, wainscot, RIB + 0.03), w: 0.06, d: 0.12, mat: "trim" });
-      }
+    let stretches: Stretch[] = [{ key: side, u0: 0, u1: len, state, girts: [COL, len - COL] }];
+    if (p !== null && d.storage) {
+      // The left wall runs back → front and the right wall front → back, so
+      // the room starts at one's left corner and ends at the other's right.
+      const atStart = (side === "left") === (d.storage.end === "back");
+      const edge = atStart ? p + PARTITION_FACE : p - PARTITION_FACE;
+      const room: Stretch = atStart
+        ? { key: `storage-${side}`, u0: 0, u1: edge, state: "enclosed", girts: [COL, p - COL / 2] }
+        : { key: `storage-${side}`, u0: edge, u1: len, state: "enclosed", girts: [p + COL / 2, len - COL] };
+      const rest: Stretch = atStart
+        ? { key: side, u0: edge, u1: len, state, girts: [p + COL / 2, len - COL] }
+        : { key: side, u0: 0, u1: edge, state, girts: [COL, p - COL / 2] };
+      stretches = [room, rest].filter((x) => x.state !== "open");
+      // Trim down the edge of the room's sheeting, where the open wall begins.
+      const t = wallPoint(f, edge, 0, 0.06);
+      cornerTrim(member, t[0], t[2], base, (x, z) => base + roofUnderAt(x, z));
     }
+    for (const st of stretches) wallStretch(side, f, st, holes, lowEave);
 
     // The bottom of the receiver along the top of this wall, which hangs
     // from the eave line; on a gable end it follows the slope.
     const sloped = gable && (side === "front" || side === "back");
     const recUnder = (u: number) => wallTopAt(d, side, u) - (sloped ? REC_D / cosG : REC_D);
-
-    // Wall purlins behind the panels, between the posts and as deep as they
-    // are, open side down, clear of the receiver; they stop at each opening's
-    // jambs. Under wainscot the first sits at its top edge: that is what the
-    // wainscot fastens to.
-    const inside = -COL / 2 - GAP;
-    const girtFrom =
-      state === "enclosed" ? (wainscot ? wainscot : 3.5) : state === "partial" ? Math.max(0.5, lowEave - PARTIAL_WALL_FT + 0.5) : lowEave + 1;
-    for (let v = girtFrom; v < lowEave - REC_D - GIRT_CLEAR; v += GIRT_SPACING) {
-      const gaps = holes
-        .filter((hl) => hl.v0 - OPENING_HEAD < v && hl.v1 + OPENING_HEAD > v)
-        .map((hl) => [hl.u0 - COL - 0.04, hl.u1 + COL + 0.04] as [number, number]);
-      for (const [u0, u1] of segments(COL, len - COL, gaps)) {
-        channel("wall", wallPoint(f, u0, v, inside), wallPoint(f, u1, v, inside), [0, -1, 0], scale(f.normal, -1));
-      }
-    }
     // End-wall posts on enclosed ends, up inside the end receiver.
     if (state === "enclosed" && (side === "front" || side === "back")) {
       const n = Math.ceil(len / END_POST_SPACING);
       for (let i = 1; i < n; i++) {
         const u = (len * i) / n;
         if (holes.some((hl) => u > hl.u0 - COL - 0.5 && u < hl.u1 + COL + 0.5)) continue;
-        member({ a: wallPoint(f, u, 0, inside), b: wallPoint(f, u, wallTopAt(d, side, u) - STEEL_T, inside), w: COL, d: COL, mat: "frame", up: f.normal });
+        member({ a: wallPoint(f, u, 0, INSIDE), b: wallPoint(f, u, wallTopAt(d, side, u) - STEEL_T, INSIDE), w: COL, d: COL, mat: "frame", up: f.normal });
       }
     }
 
-    // Openings: placements for the scene; a framed opening (jambs, header and,
-    // under a window, a sill) inside the wall line; red-iron trim jambs outside
-    // around roll-ups, as on the jobsite photos. A roll-up's jambs run all the
-    // way up inside the receiver, for reinforcement; a walk door's and a
-    // window's stop at the header. An opening that comes up close under the
-    // receiver gets a shallower header, or none: the receiver is its header.
+    // Openings: placements for the scene; a framed opening inside the wall
+    // line (frameOpening); red-iron trim jambs outside around roll-ups, as on
+    // the jobsite photos.
     for (const o of on) {
       const s = openingSpec(o.spec);
       openings.push({ id: o.id, kind: s.kind, side, origin: wallPoint(f, o.x, s.sill), uAxis: f.uAxis, normal: f.normal, w: s.w, h: s.h });
-      const across: [number, number] = [o.x - COL - 0.02, o.x + s.w + COL + 0.02];
-      const headD = Math.min(OPENING_HEAD, Math.min(recUnder(across[0]), recUnder(across[1])) - (s.sill + s.h));
-      const header = headD >= MIN_HEADER;
-      for (const u of [o.x - COL / 2 - 0.02, o.x + s.w + COL / 2 + 0.02]) {
-        const jambTop = s.kind === "rollup" || !header ? wallTopAt(d, side, u) - STEEL_T : s.sill + s.h + headD;
-        member({ a: wallPoint(f, u, 0, inside), b: wallPoint(f, u, jambTop, inside), w: COL, d: COL, mat: "frame", up: f.normal });
-      }
-      if (header) {
-        const headV = s.sill + s.h + headD / 2;
-        member({ a: wallPoint(f, across[0], headV, inside), b: wallPoint(f, across[1], headV, inside), w: COL, d: headD, mat: "frame" });
-      }
-      if (s.sill > 0) {
-        const sillV = s.sill - OPENING_HEAD / 2;
-        member({ a: wallPoint(f, across[0], sillV, inside), b: wallPoint(f, across[1], sillV, inside), w: COL, d: OPENING_HEAD, mat: "frame" });
-      }
+      frameOpening(member, f, INSIDE, o.x, s, (u) => wallTopAt(d, side, u), recUnder);
       if (s.kind === "rollup") {
         const out = RIB + 0.06;
         for (const u of [o.x - 0.15, o.x + s.w + 0.15]) {
@@ -576,8 +795,44 @@ export function layoutBuilding(d: Design): Layout {
     cornerTrim(member, sx * (W + GAP + 0.06), sz * (L + GAP + 0.06), base + bottomV, (x, z) => base + roofUnderAt(x, z));
   }
 
+  // ── storage room ──
+  // Its inner wall stands on a frame line of its own (posts each side, a
+  // double receiver over it, the purlins of both bays slotted in: see above),
+  // framed between like an end wall: posts no more than 10 ft apart, up
+  // inside the receiver, and wall purlins. Panels on both faces run up to the
+  // roof, around a walk door in the middle.
+  if (zp !== null && d.storage) {
+    const toRest = d.storage.end === "back" ? 1 : -1; // out of the room
+    const mid: WallFrame = { origin: [-W, base, zp], uAxis: [1, 0, 0], normal: [0, 0, toRest], len: d.width };
+    const topAt = (u: number) => steelTop(u - W, zp);
+    const recUnder = (u: number) => topAt(u) - (gable ? REC_D / cosG : REC_D);
+    const door = openingSpec("walk");
+    const doorX = (d.width - door.w) / 2;
+    const holes: Hole[] = [{ u0: doorX, u1: doorX + door.w, v0: door.sill, v1: door.sill + door.h }];
+    const wainscot = d.colors.wainscot ? WAINSCOT_FT : 0;
+    const us = gable ? [0, W, d.width] : [0, d.width];
+    const faces: WallFrame[] = [toRest, -toRest].map((n) => ({
+      origin: [-n * W, base, zp + n * (REC_B + GAP)],
+      uAxis: [n, 0, 0],
+      normal: [0, 0, n],
+      len: d.width,
+    }));
+    faces.forEach((f, i) => wallPanels(i === 0 ? "partition-out" : "partition-in", f, 0, d.width, us, wainscot, holes, wainscot));
+    const lowTop = Math.min(topAt(0), topAt(d.width));
+    wallGirts(mid, wainscot || 3.5, lowTop, [COL, d.width - COL], holes, 0);
+    const n = Math.ceil(d.width / END_POST_SPACING);
+    for (let i = 1; i < n; i++) {
+      const u = (d.width * i) / n;
+      if (holes.some((hl) => u > hl.u0 - COL - 0.5 && u < hl.u1 + COL + 0.5)) continue;
+      member({ a: wallPoint(mid, u, 0), b: wallPoint(mid, u, topAt(u) - STEEL_T), w: COL, d: COL, mat: "frame", up: mid.normal });
+    }
+    frameOpening(member, mid, 0, doorX, door, topAt, recUnder);
+    // Drawn as seen from the rest of the building.
+    fixedDoors.push({ key: "storage-door", origin: wallPoint(faces[0], doorX, door.sill), uAxis: faces[0].uAxis, normal: faces[0].normal, w: door.w, h: door.h, thick: 2 * (REC_B + GAP) });
+  }
+
   // ── lean-tos ──
-  for (const lean of d.leanTos) layoutLean(d, lean, { base, eave, member, channel, surface });
+  for (const lean of d.leanTos) layoutLean(d, lean, { base, eave, member, channel, surface, zs, gutterOn, leanOn });
 
   // ── slab ──
   let slab: Layout["slab"] = null;
@@ -585,11 +840,13 @@ export function layoutBuilding(d: Design): Layout {
     let x0 = -W - SLAB_MARGIN;
     let x1 = W + SLAB_MARGIN;
     let z0 = -L - SLAB_MARGIN;
-    const z1 = L + SLAB_MARGIN;
+    let z1 = L + SLAB_MARGIN;
+    // One rectangle under it all, an open corner between two lean-tos included.
     for (const l of d.leanTos) {
       if (l.side === "left") x0 -= l.depth;
       if (l.side === "right") x1 += l.depth;
       if (l.side === "back") z0 -= l.depth;
+      if (l.side === "front") z1 += l.depth;
     }
     slab = { x0, x1, z0, z1, t: SLAB_T };
     grow([x0, 0, z0]);
@@ -597,7 +854,7 @@ export function layoutBuilding(d: Design): Layout {
   }
   grow([min[0], 0, min[2]]);
 
-  return { base, slab, members, surfaces, openings, bounds: { min, max } };
+  return { base, slab, members, surfaces, openings, fixedDoors, bounds: { min, max } };
 }
 
 type LeanCtx = {
@@ -606,6 +863,10 @@ type LeanCtx = {
   member: (m: Member) => void;
   channel: Channel;
   surface: (s: Surface) => void;
+  /** The main building's frame lines (buildingFrameLines). */
+  zs: number[];
+  gutterOn: (roof: "main" | "lean", side: Side) => boolean;
+  leanOn: (side: Side) => boolean;
 };
 
 /**
@@ -613,8 +874,11 @@ type LeanCtx = {
  * receiver along the top of them, receivers running out from the main
  * building on each frame line (doubles inside the run), and purlins slotted
  * between them, tops flush, the top one a couple of inches off the main wall.
+ * Where a side lean-to meets a front or back one, the corner square between
+ * them stays open: no roof and no posts there, each roof stopping just past
+ * its own end wall, and each lean-to keeping its own end walls and framing.
  */
-function layoutLean(d: Design, lean: LeanTo, { base, eave, member, channel, surface }: LeanCtx) {
+function layoutLean(d: Design, lean: LeanTo, { base, eave, member, channel, surface, zs, gutterOn, leanOn }: LeanCtx) {
   const W = d.width / 2;
   const L = d.length / 2;
   const depth = lean.depth;
@@ -625,26 +889,35 @@ function layoutLean(d: Design, lean: LeanTo, { base, eave, member, channel, surf
   /** Top of the lean-to's steel e out from the main wall, where the roof sheets sit; its posts stop just under it. */
   const steelTop = (z: number, e: number) => eave(z) - LEAN_ATTACH_DROP - e * LEAN_PITCH;
   const underY = (z: number, e: number) => base + steelTop(z, e) + GAP / cosA;
-  // Steel running along the main wall stays outside its sheeting, ribs and all.
-  const sheeted = ["enclosed", "partial"].includes(wallState(d, lean.side));
+  const isSide = lean.side === "left" || lean.side === "right";
+  // Steel running along the main wall stays outside its sheeting, ribs and
+  // all. A storage room sheets a stretch of each side wall.
+  const sheeted = ["enclosed", "partial"].includes(wallState(d, lean.side)) || (isSide && d.storage !== null);
   const clear = sheeted ? GAP + RIB + 0.03 : 0;
   // The top purlin, a couple of inches off the main wall at its lowest corner.
   const first = clear + PURLIN_TOP_GAP + PUR_D * sinA + (PUR_B / 2) * cosA;
   const outer = depth - REC_B / 2; // the outer receiver
   const purlinEs = [first, ...stations(first, outer)];
+  const eEdge = depth + OVERHANG;
+  const enclosed = lean.walls === "enclosed";
+  // Downspouts run down the end posts, or clear of the corner trim on an
+  // enclosed lean-to, just past its ribs.
+  const dropInset = enclosed ? DOWNSPOUT_INSET : COL / 2;
+  const dropOut = depth + (enclosed ? PAST_RIBS : 0) + DOWNSPOUT_D / 2;
 
-  if (lean.side === "left" || lean.side === "right") {
+  if (isSide) {
     const sx = lean.side === "left" ? -1 : 1;
     const X = (e: number) => sx * (W + e);
     const n: Vec3 = [sx * sinA, cosA, 0];
     const upSlope: Vec3 = [-sx * cosA, sinA, 0];
     const eo = depth - COL / 2;
-    const zs = frameLines(d.length);
-    for (const z of zs) {
-      // No post in front of a roll-up on the wall this lean-to covers: the receiver spans it.
-      if (!inDrivePath(d, lean.side, sx < 0 ? z + L : L - z))
+    zs.forEach((z, i) => {
+      // No post in front of a roll-up on the wall this lean-to covers: the
+      // receiver spans it. Its end posts always stand, so each corner is held up.
+      const end = i === 0 || i === zs.length - 1;
+      if (end || !inDrivePath(d, lean.side, sx < 0 ? z + L : L - z))
         member({ a: [X(eo), base, z], b: [X(eo), base + steelTop(z, depth) - STEEL_T, z], w: COL, d: COL, mat: "frame" });
-    }
+    });
     // Along the outer posts, top flange resting on them, open toward the building.
     channel("rec", [X(outer), base + steelTop(-L, depth) - REC_D / 2, -L], [X(outer), base + steelTop(L, depth) - REC_D / 2, L], [-sx, 0, 0]);
     // Out from the main building on each frame line.
@@ -661,12 +934,16 @@ function layoutLean(d: Design, lean: LeanTo, { base, eave, member, channel, surf
       }
     }
 
+    // The roof runs the length of the wall and out over its ends, except into an open corner.
+    const zLo = leanOn("back") ? -L - SHEET_OUT : -L - OVERHANG;
+    const zHi = leanOn("front") ? L + SHEET_OUT : L + OVERHANG;
     // Roof plane: u along the main wall, v down the slope, normal up.
-    const zA = sx < 0 ? L + OVERHANG : -L - OVERHANG;
+    const slope = d.roof === "flat" ? FLAT_PITCH : 0;
+    const zA = sx < 0 ? zHi : zLo;
     const uDir = sx < 0 ? -1 : 1;
-    const uAxis = norm([0, uDir * (d.roof === "flat" ? FLAT_PITCH : 0), uDir]);
+    const uAxis = norm([0, uDir * slope, uDir]);
     const vAxis = norm([sx, -LEAN_PITCH, 0]);
-    const uLen = (d.length + 2 * OVERHANG) * Math.hypot(1, d.roof === "flat" ? FLAT_PITCH : 0);
+    const uLen = (zHi - zLo) * Math.hypot(1, slope);
     const vLen = (depth + OVERHANG + tuck) / cosA;
     surface({
       key: `lean-${lean.side}-roof`,
@@ -687,17 +964,24 @@ function layoutLean(d: Design, lean: LeanTo, { base, eave, member, channel, surf
       holes: [],
     });
     // Fascia along the low edge and rake boards on both ends.
-    const eEdge = depth + OVERHANG;
     const fy = (z: number, e: number) => underY(z, e) + RIB + 0.02 - FASCIA_D / 2;
     const xEdge = X(eEdge + FASCIA_W / 2);
-    member({ a: [xEdge, fy(-L - OVERHANG, eEdge), -L - OVERHANG], b: [xEdge, fy(L + OVERHANG, eEdge), L + OVERHANG], w: FASCIA_W, d: FASCIA_D, mat: "trim" });
-    for (const sz of [-1, 1]) {
-      const z = sz * (L + OVERHANG);
+    member({ a: [xEdge, fy(zLo, eEdge), zLo], b: [xEdge, fy(zHi, eEdge), zHi], w: FASCIA_W, d: FASCIA_D, mat: "trim" });
+    for (const [z, sz] of [
+      [zLo, -1],
+      [zHi, 1],
+    ] as const) {
       const zt = z + sz * (FASCIA_W / 2);
       member({ a: [X(-tuck), fy(z, -tuck), zt], b: [X(eEdge), fy(z, eEdge), zt], w: FASCIA_W, d: FASCIA_D, mat: "trim" });
     }
+    if (gutterOn("lean", lean.side)) {
+      const xf = X(eEdge + FASCIA_W);
+      const top = (z: number) => fy(z, eEdge) + FASCIA_D / 2;
+      const drops = ([-1, 1] as const).map((sz): Vec3 => [X(dropOut), base, sz * (L - dropInset)]);
+      gutterRun(member, [xf, top(zLo), zLo], [xf, top(zHi), zHi], [sx, 0, 0], drops);
+    }
 
-    if (lean.walls === "enclosed") {
+    if (enclosed) {
       const xo = X(depth + GAP);
       // Outer wall, seen from outside: u runs back → front on the left, front → back on the right.
       const outer: WallFrame =
@@ -730,45 +1014,54 @@ function layoutLean(d: Design, lean: LeanTo, { base, eave, member, channel, surf
     return;
   }
 
-  // Back lean-to: runs across the width behind the back wall.
-  const Z = (e: number) => -L - e;
-  const zBack = -L;
-  const n: Vec3 = [0, cosA, -sinA];
-  const upSlope: Vec3 = [0, sinA, cosA];
+  // Front or back lean-to: runs across the width outside that end wall. The
+  // front one is the back one turned around.
+  const sz = lean.side === "front" ? 1 : -1;
+  const Z = (e: number) => sz * (L + e);
+  const zW = sz * L;
+  const n: Vec3 = [0, cosA, sz * sinA];
+  const upSlope: Vec3 = [0, sinA, -sz * cosA];
   const eo = depth - COL / 2;
   const xs = spread(-(W - COL / 2), W - COL / 2, Math.max(1, Math.ceil(d.width / MAX_BAY_FT)) + 1);
-  for (const x of xs) {
-    if (!inDrivePath(d, "back", W - x))
-      member({ a: [x, base, Z(eo)], b: [x, base + steelTop(zBack, depth) - STEEL_T, Z(eo)], w: COL, d: COL, mat: "frame" });
-  }
+  xs.forEach((x, i) => {
+    // Clear of a roll-up's drive path, measured along the end wall from its
+    // left corner seen from outside; the end posts always stand.
+    const end = i === 0 || i === xs.length - 1;
+    if (end || !inDrivePath(d, lean.side, sz < 0 ? W - x : x + W))
+      member({ a: [x, base, Z(eo)], b: [x, base + steelTop(zW, depth) - STEEL_T, Z(eo)], w: COL, d: COL, mat: "frame" });
+  });
   // Along the outer posts, top flange resting on them, open toward the building.
-  const yOuter = base + steelTop(zBack, depth) - REC_D / 2;
-  channel("rec", [-W, yOuter, Z(outer)], [W, yOuter, Z(outer)], [0, 0, 1]);
+  const yOuter = base + steelTop(zW, depth) - REC_D / 2;
+  channel("rec", [-W, yOuter, Z(outer)], [W, yOuter, Z(outer)], [0, 0, -sz]);
   // Along the main end wall, outside its sheeting, open toward the lean-to:
   // the end frame has posts only at its corners, so the receivers running out
   // need something to land on.
-  const yLedger = base + steelTop(zBack, clear) - REC_D / 2;
-  channel("rec", [-W, yLedger, Z(clear + REC_B / 2)], [W, yLedger, Z(clear + REC_B / 2)], [0, 0, -1]);
+  const yLedger = base + steelTop(zW, clear) - REC_D / 2;
+  channel("rec", [-W, yLedger, Z(clear + REC_B / 2)], [W, yLedger, Z(clear + REC_B / 2)], [0, 0, sz]);
   // Out from that receiver over each post line.
   const webs = [-W, ...xs.slice(1, -1), W];
   for (const { at, dir } of receiverLines(webs)) {
     const xc = at + dir * (REC_B / 2);
     const drop = scale(n, -REC_D / 2);
-    channel("rec", add([xc, base + steelTop(zBack, clear), Z(clear)], drop), add([xc, base + steelTop(zBack, depth), Z(depth)], drop), [dir, 0, 0], n);
+    channel("rec", add([xc, base + steelTop(zW, clear), Z(clear)], drop), add([xc, base + steelTop(zW, depth), Z(depth)], drop), [dir, 0, 0], n);
   }
-  for (const e of [...stations(clear + REC_B / 2, outer)]) {
-    const c = add([0, base + steelTop(zBack, e), Z(e)], scale(n, -PUR_D / 2));
+  for (const e of stations(clear + REC_B / 2, outer)) {
+    const c = add([0, base + steelTop(zW, e), Z(e)], scale(n, -PUR_D / 2));
     for (const [x0, x1] of bays(webs)) channel("pur", [x0, c[1], c[2]], [x1, c[1], c[2]], upSlope, n);
   }
-  const uLen = d.width + 2 * OVERHANG;
+  // Across the width and out over the corners, except into an open corner.
+  const xLo = leanOn("left") ? -W - SHEET_OUT : -W - OVERHANG;
+  const xHi = leanOn("right") ? W + SHEET_OUT : W + OVERHANG;
+  const uLen = xHi - xLo;
   const vLen = (depth + OVERHANG + tuck) / cosA;
   surface({
-    key: "lean-back-roof",
+    key: `lean-${lean.side}-roof`,
     mat: "roof",
     profile: "pbr",
-    origin: [-W - OVERHANG, underY(zBack, -tuck), Z(-tuck)],
-    uAxis: [1, 0, 0],
-    vAxis: norm([0, -LEAN_PITCH, -1]),
+    // u runs left to right behind the building and right to left in front, so the panel faces up.
+    origin: [sz < 0 ? xLo : xHi, underY(zW, -tuck), Z(-tuck)],
+    uAxis: [-sz, 0, 0],
+    vAxis: norm([0, -LEAN_PITCH, sz]),
     uLen,
     bottom: [
       [0, 0],
@@ -780,37 +1073,40 @@ function layoutLean(d: Design, lean: LeanTo, { base, eave, member, channel, surf
     ],
     holes: [],
   });
-  const eEdge = depth + OVERHANG;
-  const fy = (e: number) => underY(zBack, e) + RIB + 0.02 - FASCIA_D / 2;
-  member({ a: [-W - OVERHANG, fy(eEdge), Z(eEdge + FASCIA_W / 2)], b: [W + OVERHANG, fy(eEdge), Z(eEdge + FASCIA_W / 2)], w: FASCIA_W, d: FASCIA_D, mat: "trim" });
-  for (const sx of [-1, 1]) {
-    const x = sx * (W + OVERHANG + FASCIA_W / 2);
+  const fy = (e: number) => underY(zW, e) + RIB + 0.02 - FASCIA_D / 2;
+  member({ a: [xLo, fy(eEdge), Z(eEdge + FASCIA_W / 2)], b: [xHi, fy(eEdge), Z(eEdge + FASCIA_W / 2)], w: FASCIA_W, d: FASCIA_D, mat: "trim" });
+  for (const x of [xLo - FASCIA_W / 2, xHi + FASCIA_W / 2]) {
     member({ a: [x, fy(-tuck), Z(-tuck)], b: [x, fy(eEdge), Z(eEdge)], w: FASCIA_W, d: FASCIA_D, mat: "trim" });
   }
-  if (lean.walls === "enclosed") {
+  if (gutterOn("lean", lean.side)) {
+    const zf = Z(eEdge + FASCIA_W);
+    const top = fy(eEdge) + FASCIA_D / 2;
+    const drops = ([-1, 1] as const).map((sx): Vec3 => [sx * (W - dropInset), base, Z(dropOut)]);
+    gutterRun(member, [xLo, top, zf], [xHi, top, zf], [0, 0, sz], drops);
+  }
+  if (enclosed) {
     const zo = Z(depth + GAP);
     leanWalls(d, { surface, member, channel }, [
       {
-        key: "lean-back-outer",
-        f: { origin: [W, base, zo], uAxis: [-1, 0, 0], normal: [0, 0, -1], len: d.width },
-        topAt: () => underY(zBack, depth) - base,
+        key: `lean-${lean.side}-outer`,
+        f: { origin: [-sz * W, base, zo], uAxis: [sz, 0, 0], normal: [0, 0, sz], len: d.width },
+        topAt: () => underY(zW, depth) - base,
         span: [COL, d.width - COL],
       },
-      {
-        key: "lean-back-left",
-        f: { origin: [-W - GAP, base, zo], uAxis: [0, 0, 1], normal: [-1, 0, 0], len: depth },
-        topAt: (u) => underY(zBack, depth - u) - base,
-        span: [COL + GAP, depth + GAP - clear],
-      },
-      {
-        key: "lean-back-right",
-        f: { origin: [W + GAP, base, -L], uAxis: [0, 0, -1], normal: [1, 0, 0], len: depth },
-        topAt: (u) => underY(zBack, u) - base,
-        span: [clear, depth - COL],
-      },
+      // The end walls. Seen from outside, u runs away from the building on
+      // one of them and toward it on the other.
+      ...([-1, 1] as const).map((sx) => {
+        const away = sx === -sz;
+        return {
+          key: `lean-${lean.side}-${sx < 0 ? "left" : "right"}`,
+          f: { origin: [sx * (W + GAP), base, away ? zW : zo] as Vec3, uAxis: [0, 0, -sx] as Vec3, normal: [sx, 0, 0] as Vec3, len: depth },
+          topAt: (u: number) => underY(zW, away ? u : depth - u) - base,
+          span: (away ? [clear, depth - COL] : [COL + GAP, depth + GAP - clear]) as [number, number],
+        };
+      }),
     ]);
     for (const sx of [-1, 1]) {
-      cornerTrim(member, sx * (W + 0.06), Z(depth + 0.06), base, (_x, z) => underY(zBack, -L - z));
+      cornerTrim(member, sx * (W + 0.06), Z(depth + 0.06), base, (_x, z) => underY(zW, sz * z - L));
     }
   }
 }
@@ -1021,7 +1317,7 @@ export function openingFaces(o: Pick<OpeningPlacement, "origin" | "normal">, fro
 /** Roll-up specs, for the scene's door surfaces. */
 export const ROLLUP_IDS = OPENING_SPECS.filter((s) => s.kind === "rollup").map((s) => s.id);
 
-/** Whether `u` along a main wall falls within 1 ft of a roll-up door on it: no lean-to post goes there. */
+/** Whether `u` along a main wall falls within 1 ft of a roll-up door on it: no lean-to post goes there but its end posts. */
 function inDrivePath(d: Design, wall: Side, u: number): boolean {
   return d.openings.some((o) => {
     if (o.wall !== wall) return false;

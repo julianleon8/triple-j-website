@@ -30,6 +30,7 @@ import {
 import { framingClearOf, layoutBuilding, steadyStep, type Layout, type ScreenRect, type Vec3 } from "@/lib/builder/geometry";
 import { deselectOnEscape, useBuilder, type ViewName } from "../store";
 import { Building, Person, personSpot } from "./Building";
+import { GroundMarks } from "./GroundMarks";
 
 const HORIZON = "#dfe7ec";
 const ZENITH = "#9ec0db";
@@ -68,6 +69,7 @@ function Contents() {
       <Sun layout={layout} />
       <SkyReflections />
       <Ground />
+      <GroundMarks layout={layout} />
       <Building design={design} layout={layout} />
       {showPerson ? <Person layout={layout} /> : null}
       <CameraRig layout={layout} />

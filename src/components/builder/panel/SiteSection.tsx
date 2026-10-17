@@ -1,10 +1,10 @@
 "use client";
 
-import { CheckboxRow, PillGroup } from "@/components/forge/form";
+import { CheckboxRow, FieldLabel, PillGroup } from "@/components/forge/form";
 import { CONCRETE, CONCRETE_LABEL, FRAMES, FRAME_LABEL, type Concrete, type Frame } from "@/lib/builder/catalog";
 
 import { useBuilder } from "../store";
-import { Helper, SectionShell } from "./controls";
+import { Helper, PRICED_IN_QUOTE, SectionShell } from "./controls";
 
 export function SiteSection() {
   const d = useBuilder((s) => s.design);
@@ -26,6 +26,33 @@ export function SiteSection() {
         label="Heavy-duty upgrade"
         sub="11-gauge columns, welded to the receivers and purlins. The rest of the frame stays 14-gauge."
       />
+      <div>
+        <FieldLabel as="p">Add-ons</FieldLabel>
+        <div className="flex flex-col gap-3">
+          <CheckboxRow
+            checked={d.gutters}
+            onChange={(gutters) => edit((x) => ({ ...x, gutters }))}
+            label="Gutters and downspouts"
+            sub={
+              <>
+                K-style, in your trim color, on every edge the roof drains off.
+                <span className="mt-1 block">{PRICED_IN_QUOTE}</span>
+              </>
+            }
+          />
+          <CheckboxRow
+            checked={d.insulation}
+            onChange={(insulation) => edit((x) => ({ ...x, insulation }))}
+            label="Fiberglass insulation"
+            sub={
+              <>
+                Covers the roof and any closed walls. Not shown in 3D.
+                <span className="mt-1 block">{PRICED_IN_QUOTE}</span>
+              </>
+            }
+          />
+        </div>
+      </div>
       <div>
         <PillGroup<Concrete>
           label="Concrete pad"

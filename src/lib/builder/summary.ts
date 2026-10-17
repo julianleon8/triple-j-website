@@ -18,7 +18,7 @@ import {
   type Side,
 } from "./catalog";
 import type { Design } from "./design";
-import { fmt, frontEave, leanOuterHeight, positionFrom, shownPosition, wallState } from "./rules";
+import { fmt, frontEave, gutterEdges, leanOuterHeight, positionFrom, shownPosition, wallState } from "./rules";
 
 /** Where one door or window sits, in words. Owned by rules.ts, next to the measuring it words; offered here with the rest of the wording. */
 export { openingPosition } from "./rules";
@@ -72,10 +72,34 @@ export function openingLines(d: Design): string[] {
 }
 
 export function leanLines(d: Design): string[] {
-  return d.leanTos.map((l) => {
-    const side = l.side === "back" ? "Back" : SIDE_LABEL[l.side];
-    return `${side}: ${l.depth} ft deep, ${l.walls}, ${fmt(leanOuterHeight(d, l.depth))} ft at the low edge`;
-  });
+  return [...d.leanTos]
+    .sort((a, b) => SIDES.indexOf(a.side) - SIDES.indexOf(b.side))
+    .map((l) => `${SIDE_LABEL[l.side]}: ${l.depth} ft deep, ${l.walls}, ${fmt(leanOuterHeight(d, l.depth, l.side))} ft at the low edge`);
+}
+
+/** "10 ft deep at the back, closed in, with a walk door". */
+export function storageLabel(d: Design): string {
+  if (!d.storage) return "None";
+  return `${d.storage.depth} ft deep at the ${d.storage.end}, closed in, with a walk door`;
+}
+
+/** "K-style, with downspouts, on both eaves · Charcoal, like the trim". */
+export function guttersLabel(d: Design): string {
+  const edges = gutterEdges(d);
+  if (!edges.length) return "None";
+  const main = edges.filter((e) => e.roof === "main").map((e) => e.side);
+  const leans = edges.filter((e) => e.roof === "lean").map((e) => e.side);
+  const parts = [
+    ...(main.length === 2 ? ["both eaves"] : main.map((s) => `the ${s} eave`)),
+    ...(leans.length ? [`the ${AND.format(leans)} ${leans.length === 1 ? "lean-to" : "lean-tos"}`] : []),
+  ];
+  return `K-style, with downspouts, on ${AND.format(parts)} · ${builderColor(d.colors.trim).name}, like the trim`;
+}
+
+/** Fiberglass on the roof and on every wall that is closed in. */
+export function insulationLabel(d: Design): string {
+  if (!d.insulation) return "None";
+  return hasWallPanels(d) ? "Fiberglass, on the roof and the closed walls" : "Fiberglass, on the roof";
 }
 
 /** Any wall with panels on it: an open wall has none. */
@@ -121,9 +145,12 @@ export function summaryRows(d: Design): SummaryRow[] {
     { k: "Frame", v: frameLabel(d) },
     { k: "Walls", v: wallsLabel(d) },
     { k: "Panels", v: panelsLabel(d) },
+    { k: "Storage room", v: storageLabel(d) },
     { k: "Doors & windows", v: openings.join(" · ") || "None", lines: openings },
     { k: "Lean-tos", v: leans.join(" · ") || "None", lines: leans },
     { k: "Colors", v: colorsLabel(d) },
+    { k: "Gutters", v: guttersLabel(d) },
+    { k: "Insulation", v: insulationLabel(d) },
     { k: "Concrete", v: concreteLabel(d) },
   ];
 }
@@ -164,8 +191,10 @@ export function describeDesign(d: Design): string {
   return [
     `${USE_LABEL[d.use]}, ${sizeLabel(d)}, ${ROOF_LABEL[d.roof].toLowerCase()}, ${heightLabel(d)}.`,
     `Walls: ${wallsLabel(d).toLowerCase()}.`,
+    d.storage ? `Storage room: ${storageLabel(d)}.` : "",
     openings.length ? `Openings: ${openings.join("; ")}.` : "",
     d.leanTos.length ? `Lean-tos: ${leanLines(d).join("; ")}.` : "",
+    d.gutters ? `Gutters: ${guttersLabel(d)}.` : "",
   ]
     .filter(Boolean)
     .join(" ");

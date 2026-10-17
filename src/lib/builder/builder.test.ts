@@ -114,8 +114,10 @@ describe("lean-tos", () => {
     expect(dimensionLimits(d, "height").min).toBe(11);
   });
 
-  it("keeps a back lean-to off the side lean-tos' corners", () => {
-    expect(canAddLean(PRESETS.barn, "back").ok).toBe(false);
+  it("lets a back or front lean-to join the side lean-tos: one per side, up to four", () => {
+    expect(canAddLean(PRESETS.barn, "back").ok).toBe(true);
+    expect(canAddLean(PRESETS.barn, "front").ok).toBe(true);
+    expect(canAddLean(PRESETS.barn, "left")).toEqual({ ok: false, reason: "There is already a lean-to on that side." });
   });
 });
 

@@ -16,6 +16,7 @@ import {
   OPENING_SPEC_IDS,
   ROOFS,
   SIDES,
+  STORAGE_ENDS,
   USES,
   WALL_STATES,
   type Use,
@@ -39,6 +40,12 @@ export const leanToSchema = z.object({
   walls: z.enum(["open", "enclosed"]),
 });
 
+/** A closed room across the full width at one end, with a walk door in its inner wall. */
+export const storageSchema = z.object({
+  end: z.enum(STORAGE_ENDS),
+  depth: int(LIMITS.storageDepth),
+});
+
 export const designSchema = z.object({
   v: z.literal(1),
   use: z.enum(USES),
@@ -50,7 +57,13 @@ export const designSchema = z.object({
   heavyDuty: z.boolean(),
   walls: z.object({ front: wallState, back: wallState, left: wallState, right: wallState }),
   openings: z.array(openingSchema).max(MAX_OPENINGS),
-  leanTos: z.array(leanToSchema).max(2),
+  leanTos: z.array(leanToSchema).max(LEAN_SIDES.length),
+  // Add-ons quoted on top, with no price of their own. Each defaults to
+  // none, so a link shared before they existed opens as it was sent.
+  storage: storageSchema.nullable().default(null),
+  gutters: z.boolean().default(false),
+  /** Fiberglass, the only insulation Triple J offers. Not drawn. */
+  insulation: z.boolean().default(false),
   /** `ridge` null: the ridge cap matches the roof, as the crew trims it unless asked otherwise. */
   colors: z.object({ roof: color, walls: color, trim: color, wainscot: color.nullable(), ridge: color.nullable().default(null) }),
   concrete: z.enum(CONCRETE),
@@ -62,6 +75,7 @@ export const designSchema = z.object({
 export type Design = z.infer<typeof designSchema>;
 export type Opening = z.infer<typeof openingSchema>;
 export type LeanTo = z.infer<typeof leanToSchema>;
+export type Storage = z.infer<typeof storageSchema>;
 
 const OPEN = { front: "open", back: "open", left: "open", right: "open" } as const;
 
@@ -79,6 +93,9 @@ export const PRESETS: Record<Use, Design> = {
     walls: { ...OPEN },
     openings: [],
     leanTos: [],
+    storage: null,
+    gutters: false,
+    insulation: false,
     colors: { roof: "Pewter-Gray", walls: "Light-Stone", trim: "Charcoal", wainscot: null, ridge: null },
     concrete: "yes",
   },
@@ -94,6 +111,9 @@ export const PRESETS: Record<Use, Design> = {
     walls: { ...OPEN },
     openings: [],
     leanTos: [],
+    storage: null,
+    gutters: false,
+    insulation: false,
     colors: { roof: "Galvalume", walls: "Polar-White", trim: "Galvalume", wainscot: null, ridge: null },
     concrete: "yes",
   },
@@ -114,6 +134,9 @@ export const PRESETS: Record<Use, Design> = {
       { id: "d4", spec: "win3x3", wall: "left", x: 13.5 },
     ],
     leanTos: [],
+    storage: null,
+    gutters: false,
+    insulation: false,
     colors: { roof: "Burnished-Slate", walls: "Light-Stone", trim: "Burnished-Slate", wainscot: "Burnished-Slate", ridge: null },
     concrete: "yes",
   },
@@ -135,6 +158,9 @@ export const PRESETS: Record<Use, Design> = {
       { side: "left", depth: 12, walls: "open" },
       { side: "right", depth: 12, walls: "open" },
     ],
+    storage: null,
+    gutters: false,
+    insulation: false,
     colors: { roof: "Black", walls: "Polar-White", trim: "Black", wainscot: "Black", ridge: null },
     concrete: "unsure",
   },

@@ -22,12 +22,12 @@ import { Html } from "@react-three/drei";
 
 import { FRAME_HEX, OPENING_KIND_LABEL, builderColor, openingSpec } from "@/lib/builder/catalog";
 import type { Design } from "@/lib/builder/design";
-import { keepLabelInside, openingFaces, type Layout, type Member, type OpeningPlacement, type Surface } from "@/lib/builder/geometry";
+import { keepLabelInside, openingFaces, type FixedDoor, type Layout, type Member, type OpeningPlacement, type Surface } from "@/lib/builder/geometry";
 import { openingPosition } from "@/lib/builder/rules";
 
 import { dragTo, endDrag, startDrag, type DragSession } from "../drag";
 import { canPickOpening, useBuilder } from "../store";
-import { channelGeometry } from "./channelGeometry";
+import { channelGeometry, gutterGeometry } from "./channelGeometry";
 import { panelGeometry } from "./panelGeometry";
 
 const UNDERSIDE = "#c3c8cb";
@@ -113,6 +113,9 @@ export function Building({ design, layout }: { design: Design; layout: Layout })
               dragging={dragging === o.id}
             />
           ))}
+          {layout.fixedDoors.map((f) => (
+            <FixedDoorMesh key={f.key} door={f} trimMat={trimMat} />
+          ))}
         </>
       )}
     </group>
@@ -149,6 +152,7 @@ function MemberGroup({ section, members, material }: { section: string; members:
   const geometry = useMemo(() => {
     if (section === "box") return UNIT_BOX;
     const [profile, d, w] = section.split("|");
+    if (profile === "gutter") return gutterGeometry(Number(d), Number(w));
     return channelGeometry(Number(d), Number(w), profile === "lipped");
   }, [section]);
   // Capacity grows in steps, so a slider drag rarely rebuilds the mesh.
@@ -244,7 +248,7 @@ function Slab({ slab }: { slab: NonNullable<Layout["slab"]> }) {
 // ── doors and windows ──
 
 /** Places children in the opening's own frame: x along the wall, y up, z out of the wall. */
-function useOpeningMatrix(o: OpeningPlacement) {
+function useOpeningMatrix(o: Pick<OpeningPlacement, "origin" | "uAxis" | "normal">) {
   return useMemo(() => {
     const u = new Vector3(...o.uAxis);
     const n = new Vector3(...o.normal);
@@ -432,6 +436,36 @@ function OpeningMesh({
       ) : null}
       {selected || blocking ? <Outline w={w} h={h} floor={o.kind !== "window"} color={blocking ? BLOCKING : SELECTED} /> : null}
       {selected ? <Tag o={o} dragging={dragging} /> : null}
+    </group>
+  );
+}
+
+/**
+ * A walk door drawn in a wall that isn't one of the design's doors (the
+ * storage room's): the slab through the wall's thickness, a knob and casing
+ * on each face. Nothing to pick or drag.
+ */
+function FixedDoorMesh({ door, trimMat }: { door: FixedDoor; trimMat: MeshStandardMaterial }) {
+  const matrix = useOpeningMatrix(door);
+  const slabMat = usePaint(DOOR_SLAB, { roughness: 0.6 });
+  const { w, h, thick } = door;
+  return (
+    <group matrix={matrix} matrixAutoUpdate={false}>
+      <mesh position={[w / 2, h / 2, -thick / 2]} material={slabMat} castShadow>
+        <boxGeometry args={[w - 0.08, h - 0.04, thick]} />
+      </mesh>
+      <mesh position={[w - 0.35, 3.1, 0.08]} material={trimMat}>
+        <sphereGeometry args={[0.09, 12, 8]} />
+      </mesh>
+      <Casing w={w} h={h} material={trimMat} sill={false} />
+      {/* The other face, seen from inside the room. Turned half a turn, so
+          x = 0.35 here is the outside knob's edge of the door: the latch side. */}
+      <group position={[w, 0, -thick]} rotation={[0, Math.PI, 0]}>
+        <mesh position={[0.35, 3.1, 0.08]} material={trimMat}>
+          <sphereGeometry args={[0.09, 12, 8]} />
+        </mesh>
+        <Casing w={w} h={h} material={trimMat} sill={false} />
+      </group>
     </group>
   );
 }

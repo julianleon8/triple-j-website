@@ -20,6 +20,8 @@ export const LIMITS = {
   /** Eave height. Flat roofs: at the low (back) edge, so it is the clearance. */
   height: { min: 7, max: 20 },
   leanDepth: { min: 6, max: 16 },
+  /** Storage room depth. The top only bounds the schema: the room also leaves STORAGE_MIN_REST of the building. */
+  storageDepth: { min: 6, max: 94 },
 } as const;
 
 /** 25×25 is sold as a clear span with no center post; 20×40 flat has one. */
@@ -39,6 +41,15 @@ export const WAINSCOT_FT = 3;
 /** A partial wall is closed from the eave down this far. */
 export const PARTIAL_WALL_FT = 3;
 export const MAX_OPENINGS = 24;
+/** A storage room leaves at least this much of the building outside it. */
+export const STORAGE_MIN_REST = 6;
+/** A new storage room's depth, made smaller when the building is too short for it. */
+export const STORAGE_DEFAULT_DEPTH = 10;
+/**
+ * Depth of a receiver (geometry.ts draws it). The storage room's walk door
+ * has to fit under the double receiver along the top of the room's inner wall.
+ */
+export const RECEIVER_DEPTH = 8 / 12;
 
 export const SIDES = ["front", "back", "left", "right"] as const;
 export type Side = (typeof SIDES)[number];
@@ -86,8 +97,13 @@ export const CONCRETE_LABEL: Record<Concrete, string> = {
   unsure: "Not sure yet",
 };
 
-export const LEAN_SIDES = ["left", "right", "back"] as const;
+/** One lean-to per side, up to four. Where a side one meets a front or back one, the corner square stays open. */
+export const LEAN_SIDES = ["left", "right", "front", "back"] as const;
 export type LeanSide = (typeof LEAN_SIDES)[number];
+
+/** A storage room closes one end of the building, across its full width. */
+export const STORAGE_ENDS = ["front", "back"] as const;
+export type StorageEnd = (typeof STORAGE_ENDS)[number];
 
 // ── Doors and windows ─────────────────────────────────────────────────────
 

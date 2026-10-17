@@ -8,17 +8,18 @@ import type { PointerEvent as ReactPointerEvent, Ref } from "react";
 
 import { OPENING_KIND_LABEL, SIDE_LABEL, openingSpec, type Side } from "@/lib/builder/catalog";
 import type { Design } from "@/lib/builder/design";
-import { COL, frameLines } from "@/lib/builder/geometry";
+import { COL, buildingFrameLines, partitionZ } from "@/lib/builder/geometry";
 import { openingPosition, wallState } from "@/lib/builder/rules";
 
 type Tone = "light" | "dark";
 
-const PALETTE: Record<Tone, { ink: string; muted: string; fill: string; lean: string; bg: string }> = {
+const PALETTE: Record<Tone, { ink: string; muted: string; fill: string; lean: string; room: string; bg: string }> = {
   light: {
     ink: "#00182a",
     muted: "#788a9c",
     fill: "#f4f6f8",
     lean: "#ffffff",
+    room: "#e4e9ee",
     bg: "#ffffff",
   },
   dark: {
@@ -26,6 +27,7 @@ const PALETTE: Record<Tone, { ink: string; muted: string; fill: string; lean: st
     muted: "#8b9aa8",
     fill: "rgba(255,255,255,.05)",
     lean: "rgba(255,255,255,.02)",
+    room: "rgba(255,255,255,.11)",
     bg: "transparent",
   },
 };
@@ -59,7 +61,13 @@ export function planLabel(d: Design): string {
     const spec = openingSpec(o.spec);
     return `. ${OPENING_KIND_LABEL[spec.kind]} ${spec.label}, ${SIDE_LABEL[o.wall].toLowerCase()} wall, ${openingPosition(d, o)}`;
   });
-  return `Plan view, ${d.width} by ${d.length} feet, front at the bottom${said.join("")}`;
+  return `${planName(d)}${said.join("")}`;
+}
+
+/** "Plan view, 30 by 30 feet, front at the bottom, storage room at the back". */
+function planName(d: Design): string {
+  const room = d.storage ? `, storage room at the ${d.storage.end}` : "";
+  return `Plan view, ${d.width} by ${d.length} feet, front at the bottom${room}`;
 }
 
 /** Draggable doors and windows, in the builder only (HQ's plan is a picture). */
@@ -96,7 +104,7 @@ export function PlanView({
   const x0 = -W - lean("left");
   const x1 = W + lean("right");
   const z0 = -L - lean("back");
-  const z1 = L;
+  const z1 = L + lean("front");
   const size = Math.max(x1 - x0, z1 - z0);
   const font = Math.max(1.4, size * 0.055);
   // Wall names read at about 12px in a plan 120px tall and 200px wide, whatever its shape.
@@ -118,7 +126,10 @@ export function PlanView({
     return [ax + ((bx - ax) * u) / len, az + ((bz - az) * u) / len];
   };
 
-  const columns = frameLines(d.length).flatMap((z) => [-1, 1].map((sx) => [sx * (W - COL / 2), z] as [number, number]));
+  const columns = buildingFrameLines(d).flatMap((z) => [-1, 1].map((sx) => [sx * (W - COL / 2), z] as [number, number]));
+  // The storage room: from its end wall to its inner wall at zp, a walk door in the middle of that.
+  const zp = partitionZ(d);
+  const room = d.storage && zp !== null ? { zEnd: d.storage.end === "back" ? -L : L, zp, door: openingSpec("walk").w / 2 } : null;
 
   return (
     <svg
@@ -126,16 +137,19 @@ export function PlanView({
       viewBox={vb}
       className={className}
       role="img"
-      aria-label={interactive ? planLabel(d) : `Plan view, ${d.width} by ${d.length} feet, front at the bottom`}
+      aria-label={interactive ? planLabel(d) : planName(d)}
       style={{ background: c.bg }}
     >
       {d.leanTos.map((l) => {
+        // Side lean-tos run the length, front and back ones the width: an open corner where two meet.
         const r =
           l.side === "left"
             ? { x: -W - l.depth, y: -L, w: l.depth, h: d.length }
             : l.side === "right"
               ? { x: W, y: -L, w: l.depth, h: d.length }
-              : { x: -W, y: -L - l.depth, w: d.width, h: l.depth };
+              : l.side === "back"
+                ? { x: -W, y: -L - l.depth, w: d.width, h: l.depth }
+                : { x: -W, y: L, w: d.width, h: l.depth };
         return (
           <g key={l.side}>
             <rect
@@ -156,7 +170,7 @@ export function PlanView({
                 fontSize={font * 0.8}
                 textAnchor="middle"
                 dominantBaseline="middle"
-                transform={l.side === "back" ? undefined : `rotate(-90 ${r.x + r.w / 2} ${r.y + r.h / 2})`}
+                transform={l.side === "back" || l.side === "front" ? undefined : `rotate(-90 ${r.x + r.w / 2} ${r.y + r.h / 2})`}
               >
                 Lean-to · {l.depth} ft
               </text>
@@ -166,6 +180,9 @@ export function PlanView({
       })}
 
       <rect x={-W} y={-L} width={d.width} height={d.length} fill={c.fill} />
+      {room ? (
+        <rect x={-W} y={Math.min(room.zEnd, room.zp)} width={d.width} height={Math.abs(room.zp - room.zEnd)} fill={c.room} />
+      ) : null}
 
       {(["front", "back", "left", "right"] as const).map((side) => {
         const state = wallState(d, side);
@@ -185,6 +202,31 @@ export function PlanView({
           />
         );
       })}
+
+      {room ? (
+        <g stroke={c.ink} strokeLinecap="square">
+          {/* Its stretch of each side wall is closed in, whatever the rest of that wall is. */}
+          {[-W, W].map((x) => (
+            <line key={x} x1={x} y1={room.zEnd} x2={x} y2={room.zp} strokeWidth={thick} />
+          ))}
+          {/* The inner wall, broken for the walk door. */}
+          <line x1={-W} y1={room.zp} x2={-room.door} y2={room.zp} strokeWidth={thick} />
+          <line x1={room.door} y1={room.zp} x2={W} y2={room.zp} strokeWidth={thick} />
+          <line x1={-room.door} y1={room.zp} x2={room.door} y2={room.zp} strokeWidth={thin} />
+        </g>
+      ) : null}
+      {room && labels ? (
+        <text
+          x={0}
+          y={(room.zEnd + room.zp) / 2}
+          fill={c.muted}
+          fontSize={font * 0.8}
+          textAnchor="middle"
+          dominantBaseline="middle"
+        >
+          Storage · {d.storage?.depth} ft
+        </text>
+      ) : null}
 
       {columns.map(([x, z], i) => (
         <rect key={i} x={x - COL} y={z - COL} width={COL * 2} height={COL * 2} fill={c.ink} />

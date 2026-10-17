@@ -438,7 +438,7 @@ export const SERVICES: Record<string, ServiceData> = {
   },
   {
     "q": "Can the garage be insulated?",
-    "a": "We frame the structure for insulation. We can connect you with insulation contractors, or you can handle that phase yourself."
+    "a": "Yes. We offer fiberglass insulation for the roof and walls. Ask for it in your quote."
   }
 ],
     militaryAngle: false,

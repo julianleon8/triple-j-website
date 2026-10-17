@@ -238,6 +238,9 @@ export function BuilderQuoteForm({ design }: { design: Design }) {
         frame: design.frame,
         openings: design.openings.length,
         lean_tos: design.leanTos.length,
+        storage: Boolean(design.storage),
+        gutters: design.gutters,
+        insulation: design.insulation,
       });
       // Enhanced-conversion data for /thank-you, exactly as the site's quote form does.
       try {

@@ -15,17 +15,22 @@ import {
   LEAN_ATTACH_DROP,
   LEAN_MIN_OUTER,
   LEAN_PITCH,
+  LEAN_SIDES,
   LIMITS,
   OPENING_EDGE_MARGIN,
   OPENING_GAP,
   OPENING_KIND_LABEL,
+  RECEIVER_DEPTH,
+  SIDES,
   SIDE_LABEL,
+  STORAGE_DEFAULT_DEPTH,
+  STORAGE_MIN_REST,
   openingSpec,
   type LeanSide,
   type Side,
   type WallState,
 } from "./catalog";
-import type { Design, Opening } from "./design";
+import type { Design, Opening, Storage } from "./design";
 
 // ── Wall geometry ─────────────────────────────────────────────────────────
 
@@ -64,8 +69,13 @@ export function minWallTop(d: Design, side: Side, u0: number, u1: number): numbe
   return Math.min(wallTopAt(d, side, u0), wallTopAt(d, side, u1));
 }
 
-/** A `gable` closure only exists on the front and back of a gable roof. */
+/**
+ * A `gable` closure only exists on the front and back of a gable roof. The
+ * storage room's end wall is enclosed whatever the wall is set to; the setting
+ * comes back if the room is removed.
+ */
 export function wallState(d: Design, side: Side): WallState {
+  if (d.storage?.end === side) return "enclosed";
   const s = d.walls[side];
   if (s === "gable" && (d.roof === "flat" || side === "left" || side === "right")) return "open";
   return s;
@@ -79,28 +89,137 @@ export function wallStatesFor(d: Design, side: Side): WallState[] {
 
 // ── Lean-tos ──────────────────────────────────────────────────────────────
 
-/** Deepest lean-to the main eave allows while keeping LEAN_MIN_OUTER clear at its low edge. */
-export function maxLeanDepth(d: Design): number {
-  const room = Math.floor((d.height - LEAN_ATTACH_DROP - LEAN_MIN_OUTER) / LEAN_PITCH);
+/**
+ * The main eave a lean-to hangs from, at its lowest along that wall: the
+ * stated height, except a flat roof's front, which is its high side. A gable
+ * end's lean-to hangs from the eave, not the rising rake.
+ */
+function leanAttach(d: Design, side: LeanSide | undefined): number {
+  return side === "front" ? frontEave(d) : d.height;
+}
+
+/**
+ * Deepest lean-to the main eave allows while keeping LEAN_MIN_OUTER clear at
+ * its low edge. Without a side, the lowest eave's answer, which holds on any side.
+ */
+export function maxLeanDepth(d: Design, side?: LeanSide): number {
+  const room = Math.floor((leanAttach(d, side) - LEAN_ATTACH_DROP - LEAN_MIN_OUTER) / LEAN_PITCH + 1e-9);
   return Math.min(LIMITS.leanDepth.max, room);
 }
 
-export function leanOuterHeight(d: Design, depth: number): number {
-  return d.height - LEAN_ATTACH_DROP - depth * LEAN_PITCH;
+export function leanOuterHeight(d: Design, depth: number, side?: LeanSide): number {
+  return leanAttach(d, side) - LEAN_ATTACH_DROP - depth * LEAN_PITCH;
 }
 
 export function canAddLean(d: Design, side: LeanSide): { ok: true } | { ok: false; reason: string } {
   if (d.leanTos.some((l) => l.side === side)) return { ok: false, reason: "There is already a lean-to on that side." };
-  if (d.leanTos.length >= 2) return { ok: false, reason: "Two lean-tos is the most the builder draws. Ask us about more." };
-  if (side === "back" && d.leanTos.length > 0)
-    return { ok: false, reason: "A back lean-to can't share corners with a side lean-to." };
-  if (side !== "back" && d.leanTos.some((l) => l.side === "back"))
-    return { ok: false, reason: "Remove the back lean-to first. It can't share corners with a side lean-to." };
-  if (maxLeanDepth(d) < LIMITS.leanDepth.min) {
+  if (d.leanTos.length >= LEAN_SIDES.length) return { ok: false, reason: "Four lean-tos, one on each side, is the most a building takes." };
+  if (maxLeanDepth(d, side) < LIMITS.leanDepth.min) {
     const need = Math.ceil(LEAN_ATTACH_DROP + LEAN_MIN_OUTER + LIMITS.leanDepth.min * LEAN_PITCH);
     return { ok: false, reason: `A lean-to needs at least ${need} ft of eave height on the main building.` };
   }
   return { ok: true };
+}
+
+// ── Storage room ──────────────────────────────────────────────────────────
+
+/** Deepest storage room that still leaves STORAGE_MIN_REST of the building. */
+export function maxStorageDepth(d: Design): number {
+  return Math.min(LIMITS.storageDepth.max, d.length - STORAGE_MIN_REST);
+}
+
+/** A new storage room's depth: the usual 10 ft, less on a building too short for it. */
+export function newStorageDepth(d: Design): number {
+  return Math.max(LIMITS.storageDepth.min, Math.min(STORAGE_DEFAULT_DEPTH, maxStorageDepth(d)));
+}
+
+export function canAddStorage(d: Design): { ok: true } | { ok: false; reason: string } {
+  if (d.storage) return { ok: false, reason: "There is already a storage room." };
+  if (maxStorageDepth(d) < LIMITS.storageDepth.min) {
+    const need = LIMITS.storageDepth.min + STORAGE_MIN_REST;
+    return { ok: false, reason: `A storage room needs a building at least ${need} ft long.` };
+  }
+  return { ok: true };
+}
+
+/**
+ * Where the storage room's inner wall meets a side wall, in feet along that
+ * wall from its left corner seen from outside; null on the front and back,
+ * or with no storage room.
+ */
+export function partitionAt(d: Design, side: Side): number | null {
+  const s = d.storage;
+  if (!s || side === "front" || side === "back") return null;
+  // The left wall runs back → front, the right wall front → back.
+  const fromBack = s.end === "back" ? s.depth : d.length - s.depth;
+  return side === "left" ? fromBack : d.length - fromBack;
+}
+
+/** Whether [u0, u1] on a side wall comes within a corner's margin of the storage room's wall. */
+function crossesPartition(d: Design, side: Side, u0: number, u1: number): boolean {
+  const p = partitionAt(d, side);
+  return p !== null && u0 - OPENING_EDGE_MARGIN < p - 1e-6 && u1 + OPENING_EDGE_MARGIN > p + 1e-6;
+}
+
+/**
+ * How tall the storage room's inner wall is under its walk door, which stands
+ * in the middle of it: the eave line across the building there, a gable's
+ * peak or a flat roof's height that far from the back.
+ */
+function storageDoorTop(d: Design, s: Storage): number {
+  const door = openingSpec("walk");
+  const u0 = (d.width - door.w) / 2;
+  if (d.roof === "gable") return minWallTop(d, "front", u0, u0 + door.w);
+  return wallTopAt(d, "left", s.end === "back" ? s.depth : d.length - s.depth); // the left wall's u runs from the back
+}
+
+/**
+ * What the storage room's walk door needs at the inner wall: the door, then
+ * the double receiver over it, which runs the width of the building there.
+ */
+function storageDoorNeed(): number {
+  const door = openingSpec("walk");
+  return door.sill + door.h + RECEIVER_DEPTH;
+}
+
+function storageIssues(d: Design): Issue[] {
+  const s = d.storage;
+  if (!s) return [];
+  const issues: Issue[] = [];
+  if (s.depth > maxStorageDepth(d)) {
+    issues.push({
+      code: "storage-depth",
+      message: `A ${s.depth} ft storage room leaves less than ${STORAGE_MIN_REST} ft of the building. Make the room smaller or the building longer.`,
+    });
+  }
+  const top = storageDoorTop(d, s);
+  if (storageDoorNeed() > top + 1e-6) {
+    issues.push({
+      code: "storage-door",
+      message: `The storage room's walk door needs ${fmt(storageDoorNeed())} ft of height at the room's inner wall; it is ${fmt(Math.floor(top * 10) / 10)} ft there. Raise the eave to fit it.`,
+    });
+  }
+  return issues;
+}
+
+// ── Gutters ───────────────────────────────────────────────────────────────
+
+/** An edge that gets a gutter: on the main roof's eave on `side`, or on the low outer edge of the lean-to there. */
+export type GutterEdge = { roof: "main" | "lean"; side: Side };
+
+/**
+ * Every edge the roof sheds water off, when gutters are chosen: both long
+ * sides of a gable, the low (back) edge of a flat roof, and each lean-to's low
+ * outer edge. A main eave with a lean-to under it drains onto that lean-to,
+ * so the lean-to's edge takes the gutter instead.
+ */
+export function gutterEdges(d: Design): GutterEdge[] {
+  if (!d.gutters) return [];
+  const eaves: Side[] = d.roof === "gable" ? ["left", "right"] : ["back"];
+  return [
+    ...eaves.filter((s) => !d.leanTos.some((l) => l.side === s)).map((side) => ({ roof: "main" as const, side })),
+    ...SIDES.filter((s) => d.leanTos.some((l) => l.side === s)).map((side) => ({ roof: "lean" as const, side })),
+  ];
 }
 
 // ── Doors and windows ─────────────────────────────────────────────────────
@@ -226,6 +345,14 @@ function openingIssues(d: Design): Issue[] {
       issues.push({ code: "off-wall", openingId: o.id, message: `${name} doesn't fit on the ${SIDE_LABEL[o.wall].toLowerCase()} wall.` });
       continue;
     }
+    if (crossesPartition(d, o.wall, o.x, o.x + spec.w)) {
+      issues.push({
+        code: "storage-wall",
+        openingId: o.id,
+        message: `${name} on the ${SIDE_LABEL[o.wall].toLowerCase()} wall runs into the storage room's wall. Keep it ${fmt(OPENING_EDGE_MARGIN)} ft to one side.`,
+      });
+      continue;
+    }
     const top = openingCeiling(d, o.wall, o.x, o.x + spec.w);
     if (heightNeeded(o) > top + 1e-6) {
       // Available height rounds down, so it never reads as "needs 13 ft; the wall is 13 ft tall".
@@ -256,11 +383,8 @@ function leanIssues(d: Design): Issue[] {
   const issues: Issue[] = [];
   const sides = d.leanTos.map((l) => l.side);
   if (new Set(sides).size !== sides.length) issues.push({ code: "lean-duplicate", message: "Only one lean-to per side." });
-  if (sides.includes("back") && sides.length > 1)
-    issues.push({ code: "lean-corner", message: "A back lean-to can't share corners with a side lean-to." });
-  const max = maxLeanDepth(d);
   for (const l of d.leanTos) {
-    if (l.depth > max)
+    if (l.depth > maxLeanDepth(d, l.side))
       issues.push({
         code: "lean-depth",
         leanSide: l.side,
@@ -272,7 +396,7 @@ function leanIssues(d: Design): Issue[] {
 
 /** Everything wrong with a design, in plain words. Empty means it can be quoted. */
 export function designIssues(d: Design): Issue[] {
-  return [...openingIssues(d), ...leanIssues(d)];
+  return [...openingIssues(d), ...leanIssues(d), ...storageIssues(d)];
 }
 
 // ── Normalising and bounding edits ────────────────────────────────────────
@@ -293,6 +417,12 @@ export function normalizeDesign(d: Design): Design {
     ...l,
     depth: clamp(Math.round(l.depth), LIMITS.leanDepth.min, LIMITS.leanDepth.max),
   }));
+  // The same for the storage room: too deep for the length is reported, so
+  // shortening the building stops where the room still leaves enough of it.
+  next.storage = d.storage && {
+    ...d.storage,
+    depth: clamp(Math.round(d.storage.depth), LIMITS.storageDepth.min, LIMITS.storageDepth.max),
+  };
   next.openings = packOpenings(next);
   return next;
 }
@@ -301,19 +431,39 @@ export type Dim = "width" | "length" | "height";
 export type DimLimit = { min: number; max: number; reason: string | null };
 
 /**
+ * Whether an opening on a side wall sits inside a storage room at the back.
+ * The left wall's stored edge counts from the back corner, the right wall's
+ * from the front.
+ */
+function inBackRoom(d: Design, o: Opening): boolean {
+  const p = d.storage?.end === "back" ? partitionAt(d, o.wall) : null;
+  if (p === null) return false;
+  const mid = o.x + openingSpec(o.spec).w / 2;
+  return o.wall === "left" ? mid < p : mid > p;
+}
+
+/**
  * The design at a new width, length or height. Doors and windows keep the
  * distance a customer reads for them (shownPosition: from the front corner,
  * from the left side), so on the left and back walls, whose stored edge
- * counts from the far end, they move with the change. Not yet normalised.
+ * counts from the far end, they move with the change. A side-wall door
+ * inside a storage room at the back keeps its distance from the back corner
+ * instead, so it stays in the room as the building grows or shrinks in front
+ * of it. Not yet normalised.
  */
 export function resizeDesign(d: Design, dim: Dim, value: number): Design {
   const to = clamp(Math.round(value), LIMITS[dim].min, LIMITS[dim].max);
   const by = to - d[dim];
-  const wall: Side | null = dim === "width" ? "back" : dim === "length" ? "left" : null;
+  const shift = (o: Opening): number => {
+    if (dim === "width") return o.wall === "back" ? by : 0;
+    if (dim !== "length" || (o.wall !== "left" && o.wall !== "right")) return 0;
+    const fromBack = inBackRoom(d, o);
+    return (o.wall === "left") !== fromBack ? by : 0;
+  };
   return {
     ...d,
     [dim]: to,
-    openings: wall && by ? d.openings.map((o) => (o.wall === wall ? { ...o, x: o.x + by } : o)) : d.openings,
+    openings: by ? d.openings.map((o) => (shift(o) ? { ...o, x: o.x + shift(o) } : o)) : d.openings,
   };
 }
 
@@ -364,13 +514,18 @@ function whatStops(d: Design, i: Issue): string {
     const alike = d.openings.filter((x) => x.wall === o.wall && x.spec === o.spec).length;
     const name = openingName(o).replace(/^The /, "");
     const who = alike > 1 ? `the ${COUNT_WORD[alike] ?? alike} ${name.replace(/door$/, "doors").replace(/window$/, "windows")}` : `the ${name}`;
+    if (i.code === "storage-wall") return `${who} on ${wall} would run into the storage room's wall`;
     return `${who} on ${wall} won't fit${underLean ? " under the lean-to" : ""}`;
   }
   const l = d.leanTos.find((x) => x.side === i.leanSide);
   if (i.code === "lean-depth" && l) {
-    const where = l.side === "back" ? "the back" : `the ${l.side} side`;
+    const where = l.side === "back" || l.side === "front" ? `the ${l.side}` : `the ${l.side} side`;
     return `the ${l.depth} ft lean-to on ${where} would drop below ${LEAN_MIN_OUTER} ft at its low edge`;
   }
+  if (i.code === "storage-depth" && d.storage) {
+    return `the ${d.storage.depth} ft storage room at the ${d.storage.end} would leave less than ${STORAGE_MIN_REST} ft of the building`;
+  }
+  if (i.code === "storage-door") return "the storage room's walk door wouldn't fit in its inner wall";
   return i.message.replace(/\.$/, "").replace(/^\w/, (c) => c.toLowerCase());
 }
 
@@ -429,7 +584,8 @@ export function openingRange(d: Design, o: Opening): { min: number; max: number 
     if (s.x + sw <= o.x) lo = Math.max(lo, s.x + sw + OPENING_GAP);
     else if (s.x >= o.x + spec.w) hi = Math.min(hi, s.x - OPENING_GAP - spec.w);
   }
-  const fits = (x: number) => x >= lo - 1e-6 && x <= hi + 1e-6 && openingCeiling(d, o.wall, x, x + spec.w) >= need - 1e-6;
+  const fits = (x: number) =>
+    x >= lo - 1e-6 && x <= hi + 1e-6 && !crossesPartition(d, o.wall, x, x + spec.w) && openingCeiling(d, o.wall, x, x + spec.w) >= need - 1e-6;
   if (!fits(o.x)) return { min: o.x, max: o.x };
   let min = o.x;
   while (fits(min - 0.5)) min -= 0.5;
@@ -448,15 +604,11 @@ export type SlideBlock = { message: string; by?: string };
  */
 export function slideOpening(d: Design, o: Opening, target: number): { x: number; blocked: SlideBlock | null } {
   const want = round05(target);
+  const spec = openingSpec(o.spec);
   if (!fitsAt(d, o, o.x)) {
     // It doesn't fit where it is (an old link, a building made smaller):
     // any spot on the wall that fits is a fix, so take the nearest one.
-    const spec = openingSpec(o.spec);
-    const len = wallLength(d, o.wall);
-    let best: number | null = null;
-    for (let x = OPENING_EDGE_MARGIN; x + spec.w <= len - OPENING_EDGE_MARGIN + 1e-6; x += 0.5) {
-      if (fitsAt(d, o, x) && (best === null || Math.abs(x - want) < Math.abs(best - want))) best = x;
-    }
+    const best = nearestFit(d, o, want, () => true);
     if (best === null) return { x: o.x, blocked: { message: `${openingName(o)} doesn't fit anywhere on the ${SIDE_LABEL[o.wall].toLowerCase()} wall.` } };
     return { x: best, blocked: best === want ? null : slideBlock(d, { ...o, x: best }, want > best ? 1 : -1) };
   }
@@ -464,10 +616,29 @@ export function slideOpening(d: Design, o: Opening, target: number): { x: number
   if (want >= min - 1e-6 && want <= max + 1e-6) return { x: want, blocked: null };
   const dir = want < min ? -1 : 1;
   const x = dir < 0 ? min : max;
+  // Taken past the storage room's wall, into or out of the room: it goes
+  // through to the nearest spot that fits on the far side, if there is one.
+  const p = partitionAt(d, o.wall);
+  if (p !== null && (dir > 0 ? p >= x + spec.w : p <= x) && dir * (want + spec.w / 2 - p) > 0) {
+    const beyond = (u: number) => (dir > 0 ? u - OPENING_EDGE_MARGIN >= p - 1e-6 : u + spec.w + OPENING_EDGE_MARGIN <= p + 1e-6);
+    const best = nearestFit(d, o, want, beyond);
+    if (best !== null) return { x: best, blocked: best === want ? null : slideBlock(d, { ...o, x: best }, want > best ? 1 : -1) };
+  }
   return { x, blocked: slideBlock(d, { ...o, x }, dir) };
 }
 
-/** Whether an opening fits with its left edge at x: on the wall, clear of its neighbours, under the wall's height there. */
+/** The spot nearest `want`, in half-foot steps, where the opening fits on its wall and `where` allows. */
+function nearestFit(d: Design, o: Opening, want: number, where: (x: number) => boolean): number | null {
+  const spec = openingSpec(o.spec);
+  const len = wallLength(d, o.wall);
+  let best: number | null = null;
+  for (let x = OPENING_EDGE_MARGIN; x + spec.w <= len - OPENING_EDGE_MARGIN + 1e-6; x += 0.5) {
+    if (where(x) && fitsAt(d, o, x) && (best === null || Math.abs(x - want) < Math.abs(best - want))) best = x;
+  }
+  return best;
+}
+
+/** Whether an opening fits with its left edge at x: on the wall, clear of its neighbours and the storage room's wall, under the wall's height there. */
 function fitsAt(d: Design, o: Opening, x: number): boolean {
   const spec = openingSpec(o.spec);
   if (x < OPENING_EDGE_MARGIN - 1e-6 || x + spec.w > wallLength(d, o.wall) - OPENING_EDGE_MARGIN + 1e-6) return false;
@@ -476,6 +647,7 @@ function fitsAt(d: Design, o: Opening, x: number): boolean {
     const sw = openingSpec(s.spec).w;
     if (x < s.x + sw + OPENING_GAP - 1e-6 && s.x < x + spec.w + OPENING_GAP - 1e-6) return false;
   }
+  if (crossesPartition(d, o.wall, x, x + spec.w)) return false;
   return openingCeiling(d, o.wall, x, x + spec.w) >= heightNeeded(o) - 1e-6;
 }
 
@@ -501,6 +673,9 @@ function slideBlock(d: Design, o: Opening, dir: -1 | 1): SlideBlock {
           : `${name.replace(/^The /, "the ")} and ${other.replace(/^The /, "the ")}`;
       return { message: `Keep ${fmt(OPENING_GAP)} ft of wall between ${pair}.`, by: ahead.id };
     }
+  }
+  if (crossesPartition(d, o.wall, next, next + spec.w)) {
+    return { message: `${name} stays ${fmt(OPENING_EDGE_MARGIN)} ft from the storage room's wall.` };
   }
   const top = openingCeiling(d, o.wall, next, next + spec.w);
   const there = fmt(Math.floor(top * 10) / 10);
