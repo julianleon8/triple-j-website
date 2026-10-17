@@ -26,7 +26,7 @@ const PREMIUM_SUB    = LINE_SUBTITLES.Sheffield
 export const metadata: Metadata = {
   title: 'Metal Panel Colors & Finishes',
   description:
-    'Browse 39 metal panel colors for your Central Texas carport, garage, or barn. 26 & 29-gauge Galvalume® steel with a 40-year paint warranty.',
+    'Browse 39 metal panel colors for your Central Texas carport, garage, or barn. Every panel is 26-gauge Galvalume® steel with a 40-year paint warranty.',
   alternates: { canonical: '/services/colors' },
   openGraph: {
     title: 'Metal Panel Colors & Finishes | Triple J Metal',
@@ -100,8 +100,8 @@ export default function ColorsPage() {
         lede={
           <>
             Triple J Metal sources painted Galvalume® steel from leading regional Texas suppliers,
-            spec&apos;d for high-UV, high-heat Central Texas conditions. Available in 26 and 29 gauge,
-            39 colors across two product lines.
+            spec&apos;d for high-UV, high-heat Central Texas conditions. Every panel is
+            26-gauge, in 39 colors across two product lines.
           </>
         }
         ledeMax="max-w-[640px]"
@@ -127,7 +127,7 @@ export default function ColorsPage() {
         <div className={`${container} grid grid-cols-2 md:grid-cols-4`}>
           {[
             { stat: '39',         label: 'Colors Available' },
-            { stat: '26 & 29',    label: 'Gauge Options' },
+            { stat: '26-Gauge',   label: 'Every Panel' },
             { stat: '40-Year',    label: 'Paint Warranty' },
             { stat: 'Galvalume®', label: 'Steel Substrate' },
           ].map(({ stat, label }) => (
@@ -147,7 +147,7 @@ export default function ColorsPage() {
       <section data-forge="" data-tone="light" className={`bg-white text-forge-navy ${section}`}>
         <div className={container}>
           <SectionHeading
-            eyebrow="26 & 29 Gauge"
+            eyebrow="26 Gauge"
             line1={STANDARD_LABEL}
             line2={`${TURNIUM_COLORS.length} Colors`}
             ledeMax="max-w-[640px]"
@@ -174,7 +174,7 @@ export default function ColorsPage() {
       >
         <div className={container}>
           <SectionHeading
-            eyebrow="26 Gauge Only"
+            eyebrow="26 Gauge"
             line1={PREMIUM_LABEL}
             line2={`${SHEFFIELD_COLORS.length} Colors`}
             ledeMax="max-w-[640px]"

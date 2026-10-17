@@ -40,10 +40,14 @@ describe('relatedBlogPosts', () => {
 })
 
 describe('postModified', () => {
-  const post = (date: string): BlogPost => ({ ...BLOG_POSTS[0], date })
+  const post = (date: string): BlogPost => ({ ...BLOG_POSTS[0], date, revised: undefined })
 
   it('dates an older post by the shared revision, not by its publish date', () => {
     expect(postModified(post('2026-04-15'))).toBe(BLOG_REVISED)
+  })
+
+  it('dates a post by its own revision when that is the latest', () => {
+    expect(postModified({ ...post('2026-04-15'), revised: '2026-10-17' })).toBe('2026-10-17')
   })
 
   it('keeps the publish date of a post written after the revision', () => {

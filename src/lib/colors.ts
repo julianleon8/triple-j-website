@@ -10,8 +10,10 @@
  * (renaming would orphan that data). User-facing labels come from
  * LINE_LABELS.
  *
- *   Standard Line: 26 & 29 gauge — exposed-fastener panels
- *   Premium Line:  26 gauge only — concealed-fastener (HOA + architectural)
+ *   Standard Line: exposed-fastener panels
+ *   Premium Line:  concealed-fastener (HOA + architectural)
+ *
+ * Every panel in both lines is 26 gauge — Triple J builds in nothing else.
  *
  * Swatches are sourced from a third-party CDN — see getSwatchUrl(). Mid-term:
  * mirror to Supabase Storage so we don't depend on an external host.
@@ -27,7 +29,7 @@ export const LINE_LABELS: Record<PanelLine, string> = {
 
 /** Subtitle copy for each line — used on /services/colors. */
 export const LINE_SUBTITLES: Record<PanelLine, string> = {
-  Turnium:   '26 & 29-gauge exposed-fastener panels',
+  Turnium:   '26-gauge exposed-fastener panels',
   Sheffield: '26-gauge concealed-fastener panels for HOA + architectural projects',
 }
 
@@ -37,8 +39,6 @@ export type PanelColor = {
   /** URL slug used in the swatch image filename + DB storage. */
   slug: string
   line: PanelLine
-  /** Only Standard Line is available in both 26 & 29 gauge */
-  gauges: ('26' | '29')[]
   /** True if this is a good match for HOA/luxury applications */
   hoaFriendly?: boolean
   /** Cheapest pricing tier — ~$0.50–$1/sheet less than painted panels.
@@ -52,7 +52,7 @@ function standard(
   hoaFriendly?: boolean,
   mostEconomical?: boolean,
 ): PanelColor {
-  return { name, slug, line: 'Turnium', gauges: ['26', '29'], hoaFriendly, mostEconomical }
+  return { name, slug, line: 'Turnium', hoaFriendly, mostEconomical }
 }
 
 function premium(
@@ -61,11 +61,11 @@ function premium(
   hoaFriendly?: boolean,
   mostEconomical?: boolean,
 ): PanelColor {
-  return { name, slug, line: 'Sheffield', gauges: ['26'], hoaFriendly, mostEconomical }
+  return { name, slug, line: 'Sheffield', hoaFriendly, mostEconomical }
 }
 
 export const PANEL_COLORS: PanelColor[] = [
-  // ── Standard Line — 26 & 29 gauge (legacy: Turnium) ────────────────────────
+  // ── Standard Line (legacy: Turnium) ────────────────────────────────────────
   standard('Alamo White',     'Alamo-White'),
   standard('Ash Gray',        'Ash-Gray'),
   standard('Black',           'Black'),
@@ -88,7 +88,7 @@ export const PANEL_COLORS: PanelColor[] = [
   standard('Tan',             'Tan'),
   standard('Taupe',           'Taupe', true),
 
-  // ── Premium Line — 26 gauge only (legacy: Sheffield) ───────────────────────
+  // ── Premium Line (legacy: Sheffield) ───────────────────────────────────────
   premium('Regal White',                'Regal-White', true),
   premium('Dove Gray',                  'Dove-Gray', true),
   premium('Slate Gray',                 'Slate-Gray', true),

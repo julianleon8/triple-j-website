@@ -44,7 +44,7 @@
 
 ## Material Tiers
 ### Standard (same-week builds)
-- 14-gauge steel + PBR/PBU R-Panels on Galvalume® substrate + 40-year painted finish
+- 14-gauge steel frame + **26-gauge** PBR/PBU R-Panels (PBR is the usual; 26-gauge is the only panel we build with) on Galvalume® substrate + 40-year painted finish
 
 ### Premium HOA Upgrade
 - Heavy-duty upgrade: 11-gauge columns, welded to the receivers and purlins (the rest of the frame stays 14-gauge) + Board & Batten or concealed-fastener standing-seam systems + 40-year painted finish

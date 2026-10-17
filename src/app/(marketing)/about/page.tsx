@@ -216,7 +216,7 @@ export default function AboutPage() {
             <SectionHeading eyebrow="Materials" line1="Texas steel." line2="Texas suppliers." />
             <p className="mt-[18px] max-w-[580px] text-[clamp(16px,.3vw_+_14px,18px)] leading-[1.65] text-forge-slate">
               PBR and PBU panels, Galvalume® roofing and concealed-fastener standing seam for HOA-grade builds, from
-              leading regional Texas suppliers. We buy from more than one, so a shortage on one color or gauge doesn’t
+              leading regional Texas suppliers. We buy from more than one, so a shortage on one color doesn’t
               hold up your job.
             </p>
             <RuleList
@@ -225,7 +225,7 @@ export default function AboutPage() {
               items={[
                 'Regional Texas suppliers — multi-source',
                 '14-gauge standard · 11-gauge heavy-duty columns',
-                'Galvalume® substrate · 40-year painted finish',
+                '26-gauge Galvalume® panels · 40-year painted finish',
               ]}
             />
           </ForgeReveal>

@@ -76,7 +76,7 @@ const COMPARISON_ROWS = [
   },
   {
     attribute: 'Availability',
-    pbr: 'Standard — widest color and gauge selection',
+    pbr: 'Standard — widest color selection',
     pbu: 'Slightly more limited — check with us on color options',
   },
 ]
@@ -96,7 +96,7 @@ const FAQS = [
   },
   {
     q: 'Which panel holds up better in Texas hail?',
-    a: 'Both PBR and PBU panels in 26-gauge perform similarly in hail events. If hail resistance is a specific concern, the gauge of steel matters more than the fastener style — ask us about upgrading to 26-gauge on your project.',
+    a: "Every panel we install is 26-gauge, PBR or PBU, so both hold up about the same in hail. The thickness of the steel matters more than the fastener style, which is why we don't offer thinner 29-gauge panels.",
   },
 ]
 
@@ -177,7 +177,7 @@ export default function PbrVsPbuPage() {
                 items={[
                   'Most economical panel option',
                   'Standard for carports, barns, and agricultural buildings',
-                  'Wide color and gauge availability from regional Texas suppliers',
+                  'Wide color availability from regional Texas suppliers',
                   'Proven decades of performance in Central Texas',
                 ]}
               />
@@ -280,8 +280,8 @@ export default function PbrVsPbuPage() {
               </p>
               <p className="text-[15px] leading-[1.6] text-white/80">
                 Triple J Metal sources PBR and PBU panels from leading regional Texas suppliers — Galvalume®
-                substrate with painted finishes backed by a 40-year paint warranty, in 26-gauge and 29-gauge
-                depending on your application. Multi-source so we&rsquo;re never bottlenecked when a single supplier
+                substrate with painted finishes backed by a 40-year paint warranty, always in 26-gauge.
+                Multi-source so we&rsquo;re never bottlenecked when a single supplier
                 runs short.
               </p>
             </div>

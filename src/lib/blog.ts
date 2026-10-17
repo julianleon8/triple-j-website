@@ -16,6 +16,8 @@ export type BlogPost = {
   excerpt: string
   /** ISO date string, e.g. "2026-04-15" */
   date: string
+  /** ISO date this post alone last changed, when that is after `BLOG_REVISED` */
+  revised?: string
   readTime: string
   tags: string[]
   category: BlogCategory
@@ -23,18 +25,19 @@ export type BlogPost = {
 
 /**
  * The day every post last changed: the Forge restyle, the claims brought to
- * the locks and the internal links all landed on 2026-10-03. Bump it when a
- * post's copy changes.
+ * the locks and the internal links all landed on 2026-10-03. Bump it when
+ * every post's copy changes; one post's change goes in its own `revised`.
  */
 export const BLOG_REVISED = '2026-10-03'
 
 /**
- * The ISO date a post last changed: its own publish date, or `BLOG_REVISED`
- * if that is later. The one owner of both the sitemap `lastmod` and the
+ * The ISO date a post last changed: the latest of its publish date, its own
+ * `revised` date and `BLOG_REVISED`. The one owner of both the sitemap `lastmod` and the
  * BlogPosting `dateModified`, so the two cannot disagree.
  */
 export function postModified(post: BlogPost): string {
-  return new Date(post.date) > new Date(BLOG_REVISED) ? post.date : BLOG_REVISED
+  const dates = [post.date, BLOG_REVISED, post.revised].filter((d): d is string => Boolean(d))
+  return dates.reduce((latest, d) => (new Date(d) > new Date(latest) ? d : latest))
 }
 
 export const BLOG_POSTS: BlogPost[] = [
@@ -47,6 +50,7 @@ export const BLOG_POSTS: BlogPost[] = [
     excerpt:
       'Central Texas sees 130+ MPH gusts and baseball-sized hail. Here\'s what the difference between a welded and bolted structure actually means when those storms hit Bell County.',
     date: '2026-04-15',
+    revised: '2026-10-17',
     readTime: '7 min read',
     tags: ['Welded', 'Bolted', 'Wind Rating', 'Materials'],
     category: 'Guides',

@@ -51,6 +51,10 @@ const CITY_REVISED: Record<string, Date> = {
   "harker-heights": COPY_REVISED,
   "copperas-cove": COPY_REVISED,
 };
+// 2026-10-17: every panel mention on these pages now says 26-gauge only.
+const PAGE_REVISED: Record<string, Date> = Object.fromEntries(
+  ["/about", "/services/colors", "/services/pbr-vs-pbu-panels"].map((path) => [path, new Date("2026-10-17T00:00:00.000Z")]),
+);
 
 // `gallery_items` has no `updated_at` column. Selecting one made PostgREST
 // reject the whole query, and because the result's `error` went unread, every
@@ -73,7 +77,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   for (const path of STATIC_PATHS) {
     entries.push({
       url: `${base}${path}`,
-      lastModified: CONTENT_REVISED,
+      lastModified: PAGE_REVISED[path] ?? CONTENT_REVISED,
       changeFrequency: path === "/" ? "weekly" : "monthly",
       priority:
         path === "/"
